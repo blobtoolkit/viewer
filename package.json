@@ -1,0 +1,37 @@
+{
+  "name": "btk-promise",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "pretest": "mongo --port 27018 admin --eval \"db.getSiblingDB('admin').shutdownServer()\" &> /dev/null; rm -r test/data &> /dev/null; mkdir -p test/data && mongod --dbpath test/data --port 27018 --fork --logpath /tmp/mongod.log &> /dev/null",
+    "test": "export NODE_ENV=\"test\" && mocha \"src/**/*.spec.js\"",
+    "posttest": "mongo --port 27018 admin --eval \"db.getSiblingDB('admin').shutdownServer()\" &> /dev/null && rm -r test/data",
+    "start": "nodemon src/server.js"
+  },
+  "author": "",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "bcrypt": "^1.0.2",
+    "body-parser": "^1.17.2",
+    "express": "^4.15.3",
+    "express-cors": "0.0.3",
+    "jsonwebtoken": "^7.4.1",
+    "minimist": "^1.2.0",
+    "mkdirp-promise": "^5.0.1",
+    "mongoose": "^4.11.3",
+    "passport": "^0.3.2",
+    "passport-jwt": "^2.2.1",
+    "passport-local": "^1.0.0",
+    "promise": "^8.0.1",
+    "supertest": "^3.0.0",
+    "swagger-jsdoc": "^1.9.6",
+    "testdouble": "^3.2.2"
+  },
+  "devDependencies": {
+    "mocha": "^3.4.2",
+    "mocha-mongoose": "^1.2.0",
+    "nodemon": "^1.11.0",
+    "should": "^11.2.1"
+  }
+}
