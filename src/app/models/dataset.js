@@ -126,7 +126,7 @@ const storeValues = async function(id,field){
     let filePath = this.filePath || config.filePath;
     if (field.blobDBpath[0] == 'taxonomy' && field.blobDBpath[field.blobDBpath.length-1] == 'tax'){
       let success;
-      let result = Promise.resolve(asKeyValue(values))
+      let result = asKeyValue(values)
       success = io.writeJSON(filePath+'/'+this.id+'/'+field.id+'.json',result);
       successes.push(success);
     }
@@ -154,6 +154,49 @@ const storeAllValues = function(){
   return Promise.all(successes);
 }
 
+const loadValues = async function(id) {
+  if (this.values && this.values[id]) return Promise.resolve(this.values[id]);
+  let filePath = this.filePath || config.filePath;
+  this.values = this.values || {};
+  this.values[id] = await io.readJSON(filePath+'/'+this.id+'/'+id+'.json');
+  return Promise.resolve(this.values[id]);
+}
+
+const loadValuesAtIndex = async function(id,index) {
+  let field = await this.loadValues(id);
+  let lastIndex = field.values.length-1;
+  let values = [];
+  let keys = false;
+  let ret;
+  if (field.hasOwnProperty('keys')){
+    keys = {};
+  }
+  String(index).split(',').forEach(function(r){
+    range = r.split('-');
+    if (r.match('-') && (!range[0]||!range[1])){
+      ret = Promise.resolve(undefined);
+    }
+    range[0] = range[0] ? range[0]*1 : 0;
+    range[1] = range[1] ? range[1]*1 : range[0];
+    if (range[1] < range[0] || range[1] > lastIndex){
+      ret = Promise.resolve(undefined);
+    }
+    else {
+      for (var i = range[0]; i <= range[1]; i++){
+        if (keys){
+          values.push(field.keys[field.values[i]]);
+        }
+        else {
+          values.push(field.values[i])
+        }
+      }
+    }
+  })
+  ret = ret || Promise.resolve({values})
+  return ret;
+}
+
+
 Dataset.prototype = {
   loadBlobDB,
   prepareMeta,
@@ -161,5 +204,7 @@ Dataset.prototype = {
   storeMeta,
   storeLineages,
   storeValues,
-  storeAllValues
+  storeAllValues,
+  loadValues,
+  loadValuesAtIndex
 }

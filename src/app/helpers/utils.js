@@ -28,7 +28,7 @@ const asKeyValue = (arr) => {
     }
     return obj[v];
   });
-  return Promise.resolve({values:values,keys:keys});
+  return {values:values,keys:keys};
 };
 
 const groupValuesBy = (arr, by, val) => {
