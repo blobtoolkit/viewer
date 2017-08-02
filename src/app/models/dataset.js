@@ -1,5 +1,6 @@
 const config = require('../../config/main')(process.env.NODE_ENV);
 const io = require('../helpers/io');
+const Field = require('./field');
 const waitOn = require('../helpers/utils').waitOn;
 const newField = require('../helpers/utils').newField;
 const asKeyValue = require('../helpers/utils').asKeyValue;
@@ -81,10 +82,32 @@ const storeMeta = async function() {
 }
 
 const loadMeta = async function() {
-  if (this.meta) return Promise.resolve(this.meta);
-  let filePath = this.filePath || config.filePath;
-  this.meta = await io.readJSON(filePath+'/'+this.id+'/meta.json');
+  if (!this.meta){
+    let filePath = this.filePath || config.filePath;
+    this.meta = await io.readJSON(filePath+'/'+this.id+'/meta.json');
+  }
+  if (this.meta.hasOwnProperty('id') && !this.fields){
+    this.fields = {};
+    this.addFields(this.meta.fields);
+  }
   return Promise.resolve(this.meta);
+}
+
+const addFields = function(fields,meta = {}) {
+  fields.forEach((f) => {
+    Object.keys(f).forEach((key) => {
+      meta[key] = f[key];
+    })
+    if (f.children){
+      this.addFields(f.children,meta);
+    }
+    else {
+      this.fields[f.id] = new Field(f.id,meta);
+      if (f.data){
+        this.addFields(f.data,meta);
+      }
+    }
+  })
 }
 
 const storeLineages = async function(){
@@ -154,57 +177,13 @@ const storeAllValues = function(){
   return Promise.all(successes);
 }
 
-const loadValues = async function(id) {
-  if (this.values && this.values[id]) return Promise.resolve(this.values[id]);
-  let filePath = this.filePath || config.filePath;
-  this.values = this.values || {};
-  this.values[id] = await io.readJSON(filePath+'/'+this.id+'/'+id+'.json');
-  return Promise.resolve(this.values[id]);
-}
-
-const loadValuesAtIndex = async function(id,index) {
-  let field = await this.loadValues(id);
-  let lastIndex = field.values.length-1;
-  let values = [];
-  let keys = false;
-  let ret;
-  if (field.hasOwnProperty('keys')){
-    keys = {};
-  }
-  String(index).split(',').forEach(function(r){
-    range = r.split('-');
-    if (r.match('-') && (!range[0]||!range[1])){
-      ret = Promise.resolve(undefined);
-    }
-    range[0] = range[0] ? range[0]*1 : 0;
-    range[1] = range[1] ? range[1]*1 : range[0];
-    if (range[1] < range[0] || range[1] > lastIndex){
-      ret = Promise.resolve(undefined);
-    }
-    else {
-      for (var i = range[0]; i <= range[1]; i++){
-        if (keys){
-          values.push(field.keys[field.values[i]]);
-        }
-        else {
-          values.push(field.values[i])
-        }
-      }
-    }
-  })
-  ret = ret || Promise.resolve({values})
-  return ret;
-}
-
-
 Dataset.prototype = {
   loadBlobDB,
   prepareMeta,
   loadMeta,
+  addFields,
   storeMeta,
   storeLineages,
   storeValues,
-  storeAllValues,
-  loadValues,
-  loadValuesAtIndex
+  storeAllValues
 }

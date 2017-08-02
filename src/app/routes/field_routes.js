@@ -1,8 +1,7 @@
-const Dataset = require('../models/dataset');
+const Field = require('../models/field');
 const utils = require('../helpers/utils');
 
 module.exports = function(app, db) {
-  var directory = app.locals.directory;
 /**
  * @swagger
  * definition:
@@ -124,34 +123,57 @@ module.exports = function(app, db) {
  *   get:
  *     tags:
  *       - Datasets
- *     description: Returns a data
+ *     description: Returns all values for a field
  *     produces:
  *       - application/json
  *     responses:
  *       200:
- *         description: An array of variable values
+ *         description: An object containing an array of variable values
  *         schema:
- *           $ref: '#/definitions/Field'
+ *           $ref: '#/definitions/Value'
  *     parameters:
  *       - $ref: "#/parameters/dataset_id"
  *       - $ref: "#/parameters/field_id"
  */
   app.get('/api/v1/field/:dataset_id/:field_id', async (req, res) => {
-    //res.sendFile(directory+"/"+req.params.dataset_id+"/"+req.params.field_id+".json");
     res.setHeader('content-type', 'application/json');
-    let dataset = new Dataset(req.params.dataset_id);
-    let field = await dataset.loadValues(req.params.field_id);
-    if (field.hasOwnProperty('values')){
-      res.json(field)
+    let field = new Field(req.params.field_id,req.params.dataset_id);
+    let data = await field.loadData();
+    if (data.hasOwnProperty('values')){
+      res.json(data)
     }
     else {
       res.sendStatus(404);
     }
   });
-/*
-  app.get('/api/field/:dataset_id/:field_id/:index', function(req, res) {
-    var js = require(directory+'/'+req.params.dataset_id+'/'+req.params.field_id+'.json');
-    res.send(JSON.stringify(js[req.params.index]))
+/**
+ * @swagger
+ * /api/v1/field/dataset/{dataset_id}/{field_id}/{index}:
+ *   get:
+ *     tags:
+ *       - Datasets
+ *     description: Returns specific values for a field
+ *     produces:
+ *       - application/json
+ *     responses:
+ *       200:
+ *         description: An object containing an array of variable values
+ *         schema:
+ *           $ref: '#/definitions/Value'
+ *     parameters:
+ *       - $ref: "#/parameters/dataset_id"
+ *       - $ref: "#/parameters/field_id"
+ *       - $ref: "#/parameters/index"
+ */
+  app.get('/api/v1/field/:dataset_id/:field_id/:index', async (req, res) => {
+    res.setHeader('content-type', 'application/json');
+    let field = new Field(req.params.field_id,req.params.dataset_id);
+    let data = await field.loadDataAtIndex(req.params.index);
+    if (data.hasOwnProperty('values')){
+      res.json(data)
+    }
+    else {
+      res.sendStatus(404);
+    }
   });
-  */
 };
