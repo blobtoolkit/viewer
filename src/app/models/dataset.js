@@ -9,6 +9,7 @@ const valueAtPath = require('../helpers/utils').valueAtPath;
 
 function Dataset(id) {
   this.id = id;
+  this.fields = {};
 };
 
 module.exports = Dataset;
@@ -35,40 +36,40 @@ const prepareMeta = async function() {
   let values = {};
   let fields = [];
   meta.fields = fields;
-  fields.push(newField('gc',{name:'GC',description:'per contig GC percentage',type:'variable',datatype:'float',range:[0,100],preload:true,blobDBpath:['gc']}))
-  fields.push(newField('length',{name:'Length',description:'per contig length',type:'variable',datatype:'integer',range:[0,json.length],preload:true,blobDBpath:['length']}))
-  fields.push(newField('ncount',{name:'N-count',description:'Ns per contig',type:'variable',datatype:'integer',range:[0,json.n_count],blobDBpath:['n_count']}))
+  fields.push(this.addField('gc',{name:'GC',description:'per contig GC percentage',type:'variable',datatype:'float',range:[0,100],preload:true,blobDBpath:['gc']}))
+  fields.push(this.addField('length',{name:'Length',description:'per contig length',type:'variable',datatype:'integer',range:[0,json.length],preload:true,blobDBpath:['length']}))
+  fields.push(this.addField('ncount',{name:'N-count',description:'Ns per contig',type:'variable',datatype:'integer',range:[0,json.n_count],blobDBpath:['n_count']}))
 
   let covLibs = [];
   let readCovLibs = [];
-  Object.keys(json.covLibs).forEach(function(key){
+  Object.keys(json.covLibs).forEach((key) => {
     let lib = json.covLibs[key];
-    covLibs.push(newField(key+'_cov',{name:lib.name,blobDBpath:['covs',key]}))
-    readCovLibs.push(newField(key+'_read_cov',{name:lib.name,blobDBpath:['read_cov',key]}))
+    covLibs.push(this.addField(key+'_cov',{name:lib.name,blobDBpath:['covs',key]}))
+    readCovLibs.push(this.addField(key+'_read_cov',{name:lib.name,blobDBpath:['read_cov',key]}))
   })
-  fields.push(newField('covs',{name:'Coverage',description:'coverage per contig',type:'variable',datatype:'float',range:[0,100000],children:covLibs}))
-  fields.push(newField('read_cov',{name:'Read coverage',description:'read coverage per contig',type:'variable',datatype:'float',range:[0,100000],children:readCovLibs}))
+  fields.push(this.addField('covs',{name:'Coverage',description:'coverage per contig',type:'variable',datatype:'float',range:[0,100000],children:covLibs}))
+  fields.push(this.addField('read_cov',{name:'Read coverage',description:'read coverage per contig',type:'variable',datatype:'float',range:[0,100000],children:readCovLibs}))
   let  hitLibs = [];
-  Object.keys(json.hitLibs).forEach(function(key){
+  Object.keys(json.hitLibs).forEach((key) => {
     let lib = json.hitLibs[key];
-    hitLibs.push(newField(key,{name:lib.name,blobDBpath:['hits',key]}))
+    hitLibs.push(this.addField(key,{name:lib.name,blobDBpath:['hits',key]}))
   })
-  fields.push(newField('hits',{name:'Hits',description:'Blast hit taxonomy IDs',type:'hit',datatype:'array',lookup:'ncbi_taxonomy',children:hitLibs}))
+  fields.push(this.addField('hits',{name:'Hits',description:'Blast hit taxonomy IDs',type:'hit',datatype:'array',lookup:'ncbi_taxonomy',children:hitLibs}))
   let taxrules = [];
   let levels = ['superkingdom','phylum','order','family','genus','species'];
   let taxfields = [];
-  taxfields.push(newField());
-  json.taxrules.forEach(function(rule){
+  //taxfields.push(newField());
+  json.taxrules.forEach((rule) => {
     let taxlevels = [];
-    levels.forEach(function(level){
+    levels.forEach((level) => {
       let data = [];
-      data.push(newField(rule+'_'+level+'_score',{name:'score',type:'variable',datatype:'float',range:[0,1000],blobDBpath:['taxonomy',rule,level,'score']}))
-      data.push(newField(rule+'_'+level+'_cindex',{name:'c_index',type:'variable',datatype:'integer',range:[0,100],blobDBpath:['taxonomy',rule,level,'c_index']}))
-      taxlevels.push(newField(rule+'_'+level,{name:level,data:data,blobDBpath:['taxonomy',rule,level,'tax']}))
+      data.push(this.addField(rule+'_'+level+'_score',{name:'score',type:'variable',datatype:'float',range:[0,1000],blobDBpath:['taxonomy',rule,level,'score']}))
+      data.push(this.addField(rule+'_'+level+'_cindex',{name:'c_index',type:'variable',datatype:'integer',range:[0,100],blobDBpath:['taxonomy',rule,level,'c_index']}))
+      taxlevels.push(this.addField(rule+'_'+level,{name:level,data:data,blobDBpath:['taxonomy',rule,level,'tax']}))
     })
-    taxrules.push(newField(rule,{children:taxlevels}))
+    taxrules.push(this.addField(rule,{children:taxlevels}))
   })
-  fields.push(newField('taxonomy',{name:'Taxonomy',description:'BLAST-assigned taxonomy',type:'category',datatype:'string',children:taxrules}))
+  fields.push(this.addField('taxonomy',{name:'Taxonomy',description:'BLAST-assigned taxonomy',type:'category',datatype:'string',children:taxrules}))
 
   this.meta = meta; //await waitOn(meta,json);
   return Promise.resolve(this.meta);
@@ -86,8 +87,7 @@ const loadMeta = async function() {
     let filePath = this.filePath || config.filePath;
     this.meta = await io.readJSON(filePath+'/'+this.id+'/meta.json');
   }
-  if (this.meta.hasOwnProperty('id') && !this.fields){
-    this.fields = {};
+  if (this.meta.hasOwnProperty('id')){
     this.addFields(this.meta.fields);
   }
   return Promise.resolve(this.meta);
@@ -96,18 +96,27 @@ const loadMeta = async function() {
 const addFields = function(fields,meta = {}) {
   fields.forEach((f) => {
     Object.keys(f).forEach((key) => {
-      meta[key] = f[key];
+      if (key != 'children' && key != 'data'){
+        meta[key] = f[key];
+      }
     })
     if (f.children){
       this.addFields(f.children,meta);
     }
     else {
-      this.fields[f.id] = new Field(f.id,meta);
+      this.addField(f.id,meta);
       if (f.data){
         this.addFields(f.data,meta);
       }
     }
   })
+}
+
+const addField = function(fId,meta){
+  if (!this.fields.hasOwnProperty(fId)){
+    this.fields[fId] = new Field(fId,this.id,meta);
+  }
+  return this.fields[fId];
 }
 
 const storeLineages = async function(){
@@ -182,6 +191,7 @@ Dataset.prototype = {
   prepareMeta,
   loadMeta,
   addFields,
+  addField,
   storeMeta,
   storeLineages,
   storeValues,

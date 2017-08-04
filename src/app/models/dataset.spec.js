@@ -78,81 +78,29 @@ describe("Dataset model:", () => {
       });
     });
   });
-/*  describe("storeValues()", () => {
-    let promise;
-    beforeEach(() => {
-      promise = dataset.loadMeta(id);
-      dataset.blobDB = blobDB;
-    });
-    it("should store values for a dataset", () => {
-      promise.then(async () => {
-        let success = await dataset.storeValues('hits')
-        success = success[0];
-        success.should.be.a.Array();
-        success[0].should.be.True();
-      }).catch((e)=>{throw new Error(e)});
+  describe("addField()", () => {
+    it("should add a field", () => {
+      dataset.addField('a',{key:'value'});
+      should.exist(dataset.fields);
+      dataset.fields.should.be.a.Object();
+      dataset.fields.should.have.property('a');
+      dataset.fields['a'].should.be.a.Object();
+      dataset.fields['a'].should.have.property('id','a');
+      dataset.fields['a'].should.have.property('dataset_id','ds1');
+      dataset.fields['a'].should.have.property('key','value');
     });
   });
-  describe("storeAllValues()", () => {
-    let promise;
-    beforeEach(() => {
-      promise = dataset.loadMeta(id);
-      dataset.blobDB = blobDB;
-    });
-    it("should store all values for a dataset", () => {
-      promise.then(async () => {
-        let success = await dataset.storeAllValues()
-        success = success[0];
-        success.should.be.a.Array();
-        success[0].should.match(true);
-      })
+  describe("addFields()", () => {
+    it("should store fields for a dataset", () => {
+      dataset.addFields([{id:'a',key:'value',children:[{id:'b'}]}]);
+      should.exist(dataset.fields);
+      dataset.fields.should.be.a.Object();
+      dataset.fields.should.have.properties('b');
+      dataset.fields['b'].should.be.a.Object();
+      dataset.fields['b'].should.have.property('id','b');
+      dataset.fields['b'].should.have.property('dataset_id','ds1');
+      dataset.fields['b'].should.have.property('key','value');
     });
   });
-  describe("loadValues(id,index)", () => {
-    it("should load all values for a field", async () => {
-      let result = await dataset.loadValues('gc');
-      result.should.be.a.Object();
-      result.should.have.property('values');
-    });
-  });
-  describe("loadValuesAtIndex()", () => {
-    it("should load a specific value for a field", async () => {
-      let result = await dataset.loadValuesAtIndex('gc',7);
-      result.should.be.a.Object();
-      result.should.have.property('values');
-      result.values.length.should.equal(1);
-      result.values[0].should.equal(0.2801);
-    });
-    it("should load a range of values for a field", async () => {
-      let result = await dataset.loadValuesAtIndex('gc','5-7');
-      result.should.be.a.Object();
-      result.should.have.property('values');
-      result.values.length.should.equal(3);
-      result.values[0].should.equal(0.1944);
-    });
-    it("should load comma-separated ranges", async () => {
-      let result = await dataset.loadValuesAtIndex('gc','1,5-7');
-      result.should.be.a.Object();
-      result.should.have.property('values');
-      result.values.length.should.equal(4);
-      result.values[0].should.equal(0.2623);
-      result.values[3].should.equal(0.2801);
-    });
-    it("should reject incomplete ranges", async () => {
-      let result = await dataset.loadValuesAtIndex('gc','1,-7');
-      should.not.exist(result);
-    });
-    it("should reject reversed ranges", async () => {
-      let result = await dataset.loadValuesAtIndex('gc','8-7');
-      should.not.exist(result);
-    });
-    it("should return translated value for key-value fields", async () => {
-      let result = await dataset.loadValuesAtIndex('bestsum_family','5');
-      result.should.be.a.Object();
-      result.should.have.property('values');
-      result.values.length.should.equal(1);
-      result.values[0].should.match('Hypsibiidae');
-    });
-  });
-*/
+
 });

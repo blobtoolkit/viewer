@@ -1,14 +1,28 @@
 const config = require('../../config/main')(process.env.NODE_ENV);
 const io = require('../helpers/io');
+const Filter = require('./filter');
 
 function Field(id,dataset_id,meta) {
   this.id = id;
   this.dataset_id = dataset_id;
+  let filter = new Filter('default',this.id);
+  this.filters = {default:filter};
   if (meta){
     Object.keys(meta).forEach((key)=>{
       this[key] = meta[key];
+      if (key == 'range'){
+        filter.limits(meta[key]);
+      }
     })
   }
+
+  /*
+        this._datatype = 'float';
+        this._select_step = 1;
+        this._selection = [0, Infinity];
+        this._dataset = undefined;
+        this._logged = false;
+*/
 };
 
 module.exports = Field;
