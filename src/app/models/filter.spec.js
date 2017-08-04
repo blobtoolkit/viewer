@@ -1,0 +1,240 @@
+const should = require('should');
+const config = require('../../config/main')('test')
+const Filter = require('./filter');
+
+describe("Filter model:", () => {
+  describe("limits(arr)", () => {
+    let filter;
+    beforeEach((done) => {
+      filter = new Filter('gc','ds1');
+      done();
+    })
+    it("should set range limits for the filter", (done) => {
+      filter.limits([0,2]);
+      filter._limits.should.be.a.Array();
+      filter._limits.should.match([0,2]);
+      done();
+    });
+    it("should return limits when called with no values", (done) => {
+      filter.limits([0,2]);
+      let limits = filter.limits();
+      limits.should.be.a.Array();
+      limits.should.match([0,2]);
+      done();
+    });
+    it("should return limits when called with an empty array", (done) => {
+      filter.limits([0,2]);
+      let limits = filter.limits([]);
+      limits.should.be.a.Array();
+      limits.should.match([0,2]);
+      done();
+    });
+    it("should set allow inverted max and min", (done) => {
+      filter.limits([3,1]);
+      filter._limits.should.be.a.Array();
+      filter._limits.should.match([1,3]);
+      done();
+    });
+    it("should find max and min if array is too long", (done) => {
+      filter.limits([2,3,0,1]);
+      filter._limits.should.be.a.Array();
+      filter._limits.should.match([0,3]);
+      done();
+    });
+    it("should set max and min to a single value if only one value is passed", (done) => {
+      filter.limits([2]);
+      filter._limits.should.be.a.Array();
+      filter._limits.should.match([2,2]);
+      done();
+    });
+    it("should set range to match limits", (done) => {
+      filter.limits([2,3,1]);
+      filter._range.should.be.a.Array();
+      filter._range.should.match([1,3]);
+      done();
+    });
+  });
+  describe("limitsHigh(value)", (done) => {
+    let filter;
+    beforeEach((done) => {
+      filter = new Filter('gc','ds1');
+      filter.limits([1,3]);
+      done();
+    })
+    it("should increase upper limit for the filter", (done) => {
+      filter.limitsHigh(4);
+      filter._limits.should.be.a.Array();
+      filter._limits.should.match([1,4]);
+      done();
+    });
+    it("should reduce upper limit for the filter", (done) => {
+      filter.limitsHigh(2);
+      filter._limits.should.be.a.Array();
+      filter._limits.should.match([1,2]);
+      done();
+    });
+    it("should reduce the lower limit if below existing range", (done) => {
+      filter.limitsHigh(0);
+      filter._limits.should.be.a.Array();
+      filter._limits.should.match([0,0]);
+      done();
+    });
+    it("should return upper limit when called with no values", (done) => {
+      let limit = filter.limitsHigh();
+      limit.should.be.a.Number();
+      limit.should.equal(3);
+      done();
+    });
+    it("should return upper limit when called with an invalid datatype", (done) => {
+      let limit = filter.limitsHigh('2');
+      limit.should.be.a.Number();
+      limit.should.equal(3);
+      done();
+    });
+    it("should update range if upper limit is changed", (done) => {
+      filter.limitsHigh(2);
+      filter._range.should.be.a.Array();
+      filter._range.should.match([1,2]);
+      done();
+    });
+  });
+  describe("limitsLow(value)", (done) => {
+    let filter;
+    beforeEach((done) => {
+      filter = new Filter('gc','ds1');
+      filter.limits([1,3]);
+      done();
+    })
+    it("should reduce lower limit for the filter", (done) => {
+      filter.limitsLow(0);
+      filter._limits.should.be.a.Array();
+      filter._limits.should.match([0,3]);
+      done();
+    });
+    it("should increase lower limit for the filter", (done) => {
+      filter.limitsLow(2);
+      filter._limits.should.be.a.Array();
+      filter._limits.should.match([2,3]);
+      done();
+    });
+    it("should increase the upper limit if value is above existing range", (done) => {
+      filter.limitsLow(4);
+      filter._limits.should.be.a.Array();
+      filter._limits.should.match([4,4]);
+      done();
+    });
+    it("should return lower limit when called with no values", (done) => {
+      let limit = filter.limitsLow();
+      limit.should.be.a.Number();
+      limit.should.equal(1);
+      done();
+    });
+    it("should return upper limit when called with an invalid datatype", (done) => {
+      let limit = filter.limitsLow('2');
+      limit.should.be.a.Number();
+      limit.should.equal(1);
+      done();
+    });
+    it("should update range if range becomes out of bounds", (done) => {
+      filter.limitsLow(2);
+      filter._range.should.be.a.Array();
+      filter._range.should.match([2,3]);
+      done();
+    });
+  });
+  describe("range(arr)", (done) => {
+    let filter;
+    beforeEach((done) => {
+      filter = new Filter('gc','ds1');
+      done();
+    })
+    it("should set range limits for the filter", (done) => {
+      filter.limits([0,4]);
+      filter.range([1,3,2]);
+      filter._range.should.be.a.Array();
+      filter._range.should.match([1,3]);
+      done();
+    });
+    it("should set limits to match range if unset", (done) => {
+      filter.range([2,3,1]);
+      filter._limits.should.be.a.Array();
+      filter._limits.should.match([1,3]);
+      done();
+    });
+    it("should set keep range within limits", (done) => {
+      filter.limits([1,2])
+      filter.range([2,3,1,0]);
+      filter._range.should.be.a.Array();
+      filter._range.should.match([1,2]);
+      done();
+    });
+  });
+  describe("rangeHigh(value)", (done) => {
+    let filter;
+    beforeEach((done) => {
+      filter = new Filter('gc','ds1');
+      filter.limits([2,6]);
+      filter.range([3,5]);
+      done();
+    })
+    it("should change the upper range", (done) => {
+      filter.rangeHigh(6);
+      filter._range.should.be.a.Array();
+      filter._range.should.match([3,6]);
+      done();
+    });
+    it("should be bounded by the limits", (done) => {
+      filter.rangeHigh(7);
+      filter._range.should.be.a.Array();
+      filter._range.should.match([3,6]);
+      done();
+    });
+    it("should adjust the lower range if out of bounds", (done) => {
+      filter.rangeHigh(2);
+      filter._range.should.be.a.Array();
+      filter._range.should.match([2,2]);
+      done();
+    });
+    it("should return a number if called with no value", (done) => {
+      let result = filter.rangeHigh();
+      result.should.be.a.Number();
+      result.should.equal(5);
+      done();
+    });
+  });
+  describe("rangeLow(value)", (done) => {
+    let filter;
+    beforeEach((done) => {
+      filter = new Filter('gc','ds1');
+      filter.limits([2,6]);
+      filter.range([3,5]);
+      done();
+    })
+    it("should change the lower range", (done) => {
+      filter.rangeLow(4);
+      filter._range.should.be.a.Array();
+      filter._range.should.match([4,5]);
+      done();
+    });
+    it("should be bounded by the limits", (done) => {
+      filter.rangeLow(0);
+      filter._range.should.be.a.Array();
+      filter._range.should.match([2,5]);
+      done();
+    });
+    it("should adjust the upper range if out of bounds", (done) => {
+      filter.rangeLow(6);
+      filter._range.should.be.a.Array();
+      filter._range.should.match([6,6]);
+      done();
+    });
+    it("should return a number if called with no value", (done) => {
+      let result = filter.rangeLow();
+      result.should.be.a.Number();
+      result.should.equal(3);
+      done();
+    });
+  });
+
+
+});
