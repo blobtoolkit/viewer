@@ -9,9 +9,13 @@ function Field(id,dataset_id,meta) {
   this.filters = {default:filter};
   if (meta){
     Object.keys(meta).forEach((key)=>{
-      this[key] = meta[key];
       if (key == 'range'){
+        this.scaleType('scaleLinear');
+        this.range(meta[key]);
         filter.limits(meta[key]);
+      }
+      else {
+        this[key] = meta[key];
       }
     })
   }
@@ -68,7 +72,62 @@ const loadDataAtIndex = async function(index) {
   return ret;
 }
 
+const allowedScales = {
+    scaleLinear: 'scaleLinear',
+    scaleLog: 'scaleLog',
+    scaleSqrt: 'scaleSqrt'
+};
+
+const scaleType = function(value){
+  let result
+  if (typeof value === 'string'){
+    if (allowedScales[value]){
+      let domain = this.scale ? this.scale.domain() : [];
+      this.scale = d3[allowedScales[value]]().domain(domain).range([0,100]);
+      this.scale.scaleType = allowedScales[value];
+      result = this.scale.scaleType;
+    }
+    else {
+      result = undefined;
+    }
+  }
+  else {
+    result = this.scale.scaleType;
+  }
+  return result;
+}
+
+const range = function(arr){
+  if (Array.isArray(arr) && arr.length > 0){
+    this._range = [Math.min(...arr),Math.max(...arr)];
+    this.scale.domain(this._range);
+  }
+  return this._range;
+}
+
+const rangeHigh = function(value){
+  if (typeof value === 'number') {
+    this._range[1] = value;
+    this._range[0] = Math.min(this._range[0],value);
+    this.scale.domain(this._range);
+  }
+  return this._range[1];
+}
+
+const rangeLow = function(value){
+  if (typeof value === 'number') {
+    this._range[0] = value;
+    this._range[1] = Math.max(this._range[1],value);
+    this.scale.domain(this._range);
+  }
+  return this._range[0];
+}
+
 Field.prototype = {
   loadData,
-  loadDataAtIndex
+  loadDataAtIndex,
+  scaleType,
+  range,
+  rangeHigh,
+  rangeLow
 }

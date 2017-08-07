@@ -3,7 +3,7 @@ const config = require('../../config/main')('test')
 const Filter = require('./filter');
 
 describe("Filter model:", () => {
-  describe("scaleType(value)", (done) => {
+/*  describe("scaleType(value)", (done) => {
     let filter;
     beforeEach((done) => {
       filter = new Filter('gc','ds1');
@@ -30,7 +30,7 @@ describe("Filter model:", () => {
       done();
     });
 
-  });
+  });*/
   describe("limits(arr)", () => {
     let filter;
     beforeEach((done) => {
