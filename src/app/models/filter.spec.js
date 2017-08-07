@@ -3,6 +3,34 @@ const config = require('../../config/main')('test')
 const Filter = require('./filter');
 
 describe("Filter model:", () => {
+  describe("scaleType(value)", (done) => {
+    let filter;
+    beforeEach((done) => {
+      filter = new Filter('gc','ds1');
+      done();
+    })
+    it("should return the name of the scale function if called with no value", (done) => {
+      let result = filter.scaleType();
+      result.should.be.a.String();
+      result.should.match('scaleLinear');
+      done();
+    });
+    it("should change the scale function if a valid value is passed", (done) => {
+      let result = filter.scaleType('scaleLog');
+      result.should.be.a.String();
+      result.should.match('scaleLog');
+      result = filter.scaleType('scaleSqrt');
+      result.should.be.a.String();
+      result.should.match('scaleSqrt');
+      done();
+    });
+    it("should return undefined if an invalid value is passed", (done) => {
+      let result = filter.scaleType('scaleInvalid');
+      should.not.exist(result);
+      done();
+    });
+
+  });
   describe("limits(arr)", () => {
     let filter;
     beforeEach((done) => {
@@ -235,6 +263,126 @@ describe("Filter model:", () => {
       done();
     });
   });
-
-
+  describe("rangePercent(arr)", (done) => {
+    let filter;
+    beforeEach((done) => {
+      filter = new Filter('gc','ds1');
+      done();
+    })
+    it("should show range as a percentage if called without values", (done) => {
+      filter.limits([0,200]);
+      filter.range([20,160]);
+      let result = filter.rangePercent();
+      result.should.be.a.Array();
+      result.should.match([10,80]);
+      done();
+    });
+    it("should support log scaled variables", (done) => {
+      filter.limits([1,10000]);
+      filter.range([10,1000]);
+      filter.scaleType('scaleLog');
+      let result = filter.rangePercent();
+      result.should.be.a.Array();
+      result.should.match([25,75]);
+      done();
+    });
+    it("should update the range", (done) => {
+      filter.limits([0,200]);
+      filter.rangePercent([50,75]);
+      let result = filter.range();
+      result.should.be.a.Array();
+      result.should.match([100,150]);
+      done();
+    });
+  });
+  describe("rangeHighPercent(value)", (done) => {
+    let filter;
+    beforeEach((done) => {
+      filter = new Filter('gc','ds1');
+      done();
+    })
+    it("should show upper range as a percentage if called without value", (done) => {
+      filter.limits([0,200]);
+      filter.range([20,160]);
+      let result = filter.rangeHighPercent();
+      result.should.be.a.Number();
+      result.should.equal(80);
+      done();
+    });
+    it("should update the upper range", (done) => {
+      filter.limits([0,200]);
+      filter.rangeHighPercent(75);
+      let result = filter.rangeHigh();
+      result.should.be.a.Number();
+      result.should.equal(150);
+      done();
+    });
+  });
+  describe("rangeLowPercent(value)", (done) => {
+    let filter;
+    beforeEach((done) => {
+      filter = new Filter('gc','ds1');
+      done();
+    })
+    it("should show lower range as a percentage if called without value", (done) => {
+      filter.limits([0,200]);
+      filter.range([20,160]);
+      let result = filter.rangeLowPercent();
+      result.should.be.a.Number();
+      result.should.equal(10);
+      done();
+    });
+    it("should update the lower range", (done) => {
+      filter.limits([0,200]);
+      filter.rangeLowPercent(50);
+      let result = filter.rangeLow();
+      result.should.be.a.Number();
+      result.should.equal(100);
+      done();
+    });
+  });
+  describe("active(bool)", (done) => {
+    let filter;
+    beforeEach((done) => {
+      filter = new Filter('gc','ds1');
+      done();
+    })
+    it("should return state of filter", (done) => {
+      filter._active = true;
+      let result = filter.active();
+      result.should.be.True();
+      filter._active = false;
+      result = filter.active();
+      result.should.be.False();
+      done();
+    });
+    it("should update the filter state", (done) => {
+      filter._active = true;
+      let result = filter.active(false);
+      result.should.be.False();
+      done();
+    });
+  });
+  describe("inclusive(bool)", (done) => {
+    let filter;
+    beforeEach((done) => {
+      filter = new Filter('gc','ds1');
+      done();
+    })
+    it("should return state of filter", (done) => {
+      filter._inclusive = true;
+      let result = filter.inclusive();
+      result.should.be.True();
+      filter._inclusive = false;
+      result = filter.inclusive();
+      result.should.be.False();
+      done();
+    });
+    it("should update the filter state", (done) => {
+      filter._inclusive = true;
+      let result = filter.inclusive(false);
+      result.should.be.False();
+      done();
+    });
+  });
 });
