@@ -227,18 +227,22 @@ describe("Field model:", () => {
     });
   });
   describe("applyListFilter(arr)", () => {
-    let field;
-    beforeEach(() => {
-      field = new Field('gc',{id:'ds1'});
-    });
-    it("should return an array of indices for values that pass filter", async () => {
+    it("should return an array values", async () => {
+      let field = new Field('gc',{id:'ds1'});
       let list = [1,3,5,7];
       let result = await field.applyListFilter(list);
       result.should.be.a.Array();
       result.length.should.equal(4);
-      result.should.match([3,4,9]);
+      result.should.match([0.2623,0.3155,0.1944,0.2801]);
     });
-
+    it("should return values from key value pairs", async () => {
+      let field = new Field('bestsum_family',{id:'ds1'});
+      let list = [1,3,5,7];
+      let result = await field.applyListFilter(list);
+      result.should.be.a.Array();
+      result.length.should.equal(4);
+      result.should.match(['Microbacteriaceae','Microbacteriaceae','Hypsibiidae','unresolved']);
+    });
   });
 
 });

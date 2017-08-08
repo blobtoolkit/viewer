@@ -160,29 +160,26 @@ const filterToList = async function(arr){
   return Promise.resolve(result)
 }
 
-/*
-        filterToList: function(list) {
-          var ret = [];
-          var low = this._filter.lowFilterValue();
-          var high = this._filter.highFilterValue();
-          var data = this.data();
-          list.forEach(function(i){
-            if (data[i] >= low && data[i] <= high){
-              ret.push(i);
-            }
-          })
-          return ret;
-        },
-        applyListFilter: function(list) {
-          var filtered = [];
-          var data = this.data();
-          list.forEach(function(i){
-            filtered.push(data[i]);
-          })
-          this.filtered(filtered);
-          this.previewData();
-        }
-*/
+const applyListFilter = async function(arr){
+  let result = await this.loadData().then(()=>{
+    let data = this.data;
+    let keys = data.keys;
+    let values = data.values;
+    let ret = [];
+    arr.forEach(function(i){
+      if (keys){
+        ret.push(keys[values[i]]);
+      }
+      else {
+        ret.push(values[i]);
+      }
+    })
+    this.filtered = ret;
+    return ret;
+  })
+  return Promise.resolve(result)
+}
+
 Field.prototype = {
   loadData,
   loadDataAtIndex,
@@ -190,5 +187,6 @@ Field.prototype = {
   range,
   rangeHigh,
   rangeLow,
-  filterToList
+  filterToList,
+  applyListFilter
 }
