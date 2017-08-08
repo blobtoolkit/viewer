@@ -137,7 +137,7 @@ module.exports = function(app, db) {
  */
   app.get('/api/v1/field/:dataset_id/:field_id', async (req, res) => {
     res.setHeader('content-type', 'application/json');
-    let field = new Field(req.params.field_id,req.params.dataset_id);
+    let field = new Field(req.params.field_id,{id:req.params.dataset_id});
     let data = await field.loadData();
     if (data.hasOwnProperty('values')){
       res.json(data)
@@ -167,7 +167,7 @@ module.exports = function(app, db) {
  */
   app.get('/api/v1/field/:dataset_id/:field_id/:index', async (req, res) => {
     res.setHeader('content-type', 'application/json');
-    let field = new Field(req.params.field_id,req.params.dataset_id);
+    let field = new Field(req.params.field_id,{id:req.params.dataset_id});
     let data = await field.loadDataAtIndex(req.params.index);
     if (data.hasOwnProperty('values')){
       res.json(data)

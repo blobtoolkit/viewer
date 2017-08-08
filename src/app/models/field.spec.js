@@ -4,17 +4,17 @@ const config = require('../../config/main')('test')
 const Field = require('./field');
 
 describe("Field model:", () => {
-  describe("loadValues(id,index)", () => {
+  describe("loadData(id,index)", () => {
     it("should load all values for a field", async () => {
-      let field = new Field('gc','ds1');
+      let field = new Field('gc',{id:'ds1'});
       let result = await field.loadData();
       result.should.be.a.Object();
       result.should.have.property('values');
     });
   });
-  describe("loadValuesAtIndex()", () => {
+  describe("loadDataAtIndex()", () => {
     it("should load a specific value for a field", async () => {
-      let field = new Field('gc','ds1');
+      let field = new Field('gc',{id:'ds1'});
       let result = await field.loadDataAtIndex(7);
       result.should.be.a.Object();
       result.should.have.property('values');
@@ -22,7 +22,7 @@ describe("Field model:", () => {
       result.values[0].should.equal(0.2801);
     });
     it("should load a range of values for a field", async () => {
-      let field = new Field('gc','ds1');
+      let field = new Field('gc',{id:'ds1'});
       let result = await field.loadDataAtIndex('5-7');
       result.should.be.a.Object();
       result.should.have.property('values');
@@ -30,7 +30,7 @@ describe("Field model:", () => {
       result.values[0].should.equal(0.1944);
     });
     it("should load comma-separated ranges", async () => {
-      let field = new Field('gc','ds1');
+      let field = new Field('gc',{id:'ds1'});
       let result = await field.loadDataAtIndex('1,5-7');
       result.should.be.a.Object();
       result.should.have.property('values');
@@ -39,17 +39,17 @@ describe("Field model:", () => {
       result.values[3].should.equal(0.2801);
     });
     it("should reject incomplete ranges", async () => {
-      let field = new Field('gc','ds1');
+      let field = new Field('gc',{id:'ds1'});
       let result = await field.loadDataAtIndex('1,-7');
       should.not.exist(result);
     });
     it("should reject reversed ranges", async () => {
-      let field = new Field('gc','ds1');
+      let field = new Field('gc',{id:'ds1'});
       let result = await field.loadDataAtIndex('8-7');
       should.not.exist(result);
     });
     it("should return translated value for key-value fields", async () => {
-      let field = new Field('bestsum_family','ds1');
+      let field = new Field('bestsum_family',{id:'ds1'});
       let result = await field.loadDataAtIndex('5');
       result.should.be.a.Object();
       result.should.have.property('values');
@@ -60,7 +60,7 @@ describe("Field model:", () => {
   describe("scaleType(value)", (done) => {
     let field;
     beforeEach((done) => {
-      field = new Field('gc','ds1',{range:[1,4]});
+      field = new Field('gc',{id:'ds1'},{range:[1,4]});
       done();
     })
     it("should return the name of the scale function if called with no value", (done) => {
@@ -87,7 +87,7 @@ describe("Field model:", () => {
   describe("range(arr)", () => {
     let field;
     beforeEach((done) => {
-      field = new Field('gc','ds1',{range:[0,2]});
+      field = new Field('gc',{id:'ds1'},{range:[0,2]});
       done();
     })
     it("should set range limits for the field", (done) => {
@@ -129,7 +129,7 @@ describe("Field model:", () => {
   describe("rangeHigh(value)", (done) => {
     let field;
     beforeEach((done) => {
-      field = new Field('gc','ds1',{range:[1,3]});
+      field = new Field('gc',{id:'ds1'},{range:[1,3]});
       done();
     })
     it("should increase upper range limit for the field", (done) => {
@@ -166,7 +166,7 @@ describe("Field model:", () => {
   describe("rangeLow(value)", (done) => {
     let field;
     beforeEach((done) => {
-      field = new Field('gc','ds1',{range:[1,3]});
+      field = new Field('gc',{id:'ds1'},{range:[1,3]});
       done();
     })
     it("should reduce lower range limit for the field", (done) => {
@@ -200,4 +200,31 @@ describe("Field model:", () => {
       done();
     });
   });
+  describe("FilterToList(arr)", () => {
+    let field;
+    beforeEach(() => {
+      field = new Field('gc',{id:'ds1'});
+      field.filters['default']._range = [0.3,0.7];
+    });
+    it("should return an array of indices for values that pass filter", async () => {
+      let result = await field.filterToList();
+      result.should.be.a.Array();
+      result.length.should.equal(3);
+      result.should.match([3,4,9]);
+    });
+    it("should return inverse if inclusive is false", async () => {
+      field.filters['default'].inclusive(false);
+      let result = await field.filterToList();
+      result.should.be.a.Array();
+      result.length.should.equal(7);
+      result.should.match([0,1,2,5,6,7,8]);
+    });
+    it("should restrict results to passed list", async () => {
+      let result = await field.filterToList([1,2,3,4]);
+      result.should.be.a.Array();
+      result.length.should.equal(2);
+      result.should.match([3,4]);
+    });
+  });
+
 });

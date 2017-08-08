@@ -18,7 +18,7 @@ function Field(id,dataset,meta) {
     })
   }
   if (this._range){
-    this.scaleType('scaleLinear');
+    this.scaleType(this._scale || 'scaleLinear');
   }
   let filter = new Filter('default',this);
   this.filters = {default:filter};
@@ -33,7 +33,7 @@ module.exports = Field;
 const loadData = async function() {
   if (this.data) return Promise.resolve(this.data);
   let filePath = this.filePath || config.filePath;
-  this.data = await io.readJSON(filePath+'/'+this._dataset_id+'/'+this._id+'.json');
+  this.data = await io.readJSON(filePath+'/'+this.dataset.id+'/'+this._id+'.json');
   return Promise.resolve(this.data);
 }
 
@@ -74,7 +74,9 @@ const loadDataAtIndex = async function(index) {
 const allowedScales = {
     scaleLinear: 'scaleLinear',
     scaleLog: 'scaleLog',
-    scaleSqrt: 'scaleSqrt'
+    scaleSqrt: 'scaleSqrt',
+    scalePow: 'scalePow',
+    scaleOrdinal: 'scaleOrdinal'
 };
 
 const scaleType = function(value){
@@ -124,11 +126,69 @@ const rangeLow = function(value){
   return this._range[0];
 }
 
+const filterToList = async function(arr){
+  let low = this.filters['default'].rangeLow();
+  let high = this.filters['default'].rangeHigh();
+  let inclusive = this.filters['default'].inclusive();
+  let filter;
+  if (inclusive){
+    filter = (value) => { return value >= low && value <= high }
+  }
+  else {
+    filter = (value) => { return value <= low || value >= high }
+  }
+  let result = await this.loadData().then(()=>{
+    let data = this.data;
+    let values = data.values;
+    let ret = [];
+    if (arr){
+      arr.forEach(function(i){
+        if (filter(values[i])){
+          ret.push(i);
+        }
+      })
+    }
+    else {
+      values.forEach(function(v,i){
+        if (filter(v)){
+          ret.push(i);
+        }
+      })
+    }
+    return ret;
+  })
+  return Promise.resolve(result)
+}
+
+/*
+        filterToList: function(list) {
+          var ret = [];
+          var low = this._filter.lowFilterValue();
+          var high = this._filter.highFilterValue();
+          var data = this.data();
+          list.forEach(function(i){
+            if (data[i] >= low && data[i] <= high){
+              ret.push(i);
+            }
+          })
+          return ret;
+        },
+        applyListFilter: function(list) {
+          var filtered = [];
+          var data = this.data();
+          list.forEach(function(i){
+            filtered.push(data[i]);
+          })
+          this.filtered(filtered);
+          this.previewData();
+        }
+*/
 Field.prototype = {
   loadData,
   loadDataAtIndex,
   scaleType,
   range,
   rangeHigh,
-  rangeLow
+  rangeLow,
+  filterToList
 }

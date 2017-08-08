@@ -37,9 +37,9 @@ const prepareMeta = async function() {
   let values = {};
   let fields = [];
   meta.fields = fields;
-  fields.push(this.addField('gc',{name:'GC',description:'per contig GC percentage',type:'variable',datatype:'float',range:[0,100],preload:true,blobDBpath:['gc']}))
-  fields.push(this.addField('length',{name:'Length',description:'per contig length',type:'variable',datatype:'integer',range:[0,json.length],preload:true,blobDBpath:['length']}))
-  fields.push(this.addField('ncount',{name:'N-count',description:'Ns per contig',type:'variable',datatype:'integer',range:[0,json.n_count],blobDBpath:['n_count']}))
+  fields.push(this.addField('gc',{name:'GC',description:'per contig GC percentage',type:'variable',datatype:'float',range:[0,100],scale:'scaleLinear',preload:true,blobDBpath:['gc']}))
+  fields.push(this.addField('length',{name:'Length',description:'per contig length',type:'variable',datatype:'integer',range:[0,json.length],scale:'scaleSqrt',preload:true,blobDBpath:['length']}))
+  fields.push(this.addField('ncount',{name:'N-count',description:'Ns per contig',type:'variable',datatype:'integer',range:[0,json.n_count],scale:'scaleSqrt',blobDBpath:['n_count']}))
 
   let covLibs = [];
   let readCovLibs = [];
@@ -48,8 +48,8 @@ const prepareMeta = async function() {
     covLibs.push(this.addField(key+'_cov',{name:lib.name,blobDBpath:['covs',key]}))
     readCovLibs.push(this.addField(key+'_read_cov',{name:lib.name,blobDBpath:['read_cov',key]}))
   })
-  fields.push(this.addField('covs',{name:'Coverage',description:'coverage per contig',type:'variable',datatype:'float',range:[0,100000],children:covLibs}))
-  fields.push(this.addField('read_cov',{name:'Read coverage',description:'read coverage per contig',type:'variable',datatype:'float',range:[0,100000],children:readCovLibs}))
+  fields.push(this.addField('covs',{name:'Coverage',description:'coverage per contig',type:'variable',datatype:'float',range:[0,100000],scale:'scaleLog',children:covLibs}))
+  fields.push(this.addField('read_cov',{name:'Read coverage',description:'read coverage per contig',type:'variable',datatype:'float',range:[0,100000],scale:'scaleLog',children:readCovLibs}))
   let  hitLibs = [];
   Object.keys(json.hitLibs).forEach((key) => {
     let lib = json.hitLibs[key];
@@ -63,8 +63,8 @@ const prepareMeta = async function() {
     let taxlevels = [];
     levels.forEach((level) => {
       let data = [];
-      data.push(this.addField(rule+'_'+level+'_score',{name:'score',type:'variable',datatype:'float',range:[0,1000],blobDBpath:['taxonomy',rule,level,'score']}))
-      data.push(this.addField(rule+'_'+level+'_cindex',{name:'c_index',type:'variable',datatype:'integer',range:[0,100],blobDBpath:['taxonomy',rule,level,'c_index']}))
+      data.push(this.addField(rule+'_'+level+'_score',{name:'score',type:'variable',datatype:'float',range:[0,1000],scale:'scaleLinear',blobDBpath:['taxonomy',rule,level,'score']}))
+      data.push(this.addField(rule+'_'+level+'_cindex',{name:'c_index',type:'variable',datatype:'integer',range:[0,100],scale:'scaleLinear',blobDBpath:['taxonomy',rule,level,'c_index']}))
       taxlevels.push(this.addField(rule+'_'+level,{name:level,data:data,blobDBpath:['taxonomy',rule,level,'tax']}))
     })
     taxrules.push(this.addField(rule,{children:taxlevels}))
@@ -78,7 +78,14 @@ const prepareMeta = async function() {
 const storeMeta = async function() {
   if (!this.meta) return Promise.reject(Error('Cannot storeMeta if meta is undefined'))
   let filePath = this.filePath || config.filePath;
-  removeNestedKeys(this.meta.fields,['filters','scale'],['_data','_children'])
+  removeNestedKeys(this.meta.fields,['dataset','filters','scale'],['_data','_children'])
+  this.meta.fields = this.meta.fields.map((field)=>{
+    let obj = {};
+    Object.keys(field).forEach((key)=>{
+      obj[key] = field[key];
+    });
+    return obj;
+  });
   let success = await io.writeJSON(filePath+'/'+this.id+'/meta.json',this.meta);
   return success;
 }

@@ -112,7 +112,6 @@ describe("Dataset model:", () => {
       dataset.fields.should.have.property('a');
       dataset.fields['a'].should.be.a.Object();
       dataset.fields['a'].should.have.property('_id','a');
-      dataset.fields['a'].should.have.property('_dataset_id','ds1');
       dataset.fields['a'].should.have.property('_key','value');
     });
   });
@@ -124,7 +123,6 @@ describe("Dataset model:", () => {
       dataset.fields.should.have.properties('b');
       dataset.fields['b'].should.be.a.Object();
       dataset.fields['b'].should.have.property('_id','b');
-      dataset.fields['b'].should.have.property('_dataset_id','ds1');
       dataset.fields['b'].should.have.property('_key','value');
     });
   });
