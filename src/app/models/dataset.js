@@ -115,7 +115,7 @@ const addFields = function(fields,meta = {}) {
 
 const addField = function(fId,meta){
   if (!this.fields.hasOwnProperty(fId)){
-    this.fields[fId] = new Field(fId,this.id,meta);
+    this.fields[fId] = new Field(fId,this,meta);
   }
   return this.fields[fId];
 }

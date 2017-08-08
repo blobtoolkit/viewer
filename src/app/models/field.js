@@ -3,9 +3,9 @@ const config = require('../../config/main')(process.env.NODE_ENV);
 const io = require('../helpers/io');
 const Filter = require('./filter');
 
-function Field(id,dataset_id,meta) {
+function Field(id,dataset,meta) {
   this._id = id;
-  this._dataset_id = dataset_id;
+  this.dataset = dataset;
   if (meta){
     Object.keys(meta).forEach((key)=>{
       if (key == 'range'){
@@ -26,13 +26,6 @@ function Field(id,dataset_id,meta) {
     filter._limits = this._range;
     filter.scale = this.scale;
   }
-  /*
-        this._datatype = 'float';
-        this._select_step = 1;
-        this._selection = [0, Infinity];
-        this._dataset = undefined;
-        this._logged = false;
-*/
 };
 
 module.exports = Field;
