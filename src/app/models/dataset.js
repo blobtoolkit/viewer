@@ -6,6 +6,7 @@ const newField = require('../helpers/utils').newField;
 const asKeyValue = require('../helpers/utils').asKeyValue;
 const groupValuesBy = require('../helpers/utils').groupValuesBy;
 const valueAtPath = require('../helpers/utils').valueAtPath;
+const removeNestedKeys = require('../helpers/utils').removeNestedKeys;
 
 function Dataset(id) {
   this.id = id;
@@ -58,7 +59,6 @@ const prepareMeta = async function() {
   let taxrules = [];
   let levels = ['superkingdom','phylum','order','family','genus','species'];
   let taxfields = [];
-  //taxfields.push(newField());
   json.taxrules.forEach((rule) => {
     let taxlevels = [];
     levels.forEach((level) => {
@@ -78,6 +78,7 @@ const prepareMeta = async function() {
 const storeMeta = async function() {
   if (!this.meta) return Promise.reject(Error('Cannot storeMeta if meta is undefined'))
   let filePath = this.filePath || config.filePath;
+  removeNestedKeys(this.meta.fields,['filters','scale'],['_data','_children'])
   let success = await io.writeJSON(filePath+'/'+this.id+'/meta.json',this.meta);
   return success;
 }

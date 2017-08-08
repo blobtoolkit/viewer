@@ -58,148 +58,143 @@ describe("Field model:", () => {
     });
   });
   describe("scaleType(value)", (done) => {
-    let filter;
+    let field;
     beforeEach((done) => {
-      filter = new Filter('gc','ds1');
+      field = new Field('gc','ds1',{range:[1,4]});
       done();
     })
     it("should return the name of the scale function if called with no value", (done) => {
-      let result = filter.scaleType();
+      let result = field.scaleType();
       result.should.be.a.String();
       result.should.match('scaleLinear');
       done();
     });
     it("should change the scale function if a valid value is passed", (done) => {
-      let result = filter.scaleType('scaleLog');
+      let result = field.scaleType('scaleLog');
       result.should.be.a.String();
       result.should.match('scaleLog');
-      result = filter.scaleType('scaleSqrt');
+      result = field.scaleType('scaleSqrt');
       result.should.be.a.String();
       result.should.match('scaleSqrt');
       done();
     });
     it("should return undefined if an invalid value is passed", (done) => {
-      let result = filter.scaleType('scaleInvalid');
+      let result = field.scaleType('scaleInvalid');
       should.not.exist(result);
       done();
     });
-  }};
+  });
   describe("range(arr)", () => {
-    let filter;
+    let field;
     beforeEach((done) => {
-      filter = new Filter('gc','ds1');
+      field = new Field('gc','ds1',{range:[0,2]});
       done();
     })
     it("should set range limits for the field", (done) => {
-      filter.range([0,2]);
-      filter._range.should.be.a.Array();
-      filter._range.should.match([0,2]);
+      field._range.should.be.a.Array();
+      field._range.should.match([0,2]);
       done();
     });
     it("should return range when called with no values", (done) => {
-      filter.range([0,2]);
-      let range = filter.range();
+      let range = field.range();
       range.should.be.a.Array();
       range.should.match([0,2]);
       done();
     });
     it("should return range when called with an empty array", (done) => {
-      filter.range([0,2]);
-      let range = filter.range([]);
+      let range = field.range([]);
       range.should.be.a.Array();
       range.should.match([0,2]);
       done();
     });
     it("should set allow inverted max and min", (done) => {
-      filter.range([3,1]);
-      filter._range.should.be.a.Array();
-      filter._range.should.match([1,3]);
+      field.range([3,1]);
+      field._range.should.be.a.Array();
+      field._range.should.match([1,3]);
       done();
     });
     it("should find max and min if array is too long", (done) => {
-      filter.range([2,3,0,1]);
-      filter._range.should.be.a.Array();
-      filter._range.should.match([0,3]);
+      field.range([2,3,0,1]);
+      field._range.should.be.a.Array();
+      field._range.should.match([0,3]);
       done();
     });
     it("should set max and min to a single value if only one value is passed", (done) => {
-      filter.range([2]);
-      filter._range.should.be.a.Array();
-      filter._range.should.match([2,2]);
+      field.range([2]);
+      field._range.should.be.a.Array();
+      field._range.should.match([2,2]);
       done();
     });
   });
   describe("rangeHigh(value)", (done) => {
-    let filter;
+    let field;
     beforeEach((done) => {
-      filter = new Filter('gc','ds1');
-      filter.range([1,3]);
+      field = new Field('gc','ds1',{range:[1,3]});
       done();
     })
     it("should increase upper range limit for the field", (done) => {
-      filter.rangeHigh(4);
-      filter._range.should.be.a.Array();
-      filter._range.should.match([1,4]);
+      field.rangeHigh(4);
+      field._range.should.be.a.Array();
+      field._range.should.match([1,4]);
       done();
     });
     it("should reduce upper range limit for the field", (done) => {
-      filter.rangeHigh(2);
-      filter._range.should.be.a.Array();
-      filter._range.should.match([1,2]);
+      field.rangeHigh(2);
+      field._range.should.be.a.Array();
+      field._range.should.match([1,2]);
       done();
     });
     it("should reduce the lower range limit if below existing range", (done) => {
-      filter.rangeHigh(0);
-      filter._range.should.be.a.Array();
-      filter._range.should.match([0,0]);
+      field.rangeHigh(0);
+      field._range.should.be.a.Array();
+      field._range.should.match([0,0]);
       done();
     });
     it("should return upper range limit when called with no values", (done) => {
-      let range = filter.rangeHigh();
+      let range = field.rangeHigh();
       range.should.be.a.Number();
       range.should.equal(3);
       done();
     });
     it("should return upper range limit when called with an invalid datatype", (done) => {
-      let range = filter.rangeHigh('2');
+      let range = field.rangeHigh('2');
       range.should.be.a.Number();
       range.should.equal(3);
       done();
     });
   });
   describe("rangeLow(value)", (done) => {
-    let filter;
+    let field;
     beforeEach((done) => {
-      filter = new Filter('gc','ds1');
-      filter.range([1,3]);
+      field = new Field('gc','ds1',{range:[1,3]});
       done();
     })
     it("should reduce lower range limit for the field", (done) => {
-      filter.rangeLow(0);
-      filter._range.should.be.a.Array();
-      filter._range.should.match([0,3]);
+      field.rangeLow(0);
+      field._range.should.be.a.Array();
+      field._range.should.match([0,3]);
       done();
     });
     it("should increase lower range limit for the field", (done) => {
-      filter.rangeLow(2);
-      filter._range.should.be.a.Array();
-      filter._range.should.match([2,3]);
+      field.rangeLow(2);
+      field._range.should.be.a.Array();
+      field._range.should.match([2,3]);
       done();
     });
     it("should increase the upper range limit if value is above existing range", (done) => {
-      filter.rangeLow(4);
-      filter._range.should.be.a.Array();
-      filter._range.should.match([4,4]);
+      field.rangeLow(4);
+      field._range.should.be.a.Array();
+      field._range.should.match([4,4]);
       done();
     });
     it("should return lower range limit when called with no values", (done) => {
-      let range = filter.rangeLow();
+      let range = field.rangeLow();
       range.should.be.a.Number();
       range.should.equal(1);
       done();
     });
     it("should return lower range limit when called with an invalid datatype", (done) => {
-      let range = filter.rangeLow('2');
+      let range = field.rangeLow('2');
       range.should.be.a.Number();
       range.should.equal(1);
       done();

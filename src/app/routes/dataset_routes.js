@@ -120,7 +120,7 @@ module.exports = function(app, db) {
       res.json(meta[req.params.key]);
     }
     else {
-      let result = utils.nestedEntryByKeyValue(meta.fields,'id',req.params.key,['data','children'])[0];
+      let result = utils.nestedEntryByKeyValue(meta.fields,'_id',req.params.key,['_data','_children'])[0];
       if (result){
         res.json(result);
       }

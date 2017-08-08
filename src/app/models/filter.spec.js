@@ -1,6 +1,7 @@
 const should = require('should');
 const config = require('../../config/main')('test')
 const Filter = require('./filter');
+const Field = require('./field');
 
 describe("Filter model:", () => {
 /*  describe("scaleType(value)", (done) => {
@@ -31,7 +32,7 @@ describe("Filter model:", () => {
     });
 
   });*/
-  describe("limits(arr)", () => {
+/*  describe("limits(arr)", () => {
     let filter;
     beforeEach((done) => {
       filter = new Filter('gc','ds1');
@@ -169,28 +170,24 @@ describe("Filter model:", () => {
       filter._range.should.match([2,3]);
       done();
     });
-  });
+  });*/
   describe("range(arr)", (done) => {
+    let field;
     let filter;
     beforeEach((done) => {
-      filter = new Filter('gc','ds1');
+      field = new Field('gc','ds1');
+      filter = field.filters['default'];
       done();
     })
     it("should set range limits for the filter", (done) => {
-      filter.limits([0,4]);
+      field._range = [0,4];
       filter.range([1,3,2]);
       filter._range.should.be.a.Array();
       filter._range.should.match([1,3]);
       done();
     });
-    it("should set limits to match range if unset", (done) => {
-      filter.range([2,3,1]);
-      filter._limits.should.be.a.Array();
-      filter._limits.should.match([1,3]);
-      done();
-    });
-    it("should set keep range within limits", (done) => {
-      filter.limits([1,2])
+    it("should keep range within limits", (done) => {
+      field._range = [1,2];
       filter.range([2,3,1,0]);
       filter._range.should.be.a.Array();
       filter._range.should.match([1,2]);
@@ -198,10 +195,12 @@ describe("Filter model:", () => {
     });
   });
   describe("rangeHigh(value)", (done) => {
+    let field;
     let filter;
     beforeEach((done) => {
-      filter = new Filter('gc','ds1');
-      filter.limits([2,6]);
+      field = new Field('gc','ds1');
+      filter = field.filters['default'];
+      field._range = [2,6];
       filter.range([3,5]);
       done();
     })
@@ -231,10 +230,12 @@ describe("Filter model:", () => {
     });
   });
   describe("rangeLow(value)", (done) => {
+    let field;
     let filter;
     beforeEach((done) => {
-      filter = new Filter('gc','ds1');
-      filter.limits([2,6]);
+      field = new Field('gc','ds1');
+      filter = field.filters['default'];
+      field._range = [2,6];
       filter.range([3,5]);
       done();
     })
@@ -264,13 +265,14 @@ describe("Filter model:", () => {
     });
   });
   describe("rangePercent(arr)", (done) => {
+    let field;
     let filter;
     beforeEach((done) => {
-      filter = new Filter('gc','ds1');
+      field = new Field('gc','ds1',{range:[0,200]});
+      filter = field.filters['default'];
       done();
     })
     it("should show range as a percentage if called without values", (done) => {
-      filter.limits([0,200]);
       filter.range([20,160]);
       let result = filter.rangePercent();
       result.should.be.a.Array();
@@ -278,16 +280,15 @@ describe("Filter model:", () => {
       done();
     });
     it("should support log scaled variables", (done) => {
-      filter.limits([1,10000]);
+      field.range([1,10000]);
+      field.scaleType('scaleLog');
       filter.range([10,1000]);
-      filter.scaleType('scaleLog');
       let result = filter.rangePercent();
       result.should.be.a.Array();
       result.should.match([25,75]);
       done();
     });
     it("should update the range", (done) => {
-      filter.limits([0,200]);
       filter.rangePercent([50,75]);
       let result = filter.range();
       result.should.be.a.Array();
@@ -296,13 +297,14 @@ describe("Filter model:", () => {
     });
   });
   describe("rangeHighPercent(value)", (done) => {
+    let field;
     let filter;
     beforeEach((done) => {
-      filter = new Filter('gc','ds1');
+      field = new Field('gc','ds1',{range:[0,200]});
+      filter = field.filters['default'];
       done();
     })
     it("should show upper range as a percentage if called without value", (done) => {
-      filter.limits([0,200]);
       filter.range([20,160]);
       let result = filter.rangeHighPercent();
       result.should.be.a.Number();
@@ -310,7 +312,6 @@ describe("Filter model:", () => {
       done();
     });
     it("should update the upper range", (done) => {
-      filter.limits([0,200]);
       filter.rangeHighPercent(75);
       let result = filter.rangeHigh();
       result.should.be.a.Number();
@@ -319,13 +320,14 @@ describe("Filter model:", () => {
     });
   });
   describe("rangeLowPercent(value)", (done) => {
+    let field;
     let filter;
     beforeEach((done) => {
-      filter = new Filter('gc','ds1');
+      field = new Field('gc','ds1',{range:[0,200]});
+      filter = field.filters['default'];
       done();
     })
     it("should show lower range as a percentage if called without value", (done) => {
-      filter.limits([0,200]);
       filter.range([20,160]);
       let result = filter.rangeLowPercent();
       result.should.be.a.Number();
@@ -333,7 +335,6 @@ describe("Filter model:", () => {
       done();
     });
     it("should update the lower range", (done) => {
-      filter.limits([0,200]);
       filter.rangeLowPercent(50);
       let result = filter.rangeLow();
       result.should.be.a.Number();

@@ -65,9 +65,9 @@ describe('Routes:', () => {
             res.status.should.equal(200);
             res.header['content-type'].should.match(/application\/json/)
             res.body.should.be.a.Object();
-            res.body.should.have.properties('range');
-            res.body.range.should.be.a.Array();
-            res.body.range[0].should.be.a.Number();
+            res.body.should.have.properties('_range');
+            res.body._range.should.be.a.Array();
+            res.body._range[0].should.be.a.Number();
             done();
           });
       });
@@ -79,9 +79,9 @@ describe('Routes:', () => {
             res.status.should.equal(200);
             res.header['content-type'].should.match(/application\/json/)
             res.body.should.be.a.Object();
-            res.body.should.have.properties('name');
-            res.body.name.should.be.a.String();
-            res.body.name.should.be.match('bam0');
+            res.body.should.have.properties('_name');
+            res.body._name.should.be.a.String();
+            res.body._name.should.be.match('bam0');
             done();
           });
       });

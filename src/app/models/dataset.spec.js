@@ -17,8 +17,13 @@ describe("Dataset model:", () => {
   })
   describe("loadBlobDB()", () => {
     it("should load a blobDB for a dataset", async () => {
-      let blobDB = await dataset.loadBlobDB(blobDBFile);
-      should.exist(blobDB);
+      try {
+        let blobDB = await dataset.loadBlobDB(blobDBFile);
+        should.exist(blobDB);
+      }
+      catch(err) {
+        should.not.exist(err);
+      }
     });
   });
   describe("prepareMeta()", () => {
@@ -26,22 +31,26 @@ describe("Dataset model:", () => {
       dataset.blobDB = blobDB;
     })
     it("should convert a blobDB into a meta object", async () => {
-      //dataset.blobDBFile = blobDBFile;
-      let meta = await dataset.prepareMeta(filePath);
-      should.exist(meta);
-      meta.should.have.property('filePath',filePath);
-      meta.should.have.properties('id','name','records','record_type','fields');
-      meta.id.should.be.String();
-      meta.id.should.not.be.empty();
-      meta.id.should.match(/^[\w\d]+$/);
-      meta.name.should.be.String();
-      meta.name.should.not.be.empty();
-      meta.records.should.be.Number();
-      meta.records.should.be.greaterThan(0);
-      meta.record_type.should.be.String();
-      meta.record_type.should.not.be.empty();
-      meta.fields.should.be.Array();
-      meta.fields.should.not.be.empty();
+      try {  //dataset.blobDBFile = blobDBFile;
+        let meta = await dataset.prepareMeta(filePath);
+        should.exist(meta);
+        meta.should.have.property('filePath',filePath);
+        meta.should.have.properties('id','name','records','record_type','fields');
+        meta.id.should.be.String();
+        meta.id.should.not.be.empty();
+        meta.id.should.match(/^[\w\d]+$/);
+        meta.name.should.be.String();
+        meta.name.should.not.be.empty();
+        meta.records.should.be.Number();
+        meta.records.should.be.greaterThan(0);
+        meta.record_type.should.be.String();
+        meta.record_type.should.not.be.empty();
+        meta.fields.should.be.Array();
+        meta.fields.should.not.be.empty();
+      }
+      catch(err) {
+        should.not.exist(err);
+      }
     });
   });
   describe("storeMeta()", () => {
@@ -52,16 +61,26 @@ describe("Dataset model:", () => {
     })
     it("should store meta for a dataset", () => {
       promise.then(async () => {
-        let success = await dataset.storeMeta();
-        should.exist(success);
-        success.should.be.true();
+        try {
+          let success = await dataset.storeMeta();
+          should.exist(success);
+          success.should.be.true();
+        }
+        catch(err) {
+          should.not.exist(err);
+        }
       })
     });
   });
   describe("loadMeta()", () => {
     it("should load meta for a dataset", async () => {
-      let meta = await dataset.loadMeta(id);
-      should.exist(meta);
+      try {
+        let meta = await dataset.loadMeta(id);
+        should.exist(meta);
+      }
+      catch(err) {
+        should.not.exist(err);
+      }
     });
   });
   describe("storeLineages()", () => {
@@ -72,9 +91,16 @@ describe("Dataset model:", () => {
     });
     it("should store lineages for a dataset", () => {
       promise.then(async () => {
-        let success = await dataset.storeLineages();
-        should.exist(success);
-        success.should.be.true();
+        try {
+          let success = await dataset.storeLineages();
+          should.exist(success);
+          success.should.be.true();
+        }
+        catch(err) {
+          console.log('!' + err);
+        }
+      }).catch((err) => {
+        console.log('?' + err)
       });
     });
   });
@@ -85,9 +111,9 @@ describe("Dataset model:", () => {
       dataset.fields.should.be.a.Object();
       dataset.fields.should.have.property('a');
       dataset.fields['a'].should.be.a.Object();
-      dataset.fields['a'].should.have.property('id','a');
-      dataset.fields['a'].should.have.property('dataset_id','ds1');
-      dataset.fields['a'].should.have.property('key','value');
+      dataset.fields['a'].should.have.property('_id','a');
+      dataset.fields['a'].should.have.property('_dataset_id','ds1');
+      dataset.fields['a'].should.have.property('_key','value');
     });
   });
   describe("addFields()", () => {
@@ -97,9 +123,9 @@ describe("Dataset model:", () => {
       dataset.fields.should.be.a.Object();
       dataset.fields.should.have.properties('b');
       dataset.fields['b'].should.be.a.Object();
-      dataset.fields['b'].should.have.property('id','b');
-      dataset.fields['b'].should.have.property('dataset_id','ds1');
-      dataset.fields['b'].should.have.property('key','value');
+      dataset.fields['b'].should.have.property('_id','b');
+      dataset.fields['b'].should.have.property('_dataset_id','ds1');
+      dataset.fields['b'].should.have.property('_key','value');
     });
   });
 

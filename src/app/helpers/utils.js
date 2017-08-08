@@ -4,20 +4,23 @@ const waitOn = async (value,promise) => {
   return await Promise.resolve(value);
 }
 
-/*const asKeyValue = (arr) => {
-  return new Promise((resolve, reject) => {
-  let obj = {};
-  let keys = [];
-  let values = arr.map(function(v) {
-    if (!obj.hasOwnProperty(v)) {
-      obj[v] = keys.length;
-      keys.push(v);
-    }
-    return obj[v];
-  });
-  resolve({values:values,keys:keys});
-});
-}*/
+// TODO: write test
+const removeNestedKeys = (arr,keys,nestarr) => {
+  arr.forEach((obj) => {
+    nestarr.forEach((name) => {
+      if (obj.hasOwnProperty(name)){
+        removeNestedKeys(obj[name],keys,nestarr)
+      }
+    })
+    keys.forEach((key) => {
+      if (obj.hasOwnProperty(key)){
+        delete obj[key];
+      }
+    });
+  })
+  return true;
+}
+
 const asKeyValue = (arr) => {
   let obj = {};
   let keys = [];
@@ -100,5 +103,6 @@ module.exports = {
   valueAtPath,
   newField,
   entryByKeyValue,
-  nestedEntryByKeyValue
+  nestedEntryByKeyValue,
+  removeNestedKeys
 }
