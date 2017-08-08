@@ -226,5 +226,19 @@ describe("Field model:", () => {
       result.should.match([3,4]);
     });
   });
+  describe("applyListFilter(arr)", () => {
+    let field;
+    beforeEach(() => {
+      field = new Field('gc',{id:'ds1'});
+    });
+    it("should return an array of indices for values that pass filter", async () => {
+      let list = [1,3,5,7];
+      let result = await field.applyListFilter(list);
+      result.should.be.a.Array();
+      result.length.should.equal(4);
+      result.should.match([3,4,9]);
+    });
+
+  });
 
 });
