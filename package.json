@@ -7,13 +7,14 @@
     "pretest": "mongo --port 27018 admin --eval \"db.getSiblingDB('admin').shutdownServer()\" &> /dev/null; rm -r test/data &> /dev/null; mkdir -p test/data && mongod --dbpath test/data --port 27018 --fork --logpath /tmp/mongod.log &> /dev/null",
     "test": "export NODE_ENV=\"test\" && mocha \"src/**/*.spec.js\"",
     "posttest": "mongo --port 27018 admin --eval \"db.getSiblingDB('admin').shutdownServer()\" &> /dev/null && rm -r test/data",
-    "start": "nodemon src/server.js"
+    "start": "nodemon src/server/app.js"
   },
   "author": "",
   "license": "Apache-2.0",
   "dependencies": {
     "bcrypt": "^1.0.2",
     "body-parser": "^1.17.2",
+    "browserify": "^14.4.0",
     "d3": "^4.10.0",
     "express": "^4.15.3",
     "express-cors": "0.0.3",
@@ -27,7 +28,8 @@
     "promise": "^8.0.1",
     "supertest": "^3.0.0",
     "swagger-jsdoc": "^1.9.6",
-    "testdouble": "^3.2.2"
+    "testdouble": "^3.2.2",
+    "watchify": "^3.9.0"
   },
   "devDependencies": {
     "mocha": "^3.4.2",

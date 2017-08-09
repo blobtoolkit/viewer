@@ -1,6 +1,6 @@
 const should = require('should');
 const td = require('testdouble');
-const config = require('../../config/main')('test')
+const config = require('../../server/config/main')('test')
 const Dataset = require('./dataset');
 const waitOn = require('../helpers/utils').waitOn;
 

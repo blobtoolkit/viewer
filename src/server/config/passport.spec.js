@@ -1,5 +1,5 @@
 const should = require('should');
-const AuthenticationController = require('../app/controllers/authentication');
+const AuthenticationController = require('../controllers/authentication');
 const passportService = require('./passport');
 
 describe("Configuration:", () => {

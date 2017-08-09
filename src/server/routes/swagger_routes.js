@@ -1,5 +1,5 @@
 const swaggerJSDoc   = require('swagger-jsdoc');
-const config_swagger = require('../../config/swagger')
+const config_swagger = require('../config/swagger')
 
 module.exports = function(app, db) {
   // serve swagger

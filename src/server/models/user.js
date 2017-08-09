@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 mongoose.Promise = require('promise');
-const main_config = require('../../config/main')(process.env.NODE_ENV)
+const main_config = require('../config/main')(process.env.NODE_ENV)
 mongoose.connect(main_config.dbhost,{useMongoClient:true});
 const bcrypt = require('bcrypt')
 const SALT_WORK_FACTOR = 1; // this should come from config

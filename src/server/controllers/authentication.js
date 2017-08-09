@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
 const User = require('../models/user');
-const config = require('../../config/main')(process.env.NODE_ENV);
+const config = require('../config/main')(process.env.NODE_ENV);
 
 function generateToken(user) {
   return jwt.sign(user, config.secret, {

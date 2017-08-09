@@ -1,4 +1,4 @@
-const config_main = require('../../config/main')(process.env.NODE_ENV);
+const config_main = require('../../server/config/main')(process.env.NODE_ENV);
 const io = require('../helpers/io');
 
 function Repository(id){

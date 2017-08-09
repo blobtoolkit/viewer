@@ -1,4 +1,4 @@
-const config = require('../../config/main')(process.env.NODE_ENV);
+const config = require('../../server/config/main')(process.env.NODE_ENV);
 const io = require('../helpers/io');
 const Field = require('./field');
 const waitOn = require('../helpers/utils').waitOn;

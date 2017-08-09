@@ -1,5 +1,5 @@
-const Field = require('../models/field');
-const utils = require('../helpers/utils');
+const Field = require('../../shared/models/field');
+const utils = require('../../shared/helpers/utils');
 
 module.exports = function(app, db) {
 /**

@@ -4,7 +4,7 @@ const path           = require('path')
 const config         = require('./config/main')(process.env.NODE_ENV);
 const app            = express();
 
-app.use(express.static(path.join(__dirname, 'app/public')));
+app.use(express.static(path.join(__dirname, 'server/public')));
 
 app.locals.directory = config.filePath;
 
@@ -16,14 +16,14 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use(bodyParser.json());
 
-require('./app/routes')(app, {});
+require('./routes')(app, {});
 
 if (config.https){
   const https = require('https');
   const fs = require('fs');
   var options = {
-    key: fs.readFileSync('certificates/private.key'),
-    cert: fs.readFileSync('certificates/certificate.pem')
+    key: fs.readFileSync('../certificates/private.key'),
+    cert: fs.readFileSync('../certificates/certificate.pem')
   };
   var secureServer = https.createServer(options, app).listen(
     config.port,

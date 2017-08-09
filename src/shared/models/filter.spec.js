@@ -1,5 +1,5 @@
 const should = require('should');
-const config = require('../../config/main')('test')
+const config = require('../../server/config/main')('test')
 const Filter = require('./filter');
 const Field = require('./field');
 

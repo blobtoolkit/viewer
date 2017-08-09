@@ -1,5 +1,5 @@
 const d3 = require('d3')
-const config = require('../../config/main')(process.env.NODE_ENV);
+const config = require('../../server/config/main')(process.env.NODE_ENV);
 const io = require('../helpers/io');
 const Filter = require('./filter');
 
@@ -30,7 +30,7 @@ function Field(id,dataset,meta) {
 
 module.exports = Field;
 
-const loadData = async function() {
+const loadData = async function(useAPI) {
   if (this.data) return Promise.resolve(this.data);
   let filePath = this.filePath || config.filePath;
   this.data = await io.readJSON(filePath+'/'+this.dataset.id+'/'+this._id+'.json');

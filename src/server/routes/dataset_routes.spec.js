@@ -1,7 +1,7 @@
 const should = require('should');
 const request = require('supertest');
 const express = require('express');
-const app = require('../../server');
+const app = require('../app');
 
 describe('Routes:', () => {
   describe('dataset:', () => {

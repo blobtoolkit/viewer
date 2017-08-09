@@ -1,8 +1,8 @@
 // command line tool to convert a blobDB to btk format
 
 const parseArgs = require('minimist')(process.argv.slice(2),{boolean:['a','b']})
-const Dataset = require('../app/models/dataset');
-const io = require('../app/helpers/io');
+const Dataset = require('../server/models/dataset');
+const io = require('../shared/helpers/io');
 
 main();
 
@@ -28,6 +28,6 @@ async function main() {
 }
 
 function usage(){
-  let message = 'Usage: src/utilities/importBlobDB.js [options] <blobDB file> <output directory>'
+  let message = 'Usage: src/server/utilities/importBlobDB.js [options] <blobDB file> <output directory>'
   return message;
 }
