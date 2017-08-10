@@ -1,12 +1,12 @@
+const appRoot = require('app-root-path');
 const should = require('should');
 const td = require('testdouble');
-const config = require('../../server/config/main')('test')
+const config = require('../../config/main')
 const Dataset = require('./dataset');
-const waitOn = require('../helpers/utils').waitOn;
 
 let dataset = undefined;
 const id = 'ds1';
-const blobDBFile = '../../../test/files/blobDB.json';
+const blobDBFile = config.filePath + '/blobDB.json';
 const filePath = config.filePath;
 const blobDB = require(blobDBFile);
 
@@ -31,7 +31,7 @@ describe("Dataset model:", () => {
       dataset.blobDB = blobDB;
     })
     it("should convert a blobDB into a meta object", async () => {
-      try {  //dataset.blobDBFile = blobDBFile;
+      try {
         let meta = await dataset.prepareMeta(filePath);
         should.exist(meta);
         meta.should.have.property('filePath',filePath);

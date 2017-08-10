@@ -1,5 +1,5 @@
-const config_main = require('../../server/config/main')(process.env.NODE_ENV);
-const io = require('../helpers/io');
+const config_main = require('../../config/main');
+const io = require('../../server/functions/io');
 
 function Repository(id){
   this.id = id;

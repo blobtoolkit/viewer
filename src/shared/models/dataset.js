@@ -1,12 +1,7 @@
-const config = require('../../server/config/main')(process.env.NODE_ENV);
-const io = require('../helpers/io');
+const config = require('../../config/main');
+const io = require('../../server/functions/io');
 const Field = require('./field');
-const waitOn = require('../helpers/utils').waitOn;
-const newField = require('../helpers/utils').newField;
-const asKeyValue = require('../helpers/utils').asKeyValue;
-const groupValuesBy = require('../helpers/utils').groupValuesBy;
-const valueAtPath = require('../helpers/utils').valueAtPath;
-const removeNestedKeys = require('../helpers/utils').removeNestedKeys;
+const utils = require('../functions/utils');
 
 function Dataset(id) {
   this.id = id;
@@ -28,6 +23,7 @@ const prepareMeta = async function() {
   let json = await this.loadBlobDB();
   let meta = {}
   meta.filePath = config.filePath;
+  meta.outFilePath = config.outFilePath;
   meta.id = json.title.replace(/blobdb/i,'').replace(/json/i,'').replace(/[\W]+/,'');
   meta.name = json.title;
   meta.description = json.description || 'imported from '+meta.name;
@@ -77,8 +73,8 @@ const prepareMeta = async function() {
 
 const storeMeta = async function() {
   if (!this.meta) return Promise.reject(Error('Cannot storeMeta if meta is undefined'))
-  let filePath = this.filePath || config.filePath;
-  removeNestedKeys(this.meta.fields,['dataset','filters','scale'],['_data','_children'])
+  let filePath = this.outFilePath || config.outFilePath;
+  utils.removeNestedKeys(this.meta.fields,['dataset','filters','scale'],['_data','_children'])
   this.meta.fields = this.meta.fields.map((field)=>{
     let obj = {};
     Object.keys(field).forEach((key)=>{
@@ -137,7 +133,7 @@ const storeLineages = async function(){
       values[taxid][i] = lineages[taxid][level] || undefined;
     })
   })
-  let filePath = this.filePath || config.filePath;
+  let filePath = this.outFilePath || config.outFilePath;
   let success = await io.writeJSON(filePath+'/'+this.id+'/lineages.json',{keys:levels,values:values});
   return success;
 }
@@ -154,19 +150,19 @@ const storeValues = async function(id,field){
   }
   else {
     this.blobDB.order_of_blobs.forEach(async (contig) => {
-      let val = valueAtPath(this.blobDB.dict_of_blobs[contig],field.blobDBpath)
+      let val = utils.valueAtPath(this.blobDB.dict_of_blobs[contig],field.blobDBpath)
       if (field.blobDBpath[0] == 'hits'){
-        value = await groupValuesBy((val || []),'taxId','score')
+        value = await utils.groupValuesBy((val || []),'taxId','score')
       }
       else {
         value = val;
       }
       values.push(value);
     });
-    let filePath = this.filePath || config.filePath;
+    let filePath = this.outFilePath || config.outFilePath;
     if (field.blobDBpath[0] == 'taxonomy' && field.blobDBpath[field.blobDBpath.length-1] == 'tax'){
       let success;
-      let result = asKeyValue(values)
+      let result = utils.asKeyValue(values)
       success = io.writeJSON(filePath+'/'+this.id+'/'+field.id+'.json',result);
       successes.push(success);
     }

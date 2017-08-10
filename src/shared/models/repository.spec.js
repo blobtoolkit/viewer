@@ -1,5 +1,5 @@
 const should = require('should');
-const main_config = require('../../server/config/main')('test')
+const main_config = require('../../config/main')
 const Repository = require('./repository');
 
 let repository = function(){};

@@ -1,0 +1,24 @@
+const main = require('./main')
+
+// swagger definition
+const swaggerDefinition = {
+  info: {
+    title: 'BlobToolKit API',
+    version: main.version,
+    description: 'A RESTful API for BlobToolKit',
+  },
+  host: main.https ? 'https' : 'http' + '://' + main.hostname + ':' + main.port,
+  basePath: '/',
+};
+
+// options for the swagger docs
+const options = {
+  // import swaggerDefinitions
+  swaggerDefinition: swaggerDefinition,
+  // path to the API docs
+  apis: ['./src/server/routes/*.js'],
+};
+
+module.exports = {
+  options: options
+}

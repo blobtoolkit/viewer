@@ -1,5 +1,6 @@
+const appRoot = require('app-root-path');
 const Field = require('../../shared/models/field');
-const utils = require('../../shared/helpers/utils');
+const utils = require('../../shared/functions/utils');
 
 module.exports = function(app, db) {
 /**

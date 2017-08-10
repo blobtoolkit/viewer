@@ -1,6 +1,6 @@
 const d3 = require('d3')
-const config = require('../../server/config/main')(process.env.NODE_ENV);
-const io = require('../helpers/io');
+const config = require('../../config/main');
+const io = require('../../server/functions/io');
 const Filter = require('./filter');
 
 function Field(id,dataset,meta) {

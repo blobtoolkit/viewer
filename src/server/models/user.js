@@ -1,10 +1,9 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 mongoose.Promise = require('promise');
-const main_config = require('../config/main')(process.env.NODE_ENV)
-mongoose.connect(main_config.dbhost,{useMongoClient:true});
+const config = require('../../config/main')
+mongoose.connect(config.dbHost,{useMongoClient:true});
 const bcrypt = require('bcrypt')
-const SALT_WORK_FACTOR = 1; // this should come from config
 
 // create a schema
 const userSchema = new Schema({
@@ -38,7 +37,7 @@ userSchema.pre('save', function(next) {
   if (!this.isModified('password')) return next();
 
   // generate a salt
-  bcrypt.genSalt(SALT_WORK_FACTOR, (err, salt) => {
+  bcrypt.genSalt(config.workFactor, (err, salt) => {
     if (err) return next(err);
 
     // hash the password along with our new salt

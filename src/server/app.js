@@ -1,7 +1,7 @@
 const express        = require('express');
 const bodyParser     = require('body-parser');
-const path           = require('path')
-const config         = require('./config/main')(process.env.NODE_ENV);
+const path           = require('path');
+const config         = require('../config/main');
 const app            = express();
 
 app.use(express.static(path.join(__dirname, 'server/public')));
@@ -22,8 +22,8 @@ if (config.https){
   const https = require('https');
   const fs = require('fs');
   var options = {
-    key: fs.readFileSync('../certificates/private.key'),
-    cert: fs.readFileSync('../certificates/certificate.pem')
+    key: fs.readFileSync(config.keyfile),
+    cert: fs.readFileSync(config.certfile)
   };
   var secureServer = https.createServer(options, app).listen(
     config.port,

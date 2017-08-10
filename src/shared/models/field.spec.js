@@ -1,6 +1,6 @@
 const should = require('should');
 const td = require('testdouble');
-const config = require('../../server/config/main')('test')
+const config = require('../../config/main')
 const Field = require('./field');
 
 describe("Field model:", () => {

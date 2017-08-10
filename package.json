@@ -12,10 +12,12 @@
   "author": "",
   "license": "Apache-2.0",
   "dependencies": {
+    "app-root-path": "^2.0.1",
     "bcrypt": "^1.0.2",
     "body-parser": "^1.17.2",
     "browserify": "^14.4.0",
     "d3": "^4.10.0",
+    "dotenv": "^4.0.0",
     "express": "^4.15.3",
     "express-cors": "0.0.3",
     "jsonwebtoken": "^7.4.1",

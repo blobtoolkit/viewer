@@ -1,8 +1,8 @@
 const should = require('should');
 const mongoose = require('mongoose');
 mongoose.Promise = require('promise');
-const main_config = require('../config/main')('test')
-const dbURI = main_config.dbhost
+const config = require('../../config/main')
+const dbURI = config.dbHost
 const clearDB = require('mocha-mongoose')(dbURI);
 const User = require('./user');
 
