@@ -4,7 +4,7 @@ const path           = require('path');
 const config         = require('../config/main');
 const app            = express();
 
-app.use(express.static(path.join(__dirname, 'server/public')));
+app.use(express.static(path.join(__dirname, 'public')));
 
 app.locals.directory = config.filePath;
 
@@ -22,8 +22,8 @@ if (config.https){
   const https = require('https');
   const fs = require('fs');
   var options = {
-    key: fs.readFileSync(config.keyfile),
-    cert: fs.readFileSync(config.certfile)
+    key: fs.readFileSync(config.keyFile),
+    cert: fs.readFileSync(config.certFile)
   };
   var secureServer = https.createServer(options, app).listen(
     config.port,

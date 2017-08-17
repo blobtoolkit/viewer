@@ -1,4 +1,5 @@
 const main = require('./main')
+const appRoot = require('app-root-path');
 
 // swagger definition
 const swaggerDefinition = {
@@ -16,7 +17,7 @@ const options = {
   // import swaggerDefinitions
   swaggerDefinition: swaggerDefinition,
   // path to the API docs
-  apis: ['./src/server/routes/*.js'],
+  apis: [appRoot + '/src/server/routes/*.js'],
 };
 
 module.exports = {
