@@ -6,7 +6,6 @@ import styles from './Filters.scss';
 import testSprite from './svg/test.svg';
 import * as d3 from 'd3';
 
-
 class AvailableFiltersBox extends React.Component {
   render() {
     var children = [];
@@ -22,42 +21,101 @@ class AvailableFiltersBox extends React.Component {
 }
 
 class FilterBox extends React.Component {
+  constructor(props) {
+    super(props);
+    var x = d3.scaleLog();
+    if (this.props.filter.id == 'gc'){ x = d3.scaleLinear() }
+    x.domain(this.props.filter.limits)
+    .range([0, 400]); // TODO: remove magic numbers
+    this.state = {
+      range: props.filter.limits,
+      xScale: x
+    };
+  }
+  updateRange(value,index) {
+    var newRange = this.state.range.slice(0);
+    newRange[index] = value*1;
+    this.setState({
+      range: newRange
+    })
+  }
+  xScale() {
+    var newRange = this.state.range.slice(0);
+    newRange[index] = value*1;
+    this.setState({
+      range: newRange
+    })
+  }
   render() {
+    var headerComponents = [];
+    headerComponents.push(<FilterRange key='range' range={this.state.range} update={this.updateRange.bind(this)}/>);
+    headerComponents.push(<FilterControls key='controls' datasetId={this.props.datasetId} filter={this.props.filter}/>);
+    var handleComponents = [];
+    handleComponents.push(<FilterHandle key='right' handlePosition='right' range={this.state.range} update={this.updateRange.bind(this)} xScale={this.state.xScale}/>);
+    handleComponents.push(<FilterHandle key='left' handlePosition='left' range={this.state.range} update={this.updateRange.bind(this)} xScale={this.state.xScale}/>);
     return (
       <div id={this.props.filter.id} className={styles.outer}>
-        <FilterHeader datasetId={this.props.datasetId} filter={this.props.filter}/>
+        <FilterHeader name={this.props.filter.name} children={headerComponents} />
         <div className={styles.main}>
-          <FilterDataPreview datasetId={this.props.datasetId} filter={this.props.filter} />
-          <FilterHandles datasetId={this.props.datasetId} filterName={this.props.filter.id} />
-          </div>
+          <FilterDataPreview datasetId={this.props.datasetId} filter={this.props.filter} xScale={this.state.xScale} />
+          <FilterHandles children={handleComponents}/>
+        </div>
       </div>
-    )
+    );
   }
 }
 
-class FilterHeader extends React.Component {
+const withLogProps = MyComponent => class extends MyComponent {
+  componentWillMount() {
+    console.log('Current props: ', this.props);
+  }
   render() {
-    return (
-      <div className={styles.header}>
-        <h1>{this.props.filter.name}</h1>
-        <FilterRange datasetId={this.props.datasetId} filter={this.props.filter}/>
-        <FilterControls datasetId={this.props.datasetId} filter={this.props.filter}/>
-      </div>
-    )
+    // Wraps the input component in a container, without mutating it. Good!
+    return <MyComponent {...this.props} />;
   }
 }
+const EnhancedComponent = withLogProps(FilterBox);
+
+// class FilterHeader extends React.Component {
+//   render() {
+//     return (
+//       <div className={styles.header}>
+//         <h1>{this.props.filter.name}</h1>
+//         <FilterRange datasetId={this.props.datasetId} filter={this.props.filter}/>
+//         <FilterControls datasetId={this.props.datasetId} filter={this.props.filter}/>
+//       </div>
+//     )
+//   }
+// }
+
+const FilterHeader = ({name,children}) =>
+  <div className={styles.header}>
+  <h1>{name}</h1>
+  {children}
+  </div>
 
 class FilterRange extends React.Component {
-  render() {
-    return (
+   render() {
+     return (
       <div className={styles.range}>
-        <input type='text' className={styles.range_input} defaultValue={this.props.filter.limits[0]}/>
+        <input type='text' className={styles.range_input} value={this.props.range[0]} onChange={(e)=>{this.props.update(e.target.value,0)}}/>
         &nbsp;:&nbsp;
-        <input type='text' className={styles.range_input} defaultValue={this.props.filter.limits[1]}/>
+        <input type='text' className={styles.range_input} value={this.props.range[1]} onChange={(e)=>{this.props.update(e.target.value,1)}}/>
       </div>
     )
   }
 }
+// class FilterRange extends React.Component {
+//   render() {
+//     return (
+//       <div className={styles.range}>
+//         <input type='text' className={styles.range_input} defaultValue={this.props.filter.limits[0]}/>
+//         &nbsp;:&nbsp;
+//         <input type='text' className={styles.range_input} defaultValue={this.props.filter.limits[1]}/>
+//       </div>
+//     )
+//   }
+// }
 
 class FilterControls extends React.Component {
   render() {
@@ -120,10 +178,7 @@ class FilterDataPreview extends React.Component {
     var data = this.state.data;//d3.range(1000).map(d3.randomBates(10));
     var g = svg.append("g")
 
-    var x = d3.scaleLog()
-    if (this.props.filter.id == 'gc'){ x = d3.scaleLinear() }
-    x.domain(this.props.filter.limits)
-    .range([0, width]);
+    var x = this.props.xScale;
     var thresh = Array.from(Array(24).keys()).map((n)=>{return x.invert((n+1)*width/25)});
     var bins = d3.histogram()
     .domain(x.domain())
@@ -177,8 +232,7 @@ class FilterHandles extends React.Component {
   render() {
     return (
       <div className={styles.resizables_container}>
-        <FilterHandle filterName={this.props.filterName} handlePosition='right'/>
-          <FilterHandle filterName={this.props.filterName} handlePosition='left'/>
+        {this.props.children}
       </div>
     )
   }
@@ -187,10 +241,16 @@ class FilterHandles extends React.Component {
 
 
 class FilterHandle extends React.Component {
+  bound(){
+    return this.props.handlePosition == 'right' ? 1 : 0
+  }
+  boundPercent(){
+    return this.props.xScale(this.props.range[this.bound()])/4;
+  }
   render() {
     return (
       <Resizable className={styles.resizable}
-        width={this.props.handlePosition == 'right' ? '100%' : 0}
+        width={this.boundPercent() + '%'}
         bounds={'parent'}
         height={'100%'}
         handlerClasses={{
@@ -208,7 +268,7 @@ class FilterHandle extends React.Component {
           (e,direction,ref,delta) => {}
         }
         onResizeStop={
-          (e,direction,ref,delta) => {var ratio = ref.clientWidth/ref.parentNode.clientWidth; console.log(ratio)}
+          (e,direction,ref,delta) => {this.props.update(this.props.xScale.invert(ref.clientWidth),this.bound())}
         }
       />
     )
