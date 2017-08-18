@@ -11,7 +11,7 @@ class AvailableFiltersBox extends React.Component {
   render() {
     var children = [];
     this.props.filters.forEach((filter) => {
-      children.push(<FilterBox filter={filter} key={filter.id} />)
+      children.push(<FilterBox datasetId={this.props.datasetId} filter={filter} key={filter.id} />)
     });
     return (
       <div>
@@ -25,10 +25,10 @@ class FilterBox extends React.Component {
   render() {
     return (
       <div id={this.props.filter.id} className={styles.outer}>
-        <FilterHeader filter={this.props.filter}/>
+        <FilterHeader datasetId={this.props.datasetId} filter={this.props.filter}/>
         <div className={styles.main}>
-          <FilterDataPreview filter={this.props.filter} />
-          <FilterHandles filterName={this.props.filter.id} />
+          <FilterDataPreview datasetId={this.props.datasetId} filter={this.props.filter} />
+          <FilterHandles datasetId={this.props.datasetId} filterName={this.props.filter.id} />
           </div>
       </div>
     )
@@ -40,8 +40,8 @@ class FilterHeader extends React.Component {
     return (
       <div className={styles.header}>
         <h1>{this.props.filter.name}</h1>
-        <FilterRange filter={this.props.filter}/>
-        <FilterControls filter={this.props.filter}/>
+        <FilterRange datasetId={this.props.datasetId} filter={this.props.filter}/>
+        <FilterControls datasetId={this.props.datasetId} filter={this.props.filter}/>
       </div>
     )
   }
@@ -63,7 +63,7 @@ class FilterControls extends React.Component {
   render() {
     return (
       <div className={styles.controls}>
-        <FilterSwitch filter={this.props.filter}/>
+        <FilterSwitch datasetId={this.props.datasetId} filter={this.props.filter}/>
       </div>
     )
   }
@@ -88,9 +88,9 @@ class FilterDataPreview extends React.Component {
   }
 
   componentDidMount() {
-    d3.json('http://localhost:8000/api/v1/field/ds2/'+this.props.filter.id, (error, data) => {
+    d3.json('http://localhost:8000/api/v1/field/'+this.props.datasetId+'/'+this.props.filter.id, (error, data) => {
       if (error){
-        console.log(error);
+        console.error(error);
       }
       else {
         this.state.data = data.values;

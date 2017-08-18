@@ -12,8 +12,7 @@ class Dataset extends React.Component {
     return (
       <div>
         <h1>BlobToolKit React Website!</h1>
-        <a>{this.props.datasetId}</a>
-        <AvailableFiltersBox filters={FILTERS}/>
+        <AvailableFiltersBox datasetId={this.props.match.params.datasetId} filters={FILTERS}/>
       </div>
     )
   }
