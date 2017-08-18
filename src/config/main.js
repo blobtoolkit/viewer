@@ -6,7 +6,7 @@ const appRoot = require('app-root-path');
 const BTK_ORIGINS = process.env.BTK_ORIGINS ? process.env.BTK_ORIGINS.split(' ') : ['localhost','null'];
 const BTK_HTTPS = (String(process.env.BTK_HTTPS) === 'true')
 const FILE_PATH = process.env.BTK_FILE_PATH || appRoot + 'test/files/datasets';
-
+console.log(BTK_ORIGINS);
 module.exports = {
   // secret key for JWT signing and encryption
   'secret': process.env.BTK_SECRET || 'default passphrase',
@@ -15,7 +15,7 @@ module.exports = {
   // database connection information
   'dbHost': process.env.BTK_DB_HOST || 'mongodb://localhost:27018/test',
   // setting port for server
-  'port': Number(process.env.BTK_PORT) || 8443,
+  'port': Number(process.env.BTK_PORT) || 8000,
   // flag to use https
   'https': BTK_HTTPS,
   // Cors settings

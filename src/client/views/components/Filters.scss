@@ -6,6 +6,7 @@
   height:10em;
   margin:1em;
   background-color: $shadeColor;
+  user-select:none;
 }
 
 .header {
@@ -32,6 +33,7 @@
   .range_input {
     width: 5.5em;
     border: none;
+    background-color:$lightColor;
   }
 }
 
@@ -80,7 +82,7 @@
   svg {
     height:100%;
     width:100%;
-    shape-rendering: crispEdges;
+    /*shape-rendering: crispEdges;*/
 
     .bar rect {
       fill: $paleColor;

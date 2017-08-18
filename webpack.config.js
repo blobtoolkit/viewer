@@ -19,6 +19,9 @@ const config = {
   resolve: {
     extensions: ['.js', '.jsx']
   },
+  devServer: {
+    historyApiFallback: true,
+  },
   devtool: 'source-map',
   plugins: [
     new ExtractTextPlugin('styles.css')

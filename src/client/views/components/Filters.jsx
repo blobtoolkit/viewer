@@ -51,9 +51,9 @@ class FilterRange extends React.Component {
   render() {
     return (
       <div className={styles.range}>
-        <input type='text' className={styles.range_input}/>
+        <input type='text' className={styles.range_input} defaultValue={this.props.filter.limits[0]}/>
         &nbsp;:&nbsp;
-        <input type='text' className={styles.range_input}/>
+        <input type='text' className={styles.range_input} defaultValue={this.props.filter.limits[1]}/>
       </div>
     )
   }
@@ -88,7 +88,15 @@ class FilterDataPreview extends React.Component {
   }
 
   componentDidMount() {
-    this.drawChart();
+    d3.json('http://localhost:8000/api/v1/field/ds2/'+this.props.filter.id, (error, data) => {
+      if (error){
+        console.log(error);
+      }
+      else {
+        this.state.data = data.values;
+        this.drawChart();
+      }
+    });
   }
 
   shouldComponentUpdate() {
@@ -109,15 +117,17 @@ class FilterDataPreview extends React.Component {
     var height = this.svg.clientHeight;
     var width = this.svg.clientWidth;
 
-    var data = d3.range(1000).map(d3.randomBates(10));
+    var data = this.state.data;//d3.range(1000).map(d3.randomBates(10));
     var g = svg.append("g")
 
-    var x = d3.scaleLinear()
-    .rangeRound([0, width]);
-
+    var x = d3.scaleLog()
+    if (this.props.filter.id == 'gc'){ x = d3.scaleLinear() }
+    x.domain(this.props.filter.limits)
+    .range([0, width]);
+    var thresh = Array.from(Array(24).keys()).map((n)=>{return x.invert((n+1)*width/25)});
     var bins = d3.histogram()
     .domain(x.domain())
-    .thresholds(x.ticks(50))
+    .thresholds(thresh)
     (data);
 
     var y = d3.scaleLinear()
@@ -131,8 +141,8 @@ class FilterDataPreview extends React.Component {
           .attr("transform", function(d) { return "translate(" + x(d.x0) + "," + y(d.length) + ")"; });
 
     bar.append("rect")
-        .attr("x", 0)
-        .attr("width", x(bins[0].x1) - x(bins[0].x0))
+        .attr("x", 1)
+        .attr("width", function(d) { return x(d.x1) - x(d.x0) -1 ;})
         .attr("height", function(d) { return height - y(d.length); });
     // // At some point we render a child, say a tooltip
     // const tooltipData = ...
@@ -198,7 +208,7 @@ class FilterHandle extends React.Component {
           (e,direction,ref,delta) => {}
         }
         onResizeStop={
-          (e,direction,ref,delta) => {}
+          (e,direction,ref,delta) => {var ratio = ref.clientWidth/ref.parentNode.clientWidth; console.log(ratio)}
         }
       />
     )
