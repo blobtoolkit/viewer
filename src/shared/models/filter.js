@@ -1,5 +1,4 @@
 const d3 = require('d3')
-const config = require('../../config/main');
 
 function Filter(id,field,meta) {
   this._id = id;

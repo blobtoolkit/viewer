@@ -1,6 +1,6 @@
 const express = require('express');
 const Repository = require('../models/repository');
-const Dataset = require('../../shared/models/dataset');
+const Dataset = require('../models/dataset');
 const utils = require('../../shared/functions/utils');
 
 module.exports = function(app, db) {

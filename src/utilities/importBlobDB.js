@@ -2,7 +2,7 @@
 
 const parseArgs = require('minimist')(process.argv.slice(2),{boolean:['a','b']})
 const Dataset = require('../server/models/dataset');
-const io = require('../shared/functions/io');
+const io = require('../server/functions/io');
 
 main();
 
@@ -19,7 +19,7 @@ async function main() {
   dataset = new Dataset(id);
   dataset.loadBlobDB(blobDBFile).then(()=>{
     dataset.prepareMeta().then(()=>{
-      dataset.filePath = outFilePath;
+      dataset.outFilePath = outFilePath;
       dataset.storeMeta();
       dataset.storeLineages();
       dataset.storeAllValues();

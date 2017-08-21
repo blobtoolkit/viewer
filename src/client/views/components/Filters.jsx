@@ -9,8 +9,9 @@ import * as d3 from 'd3';
 class AvailableFiltersBox extends React.Component {
   render() {
     var children = [];
-    this.props.filters.forEach((filter) => {
-      children.push(<FilterBox datasetId={this.props.datasetId} filter={filter} key={filter.id} />)
+    console.log(this.props)
+    this.props.fields.forEach((field) => {
+      children.push(<FilterBox datasetId={this.props.datasetId} filter={field.filters['default']} key={field._id} />)
     });
     return (
       <div>
@@ -23,12 +24,13 @@ class AvailableFiltersBox extends React.Component {
 class FilterBox extends React.Component {
   constructor(props) {
     super(props);
-    var x = d3.scaleLog();
-    if (this.props.filter.id == 'gc'){ x = d3.scaleLinear() }
-    x.domain(this.props.filter.limits)
+    console.log(props)
+    var x = props.filter.scale;
+    //if (this.props.filter.id == 'gc'){ x = d3.scaleLinear() }
+    x.domain(this.props.filter._limits)
     .range([0, 400]); // TODO: remove magic numbers
     this.state = {
-      range: props.filter.limits,
+      range: props.filter._limits,
       xScale: x
     };
   }
@@ -55,7 +57,7 @@ class FilterBox extends React.Component {
     handleComponents.push(<FilterHandle key='left' handlePosition='left' range={this.state.range} update={this.updateRange.bind(this)} xScale={this.state.xScale}/>);
     return (
       <div id={this.props.filter.id} className={styles.outer}>
-        <FilterHeader name={this.props.filter.name} children={headerComponents} />
+        <FilterHeader name={this.props.filter.field._name} children={headerComponents} />
         <div className={styles.main}>
           <FilterDataPreview datasetId={this.props.datasetId} filter={this.props.filter} xScale={this.state.xScale} />
           <FilterHandles children={handleComponents}/>
@@ -146,7 +148,8 @@ class FilterDataPreview extends React.Component {
   }
 
   componentDidMount() {
-    d3.json('http://localhost:8000/api/v1/field/'+this.props.datasetId+'/'+this.props.filter.id, (error, data) => {
+    console.log(this.props)
+    d3.json('http://localhost:8000/api/v1/field/'+this.props.datasetId+'/'+this.props.filter.field._id, (error, data) => {
       if (error){
         console.error(error);
       }
@@ -184,7 +187,6 @@ class FilterDataPreview extends React.Component {
     .domain(x.domain())
     .thresholds(thresh)
     (data);
-
     var y = d3.scaleLinear()
     .domain([0, d3.max(bins, function(d) { return d.length; })])
     .range([height, 0]);

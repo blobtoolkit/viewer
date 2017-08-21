@@ -4,9 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "pretest": "mongo --port 27018 admin --eval \"db.getSiblingDB('admin').shutdownServer()\" &> /dev/null; rm -r test/data &> /dev/null; mkdir -p test/data && mongod --dbpath test/data --port 27018 --fork --logpath /tmp/mongod.log &> /dev/null",
+    "preteest": "mongo --port 27018 admin --eval \"db.getSiblingDB('admin').shutdownServer()\" &> /dev/null; rm -r test/data &> /dev/null; mkdir -p test/data && mongod --dbpath test/data --port 27018 --fork --logpath /tmp/mongod.log &> /dev/null",
     "test": "export NODE_ENV=\"test\" && mocha \"src/**/*.spec.js\"",
-    "posttest": "mongo --port 27018 admin --eval \"db.getSiblingDB('admin').shutdownServer()\" &> /dev/null && rm -r test/data",
+    "postteest": "mongo --port 27018 admin --eval \"db.getSiblingDB('admin').shutdownServer()\" &> /dev/null && rm -r test/data",
     "start": "nodemon src/server/app.js",
     "client": "webpack-dev-server --content-base src/client src/client/main.js"
   },

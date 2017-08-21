@@ -6,7 +6,7 @@ const appRoot = require('app-root-path');
 const BTK_ORIGINS = process.env.BTK_ORIGINS ? process.env.BTK_ORIGINS.split(' ') : ['localhost','null'];
 const BTK_HTTPS = (String(process.env.BTK_HTTPS) === 'true')
 const FILE_PATH = process.env.BTK_FILE_PATH || appRoot + 'test/files/datasets';
-console.log(BTK_ORIGINS);
+
 module.exports = {
   // secret key for JWT signing and encryption
   'secret': process.env.BTK_SECRET || 'default passphrase',

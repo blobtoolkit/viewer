@@ -1,5 +1,5 @@
 const appRoot = require('app-root-path');
-const Field = require('../../shared/models/field');
+const Field = require('../models/field');
 const utils = require('../../shared/functions/utils');
 
 module.exports = function(app, db) {
@@ -120,7 +120,7 @@ module.exports = function(app, db) {
  */
 /**
  * @swagger
- * /api/v1/field/dataset/{dataset_id}/{field_id}:
+ * /api/v1/field/{dataset_id}/{field_id}:
  *   get:
  *     tags:
  *       - Datasets

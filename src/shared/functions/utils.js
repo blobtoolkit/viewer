@@ -96,6 +96,14 @@ const nestedEntryByKeyValue = (arr,key,value,nestarr) => {
   return result;
 }
 
+const objectToArray = (obj) => {
+  let i=0;
+  let arr=[];
+  for (let o in obj){
+    arr[i++] = obj[o];
+  }
+  return arr;
+}
 
 
 module.exports = {
@@ -106,5 +114,6 @@ module.exports = {
   newField,
   entryByKeyValue,
   nestedEntryByKeyValue,
-  removeNestedKeys
+  removeNestedKeys,
+  objectToArray
 }
