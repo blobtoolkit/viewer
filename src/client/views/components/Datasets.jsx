@@ -1,6 +1,7 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 import styles from './Datasets.scss';
+import config from '../../../config/client';
 
 class AvailableDatasetsBox extends React.Component {
   render() {
@@ -8,10 +9,19 @@ class AvailableDatasetsBox extends React.Component {
     this.props.datasets.forEach((dataset) => {
       children.push(<DatasetBox dataset={dataset} key={dataset.id} />)
     });
+    var loading = <LoadingDatasets />
     return (
       <div>
-        {children}
+        {this.props.loading ? loading : children}
       </div>
+    )
+  }
+}
+
+class LoadingDatasets extends React.Component {
+  render() {
+    return (
+      <span>loading available datasets</span>
     )
   }
 }

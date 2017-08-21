@@ -33,5 +33,7 @@ module.exports = {
   // location of certificate key file
   'keyFile': process.env.BTK_KEYFILE || appRoot + '/test/ssl/private.key',
   // location of certificate file
-  'certFile': process.env.BTK_CERTFILE || appRoot + '/test/ssl/certificate.pem'
+  'certFile': process.env.BTK_CERTFILE || appRoot + '/test/ssl/certificate.pem',
+  // API URL
+  'apiUrl': process.env.BTK_API_URL || 'http://localhost:8080'
 }

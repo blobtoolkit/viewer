@@ -1,21 +1,32 @@
 import React from 'react'
 import {AvailableDatasetsBox} from './Datasets';
+import RepositoryModel from '../../models/repository';
+import * as d3 from 'd3';
+const myRepository = new RepositoryModel('default')
 
-const DATASETS = [
-  {
-    "name": "Example dataset",
-    "id": "ds1",
-    "description":"an example dataset"
-  },
-  {
-    "name":"Sample dataset",
-    "id":"ds2",
-    "description":"another example of a dataset"
+class Repository extends React.Component {
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      loading: true,
+      datasets: []
+    };
   }
-]
 
-const Repository = () => (
-  <AvailableDatasetsBox datasets={DATASETS}/>
-)
+  componentDidMount() {
+    myRepository.loadMeta(
+      (error) => { console.log(error) },
+      (data) => { this.setState({loading:false, datasets:data}) }
+    );
+  }
 
-module.exports = Repository;
+  render(){
+    return (
+      <AvailableDatasetsBox loading={this.state.loading} datasets={this.state.datasets}/>
+    )
+  }
+
+}
+
+export default Repository;
