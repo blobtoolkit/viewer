@@ -56,8 +56,8 @@ const prepareMeta = async function() {
     let taxlevels = [];
     levels.forEach((level) => {
       let data = [];
-      data.push(this.addField(rule+'_'+level+'_score',{name:'score',type:'variable',datatype:'float',range:[1,1000],scale:'scaleLinear',blobDBpath:['taxonomy',rule,level,'score']}))
-      data.push(this.addField(rule+'_'+level+'_cindex',{name:'c_index',type:'variable',datatype:'integer',range:[1,100],scale:'scaleLinear',blobDBpath:['taxonomy',rule,level,'c_index']}))
+      data.push(this.addField(rule+'_'+level+'_score',{name:'score',type:'variable',datatype:'float',range:[1,10000],scale:'scaleSqrt',blobDBpath:['taxonomy',rule,level,'score']}))
+      data.push(this.addField(rule+'_'+level+'_cindex',{name:'c_index',type:'variable',datatype:'integer',range:[1,10],scale:'scaleLinear',blobDBpath:['taxonomy',rule,level,'c_index']}))
       taxlevels.push(this.addField(rule+'_'+level,{name:level,data:data,blobDBpath:['taxonomy',rule,level,'tax']}))
     })
     taxrules.push(this.addField(rule,{children:taxlevels}))

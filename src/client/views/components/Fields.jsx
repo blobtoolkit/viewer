@@ -2,25 +2,34 @@ import React from 'react'
 import { Link } from 'react-router-dom'
 import ReactDOM from 'react-dom'
 import Resizable from 'react-resizable-box'
-import styles from './Filters.scss';
+import styles from './Fields.scss';
 import testSprite from './svg/test.svg';
 import * as d3 from 'd3';
+import { loadValues } from '../../models/field';
 
-class AvailableFiltersBox extends React.Component {
+class AvailableFieldsBox extends React.Component {
+  containerStyles(){
+    let css = styles.preview_container;
+    if (this.props.expand){
+      css = css + ' ' + styles.expanded;
+    }
+    return css;
+  }
   render() {
-    var children = [];
-    this.props.fields.forEach((field) => {
-      children.push(<FilterBox datasetId={this.props.datasetId} filter={field.filters['default']} key={field._id} />)
-    });
     return (
-      <div>
-        {children}
+      <div className={this.containerStyles()}>
+        <div className={styles.preview_container_header}>
+          <h1>
+          {this.props.title}
+          </h1>
+        </div>
+        {this.props.children}
       </div>
     )
   }
 }
 
-class FilterBox extends React.Component {
+class FieldBox extends React.Component {
   constructor(props) {
     super(props);
     let x;
@@ -56,22 +65,49 @@ class FilterBox extends React.Component {
     handleComponents.push(<FilterHandle key='left' handlePosition='left' range={this.state.range} update={this.updateRange.bind(this)} xScale={this.state.xScale}/>);
     let preview;
     let handles;
-    if (this.props.filter.field._preload){
+    let outer_css = styles.outer;
+    if (this.props.filter.field._active){
       headerComponents.push(<FilterRange key='range' range={this.state.range} update={this.updateRange.bind(this)}/>);
-      preview = <FilterDataPreview datasetId={this.props.datasetId} filter={this.props.filter} xScale={this.state.xScale} />
+      preview = <FilterDataPreview datasetId={this.props.datasetId} field={this.props.filter.field} filter={this.props.filter} xScale={this.state.xScale} />
       handles = <FilterHandles children={handleComponents}/>
+      outer_css = outer_css + ' ' + styles.expanded
     }
-    headerComponents.push(<FilterControls key='controls' datasetId={this.props.datasetId} filter={this.props.filter}/>);
+    headerComponents.push(<FieldControls key='controls' functions={this.props.functions} field={this.props.filter.field} filter={this.props.filter}/>);
 
     return (
-      <div id={this.props.filter.id} className={styles.outer}>
-        <FilterHeader name={this.props.filter.field._name} children={headerComponents} />
+      <div id={this.props.filter.id} className={outer_css}>
+        <FilterHeader name={this.props.filter.field._id} children={headerComponents} />
         <div className={styles.main}>
           {preview}
           {handles}
         </div>
       </div>
     );
+  }
+}
+
+class FieldControls extends React.Component {
+  render() {
+    return (
+      <div className={styles.controls}>
+        <FieldSwitch fieldId={this.props.field._id} functions={this.props.functions}/>
+      </div>
+    )
+  }
+}
+
+class FieldSwitch extends React.Component {
+  constructor(props) {
+    super(props);
+  }
+  render() {
+    return (
+      <div className={styles.icon} rel={this.props.fieldId} onClick={this.props.functions.toggleActive}>
+      <svg viewBox={testSprite.viewBox}>
+        <use xlinkHref={'#'+testSprite.id} />
+      </svg>
+      </div>
+    )
   }
 }
 
@@ -84,7 +120,7 @@ const withLogProps = MyComponent => class extends MyComponent {
     return <MyComponent {...this.props} />;
   }
 }
-const EnhancedComponent = withLogProps(FilterBox);
+const EnhancedComponent = withLogProps(FieldBox);
 
 // class FilterHeader extends React.Component {
 //   render() {
@@ -127,44 +163,32 @@ class FilterRange extends React.Component {
 //   }
 // }
 
-class FilterControls extends React.Component {
-  render() {
-    return (
-      <div className={styles.controls}>
-        <FilterSwitch datasetId={this.props.datasetId} filter={this.props.filter}/>
-      </div>
-    )
-  }
-}
 
-class FilterSwitch extends React.Component {
-  render() {
-    return (
-      <svg viewBox={testSprite.viewBox} className={styles.icon}>
-        <use xlinkHref={'#'+testSprite.id} />
-      </svg>
-    )
-  }
-}
 
 
 class FilterDataPreview extends React.Component {
 
   constructor(props) {
     super(props);
-    this.state = {loading: true};
+    this.state = {
+      loading: true
+    };
   }
 
   componentDidMount() {
-    d3.json('http://localhost:8000/api/v1/field/'+this.props.datasetId+'/'+this.props.filter.field._id, (error, data) => {
-      if (error){
-        console.error(error);
-      }
-      else {
-        this.state.data = data.values;
-        this.drawChart();
-      }
-    });
+    loadValues(this.props.field,
+      (error) => { console.log(error) },
+      (data) => { this.setState({loading:false, data:data.values },this.drawChart)}
+    );
+    // d3.json('http://localhost:8000/api/v1/field/'+this.props.datasetId+'/'+this.props.filter.field._id, (error, data) => {
+    //   if (error){
+    //     console.error(error);
+    //   }
+    //   else {
+    //     this.state.data = data.values;
+    //     this.drawChart();
+    //   }
+    // });
   }
 
   shouldComponentUpdate() {
@@ -186,6 +210,7 @@ class FilterDataPreview extends React.Component {
     var width = this.svg.clientWidth;
 
     var data = this.state.data;//d3.range(1000).map(d3.randomBates(10));
+    console.log(data)
     var g = svg.append("g")
 
     var x = this.props.xScale;
@@ -284,9 +309,9 @@ class FilterHandle extends React.Component {
   }
 }
 
-export default AvailableFiltersBox;
+export default AvailableFieldsBox;
 
 export {
-  AvailableFiltersBox,
-  FilterBox
+  AvailableFieldsBox,
+  FieldBox
 }

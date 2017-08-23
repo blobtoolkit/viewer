@@ -1,14 +1,7 @@
 import React from 'react'
-import {AvailableFiltersBox} from './Filters';
+import {AvailableFieldsBox, FieldBox} from './Fields';
 import DatasetModel from '../../models/dataset';
 import utils from '../../../shared/functions/utils';
-//const myDataset = new DatasetModel('ds2')
-
-const FIELDS = [
-//  {id:'gc',name:'gc',description:'contig-wide GC proportion',active:false,inclusive:true,limits:[0.05,0.85]},
-//  {id:'length',name:'length',description:'contig length (bp)',active:false,inclusive:true,limits:[200,676517]},
-//  {id:'velvet_cov',name:'velvet_cov',description:'coverage',active:false,inclusive:true,limits:[1,15650]}
-]
 
 class Dataset extends React.Component {
 
@@ -16,9 +9,13 @@ class Dataset extends React.Component {
     super(props);
     this.state = {
       loading: true,
-      fields: FIELDS,
+      fields: [],
       dataset: new DatasetModel(this.props.match.params.datasetId)
     };
+    this.toggleActive = this.toggleActive.bind(this);
+    this.functions = {
+      toggleActive: this.toggleActive
+    }
   }
 
   componentDidMount() {
@@ -28,18 +25,51 @@ class Dataset extends React.Component {
     );
   }
 
-  render() {
-    let content;
+  toggleActive(e) {
+    let id = e.target.getAttribute('rel');
+    let fields = this.state.dataset.fields;
+    if (fields[id]){
+      fields[id]._active = !fields[id]._active;
+      this.setState({fields:fields});
+    }
+  }
+
+  renderFields(hierarchy = this.state.dataset.hierarchy, key = 'Fields'){
     if (this.state.loading == true){
-      content = <LoadingDataset />
+      return <LoadingDataset />
     }
     else {
-      content = <AvailableFiltersBox datasetId={this.props.match.params.datasetId} fields={this.state.fields}/>
+      let children = [];
+      let fields = this.state.dataset.fields;
+      let expand = true;
+      Object.keys(hierarchy).forEach((key) => {
+        if (fields[key]){
+          children.push(this.renderField(fields[key],hierarchy[key]));
+          //if (fields[key]._active){
+          //  expand = true;
+          //}
+        }
+        if (Object.keys(hierarchy[key]).length > 0) {
+          children.push(this.renderFields(hierarchy[key],key));
+        }
+      })
+      return (
+        <AvailableFieldsBox key={key} title={key} children={children} expand={expand} />
+      )
     }
+  }
+
+  renderField(field,hierarchy){
+    if (field._type == 'variable'){
+      return <FieldBox key={field._id} datasetId={this.props.match.params.datasetId} filter={field.filters['default']} functions={this.functions}/>
+    }
+  }
+
+  render() {
     return (
       <div>
         <h1>BlobToolKit React Website!</h1>
-        {content}
+        {this.renderFields()}
       </div>
     )
   }
