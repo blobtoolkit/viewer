@@ -16,7 +16,7 @@ export function selectedDataset(state = 'ds3', action) {
   }
 }
 
-export function metadata(
+function metadata(
   state = {
     isFetching: false,
     didInvalidate: false,
@@ -49,7 +49,13 @@ export function metadata(
 export function metadataByDataset(state = {}, action) {
   switch (action.type) {
     case INVALIDATE_DATASET:
+      return Object.assign({}, state, {
+        [action.id]: metadata(state[action.id], action)
+      })
     case RECEIVE_META:
+      return Object.assign({}, state, {
+        [action.id]: metadata(state[action.id], action)
+      })
     case REQUEST_META:
       return Object.assign({}, state, {
         [action.id]: metadata(state[action.id], action)

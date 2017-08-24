@@ -35,7 +35,7 @@ render(
 
 store.dispatch(fetchRepository())
 
-
+export default store;
 // store
 //   .dispatch(fetchMeta('ds3'))
 //   .then(() => console.log(store.getState()))

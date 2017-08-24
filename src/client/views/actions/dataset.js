@@ -1,4 +1,5 @@
 import fetch from 'isomorphic-fetch'
+import store from '../index'
 
 export const SELECT_DATASET = 'SELECT_DATASET'
 export function selectDataset(id) {
@@ -29,14 +30,27 @@ function receiveMeta(id, json) {
   return {
     type: RECEIVE_META,
     id,
-    meta: json,//.children.map(child => child.data),
+    meta: json,
     receivedAt: Date.now()
+  }
+}
+
+export const USE_STORED_META = 'USE_STORED_META'
+function useStoredMeta(id) {
+  return {
+    type: USE_STORED_META
   }
 }
 
 export function fetchMeta(id) {
   return function (dispatch) {
+    dispatch(selectDataset(id))
     dispatch(requestMeta(id))
+    let meta = store.getState().metadataByDataset[id].meta;
+    if (meta.hasOwnProperty('id')){
+      dispatch(useStoredMeta(id, meta))
+      return
+    }
     return fetch(`http://localhost:8000/api/v1/dataset/id/${id}`)
       .then(
         response => response.json(),
