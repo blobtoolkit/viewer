@@ -1,9 +1,10 @@
 import { combineReducers } from 'redux'
 
-import * as repositoryReducers from './repository'
-import * as datasetReducers from './dataset'
+import { repositoryReducers } from './repository'
+import { datasetReducers } from './dataset'
+import { fieldReducers } from './fields'
 
-const allReducers = Object.assign({}, repositoryReducers, datasetReducers);
+const allReducers = Object.assign({}, repositoryReducers, datasetReducers, fieldReducers);
 const rootReducer = combineReducers(allReducers);
 
 export default rootReducer

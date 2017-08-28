@@ -4,9 +4,10 @@ import PropTypes from 'prop-types'
 import styles from './Repository.scss';
 import { Link } from 'react-router-dom'
 import Spinner from './Spinner'
+import { createSelector } from 'reselect'
+import { getDatasetMeta } from '../reducers/repository'
 
-
-class AvailableDataset extends React.Component {
+class RepositoryDataset extends React.Component {
   constructor(props) {
     super(props);
   }
@@ -18,7 +19,7 @@ class AvailableDataset extends React.Component {
   render(){
     const mapStateToProps = state => {
       return {
-        meta: state.metadataByDataset[this.props.id] || {}
+          meta: getDatasetMeta(state,this.props.id)
       }
     }
     const ConnectedDataset = connect(
@@ -40,16 +41,16 @@ class AvailableDataset extends React.Component {
 
 class Dataset extends React.Component {
   render(){
-    if (!this.props.meta.meta){
+    if (!this.props.meta){
       return <Spinner/>
     }
     return (
       <div>
-        {this.props.meta.meta.name}<br/>
-        {this.props.meta.meta.records} {this.props.meta.meta.record_type}
+        {this.props.meta.name}<br/>
+        {this.props.meta.records} {this.props.meta.record_type}
       </div>
     )
   }
 }
 
-export default AvailableDataset
+export default RepositoryDataset

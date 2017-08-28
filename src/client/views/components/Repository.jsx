@@ -1,35 +1,26 @@
-import React from 'react'
-import PropTypes from 'prop-types'
+import { connect } from 'react-redux'
+import { getRepositoryIsFetching, getAvailableDatasetIds } from '../reducers/repository'
+import RepositoryDatasetList from '../components/RepositoryDatasetList'
+//import { BrowserHistory } from 'react-history'
+import { fetchMeta, selectedDataset } from '../reducers/repository'
+//import Spinner from '../components/Spinner'
 
-
-import {AvailableDatasetsBox} from './Datasets';
-import RepositoryModel from '../../models/repository';
-import * as d3 from 'd3';
-const myRepository = new RepositoryModel('default')
-
-class Repository extends React.Component {
-
-  constructor(props) {
-    super(props);
-    this.state = {
-      loading: true,
-      datasets: []
-    };
+const mapStateToProps = state => {
+  return {
+    isFetching: getRepositoryIsFetching(state),
+    datasetIds: getAvailableDatasetIds(state)
   }
-
-  componentDidMount() {
-    myRepository.loadMeta(
-      (error) => { console.log(error) },
-      (data) => { this.setState({loading:false, datasets:data}) }
-    );
-  }
-
-  render(){
-    return (
-      <AvailableDatasetsBox loading={this.state.loading} datasets={this.state.datasets}/>
-    )
-  }
-
 }
 
-export default Repository;
+const mapDispatchToProps = dispatch => {
+  return {
+    onDatasetClick: id => dispatch(selectedDataset(id)),
+    onDatasetMount: id => dispatch(fetchMeta(id))
+  }
+}
+const Repository = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(RepositoryDatasetList)
+
+export default Repository

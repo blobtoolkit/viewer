@@ -1,5 +1,5 @@
 import fetch from 'isomorphic-fetch'
-import store from '../index'
+import store from '../store'
 
 export const SELECT_DATASET = 'SELECT_DATASET'
 export function selectDataset(id) {
