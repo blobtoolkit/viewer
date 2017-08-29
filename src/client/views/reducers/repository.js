@@ -72,6 +72,13 @@ export function fetchRepository(id) {
   }
 }
 
+function clearUnderscores(obj) {
+  let str = JSON.stringify(obj);
+  str = str.replace(/"_/g,'"');
+  console.log(str)
+  return JSON.parse(str);
+}
+
 export function fetchMeta(id) {
   return dispatch => {
     dispatch(requestMeta(id))
@@ -86,9 +93,10 @@ export function fetchMeta(id) {
         response => response.json(),
         error => console.log('An error occured.', error)
       )
-      .then(json =>
+      .then(json => {
+        json = clearUnderscores(json)
         dispatch(receiveMeta({id,json}))
-      )
+      })
   }
 }
 
@@ -98,7 +106,7 @@ export const topLevelFields = handleAction(
   'ADD_TOP_LEVEL_FIELDS',
   (state, action) => {
     return (
-      action.payload.map(obj => {return obj._id || obj.id})
+      action.payload.map(obj => {return obj.id})
   )},
   []
 )
@@ -111,8 +119,30 @@ const clearFields = createAction('CLEAR_FIELDS')
 export const fields = handleActions(
   {
     ADD_FIELD: (state, action) => {
-      state.byId[action.payload._id] = action.payload;
-      state.allIds.push(action.payload._id);
+      state.byId[action.payload.id] = action.payload;
+      state.allIds.push(action.payload.id);
+      return state;
+    }
+  },
+  {
+    byId: {},
+    allIds: []
+  }
+)
+
+const addFilter = createAction('ADD_FILTER')
+export const editFilter = createAction('EDIT_FILTER')
+
+export const filters = handleActions(
+  {
+    ADD_FILTER: (state, action) => {
+      state.byId[action.payload.id] = action.payload;
+      state.allIds.push(action.payload.id);
+      return state;
+    },
+    EDIT_FILTER: (state, action) => {
+      console.log(action);
+      state.byId[action.payload.id] = action.payload;
       return state;
     }
   },
@@ -130,17 +160,22 @@ const addAllFields = (dispatch,fields,flag,meta) => {
   fields.forEach(field => {
     if (meta){
       Object.keys(meta).forEach(key => {
-        if (key != '_children' && key != '_data' && !field.hasOwnProperty(key)){
+        if (key != 'children' && key != 'data' && !field.hasOwnProperty(key)){
           field[key] = meta[key];
         }
       })
     }
     dispatch(addField(field))
     if (field._children){
-      addAllFields(dispatch,field._children,false,field)
+      addAllFields(dispatch,field.children,false,field)
+    }
+    else {
+      if (field.type == 'variable'){
+        dispatch(addFilter({id:field.id,range:field.range}))
+      }
     }
     if (field._data){
-      addAllFields(dispatch,field._data,false,field)
+      addAllFields(dispatch,field.data,false,field)
     }
   })
 
@@ -168,9 +203,13 @@ export const selectedDataset = handleAction(
 export const getDatasetMeta = (state,id) => deep(state,['availableDatasets','byId',id]) || {}
 export const getDatasetIsFetching = (state) => (deep(state,['selectedDataset']) == null) || false
 export const getTopLevelFields = (state) => deep(state,['topLevelFields']) || []
+export const getFieldsByParent = (state,id) => deep(state,['fields','byId',id,'children']) || []
+export const getFieldMetadata = (state,id) => deep(state,['fields','byId',id]) || {}
+export const getFilterMetadata = (state,id) => deep(state,['filters','byId',id]) || {}
 
 export const repositoryReducers = {
   fields,
+  filters,
   topLevelFields,
   selectedDataset,
   availableDatasets,

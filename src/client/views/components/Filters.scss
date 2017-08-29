@@ -1,11 +1,12 @@
 @import 'colors';
 
 .outer {
-  position:relative;
-  width:30em;
+  position:absolute;
+  top:2em;
+  left:0;
+  width:100%;
   height:10em;
-  margin:1em;
-  background-color: $shadeColor;
+  background-color: $clearColor;
   user-select:none;
 }
 
@@ -18,6 +19,8 @@
   line-height:2em;
   background-color: $darkColor;
   color: $paleColor;
+  box-sizing:border-box;
+  border-bottom:1px solid $darkColor;
 
   h1 {
     font-size:1em;
@@ -92,10 +95,10 @@
 
 .resizables_container {
   position:absolute;
-  top:0;
+  top:2em;
   left:0;
   width:100%;
-  height:100%;
+  height:8em;
   overflow:hidden;
   pointer-events:none;
 }
@@ -111,7 +114,9 @@
 
 .handle {
   pointer-events: auto;
+  position:absolute;
   opacity: 1;
+  height:8em;
   width:3em!important;
 }
 

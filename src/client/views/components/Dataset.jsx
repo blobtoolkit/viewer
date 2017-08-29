@@ -1,7 +1,13 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import { getDatasetIsFetching, loadDataset, getTopLevelFields } from '../reducers/repository'
-import Spinner from '../components/Spinner'
+import {
+  getDatasetIsFetching,
+  loadDataset,
+  getTopLevelFields,
+  getFieldsByParent
+} from '../reducers/repository'
+import Spinner from './Spinner'
+import Field from './Field'
 
 
 const mapStateToProps = state => {
@@ -30,7 +36,7 @@ class Overview extends React.Component {
     if (this.props.isFetching){
       return <Spinner/>
     }
-    let fields = this.props.topLevelFields.map(name => <div key={name}>{name}</div>)
+    let fields = this.props.topLevelFields.map(id => <Field key={id} fieldId={id} expanded={true}>{id}</Field>)
     return (
       <div>
         Content
