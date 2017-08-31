@@ -93,7 +93,7 @@
   }
 }
 
-.resizables_container {
+.handles_container {
   position:absolute;
   top:2em;
   left:0;
@@ -116,16 +116,15 @@
   pointer-events: auto;
   position:absolute;
   opacity: 1;
-  height:8em;
-  width:3em!important;
+  height:100%;
+  margin:0 -2em;
+  width:4em!important;
 }
 
 .handle.left {
-  right:-1em!important;
-  @include fadeFromPercent(left,$darkColor,33.3%);
+  @include fadeFromPercent(left,$darkColor,50%);
 }
 
 .handle.right {
-  right:-2em!important;
-  @include fadeFromPercent(right,$darkColor,33.3%);
+  @include fadeFromPercent(right,$darkColor,50%);
 }

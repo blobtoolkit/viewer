@@ -1,12 +1,11 @@
 import React from 'react'
 import styles from './Filters.scss';
 //import Resizable from 'react-resizable-box'
-import Draggable from 'react-draggable'
+import { DraggableCore } from 'react-draggable'
 
 class FilterDisplayRange extends React.Component {
 
   render(){
-    console.log(this.props)
     return (
       <FilterHandles {...this.props}>
         <FilterHandle key='right' handlePosition='right' range={this.props.filterRange} update={this.props.onUpdateRange} xScale={this.props.xScale}/>
@@ -19,7 +18,7 @@ class FilterDisplayRange extends React.Component {
 class FilterHandles extends React.Component {
   render() {
     return (
-      <div className={styles.resizables_container}>
+      <div className={styles.handles_container}>
         {this.props.children}
       </div>
     )
@@ -27,55 +26,39 @@ class FilterHandles extends React.Component {
 }
 
 class FilterHandle extends React.Component {
-  render(){
-    return (
-      <Draggable axis='x' bounds='parent'>
-        <div className={styles.handle+' '+styles[this.props.handlePosition]}></div>
-      </Draggable>
-    )
+  constructor(props) {
+    super(props);
+    this.state = {offsetX:0}
   }
-}
-
-/*class FilterHandle extends React.Component {
   bound(){
     return this.props.handlePosition == 'right' ? 1 : 0
   }
-  boundPercent(){
-    return this.props.xScale(this.props.range[this.bound()])/4;
+  boundPx(){
+    return this.props.xScale(this.props.range[this.bound()]);
   }
   updateRange(value,bound) {
     let range = this.props.range;
     range[bound] = value;
-    this.props.update(range)
+    this.props.update(this.props.filterId,range)
   }
-  render() {
-    console.log(this.props)
+  render(){
     return (
-      <Resizable className={styles.resizable}
-        width={this.boundPercent() + '%'}
-        bounds={'parent'}
-        height={'100%'}
-        handlerClasses={{
-          right: `${styles.handle} ${styles[this.props.handlePosition]}`
+      <DraggableCore
+        axis='x'
+        bounds='parent'
+        onStop={(e)=>{
+          this.updateRange(this.props.xScale.invert(e.x),this.bound())
         }}
-        enable={{top: false,
-          right: true,
-          bottom: false,
-          left: false,
-          topRight: false,
-          bottomRight: false,
-          bottomLeft: false,
-          topLeft: false}}
-        onResize={
-          (e,direction,ref,delta) => {}
-        }
-        onResizeStop={
-          (e,direction,ref,delta) => this.updateRange(this.props.xScale.invert(ref.clientWidth),this.bound())
-        }
-      />
+        onDrag={(e)=>{
+          this.setState({offsetX:e.x-this.boundPx()})
+        }}
+        >
+        <div style={{left: (this.boundPx()+this.state.offsetX)+'px'}}
+        className={styles.handle+' '+styles[this.props.handlePosition]}></div>
+      </DraggableCore>
     )
   }
-}*/
+}
 
 
 export default FilterDisplayRange

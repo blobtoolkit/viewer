@@ -2,41 +2,42 @@ import React from 'react'
 import styles from './Filters.scss';
 import FilterBox from './FilterBox'
 import { connect } from 'react-redux'
-import { getFilterMetadata } from '../reducers/repository'
+import { makeGetFilterMetadata } from '../reducers/repository'
 import { editFilter } from '../reducers/repository'
 
 class Filter extends React.Component {
   constructor(props) {
     super(props);
-    this.mapStateToProps = state => {
-      let filterLimit = this.props.range
-      let filterId = this.props.fieldId
-      let xScale = this.props.xScale
-      let meta = getFilterMetadata(state,filterId)
-      let filterType = 'range'
-      let filterRange = meta.range || [1,10];
-      return {
-        filterId,
-        filterRange,
-        filterLimit,
-        filterType,
-        xScale
+
+    this.makeMapStateToProps = () => {
+      const getFilterMetadata = makeGetFilterMetadata()
+      return (state, props) => {
+        let meta = getFilterMetadata(state, props)
+        return {
+          filterLimit: this.props.range,
+          filterId: this.props.fieldId,
+          xScale: this.props.xScale,
+          filterType: 'range',
+          filterRange: meta.range || [1,10]
+        }
       }
     }
     this.mapDispatchToProps = dispatch => {
       return {
-        onUpdateRange: range => dispatch(editFilter({id:'length',range:range}))
+        onUpdateRange: (id,range) => dispatch(editFilter({id:id,range:range}))
       }
     }
   }
 
   render(){
     const ConnectedFilter = connect(
-      this.mapStateToProps,
+      this.makeMapStateToProps,
       this.mapDispatchToProps
     )(FilterBox)
 
-    return <ConnectedFilter />
+    return (
+      <ConnectedFilter filterId={this.props.fieldId}/>
+    )
   }
 }
 

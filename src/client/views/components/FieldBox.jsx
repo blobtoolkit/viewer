@@ -1,6 +1,7 @@
 import React from 'react'
 import styles from './Fields.scss';
 import FieldBoxHeader from './FieldBoxHeader'
+import FieldRawDataPreview from './FieldRawDataPreview'
 import Filter from './Filter'
 import { getFieldMetadata, getFilterMetadata } from '../reducers/repository'
 
@@ -24,6 +25,7 @@ class FieldBox extends React.Component {
       <div id={this.props.fieldId} className={outer_css} onClick={()=>{}}>
         <FieldBoxHeader {...this.props} onHeaderClick={()=>{this.toggleState('expanded')}}/>
         <div className={styles.main}>
+          <FieldRawDataPreview {...this.props}/>
         </div>
         <Filter {...this.props} />
       </div>

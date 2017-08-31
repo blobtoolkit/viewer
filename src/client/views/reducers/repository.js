@@ -75,7 +75,6 @@ export function fetchRepository(id) {
 function clearUnderscores(obj) {
   let str = JSON.stringify(obj);
   str = str.replace(/"_/g,'"');
-  console.log(str)
   return JSON.parse(str);
 }
 
@@ -83,7 +82,6 @@ export function fetchMeta(id) {
   return dispatch => {
     dispatch(requestMeta(id))
     let json = deep(store.getState(),['availableDatasets','byId',id]);
-    console.log(store.getState())
     if (json && json.records){
       dispatch(useStoredMeta(json))
       return Promise.resolve(useStoredMeta(json));
@@ -152,6 +150,50 @@ export const filters = handleActions(
   }
 )
 
+const requestRawData = createAction('REQUEST_RAW_DATA')
+const receiveRawData = createAction('RECEIVE_RAW_DATA')
+const useStoredRawData = createAction('USE_STORED_RAW_DATA')
+
+export const rawData = handleActions(
+  {
+    REQUEST_RAW_DATA: (state, action) => (
+      state
+    ),
+    RECEIVE_RAW_DATA: (state, action) => {
+      state.byId[action.payload.id] = action.payload.json;
+      state.allIds.push(action.payload.id);
+      return state;
+    },
+    USE_STORED_RAW_DATA: (state, action) => (
+      state
+    )
+  },
+  {
+    byId: {},
+    allIds: []
+  }
+)
+
+export function fetchRawData(id) {
+   return dispatch => {
+     dispatch(requestRawData(id))
+     let json = deep(store.getState(),['rawData','byId',id]);
+     if (json && json.records){
+       dispatch(useStoredRawData(json))
+       return Promise.resolve(useStoredRawData(json));
+     }
+     let datasetId = deep(store.getState(),['selectedDataset']);
+     return fetch(`http://localhost:8000/api/v1/field/${datasetId}/${id}`)
+       .then(
+         response => response.json(),
+         error => console.log('An error occured.', error)
+       )
+       .then(json => {
+         dispatch(receiveRawData({id,json}))
+       })
+   }
+}
+
 const addAllFields = (dispatch,fields,flag,meta) => {
   if (flag) {
     dispatch(clearFields)
@@ -171,7 +213,10 @@ const addAllFields = (dispatch,fields,flag,meta) => {
     }
     else {
       if (field.type == 'variable'){
-        dispatch(addFilter({id:field.id,range:field.range}))
+        dispatch(addFilter({id:field.id,range:field.range.slice(0)}))
+      }
+      if (field.preload == true){
+        dispatch(fetchRawData(field.id))
       }
     }
     if (field._data){
@@ -183,10 +228,10 @@ const addAllFields = (dispatch,fields,flag,meta) => {
 
 export function loadDataset(id) {
   return function (dispatch) {
+    dispatch(selectDataset(id))
     dispatch(fetchMeta(id)).then(() => {
       let meta = deep(store.getState(),['availableDatasets','byId',id])
       addAllFields(dispatch,meta.fields,1)
-      dispatch(selectDataset(id))
     })
   }
 }
@@ -205,10 +250,37 @@ export const getDatasetIsFetching = (state) => (deep(state,['selectedDataset']) 
 export const getTopLevelFields = (state) => deep(state,['topLevelFields']) || []
 export const getFieldsByParent = (state,id) => deep(state,['fields','byId',id,'children']) || []
 export const getFieldMetadata = (state,id) => deep(state,['fields','byId',id]) || {}
-export const getFilterMetadata = (state,id) => deep(state,['filters','byId',id]) || {}
+//export const getFilterMetadata = (state,id) => deep(state,['filters','byId',id]) || {}
+
+const getFilterMetadata = (state, props) => {
+  let id = props.filterId
+  const filterMetadataById = deep(state,['filters','byId',id]) || {}
+  return filterMetadataById
+}
+//const getFilterMetadata = (state, id) => deep(state,['fields','byId',id]) || {}
+// export const makeGetFilterMetadata = () => createSelector(
+//   getFilterMetadata,
+//   (meta) => ({ meta })
+// )
+export const makeGetFilterMetadata = () => createSelector(
+  [ getFilterMetadata ],
+  (meta) => meta
+)
+
+const getFieldRawData = (state, props) => {
+  let id = props.fieldId
+  const fieldRawDataById = deep(state,['rawData','byId',id]) || {}
+  return fieldRawDataById
+}
+
+export const makeGetFieldRawData = () => createSelector(
+  [ getFieldRawData ],
+  (data) => data
+)
 
 export const repositoryReducers = {
   fields,
+  rawData,
   filters,
   topLevelFields,
   selectedDataset,

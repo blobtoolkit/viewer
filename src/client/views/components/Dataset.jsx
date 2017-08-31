@@ -27,11 +27,9 @@ const mapDispatchToProps = dispatch => {
 class Overview extends React.Component {
 
   componentDidMount(){
-    console.log(this.props.match.params.datasetId)
     this.props.onMount(this.props.match.params.datasetId)
   }
   render(){
-    console.log(this.props)
 
     if (this.props.isFetching){
       return <Spinner/>

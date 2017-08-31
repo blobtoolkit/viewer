@@ -6,9 +6,25 @@ class FilterControlRange extends React.Component {
    render() {
      return (
       <div className={styles.range}>
-        <input type='text' className={styles.range_input} value={this.props.filterRange[0]} onChange={(e)=>{this.props.update(e.target.value,0)}}/>
+        <input
+          type='text'
+          className={styles.range_input}
+          defaultValue={this.props.filterRange[0]}
+          onBlur={(e)=>{
+            let range = this.props.filterRange;
+            range[0] = e.target.value;
+            this.props.onUpdateRange(this.props.filterId,range)
+          }} />
         &nbsp;:&nbsp;
-        <input type='text' className={styles.range_input} value={this.props.filterRange[1]} onChange={(e)=>{this.props.update(e.target.value,1)}}/>
+        <input
+          type='text'
+          className={styles.range_input}
+          defaultValue={this.props.filterRange[1]}
+          onBlur={(e)=>{
+            let range = this.props.filterRange;
+            range[1] = e.target.value;
+            this.props.onUpdateRange(this.props.filterId,range)
+          }} />
       </div>
     )
   }
