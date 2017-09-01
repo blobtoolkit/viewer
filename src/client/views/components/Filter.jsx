@@ -13,14 +13,9 @@ class Filter extends React.Component {
     this.makeMapStateToProps = () => {
       const getFilterMetadata = makeGetFilterMetadata()
       return (state, props) => {
-        let meta = getFilterMetadata(state, props)
-        return {
-          filterLimit: this.props.range,
-          filterId: this.props.fieldId,
-          xScale: this.props.xScale,
-          filterType: 'range',
-          filterRange: meta.range || [1,10]
-        }
+        let ret = getFilterMetadata(state, props.filterId)
+        console.log(ret)
+        return ret
       }
     }
     this.mapDispatchToProps = dispatch => {

@@ -2,6 +2,7 @@ import { createAction, handleAction, handleActions } from 'redux-actions'
 import { createSelector } from 'reselect'
 import deep from 'deep-get-set'
 import store from '../store'
+import { getFieldMetadata } from './field'
 
 
 export const addFilter = createAction('ADD_FILTER')
@@ -27,19 +28,23 @@ export const filters = handleActions(
 )
 
 
-const getFilterMetadata = (state, props) => {
-  let id = props.filterId
-  const filterMetadataById = deep(state,['filters','byId',id]) || {}
-  return filterMetadataById
+const getFilterMetadata = (state, id) => {
+  const filterMeta = state.filters.byId[id] || {}//deep(state,['filters','byId',id]) || {}
+  return {
+    filterId: id,
+    filterType: 'range',
+    filterRange: filterMeta.range || [1,10]
+  }
 }
-//const getFilterMetadata = (state, id) => deep(state,['fields','byId',id]) || {}
-// export const makeGetFilterMetadata = () => createSelector(
-//   getFilterMetadata,
-//   (meta) => ({ meta })
-// )
+
 export const makeGetFilterMetadata = () => createSelector(
-  [ getFilterMetadata ],
-  (meta) => meta
+  [ getFilterMetadata, getFieldMetadata ],
+  (filterMeta,fieldMeta) => {
+    filterMeta.filterLimit = fieldMeta.range || [1,10]
+    filterMeta.xScale = fieldMeta.xScale
+    console.log(fieldMeta.xScale)
+    return filterMeta
+  }
 )
 
 

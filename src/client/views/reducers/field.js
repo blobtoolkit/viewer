@@ -3,6 +3,7 @@ import { createSelector } from 'reselect'
 import deep from 'deep-get-set'
 import store from '../store'
 import { addFilter } from './filter'
+import * as d3 from 'd3'
 
 const addTopLevelFields = createAction('ADD_TOP_LEVEL_FIELDS')
 
@@ -32,6 +33,23 @@ export const fields = handleActions(
     byId: {},
     allIds: []
   }
+)
+
+export const getFieldMetadata = (state, id) => {
+  const meta = state.fields.byId[id] || {}//deep(state,['fields','byId',props.fieldId]) || {}
+  let range = meta.range || [1,10];
+  let xScale = d3[meta.scale || 'scaleLinear']()
+  xScale.domain(range)
+  xScale.range([0,400])
+  return {
+    meta,
+    xScale,
+    range
+  }
+}
+export const makeGetFieldMetadata = () => createSelector(
+  getFieldMetadata,
+  meta => meta
 )
 
 const requestRawData = createAction('REQUEST_RAW_DATA')
@@ -113,7 +131,7 @@ export const addAllFields = (dispatch,fields,flag,meta) => {
 
 export const getTopLevelFields = (state) => deep(state,['topLevelFields']) || []
 export const getFieldsByParent = (state,id) => deep(state,['fields','byId',id,'children']) || []
-export const getFieldMetadata = (state,id) => deep(state,['fields','byId',id]) || {}
+//export const getFieldMetadata = (state,id) => deep(state,['fields','byId',id]) || {}
 
 
 const getFieldRawData = (state, props) => {
