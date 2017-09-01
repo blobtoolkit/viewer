@@ -1,7 +1,7 @@
 import React from 'react'
 import styles from './Fields.scss'
 import { connect } from 'react-redux'
-import { makeGetFieldRawData } from '../reducers/repository'
+import { makeGetFieldRawData } from '../reducers/field'
 import * as d3 from 'd3'
 import Spinner from './Spinner'
 

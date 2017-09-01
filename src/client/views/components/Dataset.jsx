@@ -2,10 +2,12 @@ import React from 'react'
 import { connect } from 'react-redux'
 import {
   getDatasetIsFetching,
-  loadDataset,
+  loadDataset
+} from '../reducers/repository'
+import {
   getTopLevelFields,
   getFieldsByParent
-} from '../reducers/repository'
+} from '../reducers/field'
 import Spinner from './Spinner'
 import Field from './Field'
 

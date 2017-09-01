@@ -1,10 +1,16 @@
 import { combineReducers } from 'redux'
 
 import { repositoryReducers } from './repository'
-import { datasetReducers } from './dataset'
-import { fieldReducers } from './fields'
+import { fieldReducers } from './field'
+import { filterReducers } from './filter'
 
-const allReducers = Object.assign({}, repositoryReducers, datasetReducers, fieldReducers);
+const allReducers = Object.assign(
+  {},
+  repositoryReducers,
+  fieldReducers,
+  filterReducers
+);
+
 const rootReducer = combineReducers(allReducers);
 
 export default rootReducer

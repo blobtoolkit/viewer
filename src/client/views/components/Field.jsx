@@ -2,7 +2,7 @@ import React from 'react'
 import styles from './Fields.scss';
 import FieldBox from './FieldBox'
 import { connect } from 'react-redux'
-import { getFieldMetadata } from '../reducers/repository'
+import { getFieldMetadata } from '../reducers/field'
 import * as d3 from 'd3'
 
 

@@ -2,8 +2,9 @@ import React from 'react'
 import styles from './Filters.scss';
 import FilterBox from './FilterBox'
 import { connect } from 'react-redux'
-import { makeGetFilterMetadata } from '../reducers/repository'
-import { editFilter } from '../reducers/repository'
+import {
+  makeGetFilterMetadata,
+  editFilter } from '../reducers/filter'
 
 class Filter extends React.Component {
   constructor(props) {
