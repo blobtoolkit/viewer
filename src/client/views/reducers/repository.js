@@ -117,11 +117,32 @@ export const selectedDataset = handleAction(
   null
 )
 
+export const filterList = createAction('FILTER_LIST')
+
+export const filteredList = handleAction(
+  'FILTER_LIST',
+  (state, action) => {
+    console.log(action)
+    return action.payload
+  },
+  []
+)
+export const getFilteredList = (state) => (deep(state,['filteredList']))
+
+export function filterToList(val) {
+  return function(dispatch){
+    console.log(val)
+    dispatch(filterList([1,2,4,6,8,13,56,89,258]))
+  }
+}
+
+
 export const getDatasetMeta = (state,id) => deep(state,['availableDatasets','byId',id]) || {}
 export const getDatasetIsFetching = (state) => (deep(state,['selectedDataset']) == null) || false
 
 export const repositoryReducers = {
   selectedDataset,
   availableDatasets,
+  filteredList,
   fetchRepository
 }

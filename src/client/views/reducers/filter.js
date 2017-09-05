@@ -1,8 +1,10 @@
 import { createAction, handleAction, handleActions } from 'redux-actions'
-import { createSelector } from 'reselect'
+import { createSelector, createSelectorCreator } from 'reselect'
 import deep from 'deep-get-set'
+import shallow from 'shallowequal'
 import store from '../store'
-import { getFieldMetadata } from './field'
+import { getFieldMetadata, getDetailsForFieldId } from './field'
+import { filterList } from './repository'
 
 
 export const addFilter = createAction('ADD_FILTER')
@@ -16,9 +18,11 @@ export const filters = handleActions(
       return state;
     },
     EDIT_FILTER: (state, action) => {
-      console.log(action);
-      state.byId[action.payload.id] = action.payload;
-      return state;
+      let newState = Object.assign({}, state);
+      newState.byId[action.payload.id] = action.payload;
+      return newState;
+      // console.log(state.byId.gc.range)
+      // return state
     }
   },
   {
@@ -42,11 +46,46 @@ export const makeGetFilterMetadata = () => createSelector(
   (filterMeta,fieldMeta) => {
     filterMeta.filterLimit = fieldMeta.range || [1,10]
     filterMeta.xScale = fieldMeta.xScale
-    console.log(fieldMeta.xScale)
     return filterMeta
   }
 )
 
+const createSelectorForFilterId = createSelectorCreator((resultFunc) => {
+  const memoAll = {};
+  return (filterId, ...args) => {
+    if (!memoAll[filterId]) {
+      memoAll[filterId] = {};
+    }
+    const memo = memoAll[filterId];
+    if (!shallow(memo.lastArgs, args)) {
+      memo.lastArgs = args;
+      memo.lastResult = resultFunc(...args);
+    }
+    //else {
+    //  console.log('same')
+    //}
+    return memo.lastResult;
+  };
+});
+
+const _getFilterIdAsMemoKey = (state, filterId) => filterId;
+const getMetaDataForFilter = (state, filterId) => state.filters.byId[filterId];
+
+export const getDetailsForFilterId = createSelectorForFilterId(
+  _getFilterIdAsMemoKey,
+  getMetaDataForFilter,
+  (state,filterId) => getDetailsForFieldId(state,filterId),
+  (filterMeta = {}, fieldMeta = {}) => {
+    let obj = {
+      filterId: filterMeta.id,
+      filterType: 'range',
+      filterRange: filterMeta.range ? filterMeta.range.slice(0) : fieldMeta.range ? fieldMeta.range.slice(0) : [1,10],
+      filterLimit: fieldMeta.range ? fieldMeta.range.slice(0) : [1,10],
+      xScale: fieldMeta.xScale
+    }
+    return obj
+  }
+);
 
 export const filterReducers = {
   filters

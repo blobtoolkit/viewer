@@ -14,6 +14,7 @@ class FieldBox extends React.Component {
     let obj = {};
     obj[key] = this.state.hasOwnProperty(key) ? !this.state[key] : true;
     this.setState(obj);
+    //this.props.applyFilter();
   }
   render(){
     let outer_css = styles.outer

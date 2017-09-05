@@ -58,6 +58,8 @@
     "safeobj": "^1.0.2",
     "sass-loader": "^6.0.6",
     "sass-web-fonts": "^2.0.2",
+    "shallow-equal": "^1.0.0",
+    "shallowequal": "^1.0.2",
     "style-loader": "^0.18.2",
     "supertest": "^3.0.0",
     "svg-sprite-loader": "^3.2.4",

@@ -1,7 +1,7 @@
 import React from 'react'
 import styles from './Fields.scss'
 import { connect } from 'react-redux'
-import { makeGetFieldRawData } from '../reducers/field'
+import { makeGetFieldRawData, getRawDataForFieldId } from '../reducers/field'
 import * as d3 from 'd3'
 import Spinner from './Spinner'
 
@@ -9,15 +9,23 @@ import Spinner from './Spinner'
 class FieldRawDataPreview extends React.Component {
   constructor(props) {
     super(props);
-    this.makeMapStateToProps = () => {
-      const getFieldRawData = makeGetFieldRawData()
-      return (state, props) => {
-        let data = getFieldRawData(state, props)
-        return {
-          fieldId: this.props.fieldId,
-          xScale: this.props.xScale,
-          values: data.values || []
-        }
+    // this.makeMapStateToProps = () => {
+    //   const getFieldRawData = makeGetFieldRawData()
+    //   return (state, props) => {
+    //     let data = getFieldRawData(state, props)
+    //     return {
+    //       fieldId: this.props.fieldId,
+    //       xScale: this.props.xScale,
+    //       values: data.values || []
+    //     }
+    //   }
+    // }
+    this.mapStateToProps = state => {
+      let rawData = getRawDataForFieldId(state, this.props.fieldId)
+      return {
+        fieldId: this.props.fieldId,
+        xScale: this.props.xScale,
+        values: rawData.values || []
       }
     }
     this.mapDispatchToProps = dispatch => {
@@ -28,7 +36,8 @@ class FieldRawDataPreview extends React.Component {
 
   render(){
     const ConnectedRawDataPreview = connect(
-      this.makeMapStateToProps,
+      // this.makeMapStateToProps,
+      this.mapStateToProps,
       this.mapDispatchToProps
     )(RawDataPreview)
     return <ConnectedRawDataPreview {...this.props}/>
@@ -41,8 +50,13 @@ class RawDataPreview extends React.Component {
     if (this.props.values && this.props.values.length > 0) this.drawChart();
   }
 
+  componentDidUpdate() {
+    if (this.props.values && this.props.values.length > 0) this.drawChart();
+  }
+
+
   shouldComponentUpdate() {
-  //  return false;
+    return true;
   }
 
   componentWillUnmount() {

@@ -8,8 +8,8 @@ class FilterDisplayRange extends React.Component {
   render(){
     return (
       <FilterHandles {...this.props}>
-        <FilterHandle key='right' handlePosition='right' range={this.props.filterRange} update={this.props.onUpdateRange} xScale={this.props.xScale}/>
-        <FilterHandle key='left' handlePosition='left' range={this.props.filterRange} update={this.props.onUpdateRange} xScale={this.props.xScale}/>
+        <FilterHandle {...this.props} key='right' handlePosition='right' />
+        <FilterHandle {...this.props} key='left' handlePosition='left' />
       </FilterHandles>
     )
   }
@@ -34,12 +34,13 @@ class FilterHandle extends React.Component {
     return this.props.handlePosition == 'right' ? 1 : 0
   }
   boundPx(){
-    return this.props.xScale(this.props.range[this.bound()]);
+    return this.props.xScale(this.props.filterRange[this.bound()]);
   }
   updateRange(value,bound) {
-    let range = this.props.range;
+    let range = this.props.filterRange.slice(0);
     range[bound] = value;
-    this.props.update(this.props.filterId,range)
+    this.props.onUpdateRange(this.props.filterId,range)
+    this.setState({offsetX:0})
   }
   render(){
     return (

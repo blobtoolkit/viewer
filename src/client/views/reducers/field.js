@@ -1,6 +1,7 @@
 import { createAction, handleAction, handleActions } from 'redux-actions'
-import { createSelector } from 'reselect'
+import { createSelector, createSelectorCreator } from 'reselect'
 import deep from 'deep-get-set'
+import shallow from 'shallowequal'
 import store from '../store'
 import { addFilter } from './filter'
 import * as d3 from 'd3'
@@ -35,20 +36,69 @@ export const fields = handleActions(
   }
 )
 
+const hashCode = (json) => {
+  let string = JSON.stringify(json)
+  let hash = 0, i, chr;
+  if (string.length === 0) return hash;
+  for (i = 0; i < string.length; i++) {
+    chr   = string.charCodeAt(i);
+    hash  = ((hash << 5) - hash) + chr;
+    hash |= 0; // Convert to 32bit integer
+  }
+  return hash;
+};
+
+// https://github.com/reactjs/reselect/issues/100
+const createSelectorForFieldId = createSelectorCreator((resultFunc) => {
+  const memoAll = {};
+  return (fieldId, ...args) => {
+    if (!memoAll[fieldId]) {
+      memoAll[fieldId] = {};
+    }
+    const memo = memoAll[fieldId];
+    if (!shallow(memo.lastArgs, args)) {
+      memo.lastArgs = args;
+      memo.lastResult = resultFunc(...args);
+    }
+    return memo.lastResult;
+  };
+});
+
+const _getFieldIdAsMemoKey = (state, fieldId) => fieldId;
+export const getMetaDataForField = (state, fieldId) => state.fields.byId[fieldId];
+
+export const getDetailsForFieldId = createSelectorForFieldId(
+  _getFieldIdAsMemoKey,
+  getMetaDataForField,
+  (meta = {}) => {
+    let range = meta.range || [1,10];
+    let xScale = d3[meta.scale || 'scaleLinear']()
+    xScale.domain(range)
+    xScale.range([0,400])
+    let obj = {
+      meta,
+      xScale,
+      range
+    }
+    return obj
+  }
+);
+
 export const getFieldMetadata = (state, id) => {
   const meta = state.fields.byId[id] || {}//deep(state,['fields','byId',props.fieldId]) || {}
   let range = meta.range || [1,10];
   let xScale = d3[meta.scale || 'scaleLinear']()
   xScale.domain(range)
   xScale.range([0,400])
-  return {
+  let obj = {
     meta,
     xScale,
     range
   }
+  return obj
 }
 export const makeGetFieldMetadata = () => createSelector(
-  getFieldMetadata,
+  [ getFieldMetadata ],
   meta => meta
 )
 
@@ -144,6 +194,31 @@ export const makeGetFieldRawData = () => createSelector(
   [ getFieldRawData ],
   (data) => data
 )
+
+const createRawDataSelectorForFieldId = createSelectorCreator((resultFunc) => {
+  const memoAll = {};
+  return (fieldId, ...args) => {
+    if (!memoAll[fieldId]) {
+      memoAll[fieldId] = {};
+    }
+    const memo = memoAll[fieldId];
+    if (!shallow(memo.lastArgs, args)) {
+      memo.lastArgs = args;
+      memo.lastResult = resultFunc(...args);
+    }
+    return memo.lastResult;
+  };
+});
+
+const getRawDataForField = (state, fieldId) => state.rawData.byId[fieldId];
+
+export const getRawDataForFieldId = createRawDataSelectorForFieldId(
+  _getFieldIdAsMemoKey,
+  getRawDataForField,
+  (rawData = {}) => {
+    return rawData
+  }
+);
 
 export const fieldReducers = {
   fields,

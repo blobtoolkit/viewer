@@ -3,36 +3,40 @@ import styles from './Filters.scss';
 import FilterBox from './FilterBox'
 import { connect } from 'react-redux'
 import {
-  makeGetFilterMetadata,
+//  makeGetFilterMetadata,
+  getDetailsForFilterId,
   editFilter } from '../reducers/filter'
 
 class Filter extends React.Component {
   constructor(props) {
     super(props);
 
-    this.makeMapStateToProps = () => {
-      const getFilterMetadata = makeGetFilterMetadata()
+    // this.makeMapStateToProps = () => {
+    //   const getFilterMetadata = makeGetFilterMetadata()
+    //   return (state, props) => {
+    //     return getFilterMetadata(state, props.filterId)
+    //   }
+    // }
+    this.mapStateToProps = () => {
       return (state, props) => {
-        let ret = getFilterMetadata(state, props.filterId)
-        console.log(ret)
-        return ret
+        return getDetailsForFilterId(state, props.filterId)
       }
     }
     this.mapDispatchToProps = dispatch => {
       return {
-        onUpdateRange: (id,range) => dispatch(editFilter({id:id,range:range}))
+        onUpdateRange: (id,range) => {return dispatch(editFilter({id:id,range:range}))}
       }
     }
   }
 
   render(){
     const ConnectedFilter = connect(
-      this.makeMapStateToProps,
+      //this.makeMapStateToProps,
+      this.mapStateToProps,
       this.mapDispatchToProps
     )(FilterBox)
-
     return (
-      <ConnectedFilter filterId={this.props.fieldId}/>
+      <ConnectedFilter filterId={this.props.fieldId} {...this.props}/>
     )
   }
 }
