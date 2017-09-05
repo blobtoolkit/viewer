@@ -36,7 +36,7 @@ class Overview extends React.Component {
     if (this.props.isFetching){
       return <Spinner/>
     }
-    let fields = this.props.topLevelFields.map(id => <Field key={id} fieldId={id} expanded={true}>{id}</Field>)
+    let fields = this.props.topLevelFields.map(id => <Field key={id} fieldId={id}>{id}</Field>)
     return (
       <div>
         Content

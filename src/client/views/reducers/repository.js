@@ -1,5 +1,6 @@
 import { createAction, handleAction, handleActions } from 'redux-actions'
 import { createSelector } from 'reselect'
+import immutableUpdate from 'immutable-update';
 import deep from 'deep-get-set'
 import store from '../store'
 import { addAllFields } from './field'
@@ -47,10 +48,11 @@ export const availableDatasets = handleActions(
     REQUEST_META: (state, action) => (
       state
     ),
-    RECEIVE_META: (state, action) => {
-      state.byId[action.payload.id] = action.payload.json;
-      return state;
-    }
+    RECEIVE_META: (state, action) => (
+      immutableUpdate(state, {
+        byId: { [action.payload.id]: action.payload.json }
+      })
+    )
   },
   defaultState()
 )
@@ -122,7 +124,6 @@ export const filterList = createAction('FILTER_LIST')
 export const filteredList = handleAction(
   'FILTER_LIST',
   (state, action) => {
-    console.log(action)
     return action.payload
   },
   []
@@ -131,7 +132,6 @@ export const getFilteredList = (state) => (deep(state,['filteredList']))
 
 export function filterToList(val) {
   return function(dispatch){
-    console.log(val)
     dispatch(filterList([1,2,4,6,8,13,56,89,258]))
   }
 }

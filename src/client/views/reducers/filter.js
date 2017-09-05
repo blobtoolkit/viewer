@@ -1,5 +1,6 @@
 import { createAction, handleAction, handleActions } from 'redux-actions'
 import { createSelector, createSelectorCreator } from 'reselect'
+import immutableUpdate from 'immutable-update';
 import deep from 'deep-get-set'
 import shallow from 'shallowequal'
 import store from '../store'
@@ -12,16 +13,17 @@ export const editFilter = createAction('EDIT_FILTER')
 
 export const filters = handleActions(
   {
-    ADD_FILTER: (state, action) => {
-      state.byId[action.payload.id] = action.payload;
-      state.allIds.push(action.payload.id);
-      return state;
-    },
-    EDIT_FILTER: (state, action) => {
-      let newState = Object.assign({}, state);
-      newState.byId[action.payload.id] = action.payload;
-      return newState;
-    }
+    ADD_FILTER: (state, action) => (
+      immutableUpdate(state, {
+        byId: { [action.payload.id]: action.payload },
+        allIds: [...state.allIds, action.payload.id]
+      })
+    ),
+    EDIT_FILTER: (state, action) => (
+      immutableUpdate(state, {
+        byId: { [action.payload.id]: action.payload }
+      })
+    )
   },
   {
     byId: {},

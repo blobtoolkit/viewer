@@ -2,7 +2,10 @@ import React from 'react'
 import styles from './Fields.scss';
 import FieldBox from './FieldBox'
 import { connect } from 'react-redux'
-import { makeGetFieldMetadata, getDetailsForFieldId } from '../reducers/field'
+import { makeGetFieldMetadata,
+  getDetailsForFieldId,
+  editField,
+  fetchRawData } from '../reducers/field'
 import { filterToList } from '../reducers/repository'
 
 
@@ -16,7 +19,9 @@ class Field extends React.Component {
     }
     this.mapDispatchToProps = dispatch => {
       return {
-        applyFilter: () => dispatch(filterToList())
+        applyFilter: () => dispatch(filterToList()),
+        toggleActive: (obj) => dispatch(editField(obj)),
+        showData: (id) => dispatch(fetchRawData(id))
       }
     }
   }

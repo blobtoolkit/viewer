@@ -1,5 +1,6 @@
 import { createAction, handleAction, handleActions } from 'redux-actions'
 import { createSelector, createSelectorCreator } from 'reselect'
+import immutableUpdate from 'immutable-update';
 import deep from 'deep-get-set'
 import shallow from 'shallowequal'
 import store from '../store'
@@ -18,16 +19,27 @@ export const topLevelFields = handleAction(
 )
 
 const addField = createAction('ADD_FIELD')
+export const editField = createAction('EDIT_FIELD')
 const addFields = createAction('ADD_FIELDS')
 const replaceFields = createAction('REPLACE_FIELDS')
 const clearFields = createAction('CLEAR_FIELDS')
 
 export const fields = handleActions(
   {
-    ADD_FIELD: (state, action) => {
-      state.byId[action.payload.id] = action.payload;
-      state.allIds.push(action.payload.id);
-      return state;
+    ADD_FIELD: (state, action) => (
+      immutableUpdate(state, {
+        byId: { [action.payload.id]: action.payload },
+        allIds: [...state.allIds, action.payload.id]
+      })
+    ),
+    EDIT_FIELD: (state, action) => {
+      let id = action.payload.id
+      let fields = Object.keys(action.payload).filter((key)=>{return key != 'id'})
+      return immutableUpdate(state, {
+        byId: {
+          [id]: Object.assign(...fields.map(f => ({[f]: action.payload[f]})))
+        }
+      })
     }
   },
   {
@@ -73,12 +85,14 @@ export const getDetailsForFieldId = createSelectorForFieldId(
   (meta = {}) => {
     let range = meta.range || [1,10];
     let xScale = d3[meta.scale || 'scaleLinear']()
+    let active = meta.hasOwnProperty('active') ? meta.active : meta.hasOwnProperty('preload') ? meta.preload : false
     xScale.domain(range)
     xScale.range([0,400])
     let obj = {
       meta,
       xScale,
-      range
+      range,
+      active
     }
     return obj
   }
@@ -93,11 +107,12 @@ export const rawData = handleActions(
     REQUEST_RAW_DATA: (state, action) => (
       state
     ),
-    RECEIVE_RAW_DATA: (state, action) => {
-      state.byId[action.payload.id] = action.payload.json;
-      state.allIds.push(action.payload.id);
-      return state;
-    },
+    RECEIVE_RAW_DATA: (state, action) => (
+      immutableUpdate(state, {
+        byId: { [action.payload.id]: action.payload.json },
+        allIds: [...state.allIds, action.payload.id]
+      })
+    ),
     USE_STORED_RAW_DATA: (state, action) => (
       state
     )
@@ -112,7 +127,7 @@ export function fetchRawData(id) {
    return dispatch => {
      dispatch(requestRawData(id))
      let json = deep(store.getState(),['rawData','byId',id]);
-     if (json && json.records){
+     if (json && json.values){
        dispatch(useStoredRawData(json))
        return Promise.resolve(useStoredRawData(json));
      }
