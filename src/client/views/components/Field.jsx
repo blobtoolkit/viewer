@@ -9,12 +9,6 @@ import { filterToList } from '../reducers/repository'
 class Field extends React.Component {
   constructor(props) {
     super(props);
-    // this.makeMapStateToProps = () => {
-    //   const getFieldMetadata = makeGetFieldMetadata()
-    //   return (state, props) => {
-    //     return getFieldMetadata(state, props.fieldId)
-    //   }
-    // }
     this.mapStateToProps = () => {
       return (state, props) => {
         return getDetailsForFieldId(state, props.fieldId)
@@ -29,7 +23,6 @@ class Field extends React.Component {
 
   render(){
     const ConnectedField = connect(
-      //this.makeMapStateToProps,
       this.mapStateToProps,
       this.mapDispatchToProps
     )(FieldBox)

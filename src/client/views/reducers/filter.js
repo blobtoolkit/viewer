@@ -3,7 +3,7 @@ import { createSelector, createSelectorCreator } from 'reselect'
 import deep from 'deep-get-set'
 import shallow from 'shallowequal'
 import store from '../store'
-import { getFieldMetadata, getDetailsForFieldId } from './field'
+import { getDetailsForFieldId } from './field'
 import { filterList } from './repository'
 
 
@@ -21,32 +21,11 @@ export const filters = handleActions(
       let newState = Object.assign({}, state);
       newState.byId[action.payload.id] = action.payload;
       return newState;
-      // console.log(state.byId.gc.range)
-      // return state
     }
   },
   {
     byId: {},
     allIds: []
-  }
-)
-
-
-const getFilterMetadata = (state, id) => {
-  const filterMeta = state.filters.byId[id] || {}//deep(state,['filters','byId',id]) || {}
-  return {
-    filterId: id,
-    filterType: 'range',
-    filterRange: filterMeta.range || [1,10]
-  }
-}
-
-export const makeGetFilterMetadata = () => createSelector(
-  [ getFilterMetadata, getFieldMetadata ],
-  (filterMeta,fieldMeta) => {
-    filterMeta.filterLimit = fieldMeta.range || [1,10]
-    filterMeta.xScale = fieldMeta.xScale
-    return filterMeta
   }
 )
 
@@ -61,9 +40,6 @@ const createSelectorForFilterId = createSelectorCreator((resultFunc) => {
       memo.lastArgs = args;
       memo.lastResult = resultFunc(...args);
     }
-    //else {
-    //  console.log('same')
-    //}
     return memo.lastResult;
   };
 });

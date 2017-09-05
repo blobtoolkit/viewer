@@ -3,20 +3,12 @@ import styles from './Filters.scss';
 import FilterBox from './FilterBox'
 import { connect } from 'react-redux'
 import {
-//  makeGetFilterMetadata,
   getDetailsForFilterId,
   editFilter } from '../reducers/filter'
 
 class Filter extends React.Component {
   constructor(props) {
     super(props);
-
-    // this.makeMapStateToProps = () => {
-    //   const getFilterMetadata = makeGetFilterMetadata()
-    //   return (state, props) => {
-    //     return getFilterMetadata(state, props.filterId)
-    //   }
-    // }
     this.mapStateToProps = () => {
       return (state, props) => {
         return getDetailsForFilterId(state, props.filterId)
@@ -31,7 +23,6 @@ class Filter extends React.Component {
 
   render(){
     const ConnectedFilter = connect(
-      //this.makeMapStateToProps,
       this.mapStateToProps,
       this.mapDispatchToProps
     )(FilterBox)

@@ -84,24 +84,6 @@ export const getDetailsForFieldId = createSelectorForFieldId(
   }
 );
 
-export const getFieldMetadata = (state, id) => {
-  const meta = state.fields.byId[id] || {}//deep(state,['fields','byId',props.fieldId]) || {}
-  let range = meta.range || [1,10];
-  let xScale = d3[meta.scale || 'scaleLinear']()
-  xScale.domain(range)
-  xScale.range([0,400])
-  let obj = {
-    meta,
-    xScale,
-    range
-  }
-  return obj
-}
-export const makeGetFieldMetadata = () => createSelector(
-  [ getFieldMetadata ],
-  meta => meta
-)
-
 const requestRawData = createAction('REQUEST_RAW_DATA')
 const receiveRawData = createAction('RECEIVE_RAW_DATA')
 const useStoredRawData = createAction('USE_STORED_RAW_DATA')
@@ -181,8 +163,6 @@ export const addAllFields = (dispatch,fields,flag,meta) => {
 
 export const getTopLevelFields = (state) => deep(state,['topLevelFields']) || []
 export const getFieldsByParent = (state,id) => deep(state,['fields','byId',id,'children']) || []
-//export const getFieldMetadata = (state,id) => deep(state,['fields','byId',id]) || {}
-
 
 const getFieldRawData = (state, props) => {
   let id = props.fieldId
