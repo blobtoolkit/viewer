@@ -5,6 +5,7 @@ import deep from 'deep-get-set'
 import shallow from 'shallowequal'
 import store from '../store'
 import { addFilter } from './filter'
+import { getDimensionsbyDimensionId, setDimension } from './dimension'
 import * as d3 from 'd3'
 
 const addTopLevelFields = createAction('ADD_TOP_LEVEL_FIELDS')
@@ -214,6 +215,83 @@ export const getRawDataForFieldId = createRawDataSelectorForFieldId(
     return rawData
   }
 );
+
+const createBinSelectorForFieldId = createSelectorCreator((resultFunc) => {
+  const memoAll = {};
+  return (fieldId, ...args) => {
+    if (!memoAll[fieldId]) {
+      memoAll[fieldId] = {};
+    }
+    const memo = memoAll[fieldId];
+    if (!shallow(memo.lastArgs, args)) {
+      memo.lastArgs = args;
+      memo.lastResult = resultFunc(...args);
+    }
+    return memo.lastResult;
+  };
+});
+
+export const getBinsForFieldId = createBinSelectorForFieldId(
+  _getFieldIdAsMemoKey,
+  getRawDataForFieldId,
+  getDetailsForFieldId,
+  (rawData = {}, details = {}) => {
+    let data = rawData.values || []
+    let bins = []
+    if (data){
+      let x = details.xScale
+      x.range([0,25])
+      let thresh = Array.from(Array(24).keys()).map((n)=>{return x.invert((n+1))});
+      bins = d3.histogram()
+          .domain(x.domain())
+          .thresholds(thresh)
+          (data);
+    }
+
+    return bins
+  }
+);
+
+const createBarSelectorForFieldId = createSelectorCreator((resultFunc) => {
+  const memoAll = {};
+  return (fieldId, ...args) => {
+    if (!memoAll[fieldId]) {
+      memoAll[fieldId] = {};
+    }
+    const memo = memoAll[fieldId];
+    if (!shallow(memo.lastArgs, args)) {
+      memo.lastArgs = args;
+      memo.lastResult = resultFunc(...args);
+    }
+    return memo.lastResult;
+  };
+});
+
+export const getBarsForFieldId = createBarSelectorForFieldId(
+  _getFieldIdAsMemoKey,
+  getBinsForFieldId,
+  getDetailsForFieldId,
+  (state) => getDimensionsbyDimensionId(state,'preview'),
+  (bins, details, dimensions) => {
+    let bars = []
+    let x = details.xScale
+    x.range([0,dimensions.width])
+    let y = d3.scaleLinear()
+          .domain([0, d3.max(bins, function(d) { return d.length; })])
+          .range([dimensions.height, 0]);
+    bins.forEach((d,i)=>{
+      bars.push({
+        id:i,
+        x:x(d.x0),
+        y:y(d.length),
+        width:x(d.x1) - x(d.x0) -1,
+        height:dimensions.height - y(d.length)
+      })
+    })
+    return bars
+  }
+);
+
 
 export const fieldReducers = {
   fields,

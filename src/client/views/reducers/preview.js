@@ -4,7 +4,10 @@ import immutableUpdate from 'immutable-update';
 import deep from 'deep-get-set'
 import shallow from 'shallowequal'
 import store from '../store'
-import { getDetailsForFieldId, getRawDataForFieldId } from './field'
+import { getDetailsForFieldId,
+  getRawDataForFieldId,
+  getBinsForFieldId } from './field'
+import { getDimensionsbyDimensionId } from './dimension'
 import * as d3 from 'd3'
 
 const createSelectorForFilterId = createSelectorCreator((resultFunc) => {
@@ -94,10 +97,12 @@ const createFilteredBarSelectorForFieldId = createSelectorCreator((resultFunc) =
 export const getFilteredBarsForFieldId = createFilteredBarSelectorForFieldId(
   _getFieldIdAsMemoKey,
   getFilteredDataForFieldId,
+  getBinsForFieldId,
   getDetailsForFieldId,
-  (data = [], details = {}) => {
-    let width = 400;
-    let height = 106.66;
+  (state) => getDimensionsbyDimensionId(state,'preview'),
+  (data = [], fieldBins = [], details = {}, dimensions) => {
+    let width = dimensions.width;
+    let height = dimensions.height;
     let bars = []
     if (data){
       let x = details.xScale
@@ -107,7 +112,7 @@ export const getFilteredBarsForFieldId = createFilteredBarSelectorForFieldId(
           .thresholds(thresh)
           (data);
       let y = d3.scaleLinear()
-          .domain([0, d3.max(bins, function(d) { return d.length; })])
+          .domain([0, d3.max(fieldBins, function(d) { return d.length; })])
           .range([height, 0]);
       bins.forEach((d,i)=>{
         bars.push({
@@ -119,7 +124,6 @@ export const getFilteredBarsForFieldId = createFilteredBarSelectorForFieldId(
         })
       })
     }
-
     return bars
   }
 );

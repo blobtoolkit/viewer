@@ -1,9 +1,7 @@
 import React from 'react'
 import styles from './Filters.scss'
 import { connect } from 'react-redux'
-import {
-  getFilteredDataForFieldId,
-  getFilteredBarsForFieldId } from '../reducers/preview'
+import { getFilteredBarsForFieldId } from '../reducers/preview'
 import * as d3 from 'd3'
 import Spinner from './Spinner'
 import PreviewBars from './PreviewBars'
@@ -13,8 +11,6 @@ class FilterPreview extends React.Component {
     super(props);
     this.mapStateToProps = state => {
       return {
-        values: getFilteredDataForFieldId(state, this.props.filterId),
-        //bars: [{id:'1', x:240, y:18.277, width:15, height:88.722}],
         bars: getFilteredBarsForFieldId(state, this.props.filterId),
         barcss: styles.bar
       }
@@ -27,7 +23,6 @@ class FilterPreview extends React.Component {
 
   render(){
     const ConnectedPreview = connect(
-      // this.makeMapStateToProps,
       this.mapStateToProps,
       this.mapDispatchToProps
     )(FilteredDataPreview)
@@ -37,84 +32,15 @@ class FilterPreview extends React.Component {
 
 class FilteredDataPreview extends React.Component {
 
-  componentDidMount() {
-
-  }
-
-  componentDidUpdate() {
-
-  }
-
-
-  shouldComponentUpdate() {
-    return true;
-  }
-
-  componentWillUnmount() {
-    // ReactDOM.unmountComponentAtNode(this.tooltipTarget);
-  }
-
-  drawChart() {
-    /*
-      D3 code to create our visualization by appending onto this.svg
-    */
-
-    var svg = d3.select(this.svg);
-
-    var height = this.svg.clientHeight;
-    var width = this.svg.clientWidth;
-
-    var data = this.props.values;//d3.range(1000).map(d3.randomBates(10));
-    var g = svg.append("g")
-    var x = this.props.xScale;
-    var thresh = Array.from(Array(24).keys()).map((n)=>{return x.invert((n+1)*width/25)});
-    var bins = d3.histogram()
-    .domain(x.domain())
-    .thresholds(thresh)
-    (data);
-    var y = d3.scaleLinear()
-    .domain([0, d3.max(bins, function(d) { return d.length; })])
-    .range([height, 0]);
-
-    var bar = g.selectAll('.'+styles.bar)
-        .data(bins)
-        .enter().append("g")
-          .attr("class", styles.bar)
-          .attr("transform", function(d) { return "translate(" + x(d.x0) + "," + y(d.length) + ")"; });
-
-    bar.append("rect")
-        .attr("x", 1)
-        .attr("width", function(d) { return x(d.x1) - x(d.x0) -1 ;})
-        .attr("height", function(d) { return height - y(d.length); });
-    // // At some point we render a child, say a tooltip
-    // const tooltipData = ...
-    // this.renderTooltip([50, 100], tooltipData);
-  }
-
   render() {
-    console.log(this.props.bars)
     return (
       <div className={styles.filter_preview_container}>
-        {
-          //<div ref={(elem) => { this.tooltipTarget = elem; }} />
-        }
-        <svg ref={(elem) => { this.svg = elem; }}>
+        <svg>
           <PreviewBars bars={this.props.bars} barcss={this.props.barcss} />
         </svg>
       </div>
     );
   }
-
-
-  // render(){
-  //   return (
-  //     <div>
-  //       <Spinner />
-  //       {this.props.values ? this.props.values.length : 0 } values
-  //     </div>
-  //   )
-  // }
-
 
 }
 

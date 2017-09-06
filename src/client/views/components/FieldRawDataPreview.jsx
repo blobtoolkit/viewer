@@ -1,42 +1,29 @@
 import React from 'react'
 import styles from './Fields.scss'
 import { connect } from 'react-redux'
-import { makeGetFieldRawData, getRawDataForFieldId } from '../reducers/field'
-import * as d3 from 'd3'
+import { getBarsForFieldId } from '../reducers/field'
+import { setDimension } from '../reducers/dimension'
 import Spinner from './Spinner'
-
+import PreviewBars from './PreviewBars'
 
 class FieldRawDataPreview extends React.Component {
   constructor(props) {
     super(props);
-    // this.makeMapStateToProps = () => {
-    //   const getFieldRawData = makeGetFieldRawData()
-    //   return (state, props) => {
-    //     let data = getFieldRawData(state, props)
-    //     return {
-    //       fieldId: this.props.fieldId,
-    //       xScale: this.props.xScale,
-    //       values: data.values || []
-    //     }
-    //   }
-    // }
     this.mapStateToProps = state => {
-      let rawData = getRawDataForFieldId(state, this.props.fieldId)
       return {
-        fieldId: this.props.fieldId,
-        xScale: this.props.xScale,
-        values: rawData.values || []
+        bars: getBarsForFieldId(state, this.props.fieldId),
+        barcss: styles.bar
       }
     }
     this.mapDispatchToProps = dispatch => {
       return {
+        onMount: (obj) => dispatch(setDimension(obj))
       }
     }
   }
 
   render(){
     const ConnectedRawDataPreview = connect(
-      // this.makeMapStateToProps,
       this.mapStateToProps,
       this.mapDispatchToProps
     )(RawDataPreview)
@@ -46,82 +33,23 @@ class FieldRawDataPreview extends React.Component {
 
 class RawDataPreview extends React.Component {
 
-  componentDidMount() {
-    if (this.props.values && this.props.values.length > 0) this.drawChart();
-  }
-
-  componentDidUpdate() {
-    if (this.props.values && this.props.values.length > 0) this.drawChart();
-  }
-
-
-  shouldComponentUpdate() {
-    return true;
-  }
-
-  componentWillUnmount() {
-    // ReactDOM.unmountComponentAtNode(this.tooltipTarget);
-  }
-
-  drawChart() {
-    /*
-      D3 code to create our visualization by appending onto this.svg
-    */
-
-    var svg = d3.select(this.svg);
-
-    var height = this.svg.clientHeight;
-    var width = this.svg.clientWidth;
-
-    var data = this.props.values;//d3.range(1000).map(d3.randomBates(10));
-    var g = svg.append("g")
-    var x = this.props.xScale;
-    var thresh = Array.from(Array(24).keys()).map((n)=>{return x.invert((n+1)*width/25)});
-    var bins = d3.histogram()
-    .domain(x.domain())
-    .thresholds(thresh)
-    (data);
-    var y = d3.scaleLinear()
-    .domain([0, d3.max(bins, function(d) { return d.length; })])
-    .range([height, 0]);
-
-    var bar = g.selectAll('.'+styles.bar)
-        .data(bins)
-        .enter().append("g")
-          .attr("class", styles.bar)
-          .attr("transform", function(d) { return "translate(" + x(d.x0) + "," + y(d.length) + ")"; });
-
-    bar.append("rect")
-        .attr("x", 1)
-        .attr("width", function(d) { return x(d.x1) - x(d.x0) -1 ;})
-        .attr("height", function(d) { return height - y(d.length); });
-    // // At some point we render a child, say a tooltip
-    // const tooltipData = ...
-    // this.renderTooltip([50, 100], tooltipData);
+  componentDidMount(){
+    this.props.onMount({
+      id:'preview',
+      width:this.svg.clientWidth,
+      height:this.svg.clientHeight
+    })
   }
 
   render() {
     return (
       <div className={styles.data_preview_container}>
-        {
-          //<div ref={(elem) => { this.tooltipTarget = elem; }} />
-        }
         <svg ref={(elem) => { this.svg = elem; }}>
+          <PreviewBars bars={this.props.bars} barcss={this.props.barcss} />
         </svg>
       </div>
     );
   }
-
-
-  // render(){
-  //   return (
-  //     <div>
-  //       <Spinner />
-  //       {this.props.values ? this.props.values.length : 0 } values
-  //     </div>
-  //   )
-  // }
-
 
 }
 

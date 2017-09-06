@@ -1,6 +1,5 @@
 import React from 'react'
 import styles from './Filters.scss';
-//import Resizable from 'react-resizable-box'
 import { DraggableCore } from 'react-draggable'
 
 class FilterDisplayRange extends React.Component {
