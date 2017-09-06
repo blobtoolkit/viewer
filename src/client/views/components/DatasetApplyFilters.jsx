@@ -2,7 +2,7 @@ import React from 'react'
 import { connect } from 'react-redux'
 import {
   filterToList
-} from '../reducers/repository'
+} from '../reducers/filter'
 import Spinner from './Spinner'
 
 

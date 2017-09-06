@@ -1,17 +1,22 @@
 import React from 'react'
 import styles from './Filters.scss'
 import { connect } from 'react-redux'
-import { getFilteredDataForFieldId } from '../reducers/filter'
+import {
+  getFilteredDataForFieldId,
+  getFilteredBarsForFieldId } from '../reducers/preview'
 import * as d3 from 'd3'
 import Spinner from './Spinner'
-
+import PreviewBars from './PreviewBars'
 
 class FilterPreview extends React.Component {
   constructor(props) {
     super(props);
     this.mapStateToProps = state => {
       return {
-        values: getFilteredDataForFieldId(state, this.props.filterId)
+        values: getFilteredDataForFieldId(state, this.props.filterId),
+        //bars: [{id:'1', x:240, y:18.277, width:15, height:88.722}],
+        bars: getFilteredBarsForFieldId(state, this.props.filterId),
+        barcss: styles.bar
       }
     }
     this.mapDispatchToProps = dispatch => {
@@ -33,11 +38,11 @@ class FilterPreview extends React.Component {
 class FilteredDataPreview extends React.Component {
 
   componentDidMount() {
-    if (this.props.values && this.props.values.length > 0) this.drawChart();
+
   }
 
   componentDidUpdate() {
-    if (this.props.values && this.props.values.length > 0) this.drawChart();
+
   }
 
 
@@ -87,12 +92,14 @@ class FilteredDataPreview extends React.Component {
   }
 
   render() {
+    console.log(this.props.bars)
     return (
       <div className={styles.filter_preview_container}>
         {
           //<div ref={(elem) => { this.tooltipTarget = elem; }} />
         }
         <svg ref={(elem) => { this.svg = elem; }}>
+          <PreviewBars bars={this.props.bars} barcss={this.props.barcss} />
         </svg>
       </div>
     );
