@@ -65,6 +65,43 @@ export const getDetailsForFilterId = createSelectorForFilterId(
   }
 );
 
+
+const createFilteredDataSelectorForFieldId = createSelectorCreator((resultFunc) => {
+  const memoAll = {};
+  return (fieldId, ...args) => {
+    if (!memoAll[fieldId]) {
+      memoAll[fieldId] = {};
+    }
+    const memo = memoAll[fieldId];
+    if (!shallow(memo.lastArgs, args)) {
+      memo.lastArgs = args;
+      memo.lastResult = resultFunc(...args);
+    }
+    return memo.lastResult;
+  };
+});
+
+const _getFieldIdAsMemoKey = (state, fieldId) => fieldId;
+const getFilteredList = (state) => state.filteredList;
+const getRawDataForField = (state, fieldId) => state.rawData.byId[fieldId];
+
+export const getFilteredDataForFieldId = createFilteredDataSelectorForFieldId(
+  _getFieldIdAsMemoKey,
+  getFilteredList,
+  getRawDataForField,
+  (list = [], rawData = {}) => {
+    let values = []
+    if (rawData.values){
+      let raw = rawData.values;
+      let len = list.length
+      for (var i = 0; i < len; i++){
+        values.push(raw[list[i]]);
+      }
+    }
+    return values
+  }
+);
+
 export const filterReducers = {
   filters
 }

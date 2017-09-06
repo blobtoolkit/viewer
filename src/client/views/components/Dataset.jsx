@@ -9,6 +9,7 @@ import {
   getFieldsByParent
 } from '../reducers/field'
 import Spinner from './Spinner'
+import DatasetApplyFilters from './DatasetApplyFilters'
 import Field from './Field'
 
 
@@ -39,7 +40,7 @@ class Overview extends React.Component {
     let fields = this.props.topLevelFields.map(id => <Field key={id} fieldId={id}>{id}</Field>)
     return (
       <div>
-        Content
+        <DatasetApplyFilters />
         {fields}
       </div>
     )

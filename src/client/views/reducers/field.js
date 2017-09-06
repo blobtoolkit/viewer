@@ -179,16 +179,16 @@ export const addAllFields = (dispatch,fields,flag,meta) => {
 export const getTopLevelFields = (state) => deep(state,['topLevelFields']) || []
 export const getFieldsByParent = (state,id) => deep(state,['fields','byId',id,'children']) || []
 
-const getFieldRawData = (state, props) => {
-  let id = props.fieldId
-  const fieldRawDataById = deep(state,['rawData','byId',id]) || {}
-  return fieldRawDataById
-}
-
-export const makeGetFieldRawData = () => createSelector(
-  [ getFieldRawData ],
-  (data) => data
-)
+// const getFieldRawData = (state, props) => {
+//   let id = props.fieldId
+//   const fieldRawDataById = deep(state,['rawData','byId',id]) || {}
+//   return fieldRawDataById
+// }
+//
+// export const makeGetFieldRawData = () => createSelector(
+//   [ getFieldRawData ],
+//   (data) => data
+// )
 
 const createRawDataSelectorForFieldId = createSelectorCreator((resultFunc) => {
   const memoAll = {};

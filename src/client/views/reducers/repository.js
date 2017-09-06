@@ -2,6 +2,7 @@ import { createAction, handleAction, handleActions } from 'redux-actions'
 import { createSelector } from 'reselect'
 import immutableUpdate from 'immutable-update';
 import deep from 'deep-get-set'
+import shallow from 'shallowequal'
 import store from '../store'
 import { addAllFields } from './field'
 
@@ -119,20 +120,49 @@ export const selectedDataset = handleAction(
   null
 )
 
-export const filterList = createAction('FILTER_LIST')
+export const updateFilterList = createAction('UPDATE_FILTER_LIST')
 
 export const filteredList = handleAction(
-  'FILTER_LIST',
+  'UPDATE_FILTER_LIST',
   (state, action) => {
     return action.payload
   },
   []
 )
-export const getFilteredList = (state) => (deep(state,['filteredList']))
+export const getFilteredList = state => state.filteredList
+
+const filterRangeToList = (low,high,arr,list) => {
+  let ret = []
+  let len = list.length
+  for (var i = 0; i < len; i++){
+    if (arr[list[i]] >= low && arr[list[i]] <= high){
+      ret.push(list[i]);
+    }
+  }
+  return ret
+}
 
 export function filterToList(val) {
   return function(dispatch){
-    dispatch(filterList([1,2,4,6,8,13,56,89,258]))
+    let state = store.getState();
+    let filters = state.filters.byId;
+    let fields = state.fields.byId;
+    let data = state.rawData.byId;
+    let count = state.availableDatasets.byId[state.selectedDataset].records
+    let list = [];
+    for (var i = 0; i < count; i++){
+      list.push(i)
+    }
+    state.filters.allIds.forEach(id => {
+      if (fields[id].active && filters[id]){
+        let range = filters[id].range
+        let limit = fields[id].range
+        if (!shallow(range,limit)){
+          list = filterRangeToList(range[0],range[1],data[id].values,list)
+        }
+      }
+    })
+    dispatch(updateFilterList(list))
   }
 }
 

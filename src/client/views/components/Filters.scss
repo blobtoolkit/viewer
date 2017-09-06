@@ -108,3 +108,23 @@
 .handle.right {
   @include fadeFromPercent(right,$darkColor,50%);
 }
+
+.filter_preview_container {
+  position:absolute;
+  top:2em;
+  left:0;
+  width:100%;
+  height:8em;
+  overflow:hidden;
+  pointer-events:none;
+
+  svg {
+    height:100%;
+    width:100%;
+    /*shape-rendering: crispEdges;*/
+
+    .bar rect {
+      fill: $highlightColor;
+    }
+  }
+}
