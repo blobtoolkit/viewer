@@ -100,7 +100,7 @@ export const getFilteredBarsForFieldId = createFilteredBarSelectorForFieldId(
   getBinsForFieldId,
   getDetailsForFieldId,
   (state) => getDimensionsbyDimensionId(state,'preview'),
-  (data = [], fieldBins = [], details = {}, dimensions) => {
+  (data, fieldBins = [], details = {}, dimensions) => {
     let width = dimensions.width;
     let height = dimensions.height;
     let bars = []

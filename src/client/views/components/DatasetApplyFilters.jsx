@@ -21,7 +21,6 @@ const mapDispatchToProps = dispatch => {
 class ApplyFilters extends React.Component {
 
   render(){
-
     return (
       <div onClick={this.props.onClick}>
         Apply

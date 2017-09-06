@@ -6,7 +6,7 @@ import { makeGetFieldMetadata,
   getDetailsForFieldId,
   editField,
   fetchRawData } from '../reducers/field'
-import { filterToList } from '../reducers/repository'
+import { filterToList } from '../reducers/filter'
 
 
 class Field extends React.Component {

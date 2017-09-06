@@ -4,7 +4,7 @@ import immutableUpdate from 'immutable-update';
 import deep from 'deep-get-set'
 import shallow from 'shallowequal'
 import store from '../store'
-import { addFilter } from './filter'
+import { addFilter, filterToList } from './filter'
 import { getDimensionsbyDimensionId, setDimension } from './dimension'
 import * as d3 from 'd3'
 
@@ -173,7 +173,7 @@ export const addAllFields = (dispatch,fields,flag,meta) => {
       addAllFields(dispatch,field.data,false,field)
     }
   })
-
+  dispatch(filterToList())
 }
 
 
