@@ -23,15 +23,19 @@ class FieldRawDataPreview extends React.Component {
   }
 
   render(){
+    let previewType = RangeDataPreview;
+    if (this.props.fieldId.match(/[ms]$/)){
+      previewType = CatDataPreview;
+    }
     const ConnectedRawDataPreview = connect(
       this.mapStateToProps,
       this.mapDispatchToProps
-    )(RawDataPreview)
+    )(previewType)
     return <ConnectedRawDataPreview {...this.props}/>
   }
 }
 
-class RawDataPreview extends React.Component {
+class RangeDataPreview extends React.Component {
 
   componentDidMount(){
     this.props.onMount({
@@ -52,5 +56,28 @@ class RawDataPreview extends React.Component {
   }
 
 }
+
+class CatDataPreview extends React.Component {
+
+  componentDidMount(){
+    this.props.onMount({
+      id:'preview',
+      width:this.svg.clientWidth,
+      height:this.svg.clientHeight
+    })
+  }
+
+  render() {
+    return (
+      <div className={styles.data_preview_container}>
+        <svg ref={(elem) => { this.svg = elem; }}>
+          <PreviewBars bars={this.props.bars} barcss={this.props.barcss} />
+        </svg>
+      </div>
+    );
+  }
+
+}
+
 
 export default FieldRawDataPreview

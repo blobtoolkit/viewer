@@ -5,12 +5,8 @@
   width:32em;
   margin:1em;
   background-color: $clearColor;
-  height:4em;
-  overflow-y:hidden;
-}
-
-.expanded {
   height:auto;
+  overflow-y:hidden;
 }
 
 .preview_container_header {
@@ -40,6 +36,24 @@
   user-select:none;
   overflow:hidden;
   transition:height 0.5s;
+}
+
+.preview_enter {
+  opacity: 0.01;
+}
+
+.preview_enter.preview_enter_active {
+  opacity: 1;
+  transition: opacity 400ms ease-in;
+}
+
+.preview_leave {
+  opacity: 1;
+}
+
+.preview_leave.preview_leave_active {
+  opacity: 0.01;
+  transition: opacity 400ms ease-in;
 }
 
 .header {

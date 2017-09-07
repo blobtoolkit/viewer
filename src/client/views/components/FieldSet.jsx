@@ -11,13 +11,8 @@ class FieldSet extends React.Component {
   }
 
   render(){
-    let css = styles.preview_container
-    if (this.state.expanded){
-      css += ' '+styles.expanded
-    }
     return (
-  //    <div className={styles.header} onClick={()=>{this.props.onHeaderClick()}}>
-      <div className={css}>
+      <div className={styles.preview_container}>
         <div className={styles.preview_container_header}
           onClick={()=>{this.toggleState('expanded')}}>
           <h1>{this.props.title}</h1>

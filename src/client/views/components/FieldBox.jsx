@@ -5,6 +5,7 @@ import FieldRawDataPreview from './FieldRawDataPreview'
 import Filter from './Filter'
 import * as d3 from 'd3'
 import { getFieldMetadata, getFilterMetadata } from '../reducers/repository'
+import { CSSTransitionGroup } from 'react-transition-group'
 
 class FieldBox extends React.Component {
   constructor(props) {
@@ -19,17 +20,33 @@ class FieldBox extends React.Component {
   }
   render(){
     let outer_css = styles.outer
+    let fieldContent
+    let filterContent
     if (this.props.active){
       outer_css += ' '+styles.expanded;
+      fieldContent = (<div className={styles.main}>
+        <FieldRawDataPreview {...this.props} updateYScale={(obj)=>{this.setState(obj)}}/>
+      </div>)
+      filterContent = <Filter {...this.props} />
     }
     let filterType = false;
     return (
       <div id={this.props.fieldId} className={outer_css} onClick={()=>{}}>
         <FieldBoxHeader {...this.props} onHeaderClick={()=>{this.toggleState('active')}}/>
-        <div className={styles.main}>
-          <FieldRawDataPreview {...this.props} updateYScale={(obj)=>{this.setState(obj)}}/>
-        </div>
-        <Filter {...this.props} />
+        <CSSTransitionGroup
+          transitionName={{
+            enter: styles.preview_enter,
+            enterActive: styles.preview_enter_active,
+            leave: styles.preview_leave,
+            leaveActive: styles.preview_leave_active,
+            appear: styles.preview_appear,
+            appearActive: styles.preview_appear_active
+          }}
+          transitionEnterTimeout={500}
+          transitionLeaveTimeout={500}>
+          {fieldContent}
+          {filterContent}
+        </CSSTransitionGroup>
       </div>
     );
   }
