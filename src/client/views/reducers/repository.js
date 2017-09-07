@@ -120,8 +120,6 @@ export const selectedDataset = handleAction(
   null
 )
 
-
-
 export const getDatasetMeta = (state,id) => deep(state,['availableDatasets','byId',id]) || {}
 export const getDatasetIsFetching = (state) => (deep(state,['selectedDataset']) == null) || false
 

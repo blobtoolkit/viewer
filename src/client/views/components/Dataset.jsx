@@ -6,17 +6,20 @@ import {
 } from '../reducers/repository'
 import {
   getTopLevelFields,
+  getFieldHierarchy,
   getFieldsByParent
 } from '../reducers/field'
 import Spinner from './Spinner'
 import DatasetApplyFilters from './DatasetApplyFilters'
 import Field from './Field'
+import FieldSet from './FieldSet'
 
 
 const mapStateToProps = state => {
   return {
     isFetching: getDatasetIsFetching(state),
-    topLevelFields: getTopLevelFields(state)
+    topLevelFields: getTopLevelFields(state),
+    fields: getFieldHierarchy(state)
   }
 }
 
@@ -32,12 +35,36 @@ class Overview extends React.Component {
   componentDidMount(){
     this.props.onMount(this.props.match.params.datasetId)
   }
-  render(){
 
+  mapFields(fields){
+    return (
+      fields.map(field => {
+        let jsx
+        if (field.hasRecords){
+          jsx = <Field key={field.id} fieldId={field.id}>{field.id}</Field>
+        }
+        if (field.children){
+          return (
+            <FieldSet
+              key={field.id+'_children'}
+              title={field.id}>
+              {jsx}
+              {this.mapFields(field.children)}
+            </FieldSet>
+          )
+        }
+        else {
+          return jsx
+        }
+      })
+    )
+  }
+
+  render(){
     if (this.props.isFetching){
       return <Spinner/>
     }
-    let fields = this.props.topLevelFields.map(id => <Field key={id} fieldId={id}>{id}</Field>)
+    let fields = this.mapFields(this.props.fields)
     return (
       <div>
         <DatasetApplyFilters />

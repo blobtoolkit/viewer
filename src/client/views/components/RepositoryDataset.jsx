@@ -19,7 +19,7 @@ class RepositoryDataset extends React.Component {
   render(){
     const mapStateToProps = state => {
       return {
-          meta: getDatasetMeta(state,this.props.id)
+        meta: getDatasetMeta(state,this.props.id)
       }
     }
     const ConnectedDataset = connect(

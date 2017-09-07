@@ -8,6 +8,8 @@ import { getDetailsForFieldId,
   getRawDataForFieldId,
   getBinsForFieldId } from './field'
 import { getDimensionsbyDimensionId } from './dimension'
+import { getFilteredList } from './filter'
+import { getSelectedDatasetMeta } from './dataset'
 import * as d3 from 'd3'
 
 const createSelectorForFilterId = createSelectorCreator((resultFunc) => {
@@ -127,6 +129,21 @@ export const getFilteredBarsForFieldId = createFilteredBarSelectorForFieldId(
     return bars
   }
 );
+
+
+export const getFilteredSummary = createSelector(
+  getSelectedDatasetMeta,
+  getFilteredList,
+  (meta = {}, list = []) => {
+    let toPercent = d3.format(",.1%")
+    return {
+      count: meta.records || 0,
+      type: meta.record_type || '',
+      selected: list.length || 0,
+      percentage: toPercent((list.length / meta.records) || 0)
+    }
+  }
+)
 
 // var svg = d3.select(this.svg);
 //

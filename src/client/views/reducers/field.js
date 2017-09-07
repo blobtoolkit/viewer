@@ -4,6 +4,7 @@ import immutableUpdate from 'immutable-update';
 import deep from 'deep-get-set'
 import shallow from 'shallowequal'
 import store from '../store'
+import { getSelectedDatasetMeta } from './dataset'
 import { addFilter, filterToList } from './filter'
 import { getDimensionsbyDimensionId, setDimension } from './dimension'
 import * as d3 from 'd3'
@@ -158,7 +159,7 @@ export const addAllFields = (dispatch,fields,flag,meta) => {
       })
     }
     dispatch(addField(field))
-    if (field._children){
+    if (field.children){
       addAllFields(dispatch,field.children,false,field)
     }
     else {
@@ -169,7 +170,7 @@ export const addAllFields = (dispatch,fields,flag,meta) => {
         dispatch(fetchRawData(field.id))
       }
     }
-    if (field._data){
+    if (field.data){
       addAllFields(dispatch,field.data,false,field)
     }
   })
@@ -179,6 +180,30 @@ export const addAllFields = (dispatch,fields,flag,meta) => {
 
 export const getTopLevelFields = (state) => deep(state,['topLevelFields']) || []
 export const getFieldsByParent = (state,id) => deep(state,['fields','byId',id,'children']) || []
+export const getFieldsByOwner = (state,id) => deep(state,['fields','byId',id,'data']) || []
+
+export const getFieldHierarchy = createSelector(
+  getSelectedDatasetMeta,
+  (meta = {}) => {
+    function processFields(fields = []) {
+      let hierarchy = []
+      console.log(fields)
+      fields.forEach((field) => {
+          let obj = {id:field.id,hasRecords:true};
+          let children = (field.children || []).concat(field.data || [])
+          if (children.length > 0){
+            obj.children = processFields(children)
+            if (field.hasOwnProperty('children')){
+              obj.hasRecords = false
+            }
+          }
+          hierarchy.push(obj)
+      })
+      return hierarchy
+    }
+    return processFields(meta.fields)
+  }
+)
 
 // const getFieldRawData = (state, props) => {
 //   let id = props.fieldId

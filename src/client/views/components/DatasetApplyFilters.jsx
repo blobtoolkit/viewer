@@ -3,14 +3,13 @@ import { connect } from 'react-redux'
 import {
   filterToList
 } from '../reducers/filter'
+import {
+  getFilteredSummary
+} from '../reducers/preview'
 import Spinner from './Spinner'
 
 
-const mapStateToProps = state => {
-  return {
-
-  }
-}
+const mapStateToProps = state => getFilteredSummary(state)
 
 const mapDispatchToProps = dispatch => {
   return {
@@ -22,8 +21,13 @@ class ApplyFilters extends React.Component {
 
   render(){
     return (
-      <div onClick={this.props.onClick}>
-        Apply
+      <div>
+        <div onClick={this.props.onClick}>
+          Apply
+        </div>
+        <div>
+          {this.props.selected}/{this.props.count} ({this.props.percentage}) {this.props.type} selected
+        </div>
       </div>
     )
   }

@@ -6,7 +6,7 @@
   margin:1em;
   background-color: $clearColor;
   height:4em;
-  /*overflow-y:hidden;*/
+  overflow-y:hidden;
 }
 
 .expanded {
@@ -49,8 +49,8 @@
   height: 2em;
   width: 100%;
   line-height:2em;
-  background-color: $shadeColor;
-  color: $paleColor;
+  background-color: $highlightColor;
+  color: $lightColor;
 
   h1 {
     font-size:1em;
