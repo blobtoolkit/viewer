@@ -140,3 +140,23 @@ left:0.2em;
     }
   }
 }
+
+.category_data_preview_container {
+  position:absolute;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background-color:$highlightColor;
+  overflow:hidden;
+
+  svg {
+    height:100%;
+    width:100%;
+    /*shape-rendering: crispEdges;*/
+
+    .bar rect {
+      fill: $shadeColor;
+    }
+  }
+}

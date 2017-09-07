@@ -39,7 +39,6 @@ class Overview extends React.Component {
   mapFields(fields){
     return (
       fields.map(field => {
-        console.log(field.id)
         let jsx
         if (field.hasRecords){
           jsx = <Field key={field.id} fieldId={field.id}>{field.id}</Field>

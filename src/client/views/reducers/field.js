@@ -166,6 +166,9 @@ export const addAllFields = (dispatch,fields,flag,meta) => {
       if (field.type == 'variable'){
         dispatch(addFilter({id:field.id,range:field.range.slice(0)}))
       }
+      if (field.type == 'category'){
+        dispatch(addFilter({id:field.id,range:[0,10]}))
+      }
       if (field.preload == true){
         dispatch(fetchRawData(field.id))
       }
@@ -187,7 +190,6 @@ export const getFieldHierarchy = createSelector(
   (meta = {}) => {
     function processFields(fields = []) {
       let hierarchy = []
-      console.log(fields)
       fields.forEach((field) => {
           let obj = {id:field.id,hasRecords:true};
           let children = (field.children || []).concat(field.data || [])
@@ -264,13 +266,27 @@ export const getBinsForFieldId = createBinSelectorForFieldId(
     let data = rawData.values || []
     let bins = []
     if (data){
-      let x = details.xScale
-      x.range([0,25])
-      let thresh = Array.from(Array(24).keys()).map((n)=>{return x.invert((n+1))});
-      bins = d3.histogram()
-          .domain(x.domain())
-          .thresholds(thresh)
-          (data);
+      if (details.meta.type == 'variable'){
+        let x = details.xScale
+        x.range([0,25])
+        let thresh = Array.from(Array(24).keys()).map((n)=>{return x.invert((n+1))});
+        bins = d3.histogram()
+            .domain(x.domain())
+            .thresholds(thresh)
+            (data);
+      }
+      if (details.meta.type == 'category'){
+        let sorted = d3.nest()
+          .key(d => rawData.keys[d])
+          .rollup(d => d.length)
+          .entries(data)
+          .sort((a,b) => b.value - a.value);
+        if (sorted.length > 10){
+          let other = sorted.slice(9).map(o=>o.value).reduce((a,b)=>a+b)
+          sorted = sorted.slice(0,9).concat({key:'other',value:other})
+        }
+        bins = sorted.map((d,i) => ({id:d.key,x0:i,x1:i+1,length:d.value}))
+      }
     }
 
     return bins
@@ -300,17 +316,24 @@ export const getBarsForFieldId = createBarSelectorForFieldId(
   (bins, details, dimensions) => {
     let bars = []
     let x = details.xScale
-    x.range([0,dimensions.width])
     let y = d3.scaleLinear()
           .domain([0, d3.max(bins, function(d) { return d.length; })])
           .range([dimensions.height, 0]);
+    if (details.meta.type == 'category'){
+      //x = d3.scaleOrdinal()
+      x.domain([0,10]);
+      y = d3.scaleSqrt()
+            .domain([0, d3.max(bins, function(d) { return d.length; })])
+            .range([dimensions.height, 0]);
+    }
+    x.range([0,dimensions.width])
     bins.forEach((d,i)=>{
       bars.push({
-        id:i,
+        id:d.id || i,
         x:x(d.x0),
         y:y(d.length),
         width:x(d.x1) - x(d.x0) -1,
-        height:dimensions.height - y(d.length)
+        height:(dimensions.height - y(d.length)) || 0
       })
     })
     return bars

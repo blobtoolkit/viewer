@@ -77,7 +77,7 @@ export const getFilteredDataForFieldId = createFilteredDataSelectorForFieldId(
         values.push(raw[list[i]]);
       }
     }
-    return values
+    return {values,keys:rawData.keys}
   }
 );
 
@@ -103,28 +103,62 @@ export const getFilteredBarsForFieldId = createFilteredBarSelectorForFieldId(
   getDetailsForFieldId,
   (state) => getDimensionsbyDimensionId(state,'preview'),
   (data, fieldBins = [], details = {}, dimensions) => {
-    let width = dimensions.width;
-    let height = dimensions.height;
     let bars = []
     if (data){
       let x = details.xScale
-      let thresh = Array.from(Array(24).keys()).map((n)=>{return x.invert((n+1)*width/25)});
-      let bins = d3.histogram()
-          .domain(x.domain())
-          .thresholds(thresh)
-          (data);
+      let bins = []
+      if (details.meta.type == 'variable'){
+        x.range([0,25])
+        let thresh = Array.from(Array(24).keys()).map((n)=>{return x.invert((n+1))});
+        bins = d3.histogram()
+            .domain(x.domain())
+            .thresholds(thresh)
+            (data.values);
+      }
+
+      if (details.meta.type == 'category'){
+        let nested = d3.nest()
+          .key(d => data.keys[d])
+          .rollup(d => d.length)
+          .entries(data.values)
+        fieldBins.forEach((obj,i) => {
+          let index = nested.findIndex(n => obj.id == n.key)
+          if (index > -1){
+            bins[i] = {id:obj.id,x0:i,x1:i+1,length:nested[index].value}
+          }
+          else {
+            bins[i] = {id:obj.id,x0:i,x1:i+1,length:0}
+          }
+        })
+        if (nested.length > 10){
+          let sortedSum = bins.map(a=>a.length).reduce((a,b)=> a + b)
+          let nestedSum = nested.map(a=>a.value).reduce((a,b)=> a + b)
+          let other = nestedSum - sortedSum
+          bins[9].length = nestedSum - sortedSum
+        }
+      }
+
       let y = d3.scaleLinear()
           .domain([0, d3.max(fieldBins, function(d) { return d.length; })])
-          .range([height, 0]);
+          .range([dimensions.height, 0]);
+      if (details.meta.type == 'category'){
+        //x = d3.scaleOrdinal()
+        x.domain([0,10]);
+        y = d3.scaleSqrt()
+              .domain([0, d3.max(fieldBins, function(d) { return d.length; })])
+              .range([dimensions.height, 0]);
+      }
+      x.range([0,dimensions.width])
       bins.forEach((d,i)=>{
         bars.push({
-          id:i,
+          id:d.id || i,
           x:x(d.x0),
           y:y(d.length),
           width:x(d.x1) - x(d.x0) -1,
-          height:height - y(d.length)
+          height:(dimensions.height - y(d.length)) || 0
         })
       })
+
     }
     return bars
   }

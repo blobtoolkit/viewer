@@ -25,7 +25,7 @@ class FieldRawDataPreview extends React.Component {
   render(){
     let previewType = RangeDataPreview;
     if (this.props.fieldId.match(/[ms]$/)){
-      previewType = CatDataPreview;
+    //  previewType = CatDataPreview;
     }
     const ConnectedRawDataPreview = connect(
       this.mapStateToProps,
@@ -69,7 +69,7 @@ class CatDataPreview extends React.Component {
 
   render() {
     return (
-      <div className={styles.data_preview_container}>
+      <div className={styles.category_data_preview_container}>
         <svg ref={(elem) => { this.svg = elem; }}>
           <PreviewBars bars={this.props.bars} barcss={this.props.barcss} />
         </svg>
