@@ -13,6 +13,7 @@ import Spinner from './Spinner'
 import DatasetApplyFilters from './DatasetApplyFilters'
 import Field from './Field'
 import FieldSet from './FieldSet'
+import MainPlot from './MainPlot'
 
 
 const mapStateToProps = state => {
@@ -69,6 +70,7 @@ class Overview extends React.Component {
       <div>
         <DatasetApplyFilters />
         {fields}
+        <MainPlot />
       </div>
     )
   }

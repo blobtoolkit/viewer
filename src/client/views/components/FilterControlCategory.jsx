@@ -58,18 +58,18 @@ class ControlCategory extends React.Component {
      let bins = this.props.bins.map((b,i) => {
        let css = styles.category_toggle;
        css += b.toggled == true ? ' '+styles.toggled : ''
+       console.log(b)
        return (
          <span key={i}
            className={css}
+           style={{backgroundColor:b.color}}
            onClick={()=>this.props.onToggleBin(i,b.keys,this.props.filter)}>
-           <span className={styles.text}>
-             {b.id}
-           </span>
+           &nbsp;
          </span>
        )
      })
      return (
-      <div>
+      <div className={styles.inside}>
         {bins}
       </div>
     )

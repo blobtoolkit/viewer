@@ -1,0 +1,11 @@
+@import 'colors';
+
+.outer {
+  position:absolute;
+  top:0;
+  right:0;
+  background-color: $shadeColor;
+  margin:1em;
+  height:50em;
+  width:50em;
+}

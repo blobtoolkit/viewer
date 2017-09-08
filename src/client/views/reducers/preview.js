@@ -10,6 +10,8 @@ import { getDetailsForFieldId,
 import { getDimensionsbyDimensionId } from './dimension'
 import { getFilteredList } from './filter'
 import { getSelectedDatasetMeta } from './dataset'
+import { getColorPalette } from './color'
+import { getMainPlot } from './plot'
 import * as d3 from 'd3'
 
 const createSelectorForFilterId = createSelectorCreator((resultFunc) => {
@@ -190,9 +192,13 @@ export const getCategoryListForFieldId = createCategoryListSelectorForFieldId(
   _getFieldIdAsMemoKey,
   getBinsForFieldId,
   getDetailsForFilterId,
-  (bins = [], filter = {}) => {
+  getColorPalette,
+  getMainPlot,
+  (bins = [], filter = {}, palette, plot) => {
+    console.log(plot)
     bins.forEach((b,i)=>{
       b.toggled = filter.toggled[i]
+      b.color = filter.filterId == plot.axes.cat ? palette.colors[i] : 'rgb(215, 205, 204)'
     })
     return {bins,filter}
   }
