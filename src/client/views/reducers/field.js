@@ -167,7 +167,11 @@ export const addAllFields = (dispatch,fields,flag,meta) => {
         dispatch(addFilter({id:field.id,range:field.range.slice(0)}))
       }
       if (field.type == 'category'){
-        dispatch(addFilter({id:field.id,range:[0,10]}))
+        dispatch(addFilter({
+          id:field.id,
+          toggled:Array.from(Array(10).keys()).map(i=>false),
+          keys:[]
+        }))
       }
       if (field.preload == true){
         dispatch(fetchRawData(field.id))
@@ -277,15 +281,22 @@ export const getBinsForFieldId = createBinSelectorForFieldId(
       }
       if (details.meta.type == 'category'){
         let sorted = d3.nest()
-          .key(d => rawData.keys[d])
+          .key(d => d)
           .rollup(d => d.length)
           .entries(data)
           .sort((a,b) => b.value - a.value);
         if (sorted.length > 10){
-          let other = sorted.slice(9).map(o=>o.value).reduce((a,b)=>a+b)
-          sorted = sorted.slice(0,9).concat({key:'other',value:other})
+          let count = sorted.slice(9).map(o=>o.value).reduce((a,b)=>a+b)
+          let index = sorted.slice(9).map(o=>o.key*1)
+          sorted = sorted.slice(0,9).concat({key:'other',value:count,index:index})
         }
-        bins = sorted.map((d,i) => ({id:d.key,x0:i,x1:i+1,length:d.value}))
+        bins = sorted.map((d,i) => ({
+          id:rawData.keys[d.key] || 'other',
+          keys:d.index || [d.key*1],
+          x0:i,
+          x1:i+1,
+          length:d.value
+        }))
       }
     }
 

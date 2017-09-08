@@ -17,11 +17,18 @@ export const filters = handleActions(
         allIds: [...state.allIds, action.payload.id]
       })
     ),
-    EDIT_FILTER: (state, action) => (
-      immutableUpdate(state, {
-        byId: { [action.payload.id]: action.payload }
+    EDIT_FILTER: (state, action) => {
+      // immutableUpdate(state, {
+      //   byId: { [action.payload.id]: action.payload }
+      // })
+      let id = action.payload.id
+      let fields = Object.keys(action.payload).filter((key)=>{return key != 'id'})
+      return immutableUpdate(state, {
+        byId: {
+          [id]: Object.assign(...fields.map(f => ({[f]: action.payload[f]})))
+        }
       })
-    )
+    }
   },
   {
     byId: {},
@@ -52,6 +59,17 @@ const filterRangeToList = (low,high,arr,list) => {
   return ret
 }
 
+const filterCategoriesToList = (keys,arr,list) => {
+  let ret = []
+  let len = list.length
+  for (var i = 0; i < len; i++){
+    if (!keys.includes(arr[list[i]])){
+      ret.push(list[i]);
+    }
+  }
+  return ret
+}
+
 export function filterToList(val) {
   return function(dispatch){
     let state = store.getState();
@@ -65,10 +83,15 @@ export function filterToList(val) {
     }
     state.filters.allIds.forEach(id => {
       if (fields[id].active && filters[id]){
-        let range = filters[id].range
-        let limit = fields[id].range
-        if (!shallow(range,limit)){
-          list = filterRangeToList(range[0],range[1],data[id].values,list)
+        if (filters[id].range){
+          let range = filters[id].range
+          let limit = fields[id].range
+          if (!shallow(range,limit)){
+            list = filterRangeToList(range[0],range[1],data[id].values,list)
+          }
+        }
+        else if (filters[id].keys && filters[id].keys.length > 0){
+          list = filterCategoriesToList(filters[id].keys,data[id].values,list)
         }
       }
     })

@@ -37,10 +37,17 @@ export const getDetailsForFilterId = createSelectorForFilterId(
   (filterMeta = {}, fieldMeta = {}) => {
     let obj = {
       filterId: filterMeta.id,
-      filterType: 'range',
-      filterRange: filterMeta.range ? filterMeta.range.slice(0) : fieldMeta.range ? fieldMeta.range.slice(0) : [1,10],
-      filterLimit: fieldMeta.range ? fieldMeta.range.slice(0) : [1,10],
-      xScale: fieldMeta.xScale
+    }
+    if (fieldMeta.meta.type == 'variable'){
+      obj.filterType = 'range',
+      obj.filterRange = filterMeta.range ? filterMeta.range.slice(0) : fieldMeta.range ? fieldMeta.range.slice(0) : [1,10],
+      obj.filterLimit = fieldMeta.range ? fieldMeta.range.slice(0) : [1,10],
+      obj.xScale = fieldMeta.xScale
+    }
+    if (fieldMeta.meta.type == 'category'){
+      obj.filterType = 'category'
+      obj.toggled = filterMeta.toggled,
+      obj.keys = filterMeta.keys
     }
     return obj
   }
@@ -164,6 +171,32 @@ export const getFilteredBarsForFieldId = createFilteredBarSelectorForFieldId(
   }
 );
 
+const createCategoryListSelectorForFieldId = createSelectorCreator((resultFunc) => {
+  const memoAll = {};
+  return (fieldId, ...args) => {
+    if (!memoAll[fieldId]) {
+      memoAll[fieldId] = {};
+    }
+    const memo = memoAll[fieldId];
+    if (!shallow(memo.lastArgs, args)) {
+      memo.lastArgs = args;
+      memo.lastResult = resultFunc(...args);
+    }
+    return memo.lastResult;
+  };
+});
+
+export const getCategoryListForFieldId = createCategoryListSelectorForFieldId(
+  _getFieldIdAsMemoKey,
+  getBinsForFieldId,
+  getDetailsForFilterId,
+  (bins = [], filter = {}) => {
+    bins.forEach((b,i)=>{
+      b.toggled = filter.toggled[i]
+    })
+    return {bins,filter}
+  }
+);
 
 export const getFilteredSummary = createSelector(
   getSelectedDatasetMeta,
