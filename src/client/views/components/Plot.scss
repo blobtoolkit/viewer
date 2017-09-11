@@ -4,8 +4,27 @@
   position:absolute;
   top:0;
   right:0;
-  background-color: $shadeColor;
+  background-color: $lightColor;
   margin:1em;
   height:50em;
   width:50em;
+  border:2px solid $darkColor;
+}
+
+.main_plot {
+  height:100%;
+  width:100%;
+
+  circle {
+    fill:currentColor;
+    opacity:0.2;
+  }
+}
+
+.fill_parent {
+  position:absolute;
+  top:0;
+  left:0;
+  height:100%;
+  width:100%;
 }

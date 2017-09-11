@@ -3,6 +3,7 @@ import { connect } from 'react-redux'
 import styles from './Filters.scss';
 import { getCategoryListForFieldId } from '../reducers/preview'
 import { editFilter } from '../reducers/filter'
+import { setDisplayFirst } from '../reducers/plot'
 
 function remove(array, element) {
     const index = array.indexOf(element);
@@ -35,6 +36,12 @@ class FilterControlCategory extends React.Component {
             keys = filter.keys
           }
           dispatch(editFilter({id:this.props.filterId,toggled:filter.toggled,keys:keys}))
+        },
+        onMouseEnterBin: () => {
+          //dispatch(setDisplayFirst(this.props.filterId))
+        },
+        onMouseLeaveBin: () => {
+          //dispatch(setDisplayFirst(false))
         }
       }
     }
@@ -63,7 +70,9 @@ class ControlCategory extends React.Component {
          <span key={i}
            className={css}
            style={{backgroundColor:b.color}}
-           onClick={()=>this.props.onToggleBin(i,b.keys,this.props.filter)}>
+           onClick={()=>this.props.onToggleBin(i,b.keys,this.props.filter)}
+           onMouseEnter={()=>this.props.onMouseEnterBin(i,b.keys,this.props.filter)}
+           onMouseLeave={()=>this.props.onMouseLeaveBin(i,b.keys,this.props.filter)}>
            &nbsp;
          </span>
        )

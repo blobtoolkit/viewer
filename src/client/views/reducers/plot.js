@@ -62,9 +62,20 @@ export const getMainPlot = createSelector(
   }
 )
 
+export const setDisplayFirst = createAction('SET_DISPLAY_FIRST')
+
+export const displayFirst = handleAction(
+  'SET_DISPLAY_FIRST',
+  (state, action) => {
+    return action.payload
+  },
+  false
+)
+export const getDisplayFirst = state => state.DisplayFirst
 
 
 export const plotReducers = {
   plots,
-  selectedPlot
+  selectedPlot,
+  displayFirst
 }

@@ -14,6 +14,7 @@ import DatasetApplyFilters from './DatasetApplyFilters'
 import Field from './Field'
 import FieldSet from './FieldSet'
 import MainPlot from './MainPlot'
+import styles from './Datasets.scss'
 
 
 const mapStateToProps = state => {
@@ -67,7 +68,7 @@ class Overview extends React.Component {
     }
     let fields = this.mapFields(this.props.fields)
     return (
-      <div>
+      <div className={styles.view_height}>
         <DatasetApplyFilters />
         {fields}
         <MainPlot />

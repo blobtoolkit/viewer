@@ -1,6 +1,7 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import { getMainPlotData } from '../reducers/plotData'
+import { getScatterPlotDataByCategory } from '../reducers/plotData'
+import { getColorPalette } from '../reducers/color'
 import MainPlotBox from './MainPlotBox'
 
 class MainPlot extends React.Component {
@@ -8,7 +9,9 @@ class MainPlot extends React.Component {
     super(props);
     this.mapStateToProps = () => {
       return (state, props) => {
-        return getMainPlotData(state, props.filterId)
+        let data = getScatterPlotDataByCategory(state, props.filterId)
+        data.colors = getColorPalette(state).colors
+        return data
       }
     }
     this.mapDispatchToProps = dispatch => {

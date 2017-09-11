@@ -7,6 +7,7 @@ import {
   getFilteredSummary
 } from '../reducers/preview'
 import Spinner from './Spinner'
+import styles from './Datasets.scss'
 
 
 const mapStateToProps = state => getFilteredSummary(state)
@@ -21,7 +22,7 @@ class ApplyFilters extends React.Component {
 
   render(){
     return (
-      <div>
+      <div className={styles.dataset_controls}>
         <div onClick={this.props.onClick}>
           Apply
         </div>
