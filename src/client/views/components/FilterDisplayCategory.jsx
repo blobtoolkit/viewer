@@ -30,7 +30,6 @@ class FilterDisplayCategory extends React.Component {
 
 class DisplayCategory extends React.Component {
   render() {
-    console.log(this.props)
     let labels = this.props.bins.map((b,i) => {
       let css = styles.category_label;
       css += b.toggled == true ? ' '+styles.toggled : ''

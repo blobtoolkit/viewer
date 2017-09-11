@@ -195,7 +195,6 @@ export const getCategoryListForFieldId = createCategoryListSelectorForFieldId(
   getColorPalette,
   getMainPlot,
   (bins = [], filter = {}, palette, plot) => {
-    console.log(plot)
     bins.forEach((b,i)=>{
       b.toggled = filter.toggled[i]
       b.color = filter.filterId == plot.axes.cat ? palette.colors[i] : 'rgb(215, 205, 204)'

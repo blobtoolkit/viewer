@@ -76,14 +76,17 @@ export const getScatterPlotData = createSelector(
     }
     axes.forEach(axis=>{
       scales[axis] = plotData.meta[axis].xScale.copy();
-      scales[axis].range([0,100])
+      if (axis == 'z'){
+        scales[axis] = d3.scaleSqrt().domain(scales[axis].domain())
+      }
+      scales[axis].range([0,1000])
     })
     let len = plotData.axes.x.values.length
     for (let i = 0; i < len; i++){
       data.push({
         id:i,
         cx: scales.x(plotData.axes.x.values[i]),
-        cy: 100 - scales.y(plotData.axes.y.values[i]),
+        cy: 1000 - scales.y(plotData.axes.y.values[i]),
         r: scales.z(plotData.axes.z.values[i])
       })
     }

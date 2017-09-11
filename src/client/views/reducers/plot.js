@@ -69,9 +69,9 @@ export const displayFirst = handleAction(
   (state, action) => {
     return action.payload
   },
-  false
+  5
 )
-export const getDisplayFirst = state => state.DisplayFirst
+export const getDisplayFirst = state => store.getState().displayFirst
 
 
 export const plotReducers = {

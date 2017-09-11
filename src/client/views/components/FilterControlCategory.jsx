@@ -36,12 +36,6 @@ class FilterControlCategory extends React.Component {
             keys = filter.keys
           }
           dispatch(editFilter({id:this.props.filterId,toggled:filter.toggled,keys:keys}))
-        },
-        onMouseEnterBin: () => {
-          //dispatch(setDisplayFirst(this.props.filterId))
-        },
-        onMouseLeaveBin: () => {
-          //dispatch(setDisplayFirst(false))
         }
       }
     }
@@ -61,18 +55,14 @@ class FilterControlCategory extends React.Component {
 
 class ControlCategory extends React.Component {
    render() {
-     console.log(this.props)
      let bins = this.props.bins.map((b,i) => {
        let css = styles.category_toggle;
        css += b.toggled == true ? ' '+styles.toggled : ''
-       console.log(b)
        return (
          <span key={i}
            className={css}
            style={{backgroundColor:b.color}}
-           onClick={()=>this.props.onToggleBin(i,b.keys,this.props.filter)}
-           onMouseEnter={()=>this.props.onMouseEnterBin(i,b.keys,this.props.filter)}
-           onMouseLeave={()=>this.props.onMouseLeaveBin(i,b.keys,this.props.filter)}>
+           onClick={()=>this.props.onToggleBin(i,b.keys,this.props.filter)}>
            &nbsp;
          </span>
        )
