@@ -199,7 +199,7 @@ export const getCategoryListForFieldId = createCategoryListSelectorForFieldId(
       b.toggled = filter.toggled[i]
       b.color = filter.filterId == plot.axes.cat ? palette.colors[i] : 'rgb(215, 205, 204)'
     })
-    return {bins,filter}
+    return {bins,filter,plot}
   }
 );
 

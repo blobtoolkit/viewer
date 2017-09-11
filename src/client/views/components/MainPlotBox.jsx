@@ -38,7 +38,7 @@ class MainPlotBox extends React.Component {
           <PlotBubblesCanvas key={i} zIndex={zIndex} {...this.props} bubbles={catData} color={this.props.colors[i]} bubblecss={''}/>
         )
         tabs.push(
-          <PlotLayerTab key={i} layer={i} color={this.props.colors[i]} onMouseOver={()=>{this.onTabMouseOver(i)}}/>
+          <PlotLayerTab key={i} layer={i} bin={this.props.bins[i]} color={this.props.colors[i]} onMouseOver={()=>{this.onTabMouseOver(i)}}/>
         )
       }
     })

@@ -7,6 +7,7 @@ import { makeGetFieldMetadata,
   editField,
   fetchRawData } from '../reducers/field'
 import { filterToList } from '../reducers/filter'
+import { editPlot } from '../reducers/plot'
 
 
 class Field extends React.Component {
@@ -20,7 +21,10 @@ class Field extends React.Component {
     this.mapDispatchToProps = dispatch => {
       return {
         applyFilter: () => dispatch(filterToList()),
-        toggleActive: (obj) => dispatch(editField(obj)),
+        toggleActive: (obj) => {
+          dispatch(editPlot({id:'default',cat:this.props.fieldId}))
+          dispatch(editField(obj))
+        },
         showData: (id) => dispatch(fetchRawData(id))
       }
     }

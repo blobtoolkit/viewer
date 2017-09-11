@@ -121,6 +121,6 @@ export const getScatterPlotDataByCategory = createSelector(
       )
     }
 
-    return {data};
+    return {data,bins};
   }
 )

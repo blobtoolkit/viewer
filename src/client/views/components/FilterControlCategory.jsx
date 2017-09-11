@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 import styles from './Filters.scss';
 import { getCategoryListForFieldId } from '../reducers/preview'
 import { editFilter } from '../reducers/filter'
-import { setDisplayFirst } from '../reducers/plot'
+import { setDisplayFirst, getMainPlot } from '../reducers/plot'
 
 function remove(array, element) {
     const index = array.indexOf(element);
@@ -61,6 +61,7 @@ class ControlCategory extends React.Component {
        return (
          <span key={i}
            className={css}
+           rel={this.props.plot.cat}
            style={{backgroundColor:b.color}}
            onClick={()=>this.props.onToggleBin(i,b.keys,this.props.filter)}>
            &nbsp;
