@@ -24,6 +24,7 @@
     font-size:1.5em;
     line-height:2em;
     margin-left:0.5em;
+
   }
 }
 
@@ -69,8 +70,22 @@
   h1 {
     font-size:1em;
     margin:0 0 0 0.5em;
+
+  }
+
+  .header_button {
+    float:right;
+    width:1.5em;
+    text-align:center;
+    height:2em;
+    line-height:2em;
   }
 }
+
+.inline {
+  display:inline-block;
+}
+
 
 .outer.expanded {
   height:12em;

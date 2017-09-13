@@ -20,7 +20,7 @@ class PlotBubblesCanvas extends React.Component {
         ctx.arc(bubble.cx, bubble.cy, bubble.r, 0, 2 * Math.PI, false);
         ctx.fillStyle = this.props.color;
         ctx.fill();
-        ctx.lineWidth = 0.5;
+        ctx.lineWidth = 0.25;
         ctx.strokeStyle = '#999';
         ctx.stroke();
       })
