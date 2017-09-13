@@ -1,8 +1,8 @@
 import { createAction, handleAction, handleActions } from 'redux-actions'
-import { createSelector, createSelectorCreator } from 'reselect'
+import { createSelector } from 'reselect'
+import { byIdSelectorCreator } from './selectorCreators'
 import immutableUpdate from 'immutable-update';
 import deep from 'deep-get-set'
-import shallow from 'shallowequal'
 import store from '../store'
 import { getSelectedDatasetMeta } from './dataset'
 import { addFilter, filterToList } from './filter'
@@ -63,20 +63,7 @@ const hashCode = (json) => {
 };
 
 // https://github.com/reactjs/reselect/issues/100
-const createSelectorForFieldId = createSelectorCreator((resultFunc) => {
-  const memoAll = {};
-  return (fieldId, ...args) => {
-    if (!memoAll[fieldId]) {
-      memoAll[fieldId] = {};
-    }
-    const memo = memoAll[fieldId];
-    if (!shallow(memo.lastArgs, args)) {
-      memo.lastArgs = args;
-      memo.lastResult = resultFunc(...args);
-    }
-    return memo.lastResult;
-  };
-});
+const createSelectorForFieldId = byIdSelectorCreator();
 
 const _getFieldIdAsMemoKey = (state, fieldId) => fieldId;
 export const getMetaDataForField = (state, fieldId) => state.fields.byId[fieldId];
@@ -222,20 +209,7 @@ export const getFieldHierarchy = createSelector(
 //   (data) => data
 // )
 
-const createRawDataSelectorForFieldId = createSelectorCreator((resultFunc) => {
-  const memoAll = {};
-  return (fieldId, ...args) => {
-    if (!memoAll[fieldId]) {
-      memoAll[fieldId] = {};
-    }
-    const memo = memoAll[fieldId];
-    if (!shallow(memo.lastArgs, args)) {
-      memo.lastArgs = args;
-      memo.lastResult = resultFunc(...args);
-    }
-    return memo.lastResult;
-  };
-});
+const createRawDataSelectorForFieldId = byIdSelectorCreator();
 
 const getRawDataForField = (state, fieldId) => state.rawData.byId[fieldId];
 
@@ -247,20 +221,9 @@ export const getRawDataForFieldId = createRawDataSelectorForFieldId(
   }
 );
 
-const createBinSelectorForFieldId = createSelectorCreator((resultFunc) => {
-  const memoAll = {};
-  return (fieldId, ...args) => {
-    if (!memoAll[fieldId]) {
-      memoAll[fieldId] = {};
-    }
-    const memo = memoAll[fieldId];
-    if (!shallow(memo.lastArgs, args)) {
-      memo.lastArgs = args;
-      memo.lastResult = resultFunc(...args);
-    }
-    return memo.lastResult;
-  };
-});
+
+const createBinSelectorForFieldId = byIdSelectorCreator();
+
 
 export const getBinsForFieldId = createBinSelectorForFieldId(
   _getFieldIdAsMemoKey,
@@ -304,20 +267,7 @@ export const getBinsForFieldId = createBinSelectorForFieldId(
   }
 );
 
-const createBarSelectorForFieldId = createSelectorCreator((resultFunc) => {
-  const memoAll = {};
-  return (fieldId, ...args) => {
-    if (!memoAll[fieldId]) {
-      memoAll[fieldId] = {};
-    }
-    const memo = memoAll[fieldId];
-    if (!shallow(memo.lastArgs, args)) {
-      memo.lastArgs = args;
-      memo.lastResult = resultFunc(...args);
-    }
-    return memo.lastResult;
-  };
-});
+const createBarSelectorForFieldId = byIdSelectorCreator();
 
 export const getBarsForFieldId = createBarSelectorForFieldId(
   _getFieldIdAsMemoKey,

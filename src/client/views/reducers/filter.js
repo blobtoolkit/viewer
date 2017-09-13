@@ -1,5 +1,5 @@
 import { createAction, handleAction, handleActions } from 'redux-actions'
-import { createSelector, createSelectorCreator } from 'reselect'
+import { createSelector } from 'reselect'
 import immutableUpdate from 'immutable-update';
 import deep from 'deep-get-set'
 import shallow from 'shallowequal'

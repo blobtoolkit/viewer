@@ -1,8 +1,8 @@
 import { createAction, handleAction, handleActions } from 'redux-actions'
-import { createSelector, createSelectorCreator } from 'reselect'
+import { createSelector } from 'reselect'
+import { byIdSelectorCreator } from './selectorCreators'
 import immutableUpdate from 'immutable-update';
 import deep from 'deep-get-set'
-import shallow from 'shallowequal'
 import store from '../store'
 
 
@@ -53,29 +53,36 @@ export const selectedPlot = handleAction(
 export const getSelectedPlot = state => state.selectedPlot
 export const getAllPlots = state => state.plots
 
+const createSelectorForPlotId = byIdSelectorCreator();
+const _getPlotIdAsMemoKey = (state, plotId) => plotId;
+const getMetaDataForPlot = (state, plotId) => state.plots.byId[plotId];
+
+export const getPlotByPlotId = createSelectorForPlotId(
+  _getPlotIdAsMemoKey,
+  getMetaDataForPlot,
+  (plot) => plot
+);
+
 export const getMainPlot = createSelector(
   getSelectedPlot,
-  getAllPlots,
-  (id, plots) => {
-    let axes = plots.byId[id]
-    return {id,axes}
-  }
+  (state) => getPlotByPlotId(state,getSelectedPlot(state)),
+  (id, axes) => ({id,axes})
 )
 
-export const setDisplayFirst = createAction('SET_DISPLAY_FIRST')
-
-export const displayFirst = handleAction(
-  'SET_DISPLAY_FIRST',
-  (state, action) => {
-    return action.payload
-  },
-  5
-)
-export const getDisplayFirst = state => store.getState().displayFirst
+// export const setDisplayFirst = createAction('SET_DISPLAY_FIRST')
+//
+// export const displayFirst = handleAction(
+//   'SET_DISPLAY_FIRST',
+//   (state, action) => {
+//     return action.payload
+//   },
+//   5
+// )
+// export const getDisplayFirst = state => store.getState().displayFirst
 
 
 export const plotReducers = {
   plots,
-  selectedPlot,
-  displayFirst
+  selectedPlot//,
+  // displayFirst
 }

@@ -8,24 +8,6 @@ import store from '../store'
 import * as d3 from 'd3'
 import cloneFunction from 'clone-function';
 
-
-// const createSelectorForMultipleFieldId = createSelectorCreator((resultFunc) => {
-//   const memoAll = {};
-//   return (id, ...args) => {
-//     if (!memoAll[id]) {
-//       memoAll[id] = {};
-//     }
-//     const memo = memoAll[id];
-//     if (!shallow(memo.lastArgs, args)) {
-//       memo.lastArgs = args;
-//       memo.lastResult = resultFunc(...args);
-//     }
-//     return memo.lastResult;
-//   };
-// });
-//
-// const _getMultipleFieldIdAsMemoKey = (state, idArray) => JSON.stringify(idArray);
-
 export const getMainPlotData = createSelector(
   getMainPlot,
   (state) => getFilteredDataForFieldId(state,getMainPlot(state).axes.x),
@@ -49,19 +31,6 @@ export const getMainPlotData = createSelector(
     return plotData;
   }
 );
-
-
-// export const getMainPlotData = (state) => {
-//   let mainPlot = getMainPlot(state);
-//   let plotData = {id:mainPlot.id,axes:{},meta:{}};
-//   let axes = ['x','y','z','cat']
-//   axes.forEach(axis=>{
-//     plotData.axes[axis] = getFilteredDataForFieldId(state,mainPlot.axes[axis])
-//     plotData.meta[axis] = getDetailsForFieldId(state,mainPlot.axes[axis]);
-//   })
-//   return plotData;
-// }
-
 
 export const getScatterPlotData = createSelector(
   getMainPlotData,
