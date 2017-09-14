@@ -50,7 +50,7 @@ export const getColorPalette = createSelector(
   getSelectedPalette,
   getAllPalettes,
   (id, palettes) => {
-    let colors = palettes.byId[id]
+    let colors = palettes ? palettes.byId[id] : []
     return {id,colors}
   }
 )

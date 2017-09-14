@@ -55,7 +55,7 @@ export const getAllPlots = state => state.plots
 
 const createSelectorForPlotId = byIdSelectorCreator();
 const _getPlotIdAsMemoKey = (state, plotId) => plotId;
-const getMetaDataForPlot = (state, plotId) => state.plots.byId[plotId];
+const getMetaDataForPlot = (state, plotId) => state.plots ? state.plots.byId[plotId] : {};
 
 export const getPlotByPlotId = createSelectorForPlotId(
   _getPlotIdAsMemoKey,

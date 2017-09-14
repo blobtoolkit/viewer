@@ -16,7 +16,7 @@ import * as d3 from 'd3'
 
 const createSelectorForFilterId = byIdSelectorCreator();
 const _getFilterIdAsMemoKey = (state, filterId) => filterId;
-const getMetaDataForFilter = (state, filterId) => state.filters.byId[filterId];
+const getMetaDataForFilter = (state, filterId) => state.filters ? state.filters.byId[filterId] : {};
 
 export const getDetailsForFilterId = createSelectorForFilterId(
   _getFilterIdAsMemoKey,
@@ -43,7 +43,7 @@ export const getDetailsForFilterId = createSelectorForFilterId(
 
 const createFilteredDataSelectorForFieldId = byIdSelectorCreator();
 const _getFieldIdAsMemoKey = (state, fieldId) => fieldId;
-const getFilteredList = (state) => state.filteredList;
+//const getFilteredList = (state) => state.filteredList;
 
 export const getFilteredDataForFieldId = createFilteredDataSelectorForFieldId(
   _getFieldIdAsMemoKey,
@@ -132,12 +132,28 @@ export const getFilteredBarsForFieldId = createFilteredBarSelectorForFieldId(
   }
 );
 
+const createPlainCategoryListSelectorForFieldId = byIdSelectorCreator();
+export const getPlainCategoryListForFieldId = createPlainCategoryListSelectorForFieldId(
+  _getFieldIdAsMemoKey,
+  _getFieldIdAsMemoKey,
+  getBinsForFieldId,
+  getColorPalette,
+  getMainPlot,
+  (fieldId, bins = [], palette, plot) => {
+    bins.forEach((b,i)=>{
+      b.color = fieldId == plot.axes.cat ? palette.colors[i] : 'rgb(215, 205, 204)'
+    })
+    return {bins,plot}
+  }
+);
+
+
 const createCategoryListSelectorForFieldId = byIdSelectorCreator();
 
 export const getCategoryListForFieldId = createCategoryListSelectorForFieldId(
   _getFieldIdAsMemoKey,
   getBinsForFieldId,
-  getDetailsForFilterId,
+  getDetailsForFilterId, // FIXME
   getColorPalette,
   getMainPlot,
   (bins = [], filter = {}, palette, plot) => {
@@ -145,6 +161,7 @@ export const getCategoryListForFieldId = createCategoryListSelectorForFieldId(
       b.toggled = filter.toggled[i]
       b.color = filter.filterId == plot.axes.cat ? palette.colors[i] : 'rgb(215, 205, 204)'
     })
+    console.log(bins)
     return {bins,filter,plot}
   }
 );

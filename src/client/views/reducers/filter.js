@@ -46,7 +46,12 @@ export const filteredList = handleAction(
   },
   []
 )
-export const getFilteredList = state => state.filteredList
+const getFilteredListx = state => state.filteredList
+
+export const getFilteredList = createSelector(
+  getFilteredListx,
+  list => {console.log(list); return list}
+)
 
 const filterRangeToList = (low,high,arr,list) => {
   let ret = []
@@ -78,7 +83,7 @@ export function filterToList(val) {
     let data = state.rawData.byId;
     let count = state.availableDatasets.byId[state.selectedDataset].records
     let list = [];
-    for (var i = 0; i < count; i++){
+    for (let i = 0; i < count; i++){
       list.push(i)
     }
     state.filters.allIds.forEach(id => {

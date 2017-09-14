@@ -1,13 +1,13 @@
 import React from 'react'
 import styles from './Plot.scss';
-import PlotBubblesSVG from './PlotBubblesSVG'
-import PlotBubblesCanvas from './PlotBubblesCanvas'
+import PlotLayer from './PlotLayer'
 import PlotLayerTabs from './PlotLayerTabs'
 import PlotLayerTab from './PlotLayerTab'
 
 class MainPlotBox extends React.Component {
   constructor(props) {
     super(props);
+    console.log(props)
     this.state = {toFront:-1}
   }
 
@@ -25,26 +25,23 @@ class MainPlotBox extends React.Component {
     //     <PlotBubblesCanvas {...this.props} bubbles={this.props.data[0] ? this.props.data : [{}]} bubblecss={''}/>
     //   </div>
     // );
-    let categories = []
-    let canvases = []
+    let layers = []
     let tabs = []
-    this.props.data.forEach((catData,i) => {
+    this.props.bins.forEach((bin,i) => {
       let zIndex = i == this.state.toFront ? 1 : 0
-      if (catData.length > 0){
-        categories.push(
-          <PlotBubblesSVG key={i} {...this.props} bubbles={catData} color={this.props.colors[i]} bubblecss={''}/>
+        layers.push(
+          <PlotLayer key={i} index={i} zIndex={zIndex} type='bubblesCanvas' zIndex={zIndex}/>
         )
-        canvases.push(
-          <PlotBubblesCanvas key={i} zIndex={zIndex} {...this.props} bubbles={catData} color={this.props.colors[i]} bubblecss={''}/>
-        )
+        // canvases.push(
+        //   <PlotBubblesCanvas key={i} zIndex={zIndex} {...this.props} />
+        // )
         tabs.push(
-          <PlotLayerTab key={i} layer={i} bin={this.props.bins[i]} color={this.props.colors[i]} onMouseOver={()=>{this.onTabMouseOver(i)}}/>
+          <PlotLayerTab key={i} layer={i} bin={this.props.bins[i]} color={this.props.bins[i].color} onMouseOver={()=>{this.onTabMouseOver(i)}}/>
         )
-      }
     })
     return (
       <div className={styles.outer}>
-        {canvases}
+        {layers}
         <PlotLayerTabs children={tabs}/>
       </div>
     );

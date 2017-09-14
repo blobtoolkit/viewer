@@ -1,8 +1,11 @@
 import { createAction, handleAction, handleActions } from 'redux-actions'
-import { createSelector, createSelectorCreator } from 'reselect'
+import { createSelector } from 'reselect'
+import { byIdSelectorCreator } from './selectorCreators'
 import { getMainPlot } from './plot';
 import { getColorPalette } from './color';
-import { getFilteredDataForFieldId } from './preview'
+import { getFilteredDataForFieldId,
+  getCategoryListForFieldId,
+  getPlainCategoryListForFieldId } from './preview'
 import { getDetailsForFieldId, getBinsForFieldId } from './field'
 import store from '../store'
 import * as d3 from 'd3'
@@ -89,7 +92,84 @@ export const getScatterPlotDataByCategory = createSelector(
         scatterData.data[i]
       )
     }
-
     return {data,bins};
+  }
+)
+
+const sliceObject = (obj,index) => {
+  let slice = {};
+  Object.keys(obj).forEach(key =>{
+    slice[key] = obj[key].slice(index,index+1)[0]
+  })
+  console.log(slice)
+  return slice;
+}
+const createSelectorForCategoryIndex = byIdSelectorCreator();
+const createSelectorForSliceIndex = byIdSelectorCreator();
+const createSelectorForColorIndex = byIdSelectorCreator();
+
+const _getCategoryIndexAsMemoKey = (state, categoryIndex) => categoryIndex;
+//const getScatterPlotDataForCategory = (state, categoryIndex) => getScatterPlotDataByCategory(state)[categoryIndex];
+const getColorByIndex = createSelectorForColorIndex(
+  _getCategoryIndexAsMemoKey,
+  _getCategoryIndexAsMemoKey,
+  getColorPalette,
+  (index,palette) => {
+    console.log('getColorByIndex')
+    return palette.colors[index]
+  }
+)
+
+export const getScatterPlotDataSlice = createSelectorForSliceIndex(
+  _getCategoryIndexAsMemoKey,
+  _getCategoryIndexAsMemoKey,
+  getScatterPlotDataByCategory,
+  (index,plotData) => {
+    plotData = sliceObject(plotData,index)
+    //plotData.color = palette.colors[index]
+    console.log('getScatterPlotDataSlice')
+    return plotData
+  }
+)
+
+export const getScatterPlotDataForCategoryIndex = createSelectorForCategoryIndex(
+  _getCategoryIndexAsMemoKey,
+  _getCategoryIndexAsMemoKey,
+  getScatterPlotDataSlice,
+  getColorByIndex,
+  (index,plotData,color) => {
+    plotData.color = color
+    console.log('getScatterPlotDataForCategoryIndex')
+    return plotData
+  }
+);
+
+
+// FIXME:
+// export const getCategoryListForMainPlot = createSelector(
+//   state => getCategoryListForFieldId(state,getMainPlot(state).axes.cat),
+//   list => {
+//     console.log('getCategoryListForMainPlot')
+//     return list
+//   }
+// )
+
+ // const _getMainPlotCategory = createSelector(
+ //   getMainPlot,
+ //   plot => {
+ //     console.log(plot.axes.cat)
+ //     return plot.axes.cat
+ //   }
+ // )
+
+const _getMainPlotCategory = state => state.plots.byId['default'].cat
+const createSelectorForMainPlotCategory = byIdSelectorCreator();
+
+export const getCategoryListForMainPlot = createSelectorForMainPlotCategory(
+  _getMainPlotCategory,
+  (state) => getPlainCategoryListForFieldId(state,_getMainPlotCategory(state)),
+  (list) => {
+    console.log(list)
+    return list
   }
 )

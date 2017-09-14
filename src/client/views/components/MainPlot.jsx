@@ -1,7 +1,7 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import { getScatterPlotDataByCategory } from '../reducers/plotData'
-import { getColorPalette } from '../reducers/color'
+import { getCategoryListForMainPlot } from '../reducers/plotData'
+import { getPlainCategoryListForFieldId } from '../reducers/preview'
 import MainPlotBox from './MainPlotBox'
 
 class MainPlot extends React.Component {
@@ -9,9 +9,9 @@ class MainPlot extends React.Component {
     super(props);
     this.mapStateToProps = () => {
       return (state, props) => {
-        let data = getScatterPlotDataByCategory(state, props.filterId)
-        data.colors = getColorPalette(state).colors
-        return data
+        console.log(props)
+        return getCategoryListForMainPlot(state)
+        //return getPlainCategoryListForFieldId(state,'bestsum_superkingdom')
       }
     }
     this.mapDispatchToProps = dispatch => {

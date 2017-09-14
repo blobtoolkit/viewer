@@ -1,5 +1,4 @@
 import React from 'react';
-import PlotBubble from './PlotBubble'
 import styles from './Plot.scss'
 
 class PlotBubblesCanvas extends React.Component {
@@ -26,8 +25,9 @@ class PlotBubblesCanvas extends React.Component {
       })
     }
     render() {
+      console.log(this.props)
       return (
-        <canvas className={styles.fill_parent} style={{zIndex:this.props.zIndex}} ref={(elem) => { this.canvas = elem; }} width={1000} height={1000}/>
+        <canvas className={styles.fill_parent} ref={(elem) => { this.canvas = elem; }} width={1000} height={1000}/>
       );
     }
 }

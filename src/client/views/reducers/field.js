@@ -66,7 +66,7 @@ const hashCode = (json) => {
 const createSelectorForFieldId = byIdSelectorCreator();
 
 const _getFieldIdAsMemoKey = (state, fieldId) => fieldId;
-export const getMetaDataForField = (state, fieldId) => state.fields.byId[fieldId];
+export const getMetaDataForField = (state, fieldId) => state.fields ? state.fields.byId[fieldId] : {};
 
 export const getDetailsForFieldId = createSelectorForFieldId(
   _getFieldIdAsMemoKey,
@@ -211,12 +211,12 @@ export const getFieldHierarchy = createSelector(
 
 const createRawDataSelectorForFieldId = byIdSelectorCreator();
 
-const getRawDataForField = (state, fieldId) => state.rawData.byId[fieldId];
+const getRawDataForField = (state, fieldId) => state.rawData ? state.rawData.byId[fieldId] : {};
 
 export const getRawDataForFieldId = createRawDataSelectorForFieldId(
   _getFieldIdAsMemoKey,
   getRawDataForField,
-  (rawData = {}) => {
+  (rawData) => {
     return rawData
   }
 );
