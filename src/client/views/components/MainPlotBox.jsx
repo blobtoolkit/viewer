@@ -30,7 +30,8 @@ class MainPlotBox extends React.Component {
     this.props.bins.forEach((bin,i) => {
       let zIndex = i == this.state.toFront ? 1 : 0
         layers.push(
-          <PlotLayer key={i} index={i} zIndex={zIndex} type='bubblesCanvas' zIndex={zIndex}/>
+          //<PlotLayer key={i} index={i} zIndex={zIndex} type='bubblesCanvas' zIndex={zIndex}/>
+          <PlotLayer key={i} index={i} zIndex={zIndex} type='squareBinsSVG'/>
         )
         // canvases.push(
         //   <PlotBubblesCanvas key={i} zIndex={zIndex} {...this.props} />
@@ -41,7 +42,11 @@ class MainPlotBox extends React.Component {
     })
     return (
       <div className={styles.outer}>
-        {layers}
+        <svg ref={(elem) => { this.svg = elem; }}
+          className={styles.main_plot}
+          viewBox='0 0 1000 1000'>
+          {layers}
+        </svg>
         <PlotLayerTabs children={tabs}/>
       </div>
     );

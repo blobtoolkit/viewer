@@ -5,7 +5,7 @@ import immutableUpdate from 'immutable-update';
 import deep from 'deep-get-set'
 import store from '../store'
 import { getSelectedDatasetMeta } from './dataset'
-import { addFilter, filterToList } from './filter'
+import { addFilter, editFilter, filterToList } from './filter'
 import { getDimensionsbyDimensionId, setDimension } from './dimension'
 import * as d3 from 'd3'
 
@@ -127,6 +127,10 @@ export function fetchRawData(id) {
          error => console.log('An error occured.', error)
        )
        .then(json => {
+         if (!json.keys || json.keys.length == 0){
+           dispatch(editField({id,range:[Math.min(...json.values),Math.max(...json.values)]}))
+           dispatch(editFilter({id,range:[Math.min(...json.values),Math.max(...json.values)]}))
+         }
          dispatch(receiveRawData({id,json}))
        })
    }

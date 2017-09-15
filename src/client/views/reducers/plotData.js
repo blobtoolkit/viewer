@@ -9,7 +9,9 @@ import { getFilteredDataForFieldId,
 import { getDetailsForFieldId, getBinsForFieldId } from './field'
 import store from '../store'
 import * as d3 from 'd3'
-import cloneFunction from 'clone-function';
+import cloneFunction from 'clone-function'
+// import React from 'react'
+// import { server } from 'react-dom'
 
 export const getMainPlotData = createSelector(
   getMainPlot,
@@ -54,14 +56,25 @@ export const getScatterPlotData = createSelector(
       scales[axis].range([0,1000])
     })
     let len = plotData.axes.x.values.length
+    // let limits = {
+    //   x:[Math.Infinity,-Math.Infinity],
+    //   y:[Math.Infinity,-Math.Infinity],
+    //   z:[Math.Infinity,-Math.Infinity]
+    // }
     for (let i = 0; i < len; i++){
       data.push({
         id:i,
-        cx: scales.x(plotData.axes.x.values[i]),
-        cy: 1000 - scales.y(plotData.axes.y.values[i]),
-        r: scales.z(plotData.axes.z.values[i])
+        x: scales.x(plotData.axes.x.values[i]),
+        y: 1000 - scales.y(plotData.axes.y.values[i]),
+        z: scales.z(plotData.axes.z.values[i])
       })
+      // for (let i = 0; i < 3; i++){
+      //   if (datum[axes[i]] < limits[axes[i]][0]) limits[axes[i]][0] = datum[axes[i]]
+      //   if (datum[axes[i]] > limits[axes[i]][1]) limits[axes[i]][1] = datum[axes[i]]
+      // }
+      //data.push(datum)
     }
+
     return {data};
   }
 )
@@ -134,15 +147,71 @@ export const getScatterPlotDataSlice = createSelectorForSliceIndex(
 
 export const getScatterPlotDataForCategoryIndex = createSelectorForCategoryIndex(
   _getCategoryIndexAsMemoKey,
-  _getCategoryIndexAsMemoKey,
   getScatterPlotDataSlice,
   getColorByIndex,
-  (index,plotData,color) => {
+  (plotData,color) => {
     plotData.color = color
     console.log('getScatterPlotDataForCategoryIndex')
     return plotData
   }
 );
+
+export const getSquareBinPlotDataForCategoryIndex = createSelectorForCategoryIndex(
+  _getCategoryIndexAsMemoKey,
+  getScatterPlotDataForCategoryIndex,
+  (plotData) => {
+    console.log(plotData)
+    let size = 1000 // FIXME: magic number
+    let res = 20 // FIXME: magic number
+    let side = size/res
+    let squares = []
+    for (let i = 0; i <= res; i++){
+      squares[i] = []
+      for (let j = 0; j <= res; j++){
+        squares[i][j] = {id:i+'_'+j,x:i,y:j,ids:[],zs:[]}
+      }
+    }
+    plotData.data.forEach(datum=>{
+      let x = Math.floor(datum.x/side)
+      let y = Math.floor(datum.y/side)
+      squares[x][y].ids.push(datum.id)
+      squares[x][y].zs.push(datum.z)
+    })
+    let data = [];
+    for (let i = 0; i < res; i++){
+      for (let j = 0; j < res; j++){
+        if (squares[i][j].ids.length > 0){
+          data.push(squares[i][j])
+        }
+      }
+    }
+    plotData.data = data
+    plotData.side = side
+    return plotData
+  }
+);
+
+// export const getScatterCanvasForCategoryIndex = createSelectorForCategoryIndex(
+//   _getCategoryIndexAsMemoKey,
+//   getScatterPlotDataForCategoryIndex,
+//   (plotData) => {
+//     console.log('getScatterCanvasForCategoryIndex')
+//     const canvas = React.createElement('canvas');
+//     const ctx = canvas.getContext('2d');
+//     ctx.globalAlpha=0.4
+//     ctx.fillStyle = plotData.color;
+//     ctx.lineWidth = 0.25;
+//     ctx.strokeStyle = '#999';
+//     plotData.data.map(bubble => {
+//       ctx.beginPath();
+//       ctx.arc(bubble.cx, bubble.cy, bubble.r, 0, 2 * Math.PI, false);
+//       ctx.fill();
+//       ctx.stroke();
+//     })
+//     console.log(canvas)
+//     return canvas
+//   }
+// );
 
 
 // FIXME:

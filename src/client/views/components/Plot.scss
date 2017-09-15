@@ -19,6 +19,12 @@
     fill:currentColor;
     opacity:0.4;
   }
+
+  rect {
+    fill:currentColor;
+    stroke:$darkColor;
+
+  }
 }
 
 .fill_parent {

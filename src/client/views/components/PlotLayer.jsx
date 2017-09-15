@@ -1,8 +1,10 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import { getCategoryListForMainPlot,
-  getScatterPlotDataForCategoryIndex } from '../reducers/plotData'
+  getScatterPlotDataForCategoryIndex,
+  getSquareBinPlotDataForCategoryIndex } from '../reducers/plotData'
 import PlotBubblesCanvas from './PlotBubblesCanvas'
+import PlotSquareBinsSVG from './PlotSquareBinsSVG'
 import styles from './Plot.scss'
 
 class PlotLayer extends React.Component {
@@ -10,7 +12,9 @@ class PlotLayer extends React.Component {
     super(props);
     this.mapStateToProps = () => {
       return (state, props) => {
-        return getScatterPlotDataForCategoryIndex(state,props.index)
+        //return getScatterPlotDataForCategoryIndex(state,props.index)
+        //return getScatterCanvasForCategoryIndex(state,props.index)
+        return getSquareBinPlotDataForCategoryIndex(state,props.index)
       }
     }
     this.mapDispatchToProps = dispatch => {
@@ -36,14 +40,18 @@ class PlotLayer extends React.Component {
 
 class CurrentLayer extends React.Component {
   render(){
-    let layer
-      console.log(this.props)
     if (this.props.type == 'bubblesCanvas'){
       return (
         <div className={styles.fill_parent} style={{zIndex:this.props.zIndex}}>
-
-        <PlotBubblesCanvas index={this.props.index} bubbles={this.props.data || []} color={this.props.color} />
-</div>
+          <PlotBubblesCanvas index={this.props.index} bubbles={this.props.data || []} color={this.props.color} />
+        </div>
+      )
+    }
+    if (this.props.type == 'squareBinsSVG'){
+      return (
+        <g className={styles.fill_parent} style={{zIndex:this.props.zIndex}}>
+          <PlotSquareBinsSVG index={this.props.index} data={this.props.data || []} color={this.props.color} side={this.props.side || 1} />
+        </g>
       )
     }
   }
