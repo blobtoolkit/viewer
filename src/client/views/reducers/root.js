@@ -6,6 +6,7 @@ import { filterReducers } from './filter'
 import { dimensionReducers } from './dimension'
 import { colorReducers } from './color'
 import { plotReducers } from './plot'
+import { plotParameterReducers } from './plotParameters'
 
 const allReducers = Object.assign(
   {},
@@ -14,7 +15,8 @@ const allReducers = Object.assign(
   filterReducers,
   dimensionReducers,
   colorReducers,
-  plotReducers
+  plotReducers,
+  plotParameterReducers
 );
 
 const rootReducer = combineReducers(allReducers);

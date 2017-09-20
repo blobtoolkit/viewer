@@ -3,6 +3,8 @@ import styles from './Plot.scss';
 import PlotLayer from './PlotLayer'
 import PlotLayerTabs from './PlotLayerTabs'
 import PlotLayerTab from './PlotLayerTab'
+import PlotSquareGridSVG from './PlotSquareGridSVG'
+import PlotHexGridSVG from './PlotHexGridSVG'
 
 class MainPlotBox extends React.Component {
   constructor(props) {
@@ -31,7 +33,8 @@ class MainPlotBox extends React.Component {
       let zIndex = i == this.state.toFront ? 1 : 0
         layers.push(
           //<PlotLayer key={i} index={i} zIndex={zIndex} type='bubblesCanvas' zIndex={zIndex}/>
-          <PlotLayer key={i} index={i} zIndex={zIndex} type='squareBinsSVG'/>
+          //<PlotLayer key={i} index={i} zIndex={zIndex} type='squareBinsSVG'/>
+          <PlotLayer key={i} index={i} zIndex={zIndex} type='hexBinsSVG'/>
         )
         // canvases.push(
         //   <PlotBubblesCanvas key={i} zIndex={zIndex} {...this.props} />
@@ -40,11 +43,13 @@ class MainPlotBox extends React.Component {
           <PlotLayerTab key={i} layer={i} bin={this.props.bins[i]} color={this.props.bins[i].color} onMouseOver={()=>{this.onTabMouseOver(i)}}/>
         )
     })
+    //<PlotSquareGridSVG side={50} />
     return (
       <div className={styles.outer}>
         <svg ref={(elem) => { this.svg = elem; }}
           className={styles.main_plot}
           viewBox='0 0 1000 1000'>
+          <PlotHexGridSVG />
           {layers}
         </svg>
         <PlotLayerTabs children={tabs}/>

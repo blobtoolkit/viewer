@@ -21,9 +21,28 @@
   }
 
   rect {
-    fill:currentColor;
-    stroke:$darkColor;
+    stroke:currentColor;
+    fill:none;
+    stroke-width:5;
+    box-sizing: border-box;
+  }
 
+  polygon {
+    stroke:currentColor;
+    fill:currentColor;
+    stroke-width:3;
+    box-sizing: border-box;
+  }
+
+  .grid {
+    stroke:$paleColor;
+    stroke-width:0.5;
+
+    .hex {
+      stroke:$paleColor;
+      stroke-width:0.5;
+      fill:none;
+    }
   }
 }
 
