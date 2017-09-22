@@ -11,6 +11,8 @@ import PlotSquareGridSVG from './PlotSquareGridSVG'
 //import PlotHexBinsCanvas from './PlotHexBinsCanvas'
 import PlotHexBinsSVG from './PlotHexBinsSVG'
 import PlotHexGridSVG from './PlotHexGridSVG'
+import PlotAxisTitle from './PlotAxisTitle'
+import PlotParameters from './PlotParameters'
 
 export default class MainPlot extends React.Component {
   constructor(props) {
@@ -70,11 +72,15 @@ class PlotBox extends React.Component {
         <div className={styles.outer}>
           <svg ref={(elem) => { this.svg = elem; }}
             className={styles.main_plot}
-            viewBox='0 0 1000 1000'>
+            viewBox='-50 -50 1100 1100'>
             {plotGrid}
             {plotContainer}
           </svg>
+          <PlotParameters axis='top'/>
+          <PlotAxisTitle axis='x'/>
+          <PlotAxisTitle axis='y'/>
         </div>
+
       )
     }
   }

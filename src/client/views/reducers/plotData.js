@@ -13,6 +13,16 @@ import cloneFunction from 'clone-function'
 // import React from 'react'
 // import { server } from 'react-dom'
 
+const getAxis = (state,axis) => axis
+
+export const getAxisTitle = createSelector(
+  getAxis,
+  getMainPlot,
+  (axis,plot) => (
+    plot.axes[axis]
+  )
+)
+
 export const getMainPlotData = createSelector(
   getMainPlot,
   (state) => getFilteredDataForFieldId(state,getMainPlot(state).axes.x),

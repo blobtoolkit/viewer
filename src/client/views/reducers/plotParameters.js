@@ -79,14 +79,24 @@ const zReducers = {
         if (arr[i] > max) max = arr[i]
       }
       return max
+    },
+  count: arr => arr.length > 0 ? arr.length : 0,
+  mean: arr => {
+      if (!arr.length > 0) return 0
+      let sum = 0;
+      let len = arr.length
+      for (let i = 0; i < len; i++){
+        sum += arr[i]
+      }
+      return sum / arr.length
     }
 }
 export const zReducer = handleAction(
   'SET_Z_REDUCER',
   (state, action) => {
-    if (zReducers[action.payload]) return zReducers[action.payload]
+    if (zReducers[action.payload]) return {id:action.payload,func:zReducers[action.payload]}
   },
-  zReducers.sum
+  {id:'sum',func:zReducers.sum}
 )
 export const getZReducer = state => state.zReducer
 

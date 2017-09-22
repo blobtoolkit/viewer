@@ -2,13 +2,14 @@
 
 .outer {
   position:absolute;
-  top:0;
+  top:4em;
   right:0;
   background-color: $lightColor;
   margin:1em;
-  height:50em;
-  width:50em;
-  border:2px solid $darkColor;
+  height:60em;
+  width:60em;
+  border:2px solid $shadeColor;
+  box-sizing: border-box;
 }
 
 .main_plot {
@@ -58,6 +59,56 @@
   left:0;
   height:100%;
   width:100%;
+}
+
+.axis_title {
+  width:60em;
+  height:3em;
+  text-align:center;
+  position: absolute;
+  background-color:$lightColor;
+
+  h2 {
+    margin:0;
+    line-height: 3em;
+  }
+
+}
+
+.flip_horiz {
+  transform: scaleX(-1);
+}
+
+.top_axis_title {
+  top:calc( -3em - 2px );
+  left:-2px;
+
+  span {
+    display:inline-block;
+    padding:0.2em;
+    margin:0.2em;
+    cursor:pointer;
+  }
+
+  span:hover {
+    background-color:rgba($highlightColor,0.5);
+  }
+  .active {
+    background-color:$highlightColor;
+    color:$lightColor;
+  }
+}
+
+.x_axis_title {
+  bottom:calc( -3em - 2px );
+  left:-2px;
+}
+
+.y_axis_title {
+  transform: rotate(90deg);
+  transform-origin: top left;
+  left: -2px;
+  top: -2px;
 }
 
 .layer_tab_holder {

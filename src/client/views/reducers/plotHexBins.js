@@ -128,7 +128,7 @@ export const getOccupiedHexGrid = createSelector(
       for (let i = 0; i < len; i++){
         if (d.zs[i] < min) min = d.zs[i]
       }
-      let z = reducer(d.zs)
+      let z = reducer.func(d.zs)
       max = Math.max(max,z)
     })
     let range = [min,max]
@@ -161,7 +161,8 @@ export const getScatterPlotDataByHexBin = createSelector(
       if (hexes[x]){
         for (let y = 0; y < hexes[x].length; y++){
           if (hexes[x][y] && hexes[x][y].ids.length > 0){
-            let z = zScale(reducer(hexes[x][y].zs))
+            let z = zScale(reducer.func(hexes[x][y].zs))
+            z = z > 1 ? z : 1;
             // let scale = Math.log(Math.max(...hexes[x][y].zs))/8
             hexes[x][y].points = drawPoints(x,y,grid.radius,grid.res,z/grid.radius)
             // hexes[x][y].points = drawPoints(x,y,grid.radius,grid.res)
@@ -215,7 +216,8 @@ export const getScatterPlotDataByHexBinByCategory = createSelector(
       })
       let hexArray = hexData.filter(obj => obj.ids.length > 0);
       hexArray.forEach(h=>{
-        h.z = zScale(reducer(h.zs))
+        h.z = zScale(reducer.func(h.zs))
+        h.z = h.z > 1 ? h.z : 1;
         h.points = drawPoints(h.x,h.y,grid.radius,grid.res,h.z/grid.radius)
       })
       data = data.concat(hexArray.sort((a,b)=>b.z - a.z))

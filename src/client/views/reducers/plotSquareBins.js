@@ -70,7 +70,7 @@ export const getOccupiedSquareGrid = createSelector(
       for (let i = 0; i < len; i++){
         if (d.zs[i] < min) min = d.zs[i]
       }
-      let z = reducer(d.zs)
+      let z = reducer.func(d.zs)
       max = Math.max(max,z)
     })
     let range = [min,max]
@@ -103,7 +103,8 @@ export const getScatterPlotDataBySquareBin = createSelector(
       if (squares[i]){
         for (let j = 0; j < squares[i].length; j++){
           if (squares[i][j] && squares[i][j].zs.length > 0){
-            let z = zScale(reducer(squares[i][j].zs))
+            let z = zScale(reducer.func(squares[i][j].zs))
+            z = z > 1 ? z : 1;
             let offset = (grid.width - z) / 2
             let index = grid.data.findIndex(o => o.id === squares[i][j].id)
             squares[i][j].x = grid.data[index].x + offset
@@ -161,7 +162,8 @@ export const getScatterPlotDataBySquareBinByCategory = createSelector(
       })
       let squareArray = squareData.filter(obj => obj.ids.length > 0);
       squareArray.forEach(s=>{
-        s.z = zScale(reducer(s.zs))
+        s.z = zScale(reducer.func(s.zs))
+        s.z = s.z > 1 ? s.z : 1;
         let offset = (grid.width - s.z) / 2
         let index = grid.data.findIndex(o => o.id === s.cellId)
         s.x = grid.data[index].x + offset
