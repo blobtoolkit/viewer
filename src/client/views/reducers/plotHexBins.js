@@ -124,8 +124,11 @@ export const getOccupiedHexGrid = createSelector(
     let max = Number.NEGATIVE_INFINITY
     binned.data.forEach(d => {
       data.push({id:d.id,x:d.x,y:d.y,points:grid.data[grid.data.findIndex(o => o.id === d.id)].points})
+      let len = d.zs.length
+      for (let i = 0; i < len; i++){
+        if (d.zs[i] < min) min = d.zs[i]
+      }
       let z = reducer(d.zs)
-      min = Math.min(min,z)
       max = Math.max(max,z)
     })
     let range = [min,max]
@@ -209,10 +212,12 @@ export const getScatterPlotDataByHexBinByCategory = createSelector(
         let currentCell = hexData[keys[categories.values[id]]]
         currentCell.ids.push(id)
         currentCell.zs.push(hex.zs[i])
-        currentCell.z = zScale(reducer(currentCell.zs))
-        currentCell.points = drawPoints(currentCell.x,currentCell.y,grid.radius,grid.res,currentCell.z/grid.radius)
       })
       let hexArray = hexData.filter(obj => obj.ids.length > 0);
+      hexArray.forEach(h=>{
+        h.z = zScale(reducer(h.zs))
+        h.points = drawPoints(h.x,h.y,grid.radius,grid.res,h.z/grid.radius)
+      })
       data = data.concat(hexArray.sort((a,b)=>b.z - a.z))
     })
     console.timeEnd('getScatterPlotDataByHexBinByCategory');

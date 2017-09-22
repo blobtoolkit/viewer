@@ -1,17 +1,40 @@
 import React from 'react';
+import { connect } from 'react-redux'
 import styles from './Plot.scss'
+import { getOccupiedSquareGrid } from '../reducers/plotSquareBins'
 
-const PlotSquareGridSVG = ({ side = 50, size = 1000 }) => {
-  let lines = []
-  for (let i = side; i < size; i += side){
-    lines.push(<line key={'x'+i} x1={0} y1={i} x2={size} y2={i} />)
-    lines.push(<line key={'y'+i} x1={i} y1={0} x2={i} y2={size} />)
+export default class PlotSquareGridSVG extends React.Component {
+  constructor(props) {
+    super(props);
+    this.mapStateToProps = () => {
+      return (state, props) => {
+        return getOccupiedSquareGrid(state)
+      }
+    }
+    this.mapDispatchToProps = dispatch => {
+      return {
+      }
+    }
   }
+
+  render(){
+    const ConnectedHexGrid = connect(
+      this.mapStateToProps,
+      this.mapDispatchToProps
+    )(SquareGridSVG)
+    return (
+      <ConnectedHexGrid {...this.props}/>
+    )
+  }
+}
+const SquareGridSVG = ({ data }) => {
+  let squares = []
+  data.forEach((datum,i)=>{
+    squares.push(<rect key={i} className={styles.square} x={datum.x} y={datum.y} height={datum.height} width={datum.width} />)
+  })
   return (
     <g className={styles.grid}>
-    {lines}
+    {squares}
     </g>
   )
 };
-
-export default PlotSquareGridSVG;

@@ -1,17 +1,40 @@
 import React from 'react';
+import { connect } from 'react-redux'
 import PlotSquareBinSVG from './PlotSquareBinSVG'
-import PlotHexBinSVG from './PlotHexBinSVG'
+import { getScatterPlotDataBySquareBinByCategory }  from '../reducers/plotSquareBins'
+import styles from './Plot.scss'
 
-const PlotSquareBinsSVG = ({ data, color, css }) => (
-    <g color={color}>
-      {data.map(square =>
-        <PlotSquareBinSVG key={square.id} {...square} css={css} />
-      )}
-    
-      {data.map(square =>
-        <PlotHexBinSVG key={square.id+'_hex'} {...square} css={css} />
-      )}
+export default class PlotSquareBinsSVG extends React.Component {
+  constructor(props) {
+    super(props);
+    this.mapStateToProps = () => {
+      return (state, props) => (
+        //console.log(getScatterPlotDataByHexBin(state))
+        getScatterPlotDataBySquareBinByCategory(state)
+        // plotGraphics:getPlotGraphics(state)
+      )
+    }
+  }
+
+  render(){
+    const ConnectedSquareBins = connect(
+      this.mapStateToProps
+    )(SquareBinsSVG)
+    return (
+      <ConnectedSquareBins />
+    )
+  }
+}
+
+const SquareBinsSVG = ({ data = [], css = '' }) => {
+  let squares = []
+  data.forEach((datum,i)=>{
+    let color = datum.color || '#999'
+    squares.push(<rect key={i} className={styles.square} color={color} x={datum.x} y={datum.y} height={datum.height} width={datum.width} />)
+  })
+  return (
+    <g>
+    {squares}
     </g>
-);
-
-export default PlotSquareBinsSVG;
+  )
+}

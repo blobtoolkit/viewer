@@ -29,7 +29,6 @@ export default class PlotHexGridSVG extends React.Component {
 }
 const HexGridSVG = ({ data }) => {
   let hexes = []
-  console.log(data)
   data.forEach((datum,i)=>{
     hexes.push(<polygon key={i} className={styles.hex} points={datum.points} style={{fill:datum.color}}/>)
   })

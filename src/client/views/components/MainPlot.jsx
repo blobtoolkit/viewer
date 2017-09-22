@@ -7,6 +7,7 @@ import PlotBubblesCanvas from './PlotBubblesCanvas'
 import PlotBubblesSVG from './PlotBubblesSVG'
 //import PlotSquareBinsCanvas from './PlotSquareBinsCanvas'
 import PlotSquareBinsSVG from './PlotSquareBinsSVG'
+import PlotSquareGridSVG from './PlotSquareGridSVG'
 //import PlotHexBinsCanvas from './PlotHexBinsCanvas'
 import PlotHexBinsSVG from './PlotHexBinsSVG'
 import PlotHexGridSVG from './PlotHexGridSVG'
@@ -35,6 +36,7 @@ export default class MainPlot extends React.Component {
 class PlotBox extends React.Component {
   render(){
     let plotContainer
+    let plotGrid
     if (this.props.plotShape == 'circle'){
       if (this.props.plotGraphics == 'canvas'){
         plotContainer = <PlotBubblesCanvas />
@@ -46,12 +48,15 @@ class PlotBox extends React.Component {
         //plotContainer = <PlotSquareBinsCanvas />
       }
       plotContainer = <PlotSquareBinsSVG />
+      //plotContainer = <PlotHexBinsSVG />
+      plotGrid = <PlotSquareGridSVG />
     }
     else if (this.props.plotShape == 'hex'){
       if (this.props.plotGraphics == 'canvas'){
         //plotContainer = <PlotHexBinsCanvas />
       }
       plotContainer = <PlotHexBinsSVG />
+      plotGrid = <PlotHexGridSVG />
     }
     if (this.props.plotGraphics == 'canvas'){
       return (
@@ -66,7 +71,7 @@ class PlotBox extends React.Component {
           <svg ref={(elem) => { this.svg = elem; }}
             className={styles.main_plot}
             viewBox='0 0 1000 1000'>
-            <PlotHexGridSVG />
+            {plotGrid}
             {plotContainer}
           </svg>
         </div>
