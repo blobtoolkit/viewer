@@ -113,26 +113,33 @@ export const rawData = handleActions(
 )
 
 export function fetchRawData(id) {
-   return dispatch => {
-     dispatch(requestRawData(id))
-     let json = deep(store.getState(),['rawData','byId',id]);
-     if (json && json.values){
-       dispatch(useStoredRawData(json))
-       return Promise.resolve(useStoredRawData(json));
-     }
-     let datasetId = deep(store.getState(),['selectedDataset']);
-     return fetch(`http://localhost:8000/api/v1/field/${datasetId}/${id}`)
-       .then(
-         response => response.json(),
-         error => console.log('An error occured.', error)
-       )
-       .then(json => {
-         if (!json.keys || json.keys.length == 0){
-           dispatch(editField({id,range:[Math.min(...json.values),Math.max(...json.values)]}))
-           dispatch(editFilter({id,range:[Math.min(...json.values),Math.max(...json.values)]}))
-         }
-         dispatch(receiveRawData({id,json}))
-       })
+  return dispatch => {
+    dispatch(requestRawData(id))
+    let json = deep(store.getState(),['rawData','byId',id]);
+    if (json && json.values){
+      dispatch(useStoredRawData(json))
+      return Promise.resolve(useStoredRawData(json));
+    }
+    let datasetId = deep(store.getState(),['selectedDataset']);
+    return fetch(`http://localhost:8000/api/v1/field/${datasetId}/${id}`)
+      .then(
+        response => response.json(),
+        error => console.log('An error occured.', error)
+      )
+      .then(json => {
+        if (!json.keys || json.keys.length == 0){
+          let max = Number.MIN_VALUE, min = Number.MAX_VALUE;
+          let len = json.values.length;
+          for (let i = 0; i < len; i++) {
+            if (json.values[i] > max) max = json.values[i];
+            if (json.values[i] < min) min = json.values[i];
+          }
+          if (min == 0) min = 0.01
+          dispatch(editField({id,range:[min,max]}))
+          dispatch(editFilter({id,range:[min,max]}))
+        }
+        dispatch(receiveRawData({id,json}))
+      })
    }
 }
 

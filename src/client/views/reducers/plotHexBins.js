@@ -18,18 +18,11 @@ export const getHexGrid = createSelector(
     let radius = (size/res)*(Math.sqrt(3)/3)
     let height = radius
     let width = Math.sqrt(3) * radius
-    let hexes = []
-    for (let i = 0; i <= res; i++){
-      hexes[i] = []
-      for (let j = 0; j <= res*1.2; j++){
-        let points = drawPoints(i,j,radius,res)
-        if (points) hexes[i][j] = {id:i+'_'+j,x:i,y:j,points}
-      }
-    }
     let data = [];
     for (let i = 0; i <= res; i++){
       for (let j = 0; j <= res*1.2; j++){
-        if (hexes[i][j]) data.push(hexes[i][j])
+        let points = drawPoints(i,j,radius,res)
+        if (points) data.push({id:i+'_'+j,x:i,y:j,points})
       }
     }
     return { data,size,res,radius,height,width }
@@ -113,8 +106,6 @@ export const getAllScatterPlotDataByHexBin = createSelector(
     for (let x = 0; x < hexes.length; x++){
       for (let y = 0; y < hexes[x].length; y++){
         if (hexes[x][y] && hexes[x][y].ids.length > 0){
-          // let scale = Math.log(hexes[x][y].zs.reduce((a,b)=>a+b))/15
-          // hexes[x][y].points = drawPoints(x,y,grid.radius,grid.res,scale)
           data.push(hexes[x][y])
         }
       }
@@ -133,7 +124,7 @@ export const getOccupiedHexGrid = createSelector(
     let max = Number.NEGATIVE_INFINITY
     binned.data.forEach(d => {
       data.push({id:d.id,x:d.x,y:d.y,points:grid.data[grid.data.findIndex(o => o.id === d.id)].points})
-      let z = d.zs.reduce(reducer)
+      let z = reducer(d.zs)
       min = Math.min(min,z)
       max = Math.max(max,z)
     })
@@ -164,13 +155,15 @@ export const getScatterPlotDataByHexBin = createSelector(
     })
     let data = [];
     for (let x = 0; x < hexes.length; x++){
-      for (let y = 0; y < hexes[x].length; y++){
-        if (hexes[x][y] && hexes[x][y].ids.length > 0){
-          let z = zScale(hexes[x][y].zs.reduce(reducer))
-          // let scale = Math.log(Math.max(...hexes[x][y].zs))/8
-          hexes[x][y].points = drawPoints(x,y,grid.radius,grid.res,z/grid.radius)
-          // hexes[x][y].points = drawPoints(x,y,grid.radius,grid.res)
-          data.push(hexes[x][y])
+      if (hexes[x]){
+        for (let y = 0; y < hexes[x].length; y++){
+          if (hexes[x][y] && hexes[x][y].ids.length > 0){
+            let z = zScale(reducer(hexes[x][y].zs))
+            // let scale = Math.log(Math.max(...hexes[x][y].zs))/8
+            hexes[x][y].points = drawPoints(x,y,grid.radius,grid.res,z/grid.radius)
+            // hexes[x][y].points = drawPoints(x,y,grid.radius,grid.res)
+            data.push(hexes[x][y])
+          }
         }
       }
     }
@@ -188,6 +181,7 @@ export const getScatterPlotDataByHexBinByCategory = createSelector(
   getZReducer,
   getZScale,
   (grid,scatterData,bins,categories,palette,reducer,scale) => {
+    console.time('getScatterPlotDataByHexBinByCategory');
     let zScale = d3[scale]().domain(grid.range).range([0,grid.radius])
     let keys = {}
     let data = []
@@ -200,6 +194,7 @@ export const getScatterPlotDataByHexBinByCategory = createSelector(
     let byCat = []
     scatterData.data.forEach((hex)=>{
       let hexData = []
+
       bins.forEach((bin,i)=>{
         hexData[i] = {
           id:hex.id+'_'+i,
@@ -214,12 +209,13 @@ export const getScatterPlotDataByHexBinByCategory = createSelector(
         let currentCell = hexData[keys[categories.values[id]]]
         currentCell.ids.push(id)
         currentCell.zs.push(hex.zs[i])
-        currentCell.z = zScale(currentCell.zs.reduce(reducer))
+        currentCell.z = zScale(reducer(currentCell.zs))
         currentCell.points = drawPoints(currentCell.x,currentCell.y,grid.radius,grid.res,currentCell.z/grid.radius)
       })
-      hexData.sort((a,b)=>b.z - a.z)
-      data = data.concat(hexData)
+      let hexArray = hexData.filter(obj => obj.ids.length > 0);
+      data = data.concat(hexArray.sort((a,b)=>b.z - a.z))
     })
+    console.timeEnd('getScatterPlotDataByHexBinByCategory');
     return {data};
   }
 )

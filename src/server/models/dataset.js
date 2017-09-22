@@ -30,9 +30,9 @@ const prepareMeta = async function() {
   let fields = [];
   meta.fields = fields;
   fields.push(this.addField('gc',{name:'GC',description:'per contig GC percentage',type:'variable',datatype:'float',range:[0,1],scale:'scaleLinear',preload:true,blobDBpath:['gc']}))
-  fields.push(this.addField('length',{name:'Length',description:'per contig length',type:'variable',datatype:'integer',range:[1,json.length],scale:'scaleSqrt',preload:true,blobDBpath:['length']}))
+  fields.push(this.addField('length',{name:'Length',description:'per contig length',type:'variable',datatype:'integer',range:[1,json.length],scale:'scaleLog',preload:true,blobDBpath:['length']}))
   if (json.n_count > 0){
-    fields.push(this.addField('ncount',{name:'N-count',description:'Ns per contig',type:'variable',datatype:'integer',range:[1,json.n_count],scale:'scaleSqrt',blobDBpath:['n_count']}))
+    fields.push(this.addField('ncount',{name:'N-count',description:'Ns per contig',type:'variable',datatype:'integer',range:[1,json.n_count],scale:'scaleLog',blobDBpath:['n_count']}))
   }
   let covLibs = [];
   let readCovLibs = [];

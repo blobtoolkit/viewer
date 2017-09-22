@@ -20,7 +20,7 @@ export const plotResolution = handleAction(
   (state, action) => {
     return action.payload
   },
-  15
+  30
 )
 export const getPlotResolution = state => state.plotResolution
 
@@ -55,12 +55,38 @@ export const zScale = handleAction(
 export const getZScale = state => state.zScale
 
 export const setZReducer = createAction('SET_Z_REDUCER')
+const zReducers = {
+  sum: arr => {
+      let sum = 0;
+      let len = arr.length
+      for (let i = 0; i < len; i++){
+        sum += arr[i]
+      }
+      return sum
+    },
+  min: arr => {
+      let min = Number.POSITIVE_INFINITY
+      let len = arr.length
+      for (let i = 0; i < len; i++){
+        if (arr[i] < min) min = arr[i]
+      }
+      return min
+    },
+  max: arr => {
+      let max = Number.NEGATIVE_INFINITY
+      let len = arr.length
+      for (let i = 0; i < len; i++){
+        if (arr[i] > max) max = arr[i]
+      }
+      return max
+    }
+}
 export const zReducer = handleAction(
   'SET_Z_REDUCER',
   (state, action) => {
-    return action.payload
+    if (zReducers[action.payload]) return zReducers[action.payload]
   },
-  (a,b) => (a+b)
+  zReducers.sum
 )
 export const getZReducer = state => state.zReducer
 

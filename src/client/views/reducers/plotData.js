@@ -243,131 +243,131 @@ export const getCategoryListForMainPlot = createSelectorForMainPlotCategory(
   }
 )
 
-const hexCorner = (center, radius, i) => {
-  let angle_deg = 60 * i + 30
-  let angle_rad = Math.PI / 180 * angle_deg
-  return {
-    cx:center.x + radius * Math.cos(angle_rad),
-    cy:center.y + radius * Math.sin(angle_rad)
-  }
-}
-
-const cube_to_axial = cube => {
-  let q = cube.x
-  let r = cube.z
-  return {q, r}
-}
-
-const axial_to_cube = hex => {
-  let x = hex.q
-  let z = hex.r
-  let y = -x-z
-  return {x, y, z}
-}
-
-const cube_to_oddr = cube => {
-  let i = cube.x + (cube.z - (cube.z&1)) / 2
-  let j = cube.z
-  return {i, j}
-}
-
-const oddr_to_cube = oddr => {
-  let x = oddr.j - (oddr.i - (oddr.i&1)) / 2
-  let z = oddr.i
-  let y = -x-z
-  return {x, y, z}
-}
-
-const hex_round = hex => {
-  return {q:Math.round(hex.q),r:Math.round(hex.r)}
-}
-
-const pixel_to_hex = (x, y, radius) => {
-  let q = (x * Math.sqrt(3)/3 - y / 3) / radius
-  let r = y * 2/3 / radius
-  return hex_round({q, r})
-}
-
-const pixel_to_oddr = (x, y, radius) => {
-  return cube_to_oddr(axial_to_cube(pixel_to_hex(x, y, radius)))
-}
-
-const drawPoints = (i,j,radius,res,scale = 1) => {
-  let center
-  let height = radius
-  let width = Math.sqrt(3) * radius
-  let corners = [0,1,2,3,4,5]
-  if (j%2 == 0){
-    center = {x:(i)*width,y:(j)*height*(3/2)}
-  }
-  else if (i < res) {
-    center = {x:(i)*width+width/2,y:(j)*height*(3/2)}
-  }
-  if (center){
-    radius = radius * scale
-    let vertices = corners.map(i=>hexCorner(center,radius,i))
-    let points = vertices.map(v=>v.cx+','+v.cy).join(' ')
-    return points
-  }
-  return
-}
-
-const getHexGrid = createSelector(
-  _getMainPlotCategory,
-  () => {
-    let size = 1000 // FIXME: magic number
-    let res = 20 // FIXME: magic number
-    let radius = (size/res)*(Math.sqrt(3)/3)
-    let height = radius
-    let width = Math.sqrt(3) * radius
-    let hexes = []
-    for (let i = 0; i <= res; i++){
-      hexes[i] = []
-      for (let j = 0; j <= res*1.2; j++){
-        let points = drawPoints(i,j,radius,res)
-        if (points) hexes[i][j] = {id:i+'_'+j,x:i,y:j,points}
-      }
-    }
-    let data = [];
-    for (let i = 0; i <= res; i++){
-      for (let j = 0; j <= res*1.2; j++){
-        if (hexes[i][j]) data.push(hexes[i][j])
-      }
-    }
-    return { data,size,res,radius,height,width }
-  }
-)
-
-export const getHexBinPlotDataForCategoryIndex = createSelectorForCategoryIndex(
-  _getCategoryIndexAsMemoKey,
-  getScatterPlotDataForCategoryIndex,
-  getHexGrid,
-  (plotData, grid) => {
-    let hexes = []
-    grid.data.forEach(d=>{
-      hexes[d.x] = hexes[d.x] || []
-      hexes[d.x][d.y] = {id:d.id,x:d.x,y:d.y,ids:[],zs:[]}
-    })
-    plotData.data.forEach(datum=>{
-      let coords = pixel_to_oddr(datum.x,datum.y,grid.radius)
-      if (hexes[coords.i] && hexes[coords.i][coords.j]){
-        hexes[coords.i][coords.j].ids.push(datum.id)
-        hexes[coords.i][coords.j].zs.push(datum.z)
-      }
-    })
-    let data = [];
-    for (let x = 0; x < hexes.length; x++){
-      for (let y = 0; y < hexes[x].length; y++){
-        if (hexes[x][y] && hexes[x][y].ids.length > 0){
-          let scale = Math.log(hexes[x][y].zs.reduce((a,b)=>a+b))/15
-          // let scale = Math.log(Math.max(...hexes[x][y].zs))/8
-          hexes[x][y].points = drawPoints(x,y,grid.radius,grid.res,scale)
-          // hexes[x][y].points = drawPoints(x,y,grid.radius,grid.res)
-          data.push(hexes[x][y])
-        }
-      }
-    }
-    console.log(data)
-    return {data,color:plotData.color}
-  }
-);
+// const hexCorner = (center, radius, i) => {
+//   let angle_deg = 60 * i + 30
+//   let angle_rad = Math.PI / 180 * angle_deg
+//   return {
+//     cx:center.x + radius * Math.cos(angle_rad),
+//     cy:center.y + radius * Math.sin(angle_rad)
+//   }
+// }
+//
+// const cube_to_axial = cube => {
+//   let q = cube.x
+//   let r = cube.z
+//   return {q, r}
+// }
+//
+// const axial_to_cube = hex => {
+//   let x = hex.q
+//   let z = hex.r
+//   let y = -x-z
+//   return {x, y, z}
+// }
+//
+// const cube_to_oddr = cube => {
+//   let i = cube.x + (cube.z - (cube.z&1)) / 2
+//   let j = cube.z
+//   return {i, j}
+// }
+//
+// const oddr_to_cube = oddr => {
+//   let x = oddr.j - (oddr.i - (oddr.i&1)) / 2
+//   let z = oddr.i
+//   let y = -x-z
+//   return {x, y, z}
+// }
+//
+// const hex_round = hex => {
+//   return {q:Math.round(hex.q),r:Math.round(hex.r)}
+// }
+//
+// const pixel_to_hex = (x, y, radius) => {
+//   let q = (x * Math.sqrt(3)/3 - y / 3) / radius
+//   let r = y * 2/3 / radius
+//   return hex_round({q, r})
+// }
+//
+// const pixel_to_oddr = (x, y, radius) => {
+//   return cube_to_oddr(axial_to_cube(pixel_to_hex(x, y, radius)))
+// }
+//
+// const drawPoints = (i,j,radius,res,scale = 1) => {
+//   let center
+//   let height = radius
+//   let width = Math.sqrt(3) * radius
+//   let corners = [0,1,2,3,4,5]
+//   if (j%2 == 0){
+//     center = {x:(i)*width,y:(j)*height*(3/2)}
+//   }
+//   else if (i < res) {
+//     center = {x:(i)*width+width/2,y:(j)*height*(3/2)}
+//   }
+//   if (center){
+//     radius = radius * scale
+//     let vertices = corners.map(i=>hexCorner(center,radius,i))
+//     let points = vertices.map(v=>v.cx+','+v.cy).join(' ')
+//     return points
+//   }
+//   return
+// }
+//
+// const getHexGrid = createSelector(
+//   _getMainPlotCategory,
+//   () => {
+//     let size = 1000 // FIXME: magic number
+//     let res = 20 // FIXME: magic number
+//     let radius = (size/res)*(Math.sqrt(3)/3)
+//     let height = radius
+//     let width = Math.sqrt(3) * radius
+//     let hexes = []
+//     for (let i = 0; i <= res; i++){
+//       hexes[i] = []
+//       for (let j = 0; j <= res*1.2; j++){
+//         let points = drawPoints(i,j,radius,res)
+//         if (points) hexes[i][j] = {id:i+'_'+j,x:i,y:j,points}
+//       }
+//     }
+//     let data = [];
+//     for (let i = 0; i <= res; i++){
+//       for (let j = 0; j <= res*1.2; j++){
+//         if (hexes[i][j]) data.push(hexes[i][j])
+//       }
+//     }
+//     return { data,size,res,radius,height,width }
+//   }
+// )
+//
+// export const getHexBinPlotDataForCategoryIndex = createSelectorForCategoryIndex(
+//   _getCategoryIndexAsMemoKey,
+//   getScatterPlotDataForCategoryIndex,
+//   getHexGrid,
+//   (plotData, grid) => {
+//     let hexes = []
+//     grid.data.forEach(d=>{
+//       hexes[d.x] = hexes[d.x] || []
+//       hexes[d.x][d.y] = {id:d.id,x:d.x,y:d.y,ids:[],zs:[]}
+//     })
+//     plotData.data.forEach(datum=>{
+//       let coords = pixel_to_oddr(datum.x,datum.y,grid.radius)
+//       if (hexes[coords.i] && hexes[coords.i][coords.j]){
+//         hexes[coords.i][coords.j].ids.push(datum.id)
+//         hexes[coords.i][coords.j].zs.push(datum.z)
+//       }
+//     })
+//     let data = [];
+//     for (let x = 0; x < hexes.length; x++){
+//       for (let y = 0; y < hexes[x].length; y++){
+//         if (hexes[x][y] && hexes[x][y].ids.length > 0){
+//           let scale = Math.log(hexes[x][y].zs.reduce((a,b)=>a+b))/15
+//           // let scale = Math.log(Math.max(...hexes[x][y].zs))/8
+//           hexes[x][y].points = drawPoints(x,y,grid.radius,grid.res,scale)
+//           // hexes[x][y].points = drawPoints(x,y,grid.radius,grid.res)
+//           data.push(hexes[x][y])
+//         }
+//       }
+//     }
+//     console.log(data)
+//     return {data,color:plotData.color}
+//   }
+// );
