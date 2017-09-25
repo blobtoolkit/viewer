@@ -1,14 +1,43 @@
 import React from 'react';
+import { connect } from 'react-redux'
 import styles from './Plot.scss'
-import CanvasCircle from './CanvasCircle'
-import { Layer, Stage } from 'react-konva';
 
-class PlotBubblesCanvas extends React.Component {
+import { getCirclePlotDataForCategoryIndex }  from '../reducers/plotData'
+import { getPlotResolution, getZScale }  from '../reducers/plotParameters'
+
+export default class PlotBubblesCanvas extends React.Component {
+  constructor(props) {
+    super(props);
+    this.mapStateToProps = () => {
+      return (state, props) => {
+        let val = getCirclePlotDataForCategoryIndex(state,this.props.x0)
+        let obj = {}
+        obj.color = val.color
+        obj.data = val.data
+        obj.scale = getZScale(state)
+        obj.res = getPlotResolution(state)
+        return obj
+      }
+    }
+  }
+
+  render(){
+    const ConnectedBubblesCanvas = connect(
+      this.mapStateToProps
+    )(BubblesCanvas)
+    return (
+      <ConnectedBubblesCanvas />
+    )
+  }
+}
+
+class BubblesCanvas extends React.Component {
     componentDidMount() {
-       this.updateCanvas();
+      this.updateCanvas();
     }
     componentDidUpdate() {
-       this.updateCanvas();
+      //console.log(this.props)
+      this.updateCanvas();
     }
     updateCanvas() {
       let width = this.canvas.width
@@ -17,31 +46,20 @@ class PlotBubblesCanvas extends React.Component {
       ctx.clearRect(0, 0, width, height);
       ctx.globalAlpha=0.4
       ctx.fillStyle = this.props.color;
-      ctx.lineWidth = 0.25;
+      ctx.lineWidth = 0.5;
       ctx.strokeStyle = '#999';
-      this.props.bubbles.map(bubble => {
+      this.props.data.map(bubble => {
         ctx.beginPath();
-        ctx.arc(bubble.cx, bubble.cy, bubble.r, 0, 2 * Math.PI, false);
+        ctx.arc(bubble.x, bubble.y, bubble.r, 0, 2 * Math.PI, false);
         ctx.fill();
         ctx.stroke();
       })
     }
     render() {
-      // console.log(this.props)
       return (
-        <canvas className={styles.fill_parent} ref={(elem) => { this.canvas = elem; }} width={1000} height={1000}/>
+        <div className={styles.fill_parent}>
+          <canvas className={styles.fill_parent} ref={(elem) => { this.canvas = elem; }} width={1000} height={1000}/>
+        </div>
       );
-      // let circles = this.props.bubbles.map((bubble,i) => {
-      //   return <CanvasCircle key={i} cx={bubble.cx} cy={bubble.cy} r={bubble.r} color={this.props.color}/>
-      // })
-      // return (
-      //   <Stage width={1000} height={1000}>
-      //     <Layer>
-      //         {circles}
-      //     </Layer>
-      //   </Stage>
-      // )
     }
 }
-
-export default PlotBubblesCanvas;

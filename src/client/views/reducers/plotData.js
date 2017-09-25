@@ -2,6 +2,7 @@ import { createAction, handleAction, handleActions } from 'redux-actions'
 import { createSelector } from 'reselect'
 import { byIdSelectorCreator } from './selectorCreators'
 import { getMainPlot } from './plot';
+import { getZScale, getPlotResolution } from './plotParameters';
 import { getColorPalette } from './color';
 import { getFilteredDataForFieldId,
   getCategoryListForFieldId,
@@ -65,27 +66,22 @@ export const getScatterPlotData = createSelector(
       }
       scales[axis].range([0,1000])
     })
+    let min = Number.POSITIVE_INFINITY
+    let max = Number.NEGATIVE_INFINITY
     let len = plotData.axes.x.values.length
-    // let limits = {
-    //   x:[Math.Infinity,-Math.Infinity],
-    //   y:[Math.Infinity,-Math.Infinity],
-    //   z:[Math.Infinity,-Math.Infinity]
-    // }
     for (let i = 0; i < len; i++){
+      let z = plotData.axes.z.values[i]
       data.push({
         id:i,
         x: scales.x(plotData.axes.x.values[i]),
         y: 1000 - scales.y(plotData.axes.y.values[i]),
-        z: plotData.axes.z.values[i]
+        z: z
       })
-      // for (let i = 0; i < 3; i++){
-      //   if (datum[axes[i]] < limits[axes[i]][0]) limits[axes[i]][0] = datum[axes[i]]
-      //   if (datum[axes[i]] > limits[axes[i]][1]) limits[axes[i]][1] = datum[axes[i]]
-      // }
-      //data.push(datum)
+      max = Math.max(max,z)
+      min = Math.min(min,z)
     }
-
-    return {data};
+    let range = [min,max]
+    return {data,range};
   }
 )
 
@@ -124,10 +120,11 @@ const sliceObject = (obj,index) => {
   Object.keys(obj).forEach(key =>{
     slice[key] = obj[key].slice(index,index+1)[0]
   })
-  console.log(slice)
   return slice;
 }
 const createSelectorForCategoryIndex = byIdSelectorCreator();
+const createSelectorForCircleCategoryIndex = byIdSelectorCreator();
+const createSelectorForSquareCategoryIndex = byIdSelectorCreator();
 const createSelectorForSliceIndex = byIdSelectorCreator();
 const createSelectorForColorIndex = byIdSelectorCreator();
 
@@ -138,7 +135,6 @@ const getColorByIndex = createSelectorForColorIndex(
   _getCategoryIndexAsMemoKey,
   getColorPalette,
   (index,palette) => {
-    console.log('getColorByIndex')
     return palette.colors[index]
   }
 )
@@ -149,8 +145,6 @@ export const getScatterPlotDataSlice = createSelectorForSliceIndex(
   getScatterPlotDataByCategory,
   (index,plotData) => {
     plotData = sliceObject(plotData,index)
-    //plotData.color = palette.colors[index]
-    console.log('getScatterPlotDataSlice')
     return plotData
   }
 )
@@ -159,14 +153,28 @@ export const getScatterPlotDataForCategoryIndex = createSelectorForCategoryIndex
   _getCategoryIndexAsMemoKey,
   getScatterPlotDataSlice,
   getColorByIndex,
-  (plotData,color) => {
+  (plotData,color,res) => {
     plotData.color = color
-    console.log('getScatterPlotDataForCategoryIndex')
     return plotData
   }
 );
 
-export const getSquareBinPlotDataForCategoryIndex = createSelectorForCategoryIndex(
+export const getCirclePlotDataForCategoryIndex = createSelectorForCircleCategoryIndex(
+  _getCategoryIndexAsMemoKey,
+  getScatterPlotDataForCategoryIndex,
+  (state) => getDetailsForFieldId(state,getMainPlot(state).axes.z),
+  getZScale,
+  getPlotResolution,
+  (catData,details,scale, res) => {
+    let zScale = d3[scale]().domain(details.range).range([0,2*1000/res])
+    catData.data.forEach(datum => {
+      datum.r = zScale(datum.z)
+    })
+    return catData
+  }
+);
+
+export const getSquareBinPlotDataForCategoryIndex = createSelectorForSquareCategoryIndex(
   _getCategoryIndexAsMemoKey,
   getScatterPlotDataForCategoryIndex,
   (plotData) => {

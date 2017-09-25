@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 import { getPlotShape, getPlotGraphics } from '../reducers/plotParameters'
 import styles from './Plot.scss'
 import MainPlotBox from './MainPlotBox'
-import PlotBubblesCanvas from './PlotBubblesCanvas'
+import PlotBubblesCanvasLayers from './PlotBubblesCanvasLayers'
 import PlotBubblesSVG from './PlotBubblesSVG'
 //import PlotSquareBinsCanvas from './PlotSquareBinsCanvas'
 import PlotSquareBinsSVG from './PlotSquareBinsSVG'
@@ -40,10 +40,10 @@ class PlotBox extends React.Component {
     let plotContainer
     let plotGrid
     if (this.props.plotShape == 'circle'){
-      if (this.props.plotGraphics == 'canvas'){
-        plotContainer = <PlotBubblesCanvas />
-      }
-      plotContainer = <PlotBubblesSVG />
+      //if (this.props.plotGraphics == 'canvas'){
+        plotContainer = <PlotBubblesCanvasLayers />
+      //}
+      //plotContainer = <PlotBubblesSVG />
     }
     else if (this.props.plotShape == 'square'){
       if (this.props.plotGraphics == 'canvas'){
@@ -60,10 +60,13 @@ class PlotBox extends React.Component {
       plotContainer = <PlotHexBinsSVG />
       plotGrid = <PlotHexGridSVG />
     }
-    if (this.props.plotGraphics == 'canvas'){
+    if (this.props.plotShape == 'circle'){
       return (
         <div className={styles.outer}>
           {plotContainer}
+          <PlotParameters axis='top'/>
+          <PlotAxisTitle axis='x'/>
+          <PlotAxisTitle axis='y'/>
         </div>
       )
     }
@@ -73,8 +76,8 @@ class PlotBox extends React.Component {
           <svg ref={(elem) => { this.svg = elem; }}
             className={styles.main_plot}
             viewBox='-50 -50 1100 1100'>
-            {plotGrid}
             {plotContainer}
+            {plotGrid}
           </svg>
           <PlotParameters axis='top'/>
           <PlotAxisTitle axis='x'/>

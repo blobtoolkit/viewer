@@ -48,6 +48,7 @@ const Parameters = ({ shape, onSelectShape, resolution, onChangeResolution, redu
     <div className={styles.axis_title+' '+styles.top_axis_title}>
     <span onClick={()=>onSelectShape('square')} className={shape == 'square' ? styles.active : ''}>square</span>
     <span onClick={()=>onSelectShape('hex')} className={shape == 'hex' ? styles.active : ''}>hex</span>
+    <span onClick={()=>onSelectShape('circle')} className={shape == 'circle' ? styles.active : ''}>circle</span>
     <input onChange={(e)=>onChangeResolution(e.target.value)} type="range" value={resolution} min="5" max="50" step="1" className={styles.flip_horiz}/>
     <span onClick={()=>onSelectReducer('sum')} className={reducer.id == 'sum' ? styles.active : ''}>sum</span>
     <span onClick={()=>onSelectReducer('max')} className={reducer.id == 'max' ? styles.active : ''}>max</span>

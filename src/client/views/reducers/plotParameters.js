@@ -22,8 +22,11 @@ export const plotResolution = handleAction(
   },
   30
 )
-export const getPlotResolution = state => state.plotResolution
-
+const _getPlotResolution = state => state.plotResolution
+export const getPlotResolution = createSelector(
+  _getPlotResolution,
+  res => res
+)
 export const setPlotGraphics = createAction('SET_PLOT_GRAPHICS')
 export const plotGraphics = handleAction(
   'SET_PLOT_GRAPHICS',

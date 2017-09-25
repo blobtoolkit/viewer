@@ -3,7 +3,7 @@
 .outer {
   position:absolute;
   top:4em;
-  right:0;
+  left:40em;
   background-color: $lightColor;
   margin:1em;
   height:60em;
@@ -15,6 +15,7 @@
 .main_plot {
   height:100%;
   width:100%;
+  pointer-events:none;
 
   circle {
     fill:currentColor;
@@ -38,17 +39,24 @@
   .grid {
     stroke:$paleColor;
     stroke-width:0.5;
+    pointer-events:auto;
 
     .hex {
       stroke:$paleColor;
       stroke-width:0.5;
-      fill:none;
+      fill:$clearColor;
+    }
+    .hex:hover {
+      fill:rgba($highlightColor,0.5);
     }
 
     .square {
       stroke:$paleColor;
       stroke-width:0.5;
-      fill:none;
+      fill:$clearColor;
+    }
+    .square:hover {
+      fill:rgba($highlightColor,0.5);
     }
   }
 }
