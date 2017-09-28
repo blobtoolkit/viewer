@@ -88,7 +88,8 @@
 }
 
 .top_axis_title {
-  top:calc( -3em - 2px );
+  height:6em;
+  top:calc( -6em - 2px );
   left:-2px;
 
   span {
@@ -104,6 +105,10 @@
   .active {
     background-color:$highlightColor;
     color:$lightColor;
+  }
+  h2 {
+    margin:0;
+    line-height: 2em;
   }
 }
 

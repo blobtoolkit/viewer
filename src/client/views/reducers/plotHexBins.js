@@ -20,7 +20,7 @@ export const getHexGrid = createSelector(
     let width = Math.sqrt(3) * radius
     let data = [];
     for (let i = 0; i <= res; i++){
-      for (let j = 0; j <= res*1.2; j++){
+      for (let j = 0; j <= res*(2/Math.sqrt(3)); j++){
         let points = drawPoints(i,j,radius,res)
         if (points) data.push({id:i+'_'+j,x:i,y:j,points})
       }
@@ -70,7 +70,7 @@ export const getAllScatterPlotData = createSelector(
       // if (axis == 'z'){
       //   scales[axis] = d3.scaleSqrt().domain(scales[axis].domain())
       // }
-      scales[axis].range([0,1000])
+      scales[axis].range([100,900])
     })
     let len = plotData.axes.x.values.length
     for (let i = 0; i < len; i++){

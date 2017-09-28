@@ -75,7 +75,7 @@ class PlotBox extends React.Component {
         <div className={styles.outer}>
           <svg ref={(elem) => { this.svg = elem; }}
             className={styles.main_plot}
-            viewBox='-50 -50 1100 1100'>
+            viewBox='0 0 1000 1000'>
             {plotContainer}
             {plotGrid}
           </svg>

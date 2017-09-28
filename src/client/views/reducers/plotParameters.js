@@ -10,7 +10,7 @@ export const plotShape = handleAction(
   (state, action) => {
     return action.payload
   },
-  'square'
+  'hex'
 )
 export const getPlotShape = state => state.plotShape
 

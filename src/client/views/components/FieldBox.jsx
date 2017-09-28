@@ -4,7 +4,6 @@ import FieldBoxHeader from './FieldBoxHeader'
 import FieldRawDataPreview from './FieldRawDataPreview'
 import Filter from './Filter'
 import * as d3 from 'd3'
-import { getFieldMetadata, getFilterMetadata } from '../reducers/repository'
 import { CSSTransitionGroup } from 'react-transition-group'
 
 class FieldBox extends React.Component {

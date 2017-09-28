@@ -114,13 +114,14 @@ export const rawData = handleActions(
 
 export function fetchRawData(id) {
   return dispatch => {
+    let state = store.getState()
     dispatch(requestRawData(id))
-    let json = deep(store.getState(),['rawData','byId',id]);
+    let json = deep(state,['rawData','byId',id]);
     if (json && json.values){
       dispatch(useStoredRawData(json))
       return Promise.resolve(useStoredRawData(json));
     }
-    let datasetId = deep(store.getState(),['selectedDataset']);
+    let datasetId = deep(state,['selectedDataset']);
     return fetch(`http://localhost:8000/api/v1/field/${datasetId}/${id}`)
       .then(
         response => response.json(),
@@ -128,6 +129,8 @@ export function fetchRawData(id) {
       )
       .then(json => {
         if (!json.keys || json.keys.length == 0){
+          let meta = getDetailsForFieldId(state,id)
+          console.log(meta)
           let max = Number.MIN_VALUE, min = Number.MAX_VALUE;
           let len = json.values.length;
           for (let i = 0; i < len; i++) {
@@ -135,8 +138,9 @@ export function fetchRawData(id) {
             if (json.values[i] < min) min = json.values[i];
           }
           if (min == 0) min = 0.01
-          dispatch(editField({id,range:[min,max]}))
-          dispatch(editFilter({id,range:[min,max]}))
+          let scale = meta.xScale.copy().domain([min,max]).nice(25)
+          dispatch(editField({id,range:scale.domain()}))
+          dispatch(editFilter({id,range:scale.domain()}))
         }
         dispatch(receiveRawData({id,json}))
       })

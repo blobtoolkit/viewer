@@ -64,7 +64,7 @@ export const getScatterPlotData = createSelector(
       if (axis == 'z'){
         scales[axis] = d3.scaleSqrt().domain(scales[axis].domain())
       }
-      scales[axis].range([0,1000])
+      scales[axis].range([100,900])
     })
     let min = Number.POSITIVE_INFINITY
     let max = Number.NEGATIVE_INFINITY

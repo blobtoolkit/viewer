@@ -1,0 +1,30 @@
+@import 'colors';
+
+div.icon {
+  height:1.5em;
+  width:1.5em;
+  margin:0.3em;
+  display:inline-block;
+
+  svg {
+    height:1.5em;
+    width:1.5em;
+    cursor:pointer;
+    background-color:$highlightColor;
+    color:$darkColor;
+  }
+
+  svg.active {
+    background-color:$deepColor;
+    color:$lightColor;
+  }
+
+  svg:hover {
+    background-color:$paleColor;
+    color:$lightColor;
+  }
+
+  svg.active:hover {
+
+  }
+}

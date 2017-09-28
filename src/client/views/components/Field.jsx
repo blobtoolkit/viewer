@@ -2,6 +2,7 @@ import React from 'react'
 import styles from './Fields.scss';
 import FieldBox from './FieldBox'
 import { connect } from 'react-redux'
+import { getMainPlot } from '../reducers/plot'
 import { makeGetFieldMetadata,
   getDetailsForFieldId,
   editField,
@@ -15,7 +16,9 @@ class Field extends React.Component {
     super(props);
     this.mapStateToProps = () => {
       return (state, props) => {
-        return getDetailsForFieldId(state, props.fieldId)
+        let obj = Object.assign({},getDetailsForFieldId(state, props.fieldId))
+        obj.plot = getMainPlot(state)
+        return obj
       }
     }
     this.mapDispatchToProps = dispatch => {

@@ -21,14 +21,19 @@ const mapDispatchToProps = dispatch => {
 class ApplyFilters extends React.Component {
 
   render(){
+    let text = this.props.selected+'/'+this.props.count+' ('+this.props.percentage+') '+this.props.type+' selected'
+    //let percent = this.props.selected/this.props.count*100
     return (
       <div className={styles.dataset_controls}>
-        <div onClick={this.props.onClick}>
-          Apply
+        <div className={styles.detail_container}>
+          {text}
+          <div className={styles.detail} style={{width:this.props.percentage}}>
+            {text}
+          </div>
         </div>
-        <div>
-          {this.props.selected}/{this.props.count} ({this.props.percentage}) {this.props.type} selected
-        </div>
+        <span onClick={this.props.onClick} className={styles.button}>
+          Filter
+        </span>
       </div>
     )
   }
