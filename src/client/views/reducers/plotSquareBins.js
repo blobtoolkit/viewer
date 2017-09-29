@@ -111,12 +111,13 @@ export const getScatterPlotDataBySquareBin = createSelector(
             squares[i][j].y = grid.data[index].y + offset
             squares[i][j].width = grid.width - offset * 2
             squares[i][j].height = squares[i][j].width
+            squares[i][j].index = 0
             data.push(squares[i][j])
           }
         }
       }
     }
-    return {data};
+    return {data,grid};
   }
 )
 
@@ -129,7 +130,7 @@ export const getScatterPlotDataBySquareBinByCategory = createSelector(
   getColorPalette,
   getZReducer,
   getZScale,
-  (grid,scatterData,bins,categories,palette,reducer,scale) => {
+  (grid = {},scatterData,bins,categories,palette,reducer,scale) => {
     console.time('getScatterPlotDataBySquareBinByCategory');
     let zScale = d3[scale]().domain(grid.range).range([0,grid.width])
     let keys = {}
@@ -148,6 +149,7 @@ export const getScatterPlotDataBySquareBinByCategory = createSelector(
         squareData[i] = {
           id:square.id+'_'+i,
           cellId:square.id,
+          index:i,
           i:square.i,
           j:square.j,
           color:palette.colors[i],
@@ -176,6 +178,91 @@ export const getScatterPlotDataBySquareBinByCategory = createSelector(
 
 
     console.timeEnd('getScatterPlotDataBySquareBinByCategory');
-    return {data};
+    return {data,grid};
+  }
+)
+
+export const getBinnedDataByCategoryByAxis = createSelector(
+  getScatterPlotDataBySquareBinByCategory,
+  (state) => getBinsForFieldId(state,getMainPlot(state).axes.cat),
+  (binnedData,bins) => {
+    let iBinned = [{}]
+    let jBinned = [{}]
+    for (let index = 0; index < bins.length; index++){
+      iBinned[index] = {}
+      jBinned[index] = {}
+    }
+    binnedData.data.forEach(d=>{
+      if (!iBinned[d.index][d.i]) iBinned[d.index][d.i] = {zs:[],ids:[]}
+      if (!jBinned[d.index][d.j]) jBinned[d.index][d.j] = {zs:[],ids:[]}
+      iBinned[d.index][d.i].zs = iBinned[d.index][d.i].zs.concat(d.zs)
+      iBinned[d.index][d.i].ids = iBinned[d.index][d.i].ids.concat(d.ids)
+      jBinned[d.index][d.j].zs = jBinned[d.index][d.j].zs.concat(d.zs)
+      jBinned[d.index][d.j].ids = jBinned[d.index][d.j].ids.concat(d.ids)
+    })
+    let data = []
+    for (let index = 0; index < Math.max(bins.length,1); index++){
+      Object.keys(iBinned[index]).forEach(i => {
+        let obj = {axis:'x',bin:i,index:index}
+        obj.zs = iBinned[index][i].zs
+        obj.ids = iBinned[index][i].ids
+        data.push(obj)
+      })
+      Object.keys(jBinned[index]).forEach(j => {
+        let obj = {axis:'y',bin:j,index:index}
+        obj.zs = jBinned[index][j].zs
+        obj.ids = jBinned[index][j].ids
+        data.push(obj)
+      })
+    }
+    let grid = binnedData.grid
+    return {data,grid}
+  }
+)
+
+const getAxis = (state,axis) => axis
+export const getBinnedLinesByCategoryForAxis = createSelector(
+  getAxis,
+  getBinnedDataByCategoryByAxis,
+  (state) => getFilteredDataForFieldId(state,getMainPlot(state).axes.cat),
+  getColorPalette,
+  getZReducer,
+  getZScale,
+  (axis,binnedData,categories,palette,reducer,scale) => {
+    console.log(categories)
+    let zScale = d3[scale]().domain(binnedData.grid.range).range([0,200])
+    let paths = [{name:'all',color:'#999999',path:'M0 300'}]
+    if (categories.values.length > 0){
+      for (let i = 0; i < categories.keys.length; i++){
+        paths[i] = {name:categories.keys[i],color:palette.colors[i],path:'M0 300'}
+      }
+    }
+    let zs = {}
+    let xs = {}
+    let bins = {}
+    binnedData.data.forEach(d=>{
+      if (d.axis == axis){
+        bins[d.index] = bins[d.index] ? bins[d.index] + 1 : 0
+        zs[d.index] = zs[d.index] ? zs[d.index] : 300
+        let x0 = d.bin * binnedData.grid.width
+        let x1 = x0 + binnedData.grid.width
+        let z = 300 - zScale(reducer.func(d.zs))
+        if (bins[d.index] != d.bin){
+          paths[d.index].path += ' L'+x0+' '+zs[d.index]
+        }
+        paths[d.index].path += ' L'+x0+' '+z
+        paths[d.index].path += ' L'+x1+' '+z
+        zs[d.index] = z
+        xs[d.index] = x1
+      }
+    })
+    Object.keys(xs).forEach(index => {
+      if (xs[index] < 1000){
+        paths[index].path += ' L'+xs[index]+' '+300
+        paths[index].path += ' L1000 '+300
+      }
+    })
+    console.log(paths)
+    return {paths}
   }
 )

@@ -5,7 +5,7 @@ import { getBinsForFieldId } from './field';
 import { getFilteredDataForFieldId } from './preview'
 import { getMainPlot } from './plot';
 import { getScatterPlotData } from './plotData';
-import { getZReducer, getZScale, getPlotResolution } from './plotParameters';
+import { getZReducer, getZScale, getPlotResolution, getTransformFunction } from './plotParameters';
 import { getColorPalette } from './color';
 import { drawPoints, pixel_to_oddr } from './hexFunctions'
 import * as d3 from 'd3'
@@ -55,8 +55,8 @@ export const getAllMainPlotData = createSelector(
 
 export const getAllScatterPlotData = createSelector(
   getAllMainPlotData,
-  (plotData) => {
-    console.log(plotData)
+  getTransformFunction,
+  (plotData,transform) => {
     let data = [];
     let scales = {};
     let axes = ['x','y','z']
@@ -70,14 +70,17 @@ export const getAllScatterPlotData = createSelector(
       // if (axis == 'z'){
       //   scales[axis] = d3.scaleSqrt().domain(scales[axis].domain())
       // }
-      scales[axis].range([100,900])
+      scales[axis].range([0,1000])
     })
     let len = plotData.axes.x.values.length
     for (let i = 0; i < len; i++){
+      let y = scales.y(plotData.axes.y.values[i])
+      let x = scales.x(plotData.axes.x.values[i])
+      if (transform) [x,y] = transform([x,y])
       data.push({
         id:i,
-        x: scales.x(plotData.axes.x.values[i]),
-        y: 1000 - scales.y(plotData.axes.y.values[i]),
+        x: x,
+        y: 1000 - y,
         z: plotData.axes.z.values[i]
       })
     }

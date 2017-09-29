@@ -50,7 +50,7 @@ const getFilteredListx = state => state.filteredList
 
 export const getFilteredList = createSelector(
   getFilteredListx,
-  list => {console.log(list); return list}
+  list => {return list}
 )
 
 const filterRangeToList = (low,high,arr,list) => {

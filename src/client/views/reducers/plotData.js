@@ -2,7 +2,7 @@ import { createAction, handleAction, handleActions } from 'redux-actions'
 import { createSelector } from 'reselect'
 import { byIdSelectorCreator } from './selectorCreators'
 import { getMainPlot } from './plot';
-import { getZScale, getPlotResolution } from './plotParameters';
+import { getZScale, getPlotResolution, getTransformFunction } from './plotParameters';
 import { getColorPalette } from './color';
 import { getFilteredDataForFieldId,
   getCategoryListForFieldId,
@@ -50,7 +50,8 @@ export const getMainPlotData = createSelector(
 
 export const getScatterPlotData = createSelector(
   getMainPlotData,
-  (plotData) => {
+  getTransformFunction,
+  (plotData,transform) => {
     let data = [];
     let scales = {};
     let axes = ['x','y','z']
@@ -64,17 +65,20 @@ export const getScatterPlotData = createSelector(
       if (axis == 'z'){
         scales[axis] = d3.scaleSqrt().domain(scales[axis].domain())
       }
-      scales[axis].range([100,900])
+      scales[axis].range([0,1000])
     })
     let min = Number.POSITIVE_INFINITY
     let max = Number.NEGATIVE_INFINITY
     let len = plotData.axes.x.values.length
     for (let i = 0; i < len; i++){
       let z = plotData.axes.z.values[i]
+      let y = scales.y(plotData.axes.y.values[i])
+      let x = scales.x(plotData.axes.x.values[i])
+      if (transform) [x,y] = transform([x,y])
       data.push({
         id:i,
-        x: scales.x(plotData.axes.x.values[i]),
-        y: 1000 - scales.y(plotData.axes.y.values[i]),
+        x: x,
+        y: 1000 - y,
         z: z
       })
       max = Math.max(max,z)

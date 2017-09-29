@@ -2,6 +2,7 @@ import { createAction, handleAction, handleActions } from 'redux-actions'
 import { createSelector } from 'reselect'
 import { byIdSelectorCreator } from './selectorCreators'
 import { getMainPlot } from './plot';
+import immutableUpdate from 'immutable-update';
 
 
 export const setPlotShape = createAction('SET_PLOT_SHAPE')
@@ -103,6 +104,31 @@ export const zReducer = handleAction(
 )
 export const getZReducer = state => state.zReducer
 
+export const setTransformFunction = createAction('EDIT_Y_TRANSFORM')
+export const transformFunction = handleAction(
+  'EDIT_Y_TRANSFORM',
+  (state, action) => {
+    return immutableUpdate(state,action.payload)
+      //Object.assign(...Object.keys(action.payload).map(f => ({[f]: action.payload[f]})))
+  },
+  {
+    x:500,
+    order:1,
+    factor:0
+  }
+)
+
+export const getTransformFunctionParams = state => state.transformFunction
+export const getTransformFunction = createSelector(
+  getTransformFunctionParams,
+  (props) => {
+  let factor = props.factor / 1000
+  return (([x,y]) => {
+    let newY = y + ((Math.abs(props.x-x)**props.order) * (props.factor / 1000**(props.order-1)))
+    return [x,newY]
+  })
+})
+
 
 export const plotParameterReducers = {
   plotShape,
@@ -110,5 +136,6 @@ export const plotParameterReducers = {
   plotGraphics,
   plotScale,
   zScale,
-  zReducer
+  zReducer,
+  transformFunction
 }

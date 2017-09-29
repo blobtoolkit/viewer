@@ -13,6 +13,9 @@ import PlotHexBinsSVG from './PlotHexBinsSVG'
 import PlotHexGridSVG from './PlotHexGridSVG'
 import PlotAxisTitle from './PlotAxisTitle'
 import PlotParameters from './PlotParameters'
+import PlotTransformLines from './PlotTransformLines'
+import YPlot from './YPlot'
+import XPlot from './XPlot'
 
 export default class MainPlot extends React.Component {
   constructor(props) {
@@ -63,10 +66,17 @@ class PlotBox extends React.Component {
     if (this.props.plotShape == 'circle'){
       return (
         <div className={styles.outer}>
+          <svg ref={(elem) => { this.svg = elem; }}
+            className={styles.main_plot}
+            viewBox='0 0 1000 1000'>
+            <PlotTransformLines />
+          </svg>
           {plotContainer}
           <PlotParameters axis='top'/>
           <PlotAxisTitle axis='x'/>
           <PlotAxisTitle axis='y'/>
+          <YPlot plotGraphics='svg'/>
+          <XPlot plotGraphics='svg'/>
         </div>
       )
     }
@@ -76,12 +86,15 @@ class PlotBox extends React.Component {
           <svg ref={(elem) => { this.svg = elem; }}
             className={styles.main_plot}
             viewBox='0 0 1000 1000'>
+            <PlotTransformLines />
             {plotContainer}
             {plotGrid}
           </svg>
-          <PlotParameters axis='top'/>
+          <PlotParameters axis='bottom'/>
           <PlotAxisTitle axis='x'/>
           <PlotAxisTitle axis='y'/>
+          <YPlot plotGraphics='svg'/>
+          <XPlot plotGraphics='svg'/>
         </div>
 
       )

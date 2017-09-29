@@ -130,7 +130,6 @@ export function fetchRawData(id) {
       .then(json => {
         if (!json.keys || json.keys.length == 0){
           let meta = getDetailsForFieldId(state,id)
-          console.log(meta)
           let max = Number.MIN_VALUE, min = Number.MAX_VALUE;
           let len = json.values.length;
           for (let i = 0; i < len; i++) {
