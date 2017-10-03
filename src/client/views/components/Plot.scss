@@ -49,6 +49,12 @@
     .hex:hover {
       fill:rgba($highlightColor,0.5);
     }
+    .hex.selected {
+      fill:rgba($highlightColor,0.75);
+    }
+    .hex.selected:hover {
+      fill:rgba($highlightColor,0.25);
+    }
 
     .square {
       stroke:$paleColor;
@@ -57,6 +63,12 @@
     }
     .square:hover {
       fill:rgba($highlightColor,0.5);
+    }
+    .square.selected {
+      fill:rgba($highlightColor,0.75);
+    }
+    .square.selected:hover {
+      fill:rgba($highlightColor,0.25);
     }
   }
 }

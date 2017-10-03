@@ -24,7 +24,6 @@ export default class PlotSideBinsSVG extends React.Component {
 }
 
 const SideBinsSVG = ({ paths = [] }) => {
-  console.log(paths)
   return (
     <g>
       {paths.map((path,i) =>

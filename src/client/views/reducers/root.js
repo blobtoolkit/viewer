@@ -6,6 +6,7 @@ import { filterReducers } from './filter'
 import { dimensionReducers } from './dimension'
 import { colorReducers } from './color'
 import { plotReducers } from './plot'
+import { selectReducers } from './select'
 import { plotParameterReducers } from './plotParameters'
 
 const allReducers = Object.assign(
@@ -16,6 +17,7 @@ const allReducers = Object.assign(
   dimensionReducers,
   colorReducers,
   plotReducers,
+  selectReducers,
   plotParameterReducers
 );
 

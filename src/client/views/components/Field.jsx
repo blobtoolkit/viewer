@@ -33,7 +33,7 @@ class Field extends React.Component {
           // }
           dispatch(editField(obj))
         },
-        setAxes: (axis,id) => {console.log(axis);console.log(id);dispatch(editPlot({id:'default',[axis]:id}))},
+        setAxes: (axis,id) => {dispatch(editPlot({id:'default',[axis]:id}))},
         showData: (id) => dispatch(fetchRawData(id))
       }
     }

@@ -4,6 +4,7 @@ import { getRawDataForFieldId, getDetailsForFieldId } from './field';
 import { getBinsForFieldId } from './field';
 import { getFilteredDataForFieldId } from './preview'
 import { getMainPlot } from './plot';
+import { getSelectedRecordsAsObject } from './select';
 import { getScatterPlotData } from './plotData';
 import { getAllScatterPlotData } from './plotHexBins';
 import { getZReducer, getZScale, getPlotResolution } from './plotParameters';
@@ -34,12 +35,13 @@ export const getAllScatterPlotDataBySquareBin = createSelector(
     let squares = []
     grid.data.forEach(d=>{
       squares[d.i] = squares[d.i] || []
-      squares[d.i][d.j] = {id:d.id,i:d.i,j:d.j,ids:[],zs:[]}
+      squares[d.i][d.j] = {id:d.id,i:d.i,j:d.j,ids:[],zs:[],indices:[]}
     })
     scatterData.data.forEach(datum=>{
       let coords = [Math.floor(datum.x/grid.width),Math.floor(datum.y/grid.height)]
       if (squares[coords[0]] && squares[coords[0]][coords[1]]){
         squares[coords[0]][coords[1]].ids.push(datum.id)
+        squares[coords[0]][coords[1]].indices.push(datum.index)
         squares[coords[0]][coords[1]].zs.push(datum.z)
       }
     })
@@ -65,7 +67,17 @@ export const getOccupiedSquareGrid = createSelector(
     let max = Number.NEGATIVE_INFINITY
     binned.data.forEach(d => {
       let index = grid.data.findIndex(o => o.id === d.id)
-      data.push({id:d.id,i:d.i,j:d.j,x:grid.data[index].x,y:grid.data[index].y,width:grid.width,height:grid.height})
+      let cell = {
+        id:d.id,
+        i:d.i,
+        j:d.j,
+        x:grid.data[index].x,
+        y:grid.data[index].y,
+        width:grid.width,
+        height:grid.height,
+        ids:d.ids
+      }
+      data.push(cell)
       let len = d.zs.length
       for (let i = 0; i < len; i++){
         if (d.zs[i] < min) min = d.zs[i]
@@ -89,11 +101,12 @@ export const getScatterPlotDataBySquareBin = createSelector(
     let squares = []
     grid.data.forEach(d=>{
       squares[d.i] = squares[d.i] || []
-      squares[d.i][d.j] = {id:d.id,i:d.i,j:d.j,ids:[],zs:[]}
+      squares[d.i][d.j] = {id:d.id,i:d.i,j:d.j,ids:[],zs:[],indices:[]}
     })
     scatterData.data.forEach(datum=>{
       let coords = [Math.floor(datum.x/grid.width),Math.floor(datum.y/grid.height)]
       if (squares[coords[0]] && squares[coords[0]][coords[1]]){
+        squares[coords[0]][coords[1]].indices.push(datum.index)
         squares[coords[0]][coords[1]].ids.push(datum.id)
         squares[coords[0]][coords[1]].zs.push(datum.z)
       }
@@ -121,6 +134,34 @@ export const getScatterPlotDataBySquareBin = createSelector(
   }
 )
 
+export const getSelectedSquareGrid = createSelector(
+  getOccupiedSquareGrid,
+  getSelectedRecordsAsObject,
+  getScatterPlotDataBySquareBin,
+  (grid,records,scatterData) => {
+    let data = []
+    grid.data.forEach(cell => {
+      let newCell = Object.assign({},cell)
+      let index = scatterData.data.findIndex(o => o.id === cell.id)
+      if (index != -1){
+        newCell.ids = scatterData.data[index].ids
+        let count = 0;
+        let len = newCell.ids.length
+        let i = 0
+        for (let i = 0; i < len; i++){
+          if (records[newCell.ids[i]]) count++
+        }
+        newCell.selected = count
+      }
+      else {
+        newCell.ids = []
+      }
+      data.push(newCell)
+    })
+    let newGrid = immutableUpdate(grid,{data})
+    return newGrid;
+  }
+)
 
 export const getScatterPlotDataBySquareBinByCategory = createSelector(
   getOccupiedSquareGrid,
@@ -131,7 +172,6 @@ export const getScatterPlotDataBySquareBinByCategory = createSelector(
   getZReducer,
   getZScale,
   (grid = {},scatterData,bins,categories,palette,reducer,scale) => {
-    console.time('getScatterPlotDataBySquareBinByCategory');
     let zScale = d3[scale]().domain(grid.range).range([0,grid.width])
     let keys = {}
     let data = []
@@ -154,12 +194,14 @@ export const getScatterPlotDataBySquareBinByCategory = createSelector(
           j:square.j,
           color:palette.colors[i],
           ids:[],
-          zs:[]
+          zs:[],
+          indices:[]
         }
       })
-      square.ids.forEach((id,i) => {
-        let currentCell = squareData[keys[categories.values[id]]]
-        currentCell.ids.push(id)
+      square.indices.forEach((index,i) => {
+        let currentCell = squareData[keys[categories.values[index]]]
+        currentCell.ids.push(square.ids[i])
+        currentCell.indices.push(index)
         currentCell.zs.push(square.zs[i])
       })
       let squareArray = squareData.filter(obj => obj.ids.length > 0);
@@ -175,9 +217,6 @@ export const getScatterPlotDataBySquareBinByCategory = createSelector(
       })
       data = data.concat(squareArray.sort((a,b)=>b.z - a.z))
     })
-
-
-    console.timeEnd('getScatterPlotDataBySquareBinByCategory');
     return {data,grid};
   }
 )
@@ -193,12 +232,14 @@ export const getBinnedDataByCategoryByAxis = createSelector(
       jBinned[index] = {}
     }
     binnedData.data.forEach(d=>{
-      if (!iBinned[d.index][d.i]) iBinned[d.index][d.i] = {zs:[],ids:[]}
-      if (!jBinned[d.index][d.j]) jBinned[d.index][d.j] = {zs:[],ids:[]}
+      if (!iBinned[d.index][d.i]) iBinned[d.index][d.i] = {zs:[],ids:[],indices:[]}
+      if (!jBinned[d.index][d.j]) jBinned[d.index][d.j] = {zs:[],ids:[],indices:[]}
       iBinned[d.index][d.i].zs = iBinned[d.index][d.i].zs.concat(d.zs)
       iBinned[d.index][d.i].ids = iBinned[d.index][d.i].ids.concat(d.ids)
+      iBinned[d.index][d.i].indices = iBinned[d.index][d.i].indices.concat(d.indices)
       jBinned[d.index][d.j].zs = jBinned[d.index][d.j].zs.concat(d.zs)
       jBinned[d.index][d.j].ids = jBinned[d.index][d.j].ids.concat(d.ids)
+      jBinned[d.index][d.j].indices = jBinned[d.index][d.j].indices.concat(d.indices)
     })
     let data = []
     for (let index = 0; index < Math.max(bins.length,1); index++){
@@ -206,12 +247,14 @@ export const getBinnedDataByCategoryByAxis = createSelector(
         let obj = {axis:'x',bin:i,index:index}
         obj.zs = iBinned[index][i].zs
         obj.ids = iBinned[index][i].ids
+        obj.indices = iBinned[index][i].indices
         data.push(obj)
       })
       Object.keys(jBinned[index]).forEach(j => {
         let obj = {axis:'y',bin:j,index:index}
         obj.zs = jBinned[index][j].zs
         obj.ids = jBinned[index][j].ids
+        obj.indices = jBinned[index][j].indices
         data.push(obj)
       })
     }
@@ -229,7 +272,6 @@ export const getBinnedLinesByCategoryForAxis = createSelector(
   getZReducer,
   getZScale,
   (axis,binnedData,categories,palette,reducer,scale) => {
-    console.log(categories)
     let zScale = d3[scale]().domain(binnedData.grid.range).range([0,200])
     let paths = [{name:'all',color:'#999999',path:'M0 300'}]
     if (categories.values.length > 0){
@@ -242,18 +284,23 @@ export const getBinnedLinesByCategoryForAxis = createSelector(
     let bins = {}
     binnedData.data.forEach(d=>{
       if (d.axis == axis){
-        bins[d.index] = bins[d.index] ? bins[d.index] + 1 : 0
+        bins[d.index] = bins[d.index] || 0
         zs[d.index] = zs[d.index] ? zs[d.index] : 300
         let x0 = d.bin * binnedData.grid.width
         let x1 = x0 + binnedData.grid.width
         let z = 300 - zScale(reducer.func(d.zs))
-        if (bins[d.index] != d.bin){
-          paths[d.index].path += ' L'+x0+' '+zs[d.index]
+        if (bins[d.index] == 0){
+          paths[d.index].path += ' L'+x0+' '+300
+        }
+        else if (bins[d.index] != d.bin){
+          paths[d.index].path += ' L'+xs[d.index]+' '+300
+          paths[d.index].path += ' L'+x0+' '+300
         }
         paths[d.index].path += ' L'+x0+' '+z
         paths[d.index].path += ' L'+x1+' '+z
         zs[d.index] = z
         xs[d.index] = x1
+        bins[d.index] = d.bin*1 + 1
       }
     })
     Object.keys(xs).forEach(index => {
@@ -262,7 +309,6 @@ export const getBinnedLinesByCategoryForAxis = createSelector(
         paths[index].path += ' L1000 '+300
       }
     })
-    console.log(paths)
     return {paths}
   }
 )

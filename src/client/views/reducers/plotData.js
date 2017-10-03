@@ -2,6 +2,7 @@ import { createAction, handleAction, handleActions } from 'redux-actions'
 import { createSelector } from 'reselect'
 import { byIdSelectorCreator } from './selectorCreators'
 import { getMainPlot } from './plot';
+import { getFilteredList } from './filter';
 import { getZScale, getPlotResolution, getTransformFunction } from './plotParameters';
 import { getColorPalette } from './color';
 import { getFilteredDataForFieldId,
@@ -50,8 +51,9 @@ export const getMainPlotData = createSelector(
 
 export const getScatterPlotData = createSelector(
   getMainPlotData,
+  getFilteredList,
   getTransformFunction,
-  (plotData,transform) => {
+  (plotData,list,transform) => {
     let data = [];
     let scales = {};
     let axes = ['x','y','z']
@@ -76,7 +78,8 @@ export const getScatterPlotData = createSelector(
       let x = scales.x(plotData.axes.x.values[i])
       if (transform) [x,y] = transform([x,y])
       data.push({
-        id:i,
+        id:list[i],
+        index:i,
         x: x,
         y: 1000 - y,
         z: z
@@ -190,13 +193,14 @@ export const getSquareBinPlotDataForCategoryIndex = createSelectorForSquareCateg
     for (let i = 0; i <= res; i++){
       squares[i] = []
       for (let j = 0; j <= res; j++){
-        squares[i][j] = {id:i+'_'+j,x:i,y:j,ids:[],zs:[]}
+        squares[i][j] = {id:i+'_'+j,x:i,y:j,ids:[],zs:[],indices:[]}
       }
     }
     plotData.data.forEach(datum=>{
       let x = Math.floor(datum.x/side)
       let y = Math.floor(datum.y/side)
       squares[x][y].ids.push(datum.id)
+      squares[x][y].indices.push(datum.index)
       squares[x][y].zs.push(datum.z)
     })
     let data = [];

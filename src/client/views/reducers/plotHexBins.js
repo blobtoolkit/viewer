@@ -4,6 +4,7 @@ import { getRawDataForFieldId, getDetailsForFieldId } from './field';
 import { getBinsForFieldId } from './field';
 import { getFilteredDataForFieldId } from './preview'
 import { getMainPlot } from './plot';
+import { getSelectedRecordsAsObject } from './select';
 import { getScatterPlotData } from './plotData';
 import { getZReducer, getZScale, getPlotResolution, getTransformFunction } from './plotParameters';
 import { getColorPalette } from './color';
@@ -96,12 +97,13 @@ export const getAllScatterPlotDataByHexBin = createSelector(
     let hexes = []
     grid.data.forEach(d=>{
       hexes[d.x] = hexes[d.x] || []
-      hexes[d.x][d.y] = {id:d.id,x:d.x,y:d.y,ids:[],zs:[]}
+      hexes[d.x][d.y] = {id:d.id,x:d.x,y:d.y,ids:[],zs:[],indices:[]}
     })
     scatterData.data.forEach(datum=>{
       let coords = pixel_to_oddr(datum.x,datum.y,grid.radius)
       if (hexes[coords.i] && hexes[coords.i][coords.j]){
         hexes[coords.i][coords.j].ids.push(datum.id)
+        hexes[coords.i][coords.j].indices.push(datum.index)
         hexes[coords.i][coords.j].zs.push(datum.z)
       }
     })
@@ -150,11 +152,12 @@ export const getScatterPlotDataByHexBin = createSelector(
     let hexes = []
     grid.data.forEach(d=>{
       hexes[d.x] = hexes[d.x] || []
-      hexes[d.x][d.y] = {id:d.id,x:d.x,y:d.y,ids:[],zs:[]}
+      hexes[d.x][d.y] = {id:d.id,x:d.x,y:d.y,ids:[],zs:[],indices:[]}
     })
     scatterData.data.forEach(datum=>{
       let coords = pixel_to_oddr(datum.x,datum.y,grid.radius)
       if (hexes[coords.i] && hexes[coords.i][coords.j]){
+        hexes[coords.i][coords.j].indices.push(datum.index)
         hexes[coords.i][coords.j].ids.push(datum.id)
         hexes[coords.i][coords.j].zs.push(datum.z)
       }
@@ -178,6 +181,34 @@ export const getScatterPlotDataByHexBin = createSelector(
   }
 )
 
+export const getSelectedHexGrid = createSelector(
+  getOccupiedHexGrid,
+  getSelectedRecordsAsObject,
+  getScatterPlotDataByHexBin,
+  (grid,records,scatterData) => {
+    let data = []
+    grid.data.forEach(cell => {
+      let newCell = Object.assign({},cell)
+      let index = scatterData.data.findIndex(o => o.id === cell.id)
+      if (index != -1){
+        newCell.ids = scatterData.data[index].ids
+        let count = 0;
+        let len = newCell.ids.length
+        let i = 0
+        for (let i = 0; i < len; i++){
+          if (records[newCell.ids[i]]) count++
+        }
+        newCell.selected = count
+      }
+      else {
+        newCell.ids = []
+      }
+      data.push(newCell)
+    })
+    let newGrid = immutableUpdate(grid,{data})
+    return newGrid;
+  }
+)
 
 export const getScatterPlotDataByHexBinByCategory = createSelector(
   getOccupiedHexGrid,
@@ -188,7 +219,6 @@ export const getScatterPlotDataByHexBinByCategory = createSelector(
   getZReducer,
   getZScale,
   (grid,scatterData,bins,categories,palette,reducer,scale) => {
-    console.time('getScatterPlotDataByHexBinByCategory');
     let zScale = d3[scale]().domain(grid.range).range([0,grid.radius])
     let keys = {}
     let data = []
@@ -209,12 +239,14 @@ export const getScatterPlotDataByHexBinByCategory = createSelector(
           y:hex.y,
           color:palette.colors[i],
           ids:[],
-          zs:[]
+          zs:[],
+          indices:[]
         }
       })
-      hex.ids.forEach((id,i) => {
-        let currentCell = hexData[keys[categories.values[id]]]
-        currentCell.ids.push(id)
+      hex.indices.forEach((index,i) => {
+        let currentCell = hexData[keys[categories.values[index]]]
+        currentCell.ids.push(hex.ids[i])
+        currentCell.indices.push(i)
         currentCell.zs.push(hex.zs[i])
       })
       let hexArray = hexData.filter(obj => obj.ids.length > 0);
@@ -225,7 +257,6 @@ export const getScatterPlotDataByHexBinByCategory = createSelector(
       })
       data = data.concat(hexArray.sort((a,b)=>b.z - a.z))
     })
-    console.timeEnd('getScatterPlotDataByHexBinByCategory');
     return {data};
   }
 )
