@@ -78,15 +78,8 @@ export const selectedRecords = handleActions(
 
 export const getSelectedRecords = state => state.selectedRecords
 
-export const getSelectedRecordsAsArray = createSelector(
-  getFilteredList,
-  getSelectedRecords,
-  (list,records) => {
-    return records
-  }
-)
 export const getSelectedRecordsAsObject = createSelector(
-  getSelectedRecordsAsArray,
+  getSelectedRecords,
   (arr) => {
     let obj = {}
     arr.forEach(id=>{
@@ -95,19 +88,6 @@ export const getSelectedRecordsAsObject = createSelector(
     return obj
   }
 )
-
-export function addRecordsToSelectedList(arr) {
-  return function(dispatch){
-    let state = store.getState();
-    let list = state.filteredList;
-    let len = arr.length
-    let newArr = []
-    for (let i = 0; i < len; i++){
-      newArr.push(list[arr[i]])
-    }
-    dispatch(addRecords(newArr))
-  }
-}
 
 export const selectReducers = {
   selectedRecords

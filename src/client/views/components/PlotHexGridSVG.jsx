@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux'
 import styles from './Plot.scss'
 import { getSelectedHexGrid } from '../reducers/plotHexBins'
-import { addRecords, removeRecords, addRecordsToSelectedList } from '../reducers/select'
+import { addRecords, removeRecords } from '../reducers/select'
 
 export default class PlotHexGridSVG extends React.Component {
   constructor(props) {
@@ -17,7 +17,7 @@ export default class PlotHexGridSVG extends React.Component {
       return {
         onClickCell:(arr) => {
           if (this.state.addRecords){
-            return dispatch(addRecordsToSelectedList(arr))
+            return dispatch(addRecords(arr))
           }
           return dispatch(removeRecords(arr))
         }
@@ -51,7 +51,12 @@ const HexGridSVG = ({ data, onClickCell, mouseDown, setMouseDown, setAddRecords 
   let hexes = []
   data.forEach((datum,i)=>{
     let css = styles.hex
-    if (datum.selected) css += ' '+styles.selected
+    if (datum.selected){
+      css += ' '+styles.selected
+      if (datum.selected < datum.ids.length){
+        css += ' '+styles.partial
+      }
+    }
     hexes.push(
       <polygon key={i}
         className={css}

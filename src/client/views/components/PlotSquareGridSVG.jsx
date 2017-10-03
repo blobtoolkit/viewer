@@ -16,7 +16,6 @@ export default class PlotSquareGridSVG extends React.Component {
     this.mapDispatchToProps = dispatch => {
       return {
         onClickCell:(arr) => {
-          console.log(arr)
           if (this.state.addRecords){
             return dispatch(addRecords(arr))
           }
@@ -51,7 +50,12 @@ const SquareGridSVG = ({ data, onClickCell, mouseDown, setMouseDown, setAddRecor
   let squares = []
   data.forEach((datum,i)=>{
     let css = styles.square
-    if (datum.selected) css += ' '+styles.selected
+    if (datum.selected){
+      css += ' '+styles.selected
+      if (datum.selected < datum.ids.length){
+        css += ' '+styles.partial
+      }
+    }
     squares.push(
       <rect key={i}
         className={css}

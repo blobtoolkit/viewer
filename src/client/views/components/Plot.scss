@@ -51,8 +51,18 @@
     }
     .hex.selected {
       fill:rgba($highlightColor,0.75);
+      stroke:rgba($highlightColor,1);
+      stroke-width:4px;
     }
     .hex.selected:hover {
+      fill:rgba($highlightColor,0.25);
+    }
+    .hex.selected.partial {
+      fill:$clearColor;
+      stroke:rgba($highlightColor,1);
+      stroke-width:4px;
+    }
+    .hex.selected.partial:hover {
       fill:rgba($highlightColor,0.25);
     }
 
@@ -66,8 +76,18 @@
     }
     .square.selected {
       fill:rgba($highlightColor,0.75);
+      stroke:rgba($highlightColor,1);
+      stroke-width:4px;
     }
     .square.selected:hover {
+      fill:rgba($highlightColor,0.25);
+    }
+    .square.selected.partial {
+      fill:$clearColor;
+      stroke:rgba($highlightColor,1);
+      stroke-width:4px;
+    }
+    .square.selected.partial:hover {
       fill:rgba($highlightColor,0.25);
     }
   }

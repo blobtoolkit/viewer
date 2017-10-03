@@ -172,6 +172,7 @@ export const getScatterPlotDataByHexBin = createSelector(
             // let scale = Math.log(Math.max(...hexes[x][y].zs))/8
             hexes[x][y].points = drawPoints(x,y,grid.radius,grid.res,z/grid.radius)
             // hexes[x][y].points = drawPoints(x,y,grid.radius,grid.res)
+            hexes[x][y].index = 0
             data.push(hexes[x][y])
           }
         }
@@ -246,7 +247,7 @@ export const getScatterPlotDataByHexBinByCategory = createSelector(
       hex.indices.forEach((index,i) => {
         let currentCell = hexData[keys[categories.values[index]]]
         currentCell.ids.push(hex.ids[i])
-        currentCell.indices.push(i)
+        currentCell.indices.push(index)
         currentCell.zs.push(hex.zs[i])
       })
       let hexArray = hexData.filter(obj => obj.ids.length > 0);
