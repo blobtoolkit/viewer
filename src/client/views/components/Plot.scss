@@ -55,7 +55,7 @@
       stroke-width:4px;
     }
     .hex.selected:hover {
-      fill:rgba($highlightColor,0.25);
+      fill:rgba($highlightColor,1);
     }
     .hex.selected.partial {
       fill:$clearColor;
@@ -80,7 +80,7 @@
       stroke-width:4px;
     }
     .square.selected:hover {
-      fill:rgba($highlightColor,0.25);
+      fill:rgba($highlightColor,1);
     }
     .square.selected.partial {
       fill:$clearColor;

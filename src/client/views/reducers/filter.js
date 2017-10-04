@@ -23,6 +23,11 @@ export const filters = handleActions(
       // })
       let id = action.payload.id
       let fields = Object.keys(action.payload).filter((key)=>{return key != 'id'})
+      if (action.payload.range){
+        let limit = action.payload.limit || state.byId[id].limit.slice()
+        action.payload.range[0] = Math.max(action.payload.range[0],limit[0])
+        action.payload.range[1] = Math.min(action.payload.range[1],limit[1])
+      }
       return immutableUpdate(state, {
         byId: {
           [id]: Object.assign(...fields.map(f => ({[f]: action.payload[f]})))
