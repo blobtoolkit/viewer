@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   version="1.1"
+   width="100"
+   height="100"
+   id="svg3130"
+   inkscape:version="0.48.5 r10040"
+   sodipodi:docname="invert.svg">
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1004"
+     inkscape:window-height="651"
+     id="namedview2995"
+     showgrid="false"
+     inkscape:zoom="2.36"
+     inkscape:cx="49.576271"
+     inkscape:cy="50"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="svg3130" />
+  <defs
+     id="defs3132" />
+  <metadata
+     id="metadata3135">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <path
+     style="color:#000000;fill:currentColor;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:15;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+     d="M 50 0 L 50 100 L 100 100 L 100 0 L 50 0 z M 81.03125 11.78125 A 7.50075 7.50075 0 0 1 86.375 24.71875 C 86.375 24.71875 82.598561 28.403994 78.375 33.3125 C 74.151439 38.221006 69.607228 44.695809 68.46875 47.71875 C 67.257821 50.934067 66.37873 59.109018 66.3125 65.84375 C 66.24627 72.578482 66.65625 78.0625 66.65625 78.0625 A 7.5043282 7.5043282 0 1 1 51.6875 79.15625 C 51.6875 79.15625 51.23959 73.132982 51.3125 65.71875 C 51.385412 58.304518 51.667809 49.708739 54.40625 42.4375 C 57.072241 35.358635 62.364471 28.954851 67.03125 23.53125 C 71.698029 18.107649 75.84375 14 75.84375 14 A 7.50075 7.50075 0 0 1 81.03125 11.78125 z "
+     id="rect3850" />
+  <rect
+     width="100"
+     height="100"
+     x="2.1972655e-06"
+     y="4.7656249e-06"
+     id="rect2987-4-5"
+     style="color:#000000;fill:none;stroke:none;stroke-width:3.54330707;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate" />
+  <path
+     style="fill:none;stroke:#808080;stroke-width:15;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+     d="m 18.804599,19.360737 c 0,0 15.878443,15.61331 19.682913,25.715116 3.94937,10.486556 2.252969,33.541205 2.252969,33.541205"
+     id="path3024"
+     inkscape:connector-curvature="0"
+     sodipodi:nodetypes="csc" />
+</svg>

@@ -1,13 +1,20 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
-const Header = () => (
-  <header>
-    <nav>
-      <ul>
-        <li><Link to='/'>Home</Link></li>
-      </ul>
-    </nav>
-  </header>
-)
+import styles from './Layout.scss'
+
+const Header = ( { tabs } ) => {
+  let children = tabs.map((tab,i) => {
+    let css = styles.main_header_tab
+    if (tab.active){
+      css += ' '+styles.active
+    }
+    return (<span className={css} key={i}><h2>{tab.id}</h2></span>)
+  })
+  return (
+    <div className={styles.main_header}>
+      {children}
+    </div>
+  )
+}
 
 module.exports = Header;

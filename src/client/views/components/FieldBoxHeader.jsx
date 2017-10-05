@@ -20,7 +20,7 @@ class FieldBoxHeader extends React.Component {
       <div className={styles.header}>
         <h1 className={styles.inline} onClick={()=>{this.props.onHeaderClick()}}>{this.props.fieldId}</h1>
         <div className={styles.header_buttons}>
-          <SVGIcon sprite={xAxisIcon} active={this.checkAxisStatus('x')} onIconClick={()=>{console.log(this.props);this.props.onAxisButtonClick('x',this.props.fieldId)}}/>
+          <SVGIcon sprite={xAxisIcon} active={this.checkAxisStatus('x')} onIconClick={()=>{this.props.onAxisButtonClick('x',this.props.fieldId)}}/>
           <SVGIcon sprite={yAxisIcon} active={this.checkAxisStatus('y')} onIconClick={()=>{this.props.onAxisButtonClick('y',this.props.fieldId)}}/>
           <SVGIcon sprite={zAxisIcon} active={this.checkAxisStatus('z')} onIconClick={()=>{this.props.onAxisButtonClick('z',this.props.fieldId)}}/>
           <SVGIcon sprite={categoryIcon} active={this.checkAxisStatus('cat')} onIconClick={()=>{this.props.onAxisButtonClick('cat',this.props.fieldId)}}/>

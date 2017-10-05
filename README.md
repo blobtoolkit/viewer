@@ -17,3 +17,48 @@ mongod --dbpath=/tmp/data
 #export DEBUG=express:*
 npm run start
 ```
+
+
+plots:
+- canvas vs svg
+- circle vs square vs hex
+- z scale (range and type)
+- z reduce function (min, max, sum, mean, median)
+- secondary/tertiary plots
+- bin plot order
+
+scaling:
+- manually set field domain
+- change field scale type
+
+fields:
+- manually set field domain
+- change field scale type
+- convert variable to category
+- improve display
+
+filters:
+- toggle on/off
+- toggle inverse
+- apply all inverse
+- filtered data to new dataset
+
+selection:
+- field and filter type
+- overlay
+- adjacent cells
+
+dataset:
+- store/clear state when changing dataset
+- hard filter incoming data
+
+streaming:
+- support reload/streaming of fields
+- enable timestamping
+
+buttons:
+- make svg icons for each function
+
+colors:
+- alternate color palettes
+- modify color palette

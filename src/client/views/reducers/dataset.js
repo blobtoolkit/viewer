@@ -5,11 +5,10 @@ import deep from 'deep-get-set'
 import shallow from 'shallowequal'
 import store from '../store'
 
-export const getSelectedDatasetMeta = state => {
-  let meta = {}
-  let id = state.selectedDataset || false
-  if (id){
-    meta = deep(state,['availableDatasets','byId',id])
-  }
-  return meta
-}
+export const getSelectedDataset = state => state.selectedDataset || false
+export const getDatasetMetaById = (state,id) => deep(state,['availableDatasets','byId',id])
+export const getSelectedDatasetMeta = createSelector(
+  getSelectedDataset,
+  getDatasetMetaById,
+  (meta) => meta || {}
+)

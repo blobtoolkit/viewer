@@ -1,0 +1,78 @@
+@import 'web-fonts';
+@import 'colors';
+@import url(web-fonts-url('Open Sans', 'Comfortaa'));
+
+.main {
+  position:absolute;
+  width:100vw;
+  height:100vh;
+  top:0;
+  left:0;
+  background-color: $paleColor;
+}
+
+.main_header {
+  position:absolute;
+  width:100%;
+  height:4em;
+  top:0;
+  left:0;
+  background-color: $darkColor;
+  /*box-shadow: 0px 2px 8px $darkColor;*/
+}
+
+.main_header_tab {
+  position:relative;
+  width:12em;
+  height:100%;
+  text-align:center;
+  color: $paleColor;
+  display:inline-block;
+  cursor:pointer;
+}
+
+.main_header_tab:hover {
+  background-color: $highlightColor;
+  color: $lightColor;
+}
+
+.main_header_tab.active {
+  background-color: $highlightColor;
+  color: $lightColor;
+}
+
+.menu {
+  position:absolute;
+  left:0;
+  top:4em;
+  height:calc( 100% - 4em );
+  width:20em;
+  background-color: $shadeColor;
+  overflow:scroll;
+  /*box-shadow: 4px 0px 8px $darkColor;*/
+}
+
+.menu_item {
+  position:relative;
+  width:calc(100% - 2em);
+  height:4em;
+  margin-top:0.5em;
+  padding:1em;
+  background-color: $darkColor;
+  overflow:hidden;
+  color:$paleColor;
+  cursor:pointer;
+}
+
+.menu_subtitle {
+  display:inline-block;
+  position:absolute;
+  right:0.5em;
+  bottom:0.5em;
+}
+
+.menu_item:hover,
+.menu_item.active {
+  background-color: $highlightColor;
+  color: $lightColor;
+}

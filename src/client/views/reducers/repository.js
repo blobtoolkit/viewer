@@ -13,7 +13,6 @@ const receiveRepository = createAction(
   () => ({ receivedAt: Date.now() })
 )
 
-const selectDataset = createAction('SELECT_DATASET')
 const invalidateDataset = createAction('INVALIDATE_DATASET')
 const requestMeta = createAction('REQUEST_META')
 const receiveMeta = createAction(
@@ -107,11 +106,12 @@ export function loadDataset(id) {
     dispatch(selectDataset(id))
     dispatch(fetchMeta(id)).then(() => {
       let meta = deep(store.getState(),['availableDatasets','byId',id])
-      addAllFields(dispatch,meta.fields,1)
+      addAllFields(dispatch,meta.fields,1,false,id)
     })
   }
 }
 
+export const selectDataset = createAction('SELECT_DATASET')
 export const selectedDataset = handleAction(
   'SELECT_DATASET',
   (state, action) => (

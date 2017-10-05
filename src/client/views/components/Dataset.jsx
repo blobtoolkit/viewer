@@ -27,7 +27,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    onDatasetClick: id => {},//},
+    onDatasetClick: id => {},
     onMount: id => dispatch(loadDataset(id))
   }
 }
