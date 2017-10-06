@@ -17,12 +17,11 @@
 .dataset_controls {
   position: sticky;
   top: 0em;
-  margin-left:1em;
   z-index: 10;
   width:30em;
   height:2.2em;
   background-color: $shadeColor;
-  border: 1em solid $lightColor;
+  margin:1em 0;
 
   span.button {
     display:inline-block;

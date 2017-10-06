@@ -8,7 +8,7 @@
   height:100vh;
   top:0;
   left:0;
-  background-color: $paleColor;
+  background-color: $lightColor;
 }
 
 .main_header {
@@ -19,6 +19,7 @@
   left:0;
   background-color: $darkColor;
   /*box-shadow: 0px 2px 8px $darkColor;*/
+  box-shadow: 0px 0px 4px 1px $shadeColor;
 }
 
 .main_header_tab {
@@ -29,6 +30,11 @@
   color: $paleColor;
   display:inline-block;
   cursor:pointer;
+  border: solid 1px $darkColor;
+  box-sizing: border-box;
+  margin-right: -1px;
+  border-top: none;
+  border-bottom: none;
 }
 
 .main_header_tab:hover {
@@ -46,10 +52,10 @@
   left:0;
   top:4em;
   height:calc( 100% - 4em );
-  width:20em;
+  width:30em;
   background-color: $shadeColor;
   overflow:scroll;
-  /*box-shadow: 4px 0px 8px $darkColor;*/
+  box-shadow: 0px 0px 8px 4px $darkColor;
 }
 
 .menu_item {

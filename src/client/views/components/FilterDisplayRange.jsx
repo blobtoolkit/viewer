@@ -1,4 +1,5 @@
 import React from 'react'
+import ReactDOM from 'react-dom'
 import styles from './Filters.scss';
 import { DraggableCore } from 'react-draggable'
 
@@ -7,18 +8,27 @@ class FilterDisplayRange extends React.Component {
   render(){
     return (
       <FilterHandles {...this.props}>
-        <FilterHandle {...this.props} key='right' handlePosition='right' />
-        <FilterHandle {...this.props} key='left' handlePosition='left' />
       </FilterHandles>
     )
   }
 }
 
 class FilterHandles extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {container:undefined}
+  }
+  componentDidMount() {
+    let container = ReactDOM.findDOMNode(this)
+    console.log(container)
+    this.setState({container:container,offsetX:container.getBoundingClientRect().left})
+  }
   render() {
     return (
-      <div className={styles.handles_container}>
-        {this.props.children}
+      <div className={styles.handles_container}
+        ref={(elem) => { this.container = elem; }} >
+        <FilterHandle {...this.props} key='right' handlePosition='right' parent={this.state.container} parentX={this.state.offsetX} />
+        <FilterHandle {...this.props} key='left' handlePosition='left' parent={this.state.container} parentX={this.state.offsetX} />
       </div>
     )
   }
@@ -46,11 +56,12 @@ class FilterHandle extends React.Component {
       <DraggableCore
         axis='x'
         bounds='parent'
+        offsetParent={this.props.parent}
         onStop={(e)=>{
-          this.updateRange(this.props.xScale.invert(e.x),this.bound())
+          this.updateRange(this.props.xScale.invert(e.x - this.props.parentX),this.bound())
         }}
         onDrag={(e)=>{
-          this.setState({offsetX:e.x-this.boundPx()})
+          this.setState({offsetX:e.x-this.props.parentX-this.boundPx()})
         }}
         >
         <div style={{left: (this.boundPx()+this.state.offsetX)+'px'}}

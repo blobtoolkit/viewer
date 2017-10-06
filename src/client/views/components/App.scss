@@ -2,11 +2,13 @@
 @import 'colors';
 @import url(web-fonts-url('Open Sans', 'Comfortaa'));
 
-html,body {
+html,body,main {
   height:100%;
   width:100%;
   overflow:hidden;
 }
+
+
 
 .app {
   position:absolute;
@@ -23,7 +25,11 @@ html,body {
   a {
     text-decoration: none;
   }
-
+  svg {
+    .axis_title {
+      font-family:'Comfortaa';
+    }
+  }
 }
 
 .header {

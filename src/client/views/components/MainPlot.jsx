@@ -14,8 +14,7 @@ import PlotHexGridSVG from './PlotHexGridSVG'
 import PlotAxisTitle from './PlotAxisTitle'
 import PlotParameters from './PlotParameters'
 import PlotTransformLines from './PlotTransformLines'
-import YPlot from './YPlot'
-import XPlot from './XPlot'
+import PlotSideBinsSVG from './PlotSideBinsSVG'
 
 export default class MainPlot extends React.Component {
   constructor(props) {
@@ -42,6 +41,9 @@ class PlotBox extends React.Component {
   render(){
     let plotContainer
     let plotGrid
+    let viewbox = '-100 -320 1420 1420'
+    let xPlot = <PlotSideBinsSVG axis='x'/>
+    let yPlot = <PlotSideBinsSVG axis='y'/>
     if (this.props.plotShape == 'circle'){
       //if (this.props.plotGraphics == 'canvas'){
         plotContainer = <PlotBubblesCanvasLayers />
@@ -67,16 +69,18 @@ class PlotBox extends React.Component {
       return (
         <div className={styles.outer}>
           <svg ref={(elem) => { this.svg = elem; }}
-            className={styles.main_plot}
-            viewBox='0 0 1000 1000'>
+            className={styles.main_plot+' '+styles.fill_parent}
+            viewBox={viewbox}
+            preserveAspectRatio="xMidYMid meet">
             <PlotTransformLines />
+            {xPlot}
+            {yPlot}
+            <rect className={styles.plot_boundary} x={0} y={0} width={1000} height={1000}/>
+            <PlotAxisTitle axis='x'/>
+            <PlotAxisTitle axis='y'/>
           </svg>
           {plotContainer}
           <PlotParameters axis='top'/>
-          <PlotAxisTitle axis='x'/>
-          <PlotAxisTitle axis='y'/>
-          <YPlot plotGraphics='svg'/>
-          <XPlot plotGraphics='svg'/>
         </div>
       )
     }
@@ -84,17 +88,19 @@ class PlotBox extends React.Component {
       return (
         <div className={styles.outer}>
           <svg ref={(elem) => { this.svg = elem; }}
-            className={styles.main_plot}
-            viewBox='0 0 1000 1000'>
+            className={styles.main_plot+' '+styles.fill_parent}
+            viewBox={viewbox}
+            preserveAspectRatio="xMidYMid meet">
             <PlotTransformLines />
             {plotContainer}
             {plotGrid}
+            {xPlot}
+            {yPlot}
+            <rect className={styles.plot_boundary} x={0} y={0} width={1000} height={1000}/>
+            <PlotAxisTitle axis='x'/>
+            <PlotAxisTitle axis='y'/>
           </svg>
           <PlotParameters axis='bottom'/>
-          <PlotAxisTitle axis='x'/>
-          <PlotAxisTitle axis='y'/>
-          <YPlot plotGraphics='svg'/>
-          <XPlot plotGraphics='svg'/>
         </div>
 
       )

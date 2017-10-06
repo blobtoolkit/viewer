@@ -24,9 +24,11 @@ export default class PlotAxisTitle extends React.Component {
 }
 
 const AxisTitle = ({ axis, title }) => {
+  let params = {}
+  params.transform = axis == 'x' ? 'translate(500,1075)' : 'translate(-75,500),rotate(90)'
   return (
-    <div className={styles.axis_title+' '+styles[axis+'_axis_title']}>
-    <h2>{title}</h2>
-    </div>
+    <g {...params}>
+      <text className={styles.axis_title}>{title}</text>
+    </g>
   )
 };

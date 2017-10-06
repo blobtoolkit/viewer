@@ -3,7 +3,6 @@
 .preview_container {
   position:relative;
   width:auto;
-  margin:1em;
   background-color: $clearColor;
   height:auto;
   overflow-y:hidden;
@@ -14,15 +13,17 @@
   top:0;
   left:0;
   width:100%;
-  width:32em;
+  width:30em;
   background-color: $paleColor;
-  height:3em;
+  height:2.5em;
   margin:0;
   color:$darkColor;
+  display:none;
 
   h1 {
-    font-size:1.5em;
+    font-size:1.2em;
     line-height:2em;
+    margin:0;
     margin-left:0.5em;
 
   }
@@ -32,11 +33,12 @@
   position:relative;
   width:30em;
   height:2em;
-  margin:1em;
   background-color: $shadeColor;
   user-select:none;
   overflow:hidden;
   transition:height 0.5s;
+  margin-bottom:0em;
+  border-bottom: solid $paleColor;
 }
 
 .preview_enter {
@@ -94,9 +96,10 @@
 
 .outer.expanded {
   height:12em;
-
-
+  overflow:hidden;
+  border-bottom: solid $shadeColor;
 }
+
 
 
 .controls {

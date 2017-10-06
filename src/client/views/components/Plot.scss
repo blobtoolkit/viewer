@@ -2,14 +2,17 @@
 
 .outer {
   position:absolute;
-  top:15em;
-  left:40em;
+  /*top:15em;
+  left:30em;
   background-color: $lightColor;
   margin:1em;
   height:50em;
   width:50em;
   border:2px solid $shadeColor;
-  box-sizing: border-box;
+  box-sizing: border-box;*/
+  top:4em;
+  height:calc(100% - 4em);
+  width:100%;
 }
 
 .main_plot {
@@ -91,7 +94,19 @@
       fill:rgba($highlightColor,0.25);
     }
   }
+  .plot_boundary {
+    stroke:$darkColor;
+    stroke-width:2;
+    fill:$clearColor;
+  }
+
+  .axis_title {
+    text-anchor:middle;
+    font-size:3em;
+  }
 }
+
+
 
 .fill_parent {
   position:absolute;

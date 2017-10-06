@@ -8,7 +8,6 @@ import store from '../store'
 export const getSelectedDataset = state => state.selectedDataset || false
 export const getDatasetMetaById = (state,id) => deep(state,['availableDatasets','byId',id])
 export const getSelectedDatasetMeta = createSelector(
-  getSelectedDataset,
-  getDatasetMetaById,
+  state => getDatasetMetaById(state,getSelectedDataset(state)),
   (meta) => meta || {}
 )

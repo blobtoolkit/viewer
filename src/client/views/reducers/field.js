@@ -192,8 +192,9 @@ export const getFieldsByOwner = (state,id) => deep(state,['fields','byId',id,'da
 
 export const getFieldHierarchy = createSelector(
   getSelectedDatasetMeta,
-  (meta = {}) => {
-    function processFields(fields = []) {
+  (meta = {}, top) => {
+    console.log(meta)
+    function processFields(fields=[]) {
       let hierarchy = []
       fields.forEach((field) => {
           let obj = {id:field.id,hasRecords:true};

@@ -1,7 +1,7 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import styles from './Layout.scss'
-import { getDatasetIsFetching } from '../reducers/repository'
+import { getDatasetIsFetching,getDatasetIsActive } from '../reducers/repository'
 import {
   getTopLevelFields,
   getFieldHierarchy,
@@ -38,10 +38,10 @@ class FieldMenu extends React.Component {
 
   mapFields(fields){
     return (
-      fields.map(field => {
+      fields.map((field,i) => {
         let jsx
         if (field.hasRecords){
-          jsx = <Field key={field.id} fieldId={field.id}>{field.id}</Field>
+          jsx = <Field key={i} fieldId={field.id}>{field.id}</Field>
         }
         if (field.children){
           return (
@@ -61,7 +61,7 @@ class FieldMenu extends React.Component {
   }
 
   render(){
-    if (0 && this.props.isFetching){
+    if (!this.props.isActive){
       return (
         <div className={styles.menu} style={{left:this.props.offset}}>
           <Spinner/>
@@ -70,7 +70,7 @@ class FieldMenu extends React.Component {
     }
     let fields = this.mapFields(this.props.fields)
     return (
-      <div className={styles.menu} style={{left:this.props.offset}}>
+      <div className={styles.menu} style={{left:this.props.offset,width:'30em'}}>
         <DatasetApplyFilters />
         {fields}
       </div>
@@ -80,7 +80,7 @@ class FieldMenu extends React.Component {
 
 const mapStateToProps = state => {
   return {
-    isFetching: getDatasetIsFetching(state),
+    isActive: getDatasetIsActive(state),
     topLevelFields: getTopLevelFields(state),
     fields: getFieldHierarchy(state)
   }

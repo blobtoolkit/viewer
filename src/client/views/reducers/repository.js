@@ -104,10 +104,11 @@ export function fetchMeta(id) {
 export function loadDataset(id) {
   return function (dispatch) {
     dispatch(selectDataset(id))
+    dispatch(setDatasetIsActive(false))
     dispatch(fetchMeta(id)).then(() => {
       let meta = deep(store.getState(),['availableDatasets','byId',id])
       addAllFields(dispatch,meta.fields,1,false,id)
-    })
+    }).then(()=>setTimeout(()=>dispatch(setDatasetIsActive(true)),1000))
   }
 }
 
@@ -123,8 +124,20 @@ export const selectedDataset = handleAction(
 export const getDatasetMeta = (state,id) => deep(state,['availableDatasets','byId',id]) || {}
 export const getDatasetIsFetching = (state) => (deep(state,['selectedDataset']) == null) || false
 
+export const setDatasetIsActive = createAction('SET_DATASET_IS_ACTIVE')
+export const datasetIsActive = handleAction(
+  'SET_DATASET_IS_ACTIVE',
+  (state, action) => (
+    action.payload
+  ),
+  false
+)
+
+export const getDatasetIsActive = state => state.datasetIsActive
+
 export const repositoryReducers = {
   selectedDataset,
   availableDatasets,
-  fetchRepository
+  fetchRepository,
+  datasetIsActive
 }
