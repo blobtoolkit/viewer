@@ -10,8 +10,8 @@ div.icon {
     height:1.5em;
     width:1.5em;
     cursor:pointer;
-    background-color:$highlightColor;
-    color:$darkColor;
+    background-color:inherit;
+    color:inherit;
   }
 
   svg.active {

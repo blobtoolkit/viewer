@@ -80,7 +80,6 @@ class PlotBox extends React.Component {
             <PlotAxisTitle axis='y'/>
           </svg>
           {plotContainer}
-          <PlotParameters axis='top'/>
         </div>
       )
     }
@@ -100,7 +99,6 @@ class PlotBox extends React.Component {
             <PlotAxisTitle axis='x'/>
             <PlotAxisTitle axis='y'/>
           </svg>
-          <PlotParameters axis='bottom'/>
         </div>
 
       )
