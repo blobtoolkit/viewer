@@ -1,6 +1,9 @@
 import { createAction, handleAction, handleActions } from 'redux-actions'
 import { createSelector } from 'reselect'
-import { byIdSelectorCreator } from './selectorCreators'
+import { byIdSelectorCreator,
+  handleSimpleByDatasetAction,
+  getSimpleByDatasetProperty,
+  getSelectedDatasetId } from './selectorCreators'
 import immutableUpdate from 'immutable-update';
 import deep from 'deep-get-set'
 import store from '../store'
@@ -9,15 +12,22 @@ import { addFilter, editFilter, filterToList } from './filter'
 import { getDimensionsbyDimensionId, setDimension } from './dimension'
 import * as d3 from 'd3'
 
-const addTopLevelFields = createAction('ADD_TOP_LEVEL_FIELDS')
-
+export const addTopLevelFields = createAction('ADD_TOP_LEVEL_FIELDS')
 export const topLevelFields = handleAction(
   'ADD_TOP_LEVEL_FIELDS',
   (state, action) => {
-    return (
-      action.payload.map(obj => {return obj.id})
-  )},
-  []
+    let arr = action.payload.map(obj => {return obj.id})
+    return immutableUpdate(state, {
+      byDataset: { [getSelectedDatasetId()]: arr }
+    })
+  },
+  {byDataset:{}}
+)
+const createSelectorForTopLevelFields = byIdSelectorCreator();
+export const getTopLevelFields = createSelectorForTopLevelFields(
+  getSelectedDatasetId,
+  getSimpleByDatasetProperty('topLevelFields'),
+  list => list || []
 )
 
 const addField = createAction('ADD_FIELD')
@@ -186,7 +196,6 @@ export const addAllFields = (dispatch,fields,flag,meta) => {
 }
 
 
-export const getTopLevelFields = (state) => deep(state,['topLevelFields']) || []
 export const getFieldsByParent = (state,id) => deep(state,['fields','byId',id,'children']) || []
 export const getFieldsByOwner = (state,id) => deep(state,['fields','byId',id,'data']) || []
 
@@ -296,7 +305,6 @@ export const getBarsForFieldId = createBarSelectorForFieldId(
           .domain([0, d3.max(bins, function(d) { return d.length; })])
           .range([dimensions.height, 0]);
     if (details.meta.type == 'category'){
-      //x = d3.scaleOrdinal()
       x.domain([0,10]);
       y = d3.scaleSqrt()
             .domain([0, d3.max(bins, function(d) { return d.length; })])
