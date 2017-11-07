@@ -1,6 +1,9 @@
 import { createAction, handleAction, handleActions } from 'redux-actions'
 import { createSelector } from 'reselect'
-import { byIdSelectorCreator } from './selectorCreators'
+import { byIdSelectorCreator,
+  handleSimpleByDatasetAction,
+  getSimpleByDatasetProperty,
+  getSelectedDatasetId } from './selectorCreators'
 import immutableUpdate from 'immutable-update';
 import deep from 'deep-get-set'
 import store from '../store'
@@ -42,15 +45,14 @@ export const plots = handleActions(
 
 
 export const selectPlot = createAction('SELECT_PLOT')
-
-export const selectedPlot = handleAction(
-  'SELECT_PLOT',
-  (state, action) => {
-    return action.payload
-  },
-  'default'
+export const selectedPlot = handleSimpleByDatasetAction('SELECT_PLOT')
+const createSelectorForSelectedPlot = byIdSelectorCreator();
+export const getSelectedPlot = createSelectorForSelectedPlot(
+  getSelectedDatasetId,
+  getSimpleByDatasetProperty('selectedPlot'),
+  plot => plot || 'default'
 )
-export const getSelectedPlot = state => state.selectedPlot
+
 export const getAllPlots = state => state.plots
 
 const createSelectorForPlotId = byIdSelectorCreator();

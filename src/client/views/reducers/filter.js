@@ -1,5 +1,9 @@
 import { createAction, handleAction, handleActions } from 'redux-actions'
 import { createSelector } from 'reselect'
+import { byIdSelectorCreator,
+  handleSimpleByDatasetAction,
+  getSimpleByDatasetProperty,
+  getSelectedDatasetId } from './selectorCreators'
 import immutableUpdate from 'immutable-update';
 import deep from 'deep-get-set'
 import shallow from 'shallowequal'
@@ -43,19 +47,12 @@ export const filters = handleActions(
 
 
 export const updateFilterList = createAction('UPDATE_FILTER_LIST')
-
-export const filteredList = handleAction(
-  'UPDATE_FILTER_LIST',
-  (state, action) => {
-    return action.payload
-  },
-  []
-)
-const getFilteredListx = state => state.filteredList
-
-export const getFilteredList = createSelector(
-  getFilteredListx,
-  list => {return list}
+export const filteredList = handleSimpleByDatasetAction('UPDATE_FILTER_LIST')
+const createSelectorForFilteredList = byIdSelectorCreator();
+export const getFilteredList = createSelectorForFilteredList(
+  getSelectedDatasetId,
+  getSimpleByDatasetProperty('filteredList'),
+  list => list || []
 )
 
 const filterRangeToList = (low,high,arr,list) => {
