@@ -1,62 +1,57 @@
 import { createAction, handleAction, handleActions } from 'redux-actions'
 import { createSelector } from 'reselect'
-import { byIdSelectorCreator } from './selectorCreators'
+import { byIdSelectorCreator,
+  handleSimpleByDatasetAction,
+  getSimpleByDatasetProperty,
+  getSelectedDatasetId } from './selectorCreators'
 import { getMainPlot } from './plot';
 import immutableUpdate from 'immutable-update';
-
+import store from '../store'
 
 export const setPlotShape = createAction('SET_PLOT_SHAPE')
-export const plotShape = handleAction(
-  'SET_PLOT_SHAPE',
-  (state, action) => {
-    return action.payload
-  },
-  'hex'
-)
-export const getPlotShape = state => state.plotShape
+export const plotShape = handleSimpleByDatasetAction('SET_PLOT_SHAPE')
+const createSelectorForPlotShape = byIdSelectorCreator();
+export const getPlotShape = createSelectorForPlotShape(
+  getSelectedDatasetId,
+  getSimpleByDatasetProperty('plotShape'),
+  (plotShape) => plotShape || 'hex'
+);
 
 export const setPlotResolution = createAction('SET_PLOT_RESOLUTION')
-export const plotResolution = handleAction(
-  'SET_PLOT_RESOLUTION',
-  (state, action) => {
-    return action.payload
-  },
-  30
+export const plotResolution = handleSimpleByDatasetAction('SET_PLOT_RESOLUTION')
+const createSelectorForPlotResolution = byIdSelectorCreator();
+export const getPlotResolution = createSelectorForPlotResolution(
+  getSelectedDatasetId,
+  getSimpleByDatasetProperty('plotResolution'),
+  res => res || 30
 )
-const _getPlotResolution = state => state.plotResolution
-export const getPlotResolution = createSelector(
-  _getPlotResolution,
-  res => res
-)
+
 export const setPlotGraphics = createAction('SET_PLOT_GRAPHICS')
-export const plotGraphics = handleAction(
-  'SET_PLOT_GRAPHICS',
-  (state, action) => {
-    return action.payload
-  },
-  'svg'
+export const plotGraphics = handleSimpleByDatasetAction('SET_PLOT_GRAPHICS')
+const createSelectorForPlotGraphics = byIdSelectorCreator();
+export const getPlotGraphics = createSelectorForPlotGraphics(
+  getSelectedDatasetId,
+  getSimpleByDatasetProperty('plotGraphics'),
+  graphics => graphics || 'svg'
 )
-export const getPlotGraphics = state => state.plotGraphics
 
 export const setPlotScale = createAction('SET_PLOT_SCALE')
-export const plotScale = handleAction(
-  'SET_PLOT_SCALE',
-  (state, action) => {
-    return action.payload
-  },
-  1
+export const plotScale = handleSimpleByDatasetAction('SET_PLOT_SCALE')
+const createSelectorForPlotScale = byIdSelectorCreator();
+export const getPlotScale = createSelectorForPlotScale(
+  getSelectedDatasetId,
+  getSimpleByDatasetProperty('plotScale'),
+  scale => scale || 1
 )
-export const getPlotScale = state => state.plotScale
 
 export const setZScale = createAction('SET_Z_SCALE')
-export const zScale = handleAction(
-  'SET_Z_SCALE',
-  (state, action) => {
-    return action.payload
-  },
-  'scaleLog'
+export const zScale = handleSimpleByDatasetAction('SET_Z_SCALE')
+const createSelectorForZScale = byIdSelectorCreator();
+export const getZScale = createSelectorForZScale(
+  getSelectedDatasetId,
+  getSimpleByDatasetProperty('zScale'),
+  scale => scale || 'scaleLog'
 )
-export const getZScale = state => state.zScale
 
 export const setZReducer = createAction('SET_Z_REDUCER')
 const zReducers = {
@@ -98,27 +93,44 @@ const zReducers = {
 export const zReducer = handleAction(
   'SET_Z_REDUCER',
   (state, action) => {
-    if (zReducers[action.payload]) return {id:action.payload,func:zReducers[action.payload]}
+    if (zReducers[action.payload]){
+      return immutableUpdate(state,
+        {byDataset:{[getSelectedDatasetId()]:{id:action.payload,func:zReducers[action.payload]}}}
+      )
+    }
   },
-  {id:'sum',func:zReducers.sum}
+  { byDataset:{} }
 )
-export const getZReducer = state => state.zReducer
+const createSelectorForZReducer = byIdSelectorCreator();
+export const getZReducer = createSelectorForZReducer(
+  getSelectedDatasetId,
+  getSimpleByDatasetProperty('zReducer'),
+  reducer => reducer || {id:'sum',func:zReducers.sum}
+)
 
 export const setTransformFunction = createAction('EDIT_Y_TRANSFORM')
 export const transformFunction = handleAction(
   'EDIT_Y_TRANSFORM',
   (state, action) => {
-    return immutableUpdate(state,action.payload)
-      //Object.assign(...Object.keys(action.payload).map(f => ({[f]: action.payload[f]})))
+    let obj = {}
+    let dsId = getSelectedDatasetId()
+    let current = state.byDataset[dsId] || { x:500, order:1, factor:0 }
+    obj.x = action.payload.x ? action.payload.x * 1 : current.x
+    obj.order = action.payload.order ? action.payload.order * 1 : current.order
+    obj.factor = action.payload.factor ? action.payload.factor * 1 : current.factor
+    return immutableUpdate(state,
+      {byDataset:{[getSelectedDatasetId()]:obj}}
+    )
   },
-  {
-    x:500,
-    order:1,
-    factor:0
-  }
+  { byDataset:{} }
+)
+const createSelectorForTransformFunction = byIdSelectorCreator();
+export const getTransformFunctionParams = createSelectorForTransformFunction(
+  getSelectedDatasetId,
+  getSimpleByDatasetProperty('transformFunction'),
+  params => params || { x:500, order:1, factor:0 }
 )
 
-export const getTransformFunctionParams = state => state.transformFunction
 export const getTransformFunction = createSelector(
   getTransformFunctionParams,
   (props) => {

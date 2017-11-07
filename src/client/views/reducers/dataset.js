@@ -11,3 +11,9 @@ export const getSelectedDatasetMeta = createSelector(
   state => getDatasetMetaById(state,getSelectedDataset(state)),
   (meta) => meta || {}
 )
+
+export const getDatasetById = (state,id) => deep(state,['datasets','byId',id])
+export const getDataset = createSelector(
+  state => getDatasetById(state,getSelectedDataset(state)),
+  (dataset) => dataset || {}
+)

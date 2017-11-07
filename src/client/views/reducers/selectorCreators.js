@@ -1,5 +1,10 @@
 import { createSelectorCreator } from 'reselect'
+import { handleAction } from 'redux-actions'
 import shallow from 'shallowequal'
+import immutableUpdate from 'immutable-update';
+import store from '../store'
+
+export const getSelectedDatasetId = () => store.getState().selectedDataset || false;
 
 export const byIdSelectorCreator = () => {
   return createSelectorCreator((resultFunc) => {
@@ -17,3 +22,16 @@ export const byIdSelectorCreator = () => {
     };
   })
 }
+
+export const handleSimpleByDatasetAction = (string) => handleAction(
+  string,
+  (state, action) => {
+    return immutableUpdate(state, {
+      byDataset: { [getSelectedDatasetId()]: action.payload }
+    })
+  },
+  {byDataset:{}}
+)
+
+export const getSimpleByDatasetProperty = (property) =>
+  (state, datasetId) => state[property] ? state[property].byDataset[getSelectedDatasetId()] : undefined

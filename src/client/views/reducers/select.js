@@ -1,6 +1,8 @@
 import { createAction, handleAction, handleActions } from 'redux-actions'
 import { createSelector } from 'reselect'
-import { byIdSelectorCreator } from './selectorCreators'
+import { byIdSelectorCreator,
+  getSimpleByDatasetProperty,
+  getSelectedDatasetId } from './selectorCreators'
 import { getFilteredList } from './filter'
 import immutableUpdate from 'immutable-update';
 import deep from 'deep-get-set'
@@ -14,48 +16,53 @@ export const clearSelection = createAction('CLEAR_SELECTION')
 export const selectedRecords = handleActions(
   {
     ADD_RECORDS: (state, action) => {
-      let iLen = state.length
+      let current = state.byDataset[getSelectedDatasetId()] || []
+      console.log(current)
+      let iLen = current.length
       let jLen = action.payload.length
       let combined = []
       let i = 0
       let j = 0
       while (i < iLen && j < jLen) {
-        if (state[i] < action.payload[j]){
-          combined.push(state[i])
+        if (current[i] < action.payload[j]){
+          combined.push(current[i])
           i++
         }
-        else if (action.payload[j] < state[i]){
+        else if (action.payload[j] < current[i]){
           combined.push(action.payload[j])
           j++
         }
         else {
-          combined.push(state[i])
+          combined.push(current[i])
           i++
           j++
         }
       }
       while (i < iLen){
-        combined.push(state[i])
+        combined.push(current[i])
         i++
       }
       while (j < jLen){
         combined.push(action.payload[j])
         j++
       }
-      return combined
+      return immutableUpdate(state, {
+        byDataset: { [getSelectedDatasetId()]: combined }
+      })
     },
     REMOVE_RECORDS: (state, action) => {
+      let current = state.byDataset[getSelectedDatasetId()] || []
       let arr = []
-      let iLen = state.length
+      let iLen = current.length
       let jLen = action.payload.length
       let i = 0
       let j = 0
       while (i < iLen && j < jLen) {
-        if (state[i] < action.payload[j]){
-          arr.push(state[i])
+        if (current[i] < action.payload[j]){
+          arr.push(current[i])
           i++
         }
-        else if (action.payload[j] < state[i]){
+        else if (action.payload[j] < current[i]){
           j++
         }
         else {
@@ -64,19 +71,28 @@ export const selectedRecords = handleActions(
         }
       }
       while (i < iLen){
-        arr.push(state[i])
+        arr.push(current[i])
         i++
       }
-      return arr
+      return immutableUpdate(state, {
+        byDataset: { [getSelectedDatasetId()]: arr }
+      })
     },
-    CLEAR_SELECTION: (state, action) => (
-      []
-    )
+    CLEAR_SELECTION: (state, action) => {
+      return immutableUpdate(state, {
+        byDataset: { [getSelectedDatasetId()]: [] }
+      })
+    }
   },
-  []
+  {byDataset:{}}
 )
 
-export const getSelectedRecords = state => state.selectedRecords
+const createSelectorForSelectedRecords = byIdSelectorCreator();
+export const getSelectedRecords = createSelectorForSelectedRecords(
+  getSelectedDatasetId,
+  getSimpleByDatasetProperty('selectedRecords'),
+  arr => arr || []
+)
 
 export const getSelectedRecordsAsObject = createSelector(
   getSelectedRecords,
