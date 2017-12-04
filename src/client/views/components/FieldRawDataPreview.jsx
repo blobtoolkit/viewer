@@ -17,7 +17,7 @@ class FieldRawDataPreview extends React.Component {
     }
     this.mapDispatchToProps = dispatch => {
       return {
-        onMount: (obj) => dispatch(setDimension(obj))
+        onMount: (obj) => dispatch(setDimension({id:"preview",height:107,width:400}))
       }
     }
   }

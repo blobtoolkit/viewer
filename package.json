@@ -26,6 +26,7 @@
     "css-loader": "^0.28.5",
     "d3": "^4.10.0",
     "deep-get-set": "^1.1.0",
+    "documentation": "^5.3.3",
     "dotenv": "^4.0.0",
     "es6-map": "^0.1.5",
     "express": "^4.15.4",

@@ -6,6 +6,13 @@ import store from '../store'
 
 export const getSelectedDatasetId = () => store.getState().selectedDataset || false;
 
+export const linkIdToDataset = (id) => {
+  let ds = getSelectedDatasetId()
+  let re = new RegExp('^'+ds)
+  if (!(id || 'new').match(re)) id = ds+'_'+id
+  return id
+}
+
 export const byIdSelectorCreator = () => {
   return createSelectorCreator((resultFunc) => {
     const memoAll = {};

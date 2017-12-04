@@ -69,6 +69,8 @@ class FieldMenu extends React.Component {
       )
     }
     let fields = this.mapFields(this.props.fields)
+    console.log(this.props.fields)
+    console.log(this.props.topLevelFields)
     return (
       <div className={styles.menu} style={{left:this.props.offset,width:'30em'}}>
         <DatasetApplyFilters />

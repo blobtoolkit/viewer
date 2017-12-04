@@ -6,6 +6,7 @@ import { getMainPlot } from '../reducers/plot'
 import { makeGetFieldMetadata,
   getDetailsForFieldId,
   editField,
+  cloneField,
   fetchRawData } from '../reducers/field'
 import { filterToList } from '../reducers/filter'
 import { editPlot } from '../reducers/plot'
@@ -34,6 +35,7 @@ class Field extends React.Component {
           dispatch(editField(obj))
         },
         setAxes: (axis,id) => {dispatch(editPlot({id:'default',[axis]:id}))},
+        cloneField: (id) => {dispatch(cloneField({id}))},
         showData: (id) => dispatch(fetchRawData(id))
       }
     }

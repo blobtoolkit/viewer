@@ -1,6 +1,7 @@
 import { createAction, handleAction, handleActions } from 'redux-actions'
 import { createSelector } from 'reselect'
-import { byIdSelectorCreator } from './selectorCreators'
+import { byIdSelectorCreator,
+  linkIdToDataset } from './selectorCreators'
 import immutableUpdate from 'immutable-update';
 import deep from 'deep-get-set'
 import store from '../store'
@@ -15,8 +16,8 @@ import { getMainPlot } from './plot'
 import * as d3 from 'd3'
 
 const createSelectorForFilterId = byIdSelectorCreator();
-const _getFilterIdAsMemoKey = (state, filterId) => filterId;
-const getMetaDataForFilter = (state, filterId) => state.filters ? state.filters.byId[filterId] : {};
+const _getFilterIdAsMemoKey = (state, filterId) => linkIdToDataset(filterId);
+const getMetaDataForFilter = (state, filterId) => state.filters ? state.filters.byId[linkIdToDataset(filterId)] : {};
 
 export const getDetailsForFilterId = createSelectorForFilterId(
   _getFilterIdAsMemoKey,

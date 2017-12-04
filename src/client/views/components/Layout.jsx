@@ -27,6 +27,7 @@ class Layout extends React.Component {
     labels.forEach(tab=>{
       tabs.push({id:tab,active:this.state.activeTabs.hasOwnProperty(tab)})
     })
+    console.log(this.props.active)
     let menu
     if (this.state.activeTabs.hasOwnProperty('Datasets')) menu = <MenuDatasetMain />
     if (this.state.activeTabs.hasOwnProperty('Filters')) menu = <MenuFilterMain offset='0em'/>
@@ -34,8 +35,8 @@ class Layout extends React.Component {
     if (this.state.activeTabs.hasOwnProperty('Help')) menu = <MenuHelpMain offset='0em'/>
     return (
       <div className={styles.main}>
-        <MainPlot />
-        {menu}
+        { this.props.active ? <MainPlot /> : '' }
+         {menu}
         <Header tabs={tabs} onTabClick={(tab)=>this.changeTab(tab)}/>
       </div>
     )

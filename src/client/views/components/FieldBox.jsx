@@ -32,7 +32,8 @@ class FieldBox extends React.Component {
     return (
       <div id={this.props.fieldId} className={outer_css} onClick={()=>{}}>
         <FieldBoxHeader {...this.props} onHeaderClick={()=>{this.toggleState('active')}}
-         onAxisButtonClick={(axis,id)=>{this.props.setAxes(axis,id)}}/>
+         onAxisButtonClick={(axis,id)=>{this.props.setAxes(axis,id)}}
+         onCloneButtonClick={(id)=>{this.props.cloneField(id)}}/>
         <CSSTransitionGroup
           transitionName={{
             enter: styles.preview_enter,

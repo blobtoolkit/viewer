@@ -96,6 +96,7 @@ export function fetchMeta(id) {
       )
       .then(json => {
         json = clearUnderscores(json)
+        json.fields.unshift({id:'userDefined'})
         dispatch(receiveMeta({id,json}))
       })
   }
