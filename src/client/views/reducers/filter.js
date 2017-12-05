@@ -102,7 +102,9 @@ export function filterToList(val) {
           }
         }
         else if (filters[id].type == 'list'){
+          //let data_id = filters[id].clonedFrom || id
           list = filterCategoriesToList(filters[id].keys,data[id].values,list)
+          //console.log(data_id)
         }
       }
     })

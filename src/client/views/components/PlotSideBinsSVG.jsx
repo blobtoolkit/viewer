@@ -25,7 +25,7 @@ export default class PlotSideBinsSVG extends React.Component {
 
 const SideBinsSVG = ({ paths = [], axis='x' }) => {
   let params = {}
-  params.transform = axis == 'x' ? 'translate(0,-310)' : 'translate(1310,0),rotate(90)'
+  params.transform = axis == 'x' ? 'translate(0,-300)' : 'translate(1300,0),rotate(90)'
   params.height = axis == 'x' ? 300 : 1000
   params.width = axis == 'x' ? 1000 : 300
   return (

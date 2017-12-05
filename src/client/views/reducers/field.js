@@ -75,33 +75,52 @@ export const fields = handleActions(
   }
 )
 
+function variableRawDataToCategory (data,meta){
+  let x = d3[meta.scale || 'scaleLinear']().domain(meta.range)
+  let keys = x.ticks(10)
+  let step = keys[1] - keys[0]
+  keys.push(meta.range[1])
+  let len = data.values.length
+  let values = []
+  for (let i = 0; i < len; i++){
+    values[i] = Math.floor(data.values[i]/step)
+  }
+  return {keys,values}
+}
+
 export function cloneField(obj) {
   return dispatch => {
     let state = store.getState()
-    let id = linkIdToDataset(obj.id)
-    let parent_id = linkIdToDataset('userDefined')
+    let id = obj.id
     let new_id = id + '_1'
-    let field = Object.keys(state.fields.byId[id])
+    let linked_id = linkIdToDataset(obj.id)
+    let parent_id = linkIdToDataset('userDefined')
+    let field = Object.keys(state.fields.byId[linked_id])
         .filter((key)=>{return key != 'id'})
         .reduce((obj, key) => {
-          obj[key] = state.fields.byId[id][key];
+          obj[key] = state.fields.byId[linked_id][key];
           return obj;
         }, {});
     field.id = new_id
-    field.active = false
+    field.clonedFrom = obj.id
+    field.type = "category"
     dispatch(addField(field))
     let child = {id: new_id, name: new_id, active: false}
     let children = state.fields.byId[parent_id].children.concat(child)
     dispatch(editField({id:parent_id,children}))
-    let raw_data = state.rawData.byId[id]
-    dispatch(receiveRawData({id:new_id,json:raw_data}))
-    let filt = Object.keys(state.filters.byId[id])
+    let raw_data = state.rawData.byId[linked_id]
+    let converted_data = variableRawDataToCategory(raw_data,field)
+    dispatch(receiveRawData({id:new_id,json:converted_data}))
+    let filt = Object.keys(state.filters.byId[linked_id])
         .filter((key)=>{return key != 'id'})
         .reduce((obj, key) => {
-          obj[key] = state.filters.byId[id][key];
+          obj[key] = state.filters.byId[linked_id][key];
           return obj;
         }, {});
     filt.id = new_id
+    filt.type = 'list'
+    filt.keys = converted_data.keys.slice(0)
+    filt.toggled = Array.from(Array(10).keys()).map(i=>false)
     dispatch(addFilter(filt))
 
     // dispatch(requestRawData(id))
@@ -157,7 +176,6 @@ export const getDetailsForFieldId = createSelectorForFieldId(
   _getFieldIdAsMemoKey,
   getMetaDataForField,
   (meta = {}) => {
-    console.log(meta)
     let range = meta.range || [1,10];
     let xScale = d3[meta.scale || 'scaleLinear']()
     let active = meta.hasOwnProperty('active') ? meta.active : meta.hasOwnProperty('preload') ? meta.preload : false
@@ -169,6 +187,7 @@ export const getDetailsForFieldId = createSelectorForFieldId(
       range,
       active
     }
+    obj.clonedFrom = meta.clonedFrom
     return obj
   }
 );
@@ -394,6 +413,7 @@ export const getBarsForFieldId = createBarSelectorForFieldId(
           .domain([0, d3.max(bins, function(d) { return d.length; })])
           .range([dimensions.height, 0]);
     if (details.meta.type == 'category'){
+      x = d3.scaleLinear()
       x.domain([0,10]);
       y = d3.scaleSqrt()
             .domain([0, d3.max(bins, function(d) { return d.length; })])

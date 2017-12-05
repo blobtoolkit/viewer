@@ -38,6 +38,7 @@ export const getDetailsForFilterId = createSelectorForFilterId(
       obj.toggled = filterMeta.toggled,
       obj.keys = filterMeta.keys
     }
+    obj.clonedFrom = fieldMeta.clonedFrom
     return obj
   }
 );
@@ -111,7 +112,7 @@ export const getFilteredBarsForFieldId = createFilteredBarSelectorForFieldId(
           .domain([0, d3.max(fieldBins, function(d) { return d.length; })])
           .range([dimensions.height, 0]);
       if (details.meta.type == 'category'){
-        //x = d3.scaleOrdinal()
+        x = d3.scaleLinear()
         x.domain([0,10]);
         y = d3.scaleSqrt()
               .domain([0, d3.max(fieldBins, function(d) { return d.length; })])
@@ -158,9 +159,12 @@ export const getCategoryListForFieldId = createCategoryListSelectorForFieldId(
   getColorPalette,
   getMainPlot,
   (bins = [], filter = {}, palette, plot) => {
+    let matchId = filter.filterId
+    // let matchId = filter.clonedFrom || filter.filterId
     bins.forEach((b,i)=>{
       b.toggled = filter.toggled[i]
-      b.color = filter.filterId == plot.axes.cat ? palette.colors[i] : 'rgb(215, 205, 204)'
+      b.color = plot.axes.cat == matchId ? palette.colors[i] : 'rgb(215, 205, 204)'
+      // b.color =  plot.axes.cat.match(filter.filterID) ? palette.colors[i] : 'rgb(215, 205, 204)'
     })
     return {bins,filter,plot}
   }

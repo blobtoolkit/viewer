@@ -304,10 +304,10 @@ export const getBinnedLinesByCategoryForAxis = createSelector(
       }
     })
     Object.keys(xs).forEach(index => {
-      if (xs[index] < 1000){
+      //if (xs[index] < 1000){
         paths[index].path += ' L'+xs[index]+' '+300
         paths[index].path += ' L1000 '+300
-      }
+      //}
     })
     return {paths}
   }
