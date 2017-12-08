@@ -10,7 +10,11 @@ import { makeGetFieldMetadata,
   fetchRawData } from '../reducers/field'
 import { filterToList, editFilter } from '../reducers/filter'
 import { editPlot } from '../reducers/plot'
-
+import { getSelectionDisplay,
+  toggleSelection,
+  selectAll,
+  selectNone,
+  invertSelection } from '../reducers/select'
 
 class Field extends React.Component {
   constructor(props) {
@@ -19,6 +23,8 @@ class Field extends React.Component {
       return (state, props) => {
         let obj = Object.assign({},getDetailsForFieldId(state, props.fieldId))
         obj.plot = getMainPlot(state)
+        obj.hideSelection = !getSelectionDisplay(state)
+        console.log(obj.hideSelection)
         return obj
       }
     }
@@ -36,7 +42,11 @@ class Field extends React.Component {
         },
         setAxes: (axis,id) => {dispatch(editPlot({id:'default',[axis]:id}))},
         cloneField: (id) => {dispatch(cloneField({id}))},
-        showData: (id) => dispatch(fetchRawData(id))
+        showData: (id) => dispatch(fetchRawData(id)),
+        toggleSelection: (visible) => dispatch(toggleSelection(visible)),
+        selectAll: () => dispatch(selectAll()),
+        selectNone: () => dispatch(selectNone()),
+        invertSelection: () => dispatch(invertSelection())
       }
     }
   }

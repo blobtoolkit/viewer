@@ -142,17 +142,17 @@ export function filterToList(val) {
     let fields = state.fields.byId;
     let data = state.rawData.byId;
     let count = state.availableDatasets.byId[state.selectedDataset].records
-    let list = state.selectedRecords.byDataset[state.selectedDataset]
+    let list = fields[linkIdToDataset('selection')].active ? state.selectedRecords.byDataset[state.selectedDataset] : undefined
     let all = []
-    if (!list || filters[linkIdToDataset('selection')].invert){
+    if (!list || list.length == 0 || filters[linkIdToDataset('selection')].invert){
       for (let i = 0; i < count; i++){
         all.push(i)
       }
     }
-    if (!list){
+    if (!list || list.length == 0){
       list = all
     }
-    else if (filters[linkIdToDataset('selection')].invert){
+    else if (fields[linkIdToDataset('selection')].active && filters[linkIdToDataset('selection')].invert){
       list = filterArrayFromList(list,all)
     }
     state.filters.allIds.forEach(id => {

@@ -268,6 +268,7 @@ export const addAllFields = (dispatch,fields,flag,meta) => {
     list:[],
     invert:false
   }))
+  dispatch(receiveRawData({id:'selection',json:{values:[]}}))
   dispatch(addField({
     id:'userDefined',
     children:[{id:'selection',active:false}]

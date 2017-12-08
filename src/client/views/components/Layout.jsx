@@ -4,6 +4,7 @@ import Header from './Header'
 import styles from './Layout.scss'
 import MenuDatasetMain from './MenuDatasetMain'
 import MenuFilterMain from './MenuFilterMain'
+import MenuListsMain from './MenuListsMain'
 import MenuDisplayMain from './MenuDisplayMain'
 import MenuHelpMain from './MenuHelpMain'
 import MainPlot from './MainPlot'
@@ -22,7 +23,7 @@ class Layout extends React.Component {
     }
   }
   render(){
-    let labels = ['Datasets','Filters','Display','Help']
+    let labels = ['Datasets','Filters','Lists','Settings','Help']
     let tabs = []
     labels.forEach(tab=>{
       tabs.push({id:tab,active:this.state.activeTabs.hasOwnProperty(tab)})
@@ -31,7 +32,8 @@ class Layout extends React.Component {
     let menu
     if (this.state.activeTabs.hasOwnProperty('Datasets')) menu = <MenuDatasetMain />
     if (this.state.activeTabs.hasOwnProperty('Filters')) menu = <MenuFilterMain offset='0em'/>
-    if (this.state.activeTabs.hasOwnProperty('Display')) menu = <MenuDisplayMain offset='0em'/>
+    if (this.state.activeTabs.hasOwnProperty('Lists')) menu = <MenuListsMain offset='0em'/>
+    if (this.state.activeTabs.hasOwnProperty('Settings')) menu = <MenuDisplayMain offset='0em'/>
     if (this.state.activeTabs.hasOwnProperty('Help')) menu = <MenuHelpMain offset='0em'/>
     return (
       <div className={styles.main}>
