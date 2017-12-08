@@ -8,7 +8,7 @@ import { makeGetFieldMetadata,
   editField,
   cloneField,
   fetchRawData } from '../reducers/field'
-import { filterToList } from '../reducers/filter'
+import { filterToList, editFilter } from '../reducers/filter'
 import { editPlot } from '../reducers/plot'
 
 

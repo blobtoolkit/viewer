@@ -38,7 +38,11 @@ export const getDetailsForFilterId = createSelectorForFilterId(
       obj.toggled = filterMeta.toggled,
       obj.keys = filterMeta.keys
     }
+    if (fieldMeta.meta.type == 'selection'){
+      obj.filterType = 'selection'
+    }
     obj.clonedFrom = fieldMeta.clonedFrom
+    obj.invert = filterMeta.invert
     return obj
   }
 );

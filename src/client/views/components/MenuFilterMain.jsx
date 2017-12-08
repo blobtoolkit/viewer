@@ -43,6 +43,13 @@ class FieldMenu extends React.Component {
         if (field.hasRecords){
           jsx = <Field key={i} fieldId={field.id}>{field.id}</Field>
         }
+        else if (field.id == 'selection'){
+          /*
+            TODO:
+            Selection Filter goes here
+          */
+          jsx = <Field key={i} fieldId={field.id}>{field.id}</Field>
+        }
         if (field.children){
           return (
             <FieldSet

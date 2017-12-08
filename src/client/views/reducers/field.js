@@ -187,6 +187,7 @@ export const getDetailsForFieldId = createSelectorForFieldId(
       range,
       active
     }
+    obj.type = meta.type
     obj.clonedFrom = meta.clonedFrom
     return obj
   }
@@ -256,6 +257,11 @@ export const addAllFields = (dispatch,fields,flag,meta) => {
     dispatch(clearFields)
     dispatch(addTopLevelFields(fields))
   }
+  dispatch(addField({
+    id:'selection',
+    type:'selection',
+    children:[]
+  }))
   dispatch(addFilter({
     id:'selection',
     type:'selection',
@@ -264,7 +270,7 @@ export const addAllFields = (dispatch,fields,flag,meta) => {
   }))
   dispatch(addField({
     id:'userDefined',
-    children:[]
+    children:[{id:'selection',active:false}]
   }))
   fields.forEach(field => {
     if (meta){
@@ -326,6 +332,7 @@ export const getFieldHierarchy = createSelector(
       })
       return hierarchy
     }
+    console.log(fields)
     return processFields(list,fields)
   }
 )

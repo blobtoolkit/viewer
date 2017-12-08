@@ -1,7 +1,6 @@
 import React from 'react'
 import styles from './Filters.scss';
 
-
 class FilterControlRange extends React.Component {
    render() {
      return (

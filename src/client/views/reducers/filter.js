@@ -56,23 +56,80 @@ export const getFilteredList = createSelectorForFilteredList(
   list => list || []
 )
 
-const filterRangeToList = (low,high,arr,list) => {
+const filterRangeToList = (low,high,arr,list,invert) => {
   let ret = []
   let len = list.length
   for (var i = 0; i < len; i++){
-    if (arr[list[i]] >= low && arr[list[i]] <= high){
-      ret.push(list[i]);
+    if (invert){
+      if (arr[list[i]] < low || arr[list[i]] > high){
+        ret.push(list[i]);
+      }
+    }
+    else {
+      if (arr[list[i]] >= low && arr[list[i]] <= high){
+        ret.push(list[i]);
+      }
     }
   }
   return ret
 }
 
-const filterCategoriesToList = (keys,arr,list) => {
+const filterCategoriesToList = (keys,arr,list,invert) => {
   let ret = []
   let len = list.length
+  console.log(keys)
+  console.log(arr)
+  console.log(list)
+  console.log(invert)
   for (var i = 0; i < len; i++){
-    if (!keys.includes(arr[list[i]])){
-      ret.push(list[i]);
+    if (invert){
+      if (keys.includes(arr[list[i]])){
+        ret.push(list[i]);
+      }
+    }
+    else {
+      if (!keys.includes(arr[list[i]])){
+        ret.push(list[i]);
+      }
+    }
+
+  }
+  return ret
+}
+
+const filterArrayToList = (arr,list) => {
+  let ret = []
+  let a=0, l=0;
+  while (a < arr.length && l < list.length){
+    if (arr[a] < list[l] ){
+      a++
+    }
+    else if (arr[a] > list[l]){
+      l++
+    }
+    else {
+      ret.push(arr[a])
+      a++
+      l++
+    }
+  }
+  return ret
+}
+
+const filterArrayFromList = (arr,list) => {
+  let ret = []
+  let a=0, l=0;
+  while (a < arr.length && l < list.length){
+    if (arr[a] < list[l] ){
+      a++
+    }
+    else if (arr[a] > list[l]){
+      ret.push(list[l])
+      l++
+    }
+    else {
+      a++
+      l++
     }
   }
   return ret
@@ -85,27 +142,38 @@ export function filterToList(val) {
     let fields = state.fields.byId;
     let data = state.rawData.byId;
     let count = state.availableDatasets.byId[state.selectedDataset].records
-    let list = [];
-    for (let i = 0; i < count; i++){
-      list.push(i)
+    let list = state.selectedRecords.byDataset[state.selectedDataset]
+    let all = []
+    if (!list || filters[linkIdToDataset('selection')].invert){
+      for (let i = 0; i < count; i++){
+        all.push(i)
+      }
+    }
+    if (!list){
+      list = all
+    }
+    else if (filters[linkIdToDataset('selection')].invert){
+      list = filterArrayFromList(list,all)
     }
     state.filters.allIds.forEach(id => {
-      if (filters[id] && filters[id].type == 'selection'){
-        list == filters[id].list
-      }
       if (fields[id] && fields[id].active && filters[id]){
         if (filters[id].type == 'range'){
           let range = filters[id].range
           let limit = fields[id].range
           if (!shallow(range,limit)){
-            list = filterRangeToList(range[0],range[1],data[id].values,list)
+            list = filterRangeToList(range[0],range[1],data[id].values,list,filters[id].invert)
           }
         }
-        else if (filters[id].type == 'list'){
+        else if (filters[id].type == 'list' || filters[id].type == 'category'){
           //let data_id = filters[id].clonedFrom || id
-          list = filterCategoriesToList(filters[id].keys,data[id].values,list)
+
+            console.log(filters[id])
+          list = filterCategoriesToList(filters[id].keys,data[id].values,list,filters[id].invert)
           //console.log(data_id)
         }
+        // else if (filters[id].type == 'selection'){
+        //   list = filterArrayToList(filters[id].list,list)
+        // }
       }
     })
     dispatch(updateFilterList(list))

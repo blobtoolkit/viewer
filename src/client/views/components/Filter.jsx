@@ -15,7 +15,7 @@ class Filter extends React.Component {
     }
     this.mapDispatchToProps = dispatch => {
       return {
-        onUpdateRange: (id,range) => {return dispatch(editFilter({id:id,range:range}))}
+        onUpdateRange: (id,range) => {return dispatch(editFilter({id,range}))}
       }
     }
   }
