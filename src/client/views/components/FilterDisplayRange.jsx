@@ -20,7 +20,6 @@ class FilterHandles extends React.Component {
   }
   componentDidMount() {
     let container = ReactDOM.findDOMNode(this)
-    console.log(container)
     this.setState({container:container,offsetX:container.getBoundingClientRect().left})
   }
   render() {

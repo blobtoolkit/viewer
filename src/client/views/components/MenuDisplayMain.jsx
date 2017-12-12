@@ -26,7 +26,8 @@ import meanIcon from './svg/mean.svg';
 import logIcon from './svg/log.svg';
 import linearIcon from './svg/linear.svg';
 import sqrtIcon from './svg/sqrt.svg';
-
+import Palettes from './Palettes'
+import MenuItem from './MenuItem'
 
 const DisplayMenu = ({
   title,
@@ -57,6 +58,7 @@ const DisplayMenu = ({
         <SVGIcon sprite={linearIcon} active={scale == 'scaleLinear'} onIconClick={()=>onSelectScale('scaleLinear')}/>
         <SVGIcon sprite={sqrtIcon} active={scale == 'scaleSqrt'} onIconClick={()=>onSelectScale('scaleSqrt')}/>
       </MenuDisplaySimple>
+      <MenuItem name='palette' type='palette'/>
       <br/>
       <label htmlFor='transform_x'>x position: {transform.x} </label>
       <br/>

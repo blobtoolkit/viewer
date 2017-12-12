@@ -28,7 +28,6 @@ class Layout extends React.Component {
     labels.forEach(tab=>{
       tabs.push({id:tab,active:this.state.activeTabs.hasOwnProperty(tab)})
     })
-    console.log(this.props.active)
     let menu
     if (this.state.activeTabs.hasOwnProperty('Datasets')) menu = <MenuDatasetMain />
     if (this.state.activeTabs.hasOwnProperty('Filters')) menu = <MenuFilterMain offset='0em'/>

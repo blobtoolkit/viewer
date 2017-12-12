@@ -23,17 +23,19 @@ export const palettes = handleActions(
     ),
     EDIT_PALETTE: (state, action) => {
       let id = action.payload.id
-      let fields = Object.keys(action.payload).filter((key)=>{return key != 'id'})
       return immutableUpdate(state, {
         byId: {
-          [id]: Object.assign(...fields.map(f => ({[f]: action.payload[f]})))
+          [id]: action.payload[id]
         }
       })
     }
   },
   {
-    byId: {default:['rgb(166,206,227)','rgb(31,120,180)','rgb(178,223,138)','rgb(51,160,44)','rgb(251,154,153)','rgb(227,26,28)','rgb(253,191,111)','rgb(255,127,0)','rgb(202,178,214)','rgb(106,61,154)']},
-    allIds: ['default']
+    byId: {
+      default:['rgb(166,206,227)','rgb(31,120,180)','rgb(178,223,138)','rgb(51,160,44)','rgb(251,154,153)','rgb(227,26,28)','rgb(253,191,111)','rgb(255,127,0)','rgb(202,178,214)','rgb(106,61,154)'],
+      user: ['rgb(166,206,227)','rgb(31,120,180)','rgb(178,223,138)','rgb(51,160,44)','rgb(251,154,153)','rgb(227,26,28)','rgb(253,191,111)','rgb(255,127,0)','rgb(202,178,214)','rgb(106,61,154)']
+    },
+    allIds: ['default','user']
   }
 )
 

@@ -14,7 +14,6 @@ export const toggleSelection = createAction('TOGGLE_SELECTION')
 const selectionDisplay = handleActions(
   {
     TOGGLE_SELECTION: (state, action) => {
-      console.log(action)
       return immutableUpdate(state, {
         byDataset: { [getSelectedDatasetId()]: !action.payload }
       })
@@ -38,7 +37,6 @@ export const selectedRecords = handleActions(
   {
     ADD_RECORDS: (state, action) => {
       let current = state.byDataset[getSelectedDatasetId()] || []
-      console.log(current)
       let iLen = current.length
       let jLen = action.payload.length
       let combined = []

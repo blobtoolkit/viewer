@@ -24,7 +24,6 @@ class Field extends React.Component {
         let obj = Object.assign({},getDetailsForFieldId(state, props.fieldId))
         obj.plot = getMainPlot(state)
         obj.hideSelection = !getSelectionDisplay(state)
-        console.log(obj.hideSelection)
         return obj
       }
     }

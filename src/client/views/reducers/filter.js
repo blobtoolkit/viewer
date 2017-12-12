@@ -77,10 +77,6 @@ const filterRangeToList = (low,high,arr,list,invert) => {
 const filterCategoriesToList = (keys,arr,list,invert) => {
   let ret = []
   let len = list.length
-  console.log(keys)
-  console.log(arr)
-  console.log(list)
-  console.log(invert)
   for (var i = 0; i < len; i++){
     if (invert){
       if (keys.includes(arr[list[i]])){
@@ -167,7 +163,6 @@ export function filterToList(val) {
         else if (filters[id].type == 'list' || filters[id].type == 'category'){
           //let data_id = filters[id].clonedFrom || id
 
-            console.log(filters[id])
           list = filterCategoriesToList(filters[id].keys,data[id].values,list,filters[id].invert)
           //console.log(data_id)
         }

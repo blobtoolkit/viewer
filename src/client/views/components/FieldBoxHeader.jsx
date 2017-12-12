@@ -24,7 +24,6 @@ class FieldBoxHeader extends React.Component {
     return false
   }
   render(){
-    console.log(this.props)
     let buttons
     if (this.props.active){
       let icons

@@ -333,7 +333,6 @@ export const getFieldHierarchy = createSelector(
       })
       return hierarchy
     }
-    console.log(fields)
     return processFields(list,fields)
   }
 )
