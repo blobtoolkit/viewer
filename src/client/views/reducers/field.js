@@ -77,15 +77,31 @@ export const fields = handleActions(
 
 function variableRawDataToCategory (data,meta){
   let x = d3[meta.scale || 'scaleLinear']().domain(meta.range)
-  let keys = x.ticks(10)
+  x.range([0,10])
+  // let quantile = d3.scaleQuantile()
+  //  .domain(data.values.sort())
+  //  .range([0,10]);
+  let sorted = data.values.slice(0).sort((a,b)=>a - b)
+   console.log(d3.quantile(sorted,0.2))
+  // let keys = Array.from(Array(9).keys()).map((n)=>{return x.invert((n+1))});
+  let keys = Array.from(Array(10).keys()).map((n)=>{console.log(n);return d3.quantile(sorted,(n+1)/10)});
+  // keys.push(meta.range[1])
   let step = keys[1] - keys[0]
-  keys.push(meta.range[1])
   let len = data.values.length
   let values = []
   for (let i = 0; i < len; i++){
-    values[i] = Math.floor(data.values[i]/step)
+    for (let b = keys.length -1; b >= 0; b--){
+      if (data.values[i] > keys[b]){
+        values[i] = b + 1
+        b = -1
+      }
+      else if (b == 0){
+        values[i] = 0
+      }
+    }
+    //values[i] = Math.floor(data.values[i]/step - keys[0]/step + 1)
   }
-  return {keys,values}
+  return {keys,values,fixedOrder:true}
 }
 
 export function cloneField(obj) {
@@ -110,6 +126,7 @@ export function cloneField(obj) {
     dispatch(editField({id:parent_id,children}))
     let raw_data = state.rawData.byId[linked_id]
     let converted_data = variableRawDataToCategory(raw_data,field)
+    console.log(converted_data)
     dispatch(receiveRawData({id:new_id,json:converted_data}))
     let filt = Object.keys(state.filters.byId[linked_id])
         .filter((key)=>{return key != 'id'})
@@ -382,11 +399,18 @@ export const getBinsForFieldId = createBinSelectorForFieldId(
             (data);
       }
       if (details.meta.type == 'category'){
+        console.log(Math.min(...data))
         let sorted = d3.nest()
           .key(d => d)
           .rollup(d => d.length)
           .entries(data)
-          .sort((a,b) => b.value - a.value);
+          console.log(sorted)
+        if (!rawData.fixedOrder){
+          sorted = sorted.sort((a,b) => b.value - a.value);
+        }
+        else {
+          sorted = sorted.sort((a,b) => a.key - b.key);
+        }
         if (sorted.length > 10){
           let count = sorted.slice(9).map(o=>o.value).reduce((a,b)=>a+b)
           let index = sorted.slice(9).map(o=>o.key*1)
