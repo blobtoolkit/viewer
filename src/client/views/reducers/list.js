@@ -19,7 +19,8 @@ export const lists = handleActions(
     ADD_LIST: (state, action) => (
       immutableUpdate(state, {
         byId: { [linkIdToDataset(action.payload.id)]: action.payload },
-        allIds: [...state.allIds, linkIdToDataset(action.payload.id)]
+        allIds: [...state.allIds, linkIdToDataset(action.payload.id)],
+        byDatasetIds: {[getSelectedDatasetId()]: [...getListOfListsByDataset(), linkIdToDataset(action.payload.id)]}
       })
     ),
     EDIT_LIST: (state, action) => {
@@ -34,10 +35,34 @@ export const lists = handleActions(
   },
   {
     byId: {},
-    allIds: []
+    allIds: [],
+    byDatasetIds: {}
   }
 )
 
+const getListOfListsByDataset = () => {
+  let dsId = getSelectedDatasetId();
+  let state = store.getState()
+  let ids = state.lists ? (state.lists.byDatasetIds[dsId] || []) : []
+  return ids
+}
+
+export const getListsForCurrentDataset = (state) => {
+  let dsId = getSelectedDatasetId();
+  let ids = state.lists.byDatasetIds[dsId] || []
+  let lists = ids.map(i => state.lists.byId[i])
+  return lists
+}
+
+
+export const updateSelectedList = createAction('UPDATE_SELECTED_LIST')
+export const selectedList = handleSimpleByDatasetAction('UPDATE_SELECTED_LIST')
+const createSelectorForSelectedList = byIdSelectorCreator();
+export const getSelectedList = createSelectorForSelectedList(
+  getSelectedDatasetId,
+  getSimpleByDatasetProperty('selectedList'),
+  id => id
+)
 
 export function createList(val) {
   return function(dispatch){
