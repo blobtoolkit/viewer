@@ -156,7 +156,7 @@ class FilterDataPreview extends React.Component {
   }
 
   componentDidMount() {
-    d3.json('http://localhost:8000/api/v1/field/'+this.props.datasetId+'/'+this.props.filter.field._id, (error, data) => {
+    d3.json('http://192.168.1.67:8000/api/v1/field/'+this.props.datasetId+'/'+this.props.filter.field._id, (error, data) => {
       if (error){
         console.error(error);
       }

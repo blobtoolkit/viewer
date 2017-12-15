@@ -9,6 +9,7 @@ import {
 } from '../reducers/field'
 import Spinner from './Spinner'
 import DatasetApplyFilters from './DatasetApplyFilters'
+import DatasetCreateList from './DatasetCreateList'
 import Field from './Field'
 import FieldSet from './FieldSet'
 import MainPlot from './MainPlot'
@@ -79,6 +80,7 @@ class FieldMenu extends React.Component {
     return (
       <div className={styles.menu} style={{left:this.props.offset,width:'30em'}}>
         <DatasetApplyFilters />
+        <DatasetCreateList />
         {fields}
       </div>
     )

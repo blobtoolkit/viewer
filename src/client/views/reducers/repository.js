@@ -64,7 +64,7 @@ export const getAvailableDatasetIds = state => deep(state,'availableDatasets.all
 export function fetchRepository(id) {
   return function (dispatch) {
     dispatch(requestRepository())
-    return fetch('http://localhost:8000/api/v1/dataset/all')
+    return fetch('http://192.168.1.67:8000/api/v1/dataset/all')
       .then(
         response => response.json(),
         error => console.log('An error occured.', error)
@@ -89,7 +89,7 @@ export function fetchMeta(id) {
       dispatch(useStoredMeta(json))
       return Promise.resolve(useStoredMeta(json));
     }
-    return fetch(`http://localhost:8000/api/v1/dataset/id/${id}`)
+    return fetch(`http://192.168.1.67:8000/api/v1/dataset/id/${id}`)
       .then(
         response => response.json(),
         error => console.log('An error occured.', error)

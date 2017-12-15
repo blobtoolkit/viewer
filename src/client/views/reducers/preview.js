@@ -89,7 +89,6 @@ export const getFilteredBarsForFieldId = createFilteredBarSelectorForFieldId(
             .thresholds(thresh)
             (data.values);
       }
-
       if (details.meta.type == 'category'){
         let nested = d3.nest()
           .key(d => data.keys[d])

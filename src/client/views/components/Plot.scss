@@ -48,6 +48,7 @@
       stroke:$paleColor;
       stroke-width:0.5;
       fill:$clearColor;
+      cursor:pointer;
     }
     .hex:hover {
       fill:rgba($highlightColor,0.5);
@@ -73,6 +74,7 @@
       stroke:$paleColor;
       stroke-width:0.5;
       fill:$clearColor;
+      cursor:pointer;
     }
     .square:hover {
       fill:rgba($highlightColor,0.5);

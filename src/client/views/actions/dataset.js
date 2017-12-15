@@ -51,7 +51,7 @@ export function fetchMeta(id) {
       dispatch(useStoredMeta(id, meta))
       return
     }
-    return fetch(`http://localhost:8000/api/v1/dataset/id/${id}`)
+    return fetch(`http://192.168.1.67:8000/api/v1/dataset/id/${id}`)
       .then(
         response => response.json(),
         error => console.log('An error occured.', error)

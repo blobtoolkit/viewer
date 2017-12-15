@@ -245,7 +245,7 @@ export function fetchRawData(id) {
       return Promise.resolve(useStoredRawData(json));
     }
     let datasetId = deep(state,['selectedDataset']);
-    return fetch(`http://localhost:8000/api/v1/field/${datasetId}/${id}`)
+    return fetch(`http://192.168.1.67:8000/api/v1/field/${datasetId}/${id}`)
       .then(
         response => response.json(),
         error => console.log('An error occured.', error)
@@ -400,6 +400,7 @@ export const getBinsForFieldId = createBinSelectorForFieldId(
       }
       if (details.meta.type == 'category'){
         console.log(Math.min(...data))
+        console.log('here')
         let sorted = d3.nest()
           .key(d => d)
           .rollup(d => d.length)
@@ -424,8 +425,8 @@ export const getBinsForFieldId = createBinSelectorForFieldId(
           length:d.value
         }))
       }
+  console.log(bins)
     }
-
     return bins
   }
 );

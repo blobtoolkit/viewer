@@ -58,7 +58,6 @@ class CurrentLayer extends React.Component {
       )
     }
     else if (this.props.type == 'hexBinsSVG'){
-      console.log(this.props.data)
       return (
         <g className={styles.fill_parent} style={{zIndex:this.props.zIndex}}>
           <PlotHexBinsSVG index={this.props.index} data={this.props.data || []} color={this.props.color} />

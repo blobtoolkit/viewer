@@ -73,6 +73,20 @@ const HexGridSVG = ({ data, onClickCell, mouseDown, setMouseDown, setAddRecords 
           setMouseDown(true)
         }}
         onMouseUp={()=>{setMouseDown(false)}}
+        onTouchStart={(e)=>{
+          e.preventDefault()
+          if (datum.selected){
+            setAddRecords(false)
+          }
+          else {
+            setAddRecords(true)
+          }
+          setMouseDown(true)
+        }}
+        onTouchMove={(e)=>{
+          //e.preventDefault(); if (mouseDown){onClickCell(datum.ids)}
+        }}
+        onTouchEnd={(e)=>{e.preventDefault(); setMouseDown(false)}}
       />)
   })
   return (

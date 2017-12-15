@@ -3,7 +3,7 @@ if (process.env.NODE_ENV != 'test'){
 }
 const appRoot = require('app-root-path');
 
-const BTK_ORIGINS = process.env.BTK_ORIGINS ? process.env.BTK_ORIGINS.split(' ') : ['localhost','null'];
+const BTK_ORIGINS = process.env.BTK_ORIGINS ? process.env.BTK_ORIGINS.split(' ') : ['localhost','null','192.168.1.67','http://192.168.1.67:8080'];
 const BTK_HTTPS = (String(process.env.BTK_HTTPS) === 'true')
 const FILE_PATH = process.env.BTK_FILE_PATH || appRoot + 'test/files/datasets';
 
@@ -13,7 +13,7 @@ module.exports = {
   // salt work factor for encryption
   'workFactor': process.env.BTK_SALT_WORK_FACTOR || 1,
   // database connection information
-  'dbHost': process.env.BTK_DB_HOST || 'mongodb://localhost:27018/test',
+  'dbHost': process.env.BTK_DB_HOST || 'mongodb://192.168.1.67:27018/test',
   // setting port for server
   'port': Number(process.env.BTK_PORT) || 8000,
   // flag to use https
@@ -29,11 +29,11 @@ module.exports = {
   // version
   'version': process.env.BTK_VERSION || 'test',
   // hostname
-  'hostname': process.env.BTK_HOST || 'localhost',
+  'hostname': process.env.BTK_HOST || '0.0.0.0',
   // location of certificate key file
   'keyFile': process.env.BTK_KEYFILE || appRoot + '/test/ssl/private.key',
   // location of certificate file
   'certFile': process.env.BTK_CERTFILE || appRoot + '/test/ssl/certificate.pem',
   // API URL
-  'apiUrl': process.env.BTK_API_URL || 'http://localhost:8080'
+  'apiUrl': process.env.BTK_API_URL || 'http://0.0.0.0:8080'
 }
