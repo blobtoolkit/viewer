@@ -62,7 +62,11 @@ const HexGridSVG = ({ data, onClickCell, mouseDown, setMouseDown, setAddRecords 
         className={css}
         points={datum.points}
         style={{fill:datum.color}}
-        onMouseOver={()=>{if (mouseDown){onClickCell(datum.ids)}}}
+        onMouseOver={()=>{
+          if (mouseDown){
+            onClickCell(datum.ids)
+          }
+        }}
         onMouseDown={()=>{
           if (datum.selected){
             setAddRecords(false)
@@ -72,8 +76,11 @@ const HexGridSVG = ({ data, onClickCell, mouseDown, setMouseDown, setAddRecords 
           }
           setMouseDown(true)
         }}
-        onMouseUp={()=>{setMouseDown(false)}}
+        onMouseUp={()=>{
+          setMouseDown(false)
+        }}
         onTouchStart={(e)=>{
+          // TODO: support touch events - need to find bins by coords returned by nativeEvent
           e.preventDefault()
           if (datum.selected){
             setAddRecords(false)
@@ -84,9 +91,17 @@ const HexGridSVG = ({ data, onClickCell, mouseDown, setMouseDown, setAddRecords 
           setMouseDown(true)
         }}
         onTouchMove={(e)=>{
-          //e.preventDefault(); if (mouseDown){onClickCell(datum.ids)}
+          console.log(e.nativeEvent)
+          e.preventDefault(); if (mouseDown){onClickCell(datum.ids)}
         }}
-        onTouchEnd={(e)=>{e.preventDefault(); setMouseDown(false)}}
+        onTouchEnd={(e)=>{
+          console.log(e)
+          e.preventDefault(); setMouseDown(false)
+        }}
+        onTouchCancel={(e)=>{
+          console.log(e)
+          e.preventDefault(); setMouseDown(false)
+        }}
       />)
   })
   return (

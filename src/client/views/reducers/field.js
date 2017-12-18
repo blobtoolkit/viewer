@@ -399,8 +399,6 @@ export const getBinsForFieldId = createBinSelectorForFieldId(
             (data);
       }
       if (details.meta.type == 'category'){
-        console.log(Math.min(...data))
-        console.log('here')
         let sorted = d3.nest()
           .key(d => d)
           .rollup(d => d.length)
@@ -425,7 +423,6 @@ export const getBinsForFieldId = createBinSelectorForFieldId(
           length:d.value
         }))
       }
-  console.log(bins)
     }
     return bins
   }
