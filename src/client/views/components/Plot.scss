@@ -11,8 +11,10 @@
   border:2px solid $shadeColor;
   box-sizing: border-box;*/
   top:4em;
-  height:calc(100% - 4em);
-  width:100%;
+  height: calc(100vh - 4em);
+  max-height: 100vw;
+  width: 100%;
+  max-width: calc(100vh - 4em);
 }
 
 .main_plot {
@@ -117,6 +119,18 @@
   height:100%;
   width:100%;
 }
+
+.square {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  width: 70.42%;
+  height: 70.42%;
+  padding: 22.54% 22.54% 7.04% 7.04%;
+}
+
 
 .axis_title {
   width:50em;
