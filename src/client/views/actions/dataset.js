@@ -1,5 +1,6 @@
 import fetch from 'isomorphic-fetch'
 import store from '../store'
+const apiUrl = '/api/v1'
 
 export const SELECT_DATASET = 'SELECT_DATASET'
 export function selectDataset(id) {
@@ -51,7 +52,7 @@ export function fetchMeta(id) {
       dispatch(useStoredMeta(id, meta))
       return
     }
-    return fetch(`http://192.168.1.67:8000/api/v1/dataset/id/${id}`)
+    return fetch(`${apiUrl}/dataset/id/${id}`)
       .then(
         response => response.json(),
         error => console.log('An error occured.', error)

@@ -138,7 +138,7 @@ module.exports = function(app, db) {
  */
   app.get('/api/v1/field/:dataset_id/:field_id', async (req, res) => {
     res.setHeader('content-type', 'application/json');
-    res.setHeader('Access-Control-Allow-Origin', 'http://192.168.1.67:8080');
+    //res.setHeader('Access-Control-Allow-Origin', 'http://localhost:8080');
     let field = new Field(req.params.field_id,{id:req.params.dataset_id});
     let data = await field.loadData();
     if (data.hasOwnProperty('values')){

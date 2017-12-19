@@ -73,8 +73,10 @@
 window.onload = function() {
 
   // Build a system
+  const swaggerUrl = 'http://localhost:8000' + '/swagger.json'
+
   const ui = SwaggerUIBundle({
-    url: "http://192.168.1.67:8000/swagger.json",
+    url: swaggerUrl,
     dom_id: '#swagger-ui',
     presets: [
       SwaggerUIBundle.presets.apis,

@@ -1,7 +1,7 @@
 @import 'colors';
 
 .outer {
-  position:absolute;
+  position:relative;
   /*top:15em;
   left:30em;
   background-color: $lightColor;
@@ -15,6 +15,7 @@
   max-height: 100vw;
   width: 100%;
   max-width: calc(100vh - 4em);
+  margin:0 auto;
 }
 
 .main_plot {

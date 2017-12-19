@@ -12,6 +12,8 @@ import { getSelectedDatasetMeta } from './dataset'
 import { addFilter, editFilter, filterToList } from './filter'
 import { getDimensionsbyDimensionId, setDimension } from './dimension'
 import * as d3 from 'd3'
+const apiUrl = '/api/v1'
+
 
 export const addTopLevelFields = createAction('ADD_TOP_LEVEL_FIELDS')
 export const topLevelFields = handleAction(
@@ -245,7 +247,7 @@ export function fetchRawData(id) {
       return Promise.resolve(useStoredRawData(json));
     }
     let datasetId = deep(state,['selectedDataset']);
-    return fetch(`http://192.168.1.67:8000/api/v1/field/${datasetId}/${id}`)
+    return fetch(`${apiUrl}/field/${datasetId}/${id}`)
       .then(
         response => response.json(),
         error => console.log('An error occured.', error)

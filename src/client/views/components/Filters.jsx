@@ -5,6 +5,7 @@ import Resizable from 'react-resizable-box'
 import styles from './Filters.scss';
 import testSprite from './svg/test.svg';
 import * as d3 from 'd3';
+const apiUrl = '/api/v1'
 
 class AvailableFiltersBox extends React.Component {
   render() {
@@ -156,7 +157,7 @@ class FilterDataPreview extends React.Component {
   }
 
   componentDidMount() {
-    d3.json('http://192.168.1.67:8000/api/v1/field/'+this.props.datasetId+'/'+this.props.filter.field._id, (error, data) => {
+    d3.json(apiUrl+'/field/'+this.props.datasetId+'/'+this.props.filter.field._id, (error, data) => {
       if (error){
         console.error(error);
       }
