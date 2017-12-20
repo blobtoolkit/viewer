@@ -8,7 +8,7 @@
     "test": "export NODE_ENV=\"test\" && mocha \"src/**/*.spec.js\"",
     "postteest": "mongo --port 27018 admin --eval \"db.getSiblingDB('admin').shutdownServer()\" &> /dev/null && rm -r test/data",
     "start": "nodemon src/server/app.js",
-    "client": "webpack-dev-server --content-base src/client src/client/main.js"
+    "client": "export NODE_ENV=\"test\" && webpack-dev-server --content-base src/client src/client/main.js"
   },
   "author": "",
   "license": "Apache-2.0",
@@ -51,6 +51,7 @@
     "react-draggable": "^3.0.2",
     "react-history": "^0.18.2",
     "react-konva": "^1.1.4",
+    "react-modal-dialog": "^4.0.7",
     "react-redux": "^5.0.6",
     "react-resizable": "^1.7.1",
     "react-resizable-box": "^2.0.6",

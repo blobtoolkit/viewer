@@ -24,14 +24,8 @@ const mapStateToProps = state => {
   }
 }
 
-const mapDispatchToProps = dispatch => {
-  return {
-    onListClick: id => console.log('coming soon...') //dispatch(loadList(id))
-  }
-}
 const MenuListsMain = connect(
-  mapStateToProps,
-  mapDispatchToProps
+  mapStateToProps
 )(ListsMenu)
 
 export default MenuListsMain

@@ -5,20 +5,50 @@ import styles from './Layout.scss';
 import { Link } from 'react-router-dom'
 import Spinner from './Spinner'
 import { createSelector } from 'reselect'
-import { getDatasetMeta } from '../reducers/repository'
+import { fetchIdentifiers } from '../reducers/identifiers'
+import { updateSelectedList, getIdentifiersForList } from '../reducers/list'
+import ListModal from './ListModal';
+
+const ListItem = ({id,list,onClick,identifiers,active}) => {
+
+  let css = styles.menu_item
+  if (active) css += ' '+styles.active
+  return (
+    <div className={css} onClick={()=>onClick(id)}>
+    <ListModal name={id} identifiers={identifiers}>&nbsp;</ListModal>
+      <h3>{id}</h3>
+      <span className={styles.menu_subtitle}>{list.length}</span>
+    </div>
+  )
+}
 
 class MenuList extends React.Component {
+  constructor(props) {
+    super(props);
+    this.mapStateToProps = state => {
+      return {
+        identifiers: getIdentifiersForList(state)
+      }
+    }
+    this.mapDispatchToProps = dispatch => {
+      return {
+        onClick: () => {
+          dispatch(updateSelectedList(this.props.id))
+          dispatch(fetchIdentifiers())
+        }
+      }
+    }
+  }
+
   render(){
-    let css = styles.menu_item
-    if (this.props.active) css += ' '+styles.active
+    const ConnectedListItem = connect(
+      this.mapStateToProps,
+      this.mapDispatchToProps
+    )(ListItem)
     return (
-      <div className={css} onClick={()=>{this.props.onListClick(this.props.id)}}>
-        <h3>{this.props.id}</h3>
-        <span className={styles.menu_subtitle}>{this.props.list.length}</span>
-      </div>
+      <ConnectedListItem {...this.props}/>
     )
   }
 }
-
 
 export default MenuList

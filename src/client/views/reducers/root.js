@@ -4,6 +4,7 @@ import { repositoryReducers } from './repository'
 import { fieldReducers } from './field'
 import { filterReducers } from './filter'
 import { listReducers } from './list'
+import { identifierReducers } from './identifiers'
 import { dimensionReducers } from './dimension'
 import { colorReducers } from './color'
 import { plotReducers } from './plot'
@@ -16,6 +17,7 @@ const allReducers = Object.assign(
   fieldReducers,
   filterReducers,
   listReducers,
+  identifierReducers,
   dimensionReducers,
   colorReducers,
   plotReducers,

@@ -5,6 +5,7 @@ import { byIdSelectorCreator,
   getSimpleByDatasetProperty,
   getSelectedDatasetId,
   linkIdToDataset } from './selectorCreators'
+import { getIdentifiersForCurrentDataset } from './identifiers'
 import immutableUpdate from 'immutable-update';
 import deep from 'deep-get-set'
 import shallow from 'shallowequal'
@@ -64,6 +65,19 @@ export const getSelectedList = createSelectorForSelectedList(
   id => id
 )
 
+const getListById = (state,id) => state.lists.byId[linkIdToDataset(getSelectedList(store.getState()))] || {}
+const createSelectorForListIdentifiers = byIdSelectorCreator();
+export const getIdentifiersForList = createSelectorForListIdentifiers(
+  getSelectedList,
+  getListById,
+  getIdentifiersForCurrentDataset,
+  (list,ids) => {
+    let ret = [];
+    (list.list || []).forEach(index => {ret.push(ids[index])})
+    return ret;
+  }
+)
+
 export function createList(val) {
   return function(dispatch){
     val.id = val.id.replace(/\s/g,'_')
@@ -73,5 +87,6 @@ export function createList(val) {
 }
 
 export const listReducers = {
-  lists
+  lists,
+  selectedList
 }

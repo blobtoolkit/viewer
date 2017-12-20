@@ -158,6 +158,9 @@ const storeAllValues = function(){
     let out = this.storeValues(field._id)
     successes = successes.concat(out)
   })
+  let filePath = this.outFilePath || config.outFilePath;
+  let success = io.writeJSON(filePath+'/'+this.id+'/identifiers.json',this.blobDB.order_of_blobs);
+  successes.push(success);
   return Promise.all(successes);
 }
 
