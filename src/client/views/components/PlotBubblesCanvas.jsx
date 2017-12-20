@@ -58,7 +58,7 @@ class BubblesCanvas extends React.Component {
     render() {
       return (
         <div className={styles.fill_parent}>
-          <canvas className={styles.square} ref={(elem) => { this.canvas = elem; }} width={1000} height={1000}/>
+          <canvas className={styles.main_canvas} ref={(elem) => { this.canvas = elem; }} width={1000} height={1000}/>
         </div>
       );
     }
