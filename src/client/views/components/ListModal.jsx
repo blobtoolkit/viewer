@@ -5,7 +5,7 @@ class ListModal extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      isShowingModal: this.props.identifiers.length > 0,
+      isShowingModal: this.props.selected,
     }
   }
   handleClick(){ this.setState({isShowingModal: true}) }
@@ -27,6 +27,7 @@ class ListModal extends React.Component {
           <ModalContainer onClose={()=>this.handleClose()}>
             <ModalDialog onClose={()=>this.handleClose()}>
               <h1>List summary</h1>
+              <h2>Name: {this.props.name}</h2>
               <button onClick={()=>this._downloadJSONFile(this.props.name,this.props.identifiers)}>Download JSON</button>
               <p>Metadata, view and copy list functions coming soon</p>
             </ModalDialog>

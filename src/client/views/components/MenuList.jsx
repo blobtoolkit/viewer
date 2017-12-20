@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom'
 import Spinner from './Spinner'
 import { createSelector } from 'reselect'
 import { fetchIdentifiers } from '../reducers/identifiers'
-import { updateSelectedList, getIdentifiersForList } from '../reducers/list'
+import { getSelectedList, updateSelectedList, getIdentifiersForList } from '../reducers/list'
 import ListModal from './ListModal';
 
 const ListItem = ({id,list,onClick,identifiers,active}) => {
@@ -15,7 +15,7 @@ const ListItem = ({id,list,onClick,identifiers,active}) => {
   if (active) css += ' '+styles.active
   return (
     <div className={css} onClick={()=>onClick(id)}>
-    <ListModal name={id} identifiers={identifiers}>&nbsp;</ListModal>
+    <ListModal name={id} selected={active} identifiers={identifiers}>&nbsp;</ListModal>
       <h3>{id}</h3>
       <span className={styles.menu_subtitle}>{list.length}</span>
     </div>
@@ -27,7 +27,8 @@ class MenuList extends React.Component {
     super(props);
     this.mapStateToProps = state => {
       return {
-        identifiers: getIdentifiersForList(state)
+        identifiers: getIdentifiersForList(state),
+        active: getSelectedList(state) == this.props.id
       }
     }
     this.mapDispatchToProps = dispatch => {
