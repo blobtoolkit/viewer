@@ -8,7 +8,8 @@
     "test": "export NODE_ENV=\"test\" && mocha \"src/**/*.spec.js\"",
     "postteest": "mongo --port 27018 admin --eval \"db.getSiblingDB('admin').shutdownServer()\" &> /dev/null && rm -r test/data",
     "start": "nodemon src/server/app.js",
-    "client": "export NODE_ENV=\"test\" && webpack-dev-server --content-base src/client src/client/main.js"
+    "client": "export NODE_ENV=\"test\" && webpack-dev-server --content-base src/client src/client/main.js",
+    "build": "NODE_ENV=production webpack -p --config ./webpack.config.js"
   },
   "author": "",
   "license": "Apache-2.0",

@@ -36,7 +36,16 @@ const config = {
         include: APP_DIR,
         loader: 'babel-loader',
         query: {
-          presets: ["es2015","react"],
+          presets: ["es2015","env","react"],
+          plugins: ["transform-object-rest-spread"]
+        }
+      },
+      {
+        test: /\.js$/,
+        include: APP_DIR,
+        loader: 'babel-loader',
+        query: {
+          presets: ["es2015","env","react"],
           plugins: ["transform-object-rest-spread"]
         }
       },
