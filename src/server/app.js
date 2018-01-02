@@ -1,9 +1,11 @@
 const express        = require('express');
+const compression    = require('compression')
 const bodyParser     = require('body-parser');
 const path           = require('path');
 const config         = require('../config/main');
 const app            = express();
 
+app.use(compression())
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.locals.directory = config.filePath;
