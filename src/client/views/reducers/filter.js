@@ -14,6 +14,11 @@ import store from '../store'
 export const addFilter = createAction('ADD_FILTER')
 export const editFilter = createAction('EDIT_FILTER')
 
+function isNumeric(n) {
+  if ((typeof n === 'undefined') || n == 'NaN') return false
+  return !isNaN(parseFloat(n)) && isFinite(n)
+}
+
 export const filters = handleActions(
   {
     ADD_FILTER: (state, action) => (
@@ -29,9 +34,12 @@ export const filters = handleActions(
       let id = linkIdToDataset(action.payload.id)
       let fields = Object.keys(action.payload).filter((key)=>{return key != 'id'})
       if (action.payload.range){
+        let range = []
+        range[0] = isNumeric(action.payload.range[0]) ? action.payload.range[0] : Number.NEGATIVE_INFINITY
+        range[1] = isNumeric(action.payload.range[1]) ? action.payload.range[1] : Number.POSITIVE_INFINITY
         let limit = action.payload.limit || state.byId[id].limit.slice()
-        action.payload.range[0] = Math.max(action.payload.range[0],limit[0])
-        action.payload.range[1] = Math.min(action.payload.range[1],limit[1])
+        action.payload.range[0] = Math.max(range[0],limit[0])
+        action.payload.range[1] = Math.min(range[1],limit[1])
       }
       return immutableUpdate(state, {
         byId: {

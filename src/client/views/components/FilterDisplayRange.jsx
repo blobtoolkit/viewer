@@ -2,6 +2,7 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import styles from './Filters.scss';
 import { DraggableCore } from 'react-draggable'
+import ReactTooltip from 'react-tooltip'
 
 class FilterDisplayRange extends React.Component {
 
@@ -65,7 +66,10 @@ class FilterHandle extends React.Component {
         >
         <div style={{left: (this.boundPx()+this.state.offsetX)+'px'}}
         className={styles.handle+' '+styles[this.props.handlePosition]}>
-          <div className={styles.arrows}>&lt;&nbsp;&gt;</div>
+          <div className={styles.arrows} data-tip data-for='draggable-arrow'>
+            &lt;&nbsp;&gt;
+          </div>
+          <ReactTooltip id='draggable-arrow'>Drag to set range</ReactTooltip>
         </div>
       </DraggableCore>
     )
