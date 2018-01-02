@@ -11,7 +11,6 @@ async function main() {
   let outFilePath = parseArgs['_'][1];
   let bool = await io.fileExists(blobDBFile)
   if (!bool || !outFilePath){
-    console.log(usage());
     return usage();
   }
   let id = outFilePath.match(/([^\/]*)\/*$/)[1]

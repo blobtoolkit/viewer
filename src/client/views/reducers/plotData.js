@@ -264,7 +264,6 @@ export const getCategoryListForMainPlot = createSelectorForMainPlotCategory(
   _getMainPlotCategory,
   (state) => getPlainCategoryListForFieldId(state,_getMainPlotCategory(state)),
   (list) => {
-    console.log(list)
     return list
   }
 )

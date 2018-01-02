@@ -10,8 +10,6 @@ class MainPlot extends React.Component {
     super(props);
     this.mapStateToProps = () => {
       return (state, props) => {
-        console.log(getPlotType(state))
-        console.log(getPlotResolution(state))
         return getCategoryListForMainPlot(state)
         //return getPlainCategoryListForFieldId(state,'bestsum_superkingdom')
       }

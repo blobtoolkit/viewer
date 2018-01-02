@@ -91,15 +91,13 @@ const HexGridSVG = ({ data, onClickCell, mouseDown, setMouseDown, setAddRecords 
           setMouseDown(true)
         }}
         onTouchMove={(e)=>{
-          console.log(e.nativeEvent)
+          // console.log(e.nativeEvent)
           e.preventDefault(); if (mouseDown){onClickCell(datum.ids)}
         }}
         onTouchEnd={(e)=>{
-          console.log(e)
           e.preventDefault(); setMouseDown(false)
         }}
         onTouchCancel={(e)=>{
-          console.log(e)
           e.preventDefault(); setMouseDown(false)
         }}
       />)

@@ -9,7 +9,6 @@ import PlotHexGridSVG from './PlotHexGridSVG'
 class MainPlotBox extends React.Component {
   constructor(props) {
     super(props);
-    console.log(props)
     this.state = {toFront:-1}
   }
 

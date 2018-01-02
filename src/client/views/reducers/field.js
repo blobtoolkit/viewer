@@ -84,9 +84,8 @@ function variableRawDataToCategory (data,meta){
   //  .domain(data.values.sort())
   //  .range([0,10]);
   let sorted = data.values.slice(0).sort((a,b)=>a - b)
-   console.log(d3.quantile(sorted,0.2))
   // let keys = Array.from(Array(9).keys()).map((n)=>{return x.invert((n+1))});
-  let keys = Array.from(Array(10).keys()).map((n)=>{console.log(n);return d3.quantile(sorted,(n+1)/10)});
+  let keys = Array.from(Array(10).keys()).map((n)=>{return d3.quantile(sorted,(n+1)/10)});
   // keys.push(meta.range[1])
   let step = keys[1] - keys[0]
   let len = data.values.length
@@ -128,7 +127,6 @@ export function cloneField(obj) {
     dispatch(editField({id:parent_id,children}))
     let raw_data = state.rawData.byId[linked_id]
     let converted_data = variableRawDataToCategory(raw_data,field)
-    console.log(converted_data)
     dispatch(receiveRawData({id:new_id,json:converted_data}))
     let filt = Object.keys(state.filters.byId[linked_id])
         .filter((key)=>{return key != 'id'})
@@ -405,7 +403,6 @@ export const getBinsForFieldId = createBinSelectorForFieldId(
           .key(d => d)
           .rollup(d => d.length)
           .entries(data)
-          console.log(sorted)
         if (!rawData.fixedOrder){
           sorted = sorted.sort((a,b) => b.value - a.value);
         }

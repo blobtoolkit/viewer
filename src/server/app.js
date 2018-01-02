@@ -20,7 +20,6 @@ app.use(bodyParser.json());
 
 require('./routes')(app, {});
 
-console.log(config)
 if (config.https){
   const https = require('https');
   const fs = require('fs');

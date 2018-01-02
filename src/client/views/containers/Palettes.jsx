@@ -8,7 +8,6 @@ class Palettes extends React.Component {
     super(props);
     this.mapStateToProps = () => {
       return (state, props) => {
-        console.log(getAllPalettes(state))
         return getAllPalettes(state)
       }
     }
