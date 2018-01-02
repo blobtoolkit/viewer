@@ -12,8 +12,8 @@ import { getSelectedDatasetMeta } from './dataset'
 import { addFilter, editFilter, filterToList } from './filter'
 import { getDimensionsbyDimensionId, setDimension } from './dimension'
 import * as d3 from 'd3'
-const apiUrl = '/api/v1'
 
+const apiUrl = window.apiURL || '/api/v1'
 
 export const addTopLevelFields = createAction('ADD_TOP_LEVEL_FIELDS')
 export const topLevelFields = handleAction(

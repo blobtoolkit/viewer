@@ -49,82 +49,51 @@ const config = {
           plugins: ["transform-object-rest-spread"]
         }
       },
-      // {
-      //   test : /\.scss$/,
-      //   loader: //ExtractTextPlugin.extract(
-      //     combineLoaders([
-      //       {
-      //         loader: 'style-loader'
-      //       },
-      //       {
-      //         loader: 'sass-loader'
-      //       },
-      //       {
-      //         loader: 'css-loader',
-      //         query: {
-      //           modules: true,
-      //           localIdentName: '[name]__[local]___[hash:base64:5]'
-      //         }
-      //       }
-      //     ])
-      //   //)
-      // }
-            //      {
-            //     test: /\.scss$/,
-            //     loader: ExtractTextPlugin.extract('css-loader!sass-loader')
-            // }
-           {
-                test: /\.css$/,
-                exclude: /node_modules/,
-                use: ExtractTextPlugin.extract({
-                    fallback: 'style-loader',
-
-                    // Could also be write as follow:
-                    // use: 'css-loader?modules&localIdentName=[name]__[local]___[hash:base64:5]!postcss-loader'
-                    use: [
-                        {
-                            loader: 'css-loader',
-                            query: {
-                                modules: true,
-                                localIdentName: '[name]__[local]___[hash:base64:5]'
-                            }
-                        },
-                        'postcss-loader'
-                    ]
-                }),
-            },
+      {
+        test: /\.css$/,
+        exclude: /node_modules/,
+        use: ExtractTextPlugin.extract({
+          fallback: 'style-loader',
+          use: [
             {
-                test: /\.scss$/,
-                exclude: /node_modules/,
-                use: ExtractTextPlugin.extract({
-                    fallback: 'style-loader',
-
-                    // Could also be write as follow:
-                    // use: 'css-loader?modules&importLoader=2&sourceMap&localIdentName=[name]__[local]___[hash:base64:5]!sass-loader'
-                    use: [
-                        {
-                            loader: 'css-loader',
-                            query: {
-                                modules: true,
-                                sourceMap: true,
-                                importLoaders: 2,
-                                localIdentName: '[name]__[local]___[hash:base64:5]'
-                            }
-                        },
-                        'sass-loader'
-                    ]
-                }),
+              loader: 'css-loader',
+              query: {
+                modules: true,
+                localIdentName: '[name]__[local]___[hash:base64:5]'
+              }
             },
+            'postcss-loader'
+          ]
+        }),
+      },
+      {
+        test: /\.scss$/,
+        exclude: /node_modules/,
+        use: ExtractTextPlugin.extract({
+          fallback: 'style-loader',
+          use: [
             {
-  test: /\.svg$/,
-  use: [
+              loader: 'css-loader',
+              query: {
+                modules: true,
+                sourceMap: true,
+                importLoaders: 2,
+                localIdentName: '[name]__[local]___[hash:base64:5]'
+              }
+            },
+            'sass-loader'
+          ]
+        }),
+      },
+      {
+        test: /\.svg$/,
+        use: [
           'svg-sprite-loader',
           'svgo-loader'
         ]
-}
+      }
     ]
-  }//,
-  //debug: true
+  }
 };
 
 module.exports = config;

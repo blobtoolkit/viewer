@@ -9,8 +9,8 @@ import { byIdSelectorCreator,
   getSimpleByDatasetProperty,
   getSelectedDatasetId,
   linkIdToDataset } from './selectorCreators'
-//const configMain = require('../../../config/main');
-const apiUrl = '/api/v1'
+  
+const apiUrl = window.apiURL || '/api/v1'
 
 const requestIdentifiers = createAction('REQUEST_IDENTIFIERS')
 const receiveIdentifiers = createAction(

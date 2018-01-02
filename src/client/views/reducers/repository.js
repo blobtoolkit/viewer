@@ -5,8 +5,8 @@ import deep from 'deep-get-set'
 import shallow from 'shallowequal'
 import store from '../store'
 import { addAllFields } from './field'
-//const configMain = require('../../../config/main');
-const apiUrl = '/api/v1'
+
+const apiUrl = window.apiURL || '/api/v1'
 
 const requestRepository = createAction('REQUEST_REPOSITORY')
 const receiveRepository = createAction(

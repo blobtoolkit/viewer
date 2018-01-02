@@ -6,14 +6,18 @@ import Dataset from './Dataset';
 import Layout from './Layout';
 import Repository from './Repository';
 import { NotFound } from './Error';
+import { createHistory, createBrowserHistory } from 'history';
+
+const browserHistory = createBrowserHistory({
+  basename: "/visualisation/btk-promise/dist/public/"
+});
 
 const MainDiv = (active) => (
   <main>
     <Switch>
-      <Route exact path='/' component={Repository}/>
-      <Route path="/view/:datasetId" component={Dataset}/>
-      <Route path="/layout" render={()=>(<Layout {...active}/>)}/>
-      <Route component={NotFound}/>
+      <Route history={browserHistory} path="/view/:datasetId" component={Dataset}/>
+      <Route history={browserHistory} path="/layout" render={()=>(<Layout {...active}/>)}/>
+      <Route history={browserHistory} render={()=>(<Layout {...active}/>)}/>
     </Switch>
   </main>
 )
