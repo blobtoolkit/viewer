@@ -27,8 +27,7 @@ const config = {
   },
   devtool: 'source-map',
   plugins: [
-    new ExtractTextPlugin('styles.css'),
-    new webpack.optimize.UglifyJsPlugin({minimize: true})
+    new ExtractTextPlugin('styles.css')
   ],
   module: {
     loaders: [
