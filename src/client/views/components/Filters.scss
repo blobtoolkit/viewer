@@ -17,10 +17,9 @@
   height: 2em;
   width: 100%;
   line-height:2em;
-  background-color: $darkColor;
+  background-color: rgba($highlightColor,0.5);
   color: $paleColor;
   box-sizing:border-box;
-  border-bottom:1px solid $darkColor;
 
   h1 {
     font-size:1em;
@@ -107,9 +106,9 @@
     top: calc(50% - 1em);
     border-radius: 1em;
     text-align: center;
-    background-color: rgba($darkColor,0.5);
+    background-color: rgba($paleColor,0.5);
     line-height: 2em;
-    color: rgba($paleColor,0.75);
+    color: rgba($shadeColor,0.75);
   }
 }
 

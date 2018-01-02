@@ -21,7 +21,7 @@ class FieldBox extends React.Component {
     let outer_css = styles.outer
     let fieldContent
     let filterContent
-    if (this.props.active){
+    if (this.props.active && !this.props.fieldId.match('selection')){
       outer_css += ' '+styles.expanded;
       fieldContent = (<div className={styles.main}>
         <FieldRawDataPreview {...this.props} updateYScale={(obj)=>{this.setState(obj)}}/>

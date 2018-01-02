@@ -337,6 +337,12 @@ export const getFieldHierarchy = createSelector(
     function processFields(list,fields) {
       let hierarchy = []
       list.forEach((id) => {
+          if (fields[id].type != 'variable' &&
+              fields[id].type != 'category' &&
+              fields[id].id != 'userDefined' &&
+              fields[id].type != 'selection'){
+                return hierarchy
+              }
           let base_id = id.replace(/^\w+?_/,'')
           let obj = {id:base_id,hasRecords:true};
           if (fields[id].hasOwnProperty('children')){
@@ -350,7 +356,8 @@ export const getFieldHierarchy = createSelector(
       })
       return hierarchy
     }
-    return processFields(list,fields)
+    let hierarchy = processFields(list,fields)
+    return hierarchy
   }
 )
 

@@ -66,8 +66,8 @@
   height: 2em;
   width: 100%;
   line-height:2em;
-  background-color: $highlightColor;
-  color: $lightColor;
+  background-color: $darkColor;
+  color: $paleColor;
 
   h1 {
     font-size:1em;
@@ -96,6 +96,11 @@
     color:$paleColor;
     font-size:85%;
   }
+}
+
+.header.active {
+  background-color: $highlightColor;
+  color: $lightColor;
 }
 
 .inline {
