@@ -64,6 +64,14 @@ class FieldBoxHeader extends React.Component {
         </div>
       )
     }
+    else {
+      if (this.props.type == 'variable'){
+        buttons = (<div className={styles.header_type}>variable</div>)
+      }
+      else if (this.props.type == 'category'){
+        buttons = (<div className={styles.header_type}>category</div>)
+      }
+    }
     return (
       <div className={styles.header}>
         <h1 className={styles.inline} onClick={()=>{this.props.onHeaderClick()}}>{this.props.fieldId}</h1>

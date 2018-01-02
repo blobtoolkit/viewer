@@ -10,7 +10,7 @@ const MenuHelpMain = ({}) => {
         Interactive help will be added once the viewer is more feature-complete.
       </p>
       Further information and code are available in the project
-      <a href="https://github.com/blobtoolkit/viewer">Github repository</a>. 
+      <a href="https://github.com/blobtoolkit/viewer">Github repository</a>.
     </div>
   )
 };

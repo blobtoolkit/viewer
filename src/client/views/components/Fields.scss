@@ -75,11 +75,11 @@
 
   }
 
-.header_buttons {
-  float:right;
-  text-align:right;
-  color:$darkColor;
-}
+  .header_buttons {
+    float:right;
+    text-align:right;
+    color:$darkColor;
+  }
 
   .header_button {
     float:right;
@@ -87,6 +87,14 @@
     text-align:center;
     height:2em;
     line-height:2em;
+  }
+
+  .header_type {
+    float:right;
+    margin-right:1em;
+    text-align:right;
+    color:$paleColor;
+    font-size:85%;
   }
 }
 

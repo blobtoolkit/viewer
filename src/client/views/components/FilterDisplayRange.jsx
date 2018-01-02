@@ -64,7 +64,9 @@ class FilterHandle extends React.Component {
         }}
         >
         <div style={{left: (this.boundPx()+this.state.offsetX)+'px'}}
-        className={styles.handle+' '+styles[this.props.handlePosition]}></div>
+        className={styles.handle+' '+styles[this.props.handlePosition]}>
+          <div className={styles.arrows}>&lt;&nbsp;&gt;</div>
+        </div>
       </DraggableCore>
     )
   }

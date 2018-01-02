@@ -99,6 +99,18 @@
   margin:0 -2em;
   width:4em!important;
   cursor:ew-resize;
+  .arrows {
+    width: 50%;
+    height: 2em;
+    margin: 0 auto;
+    position: relative;
+    top: calc(50% - 1em);
+    border-radius: 1em;
+    text-align: center;
+    background-color: rgba($darkColor,0.5);
+    line-height: 2em;
+    color: rgba($paleColor,0.75);
+  }
 }
 
 .handle.left {
