@@ -6,7 +6,11 @@ import styles from './Layout.scss'
 const MenuHelpMain = ({}) => {
   return (
     <div className={styles.menu}>
-      Sorry, no help yet.
+      <p>
+        Interactive help will be added once the viewer is more feature-complete.
+      </p>
+      Further information and code are available in the project
+      <a href="https://github.com/blobtoolkit/viewer">Github repository</a>. 
     </div>
   )
 };

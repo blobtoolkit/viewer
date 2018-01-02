@@ -10,7 +10,7 @@ const ListsMenu = ({lists,selectedList,onListClick}) => {
   return (
     <div className={styles.menu}>
       { lists.length == 0 ?
-        'Sorry, no list display yet.' :
+        'Create lists in the Filters menu' :
         lists.map((list,i) => (<MenuList key={i} {...list} onListClick={onListClick}/>))
       }
     </div>
