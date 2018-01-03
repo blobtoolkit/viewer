@@ -15,7 +15,7 @@ const ListItem = ({id,list,onClick,identifiers,active}) => {
   if (active) css += ' '+styles.active
   return (
     <div className={css} onClick={()=>onClick(id)}>
-    <ListModal name={id} selected={active} identifiers={identifiers}>&nbsp;</ListModal>
+    <ListModal name={id} selected={active} dismiss={()=>onClick(null)} identifiers={identifiers}>&nbsp;</ListModal>
       <h3>{id}</h3>
       <span className={styles.menu_subtitle}>{list.length}</span>
     </div>
@@ -33,8 +33,8 @@ class MenuList extends React.Component {
     }
     this.mapDispatchToProps = dispatch => {
       return {
-        onClick: () => {
-          dispatch(updateSelectedList(this.props.id))
+        onClick: (id) => {
+          dispatch(updateSelectedList(id))
           dispatch(fetchIdentifiers())
         }
       }

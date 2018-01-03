@@ -9,7 +9,10 @@ class ListModal extends React.Component {
     }
   }
   handleClick(){ this.setState({isShowingModal: true}) }
-  handleClose(){ this.setState({isShowingModal: false}) }
+  handleClose(){
+    this.setState({isShowingModal: false})
+    this.props.dismiss()
+  }
 
   _downloadJSONFile(name,content){
     var element = document.createElement('a');
