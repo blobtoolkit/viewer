@@ -69,7 +69,7 @@ class ControlCategory extends React.Component {
        )
      })
      return (
-      <div className={styles.inside}>
+      <div className={styles.inside} data-tip data-for='category-toggle'>
         {bins}
       </div>
     )

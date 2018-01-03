@@ -1,6 +1,5 @@
 import React from 'react';
 import styles from './Icon.scss'
-import ReactTooltip from 'react-tooltip'
 
 const SVGIcon = ({ sprite, active, onIconClick = ()=>{} }) => (
   <div className={styles.icon}
@@ -10,7 +9,7 @@ const SVGIcon = ({ sprite, active, onIconClick = ()=>{} }) => (
       onClick={onIconClick}>
       <use xlinkHref={'#'+sprite.id} />
     </svg>
-    <ReactTooltip id={sprite.id}>{sprite.id}</ReactTooltip>
+
   </div>
 );
 

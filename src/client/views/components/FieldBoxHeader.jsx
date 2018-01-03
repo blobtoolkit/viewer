@@ -14,7 +14,6 @@ import selectInverseIcon from './svg/invert.svg';
 import selectAllIcon from './svg/selectAll.svg';
 import selectNoneIcon from './svg/selectNone.svg';
 import invertSelectionIcon from './svg/invertSelection.svg';
-import ReactTooltip from 'react-tooltip'
 
 class FieldBoxHeader extends React.Component {
   checkAxisStatus(axis){
@@ -66,7 +65,11 @@ class FieldBoxHeader extends React.Component {
       )
     }
     else {
-      buttons = (<div className={styles.header_type}>{this.props.type}</div>)
+      buttons = (
+        <div className={styles.header_type}
+          data-tip data-for='header-type'
+          >{this.props.type}</div>
+        )
     }
     return (
       <div className={styles.header + ' ' + (this.props.active ? styles.active : '')}>
@@ -75,8 +78,6 @@ class FieldBoxHeader extends React.Component {
           onClick={()=>{this.props.onHeaderClick()}}>
           <h1 className={styles.inline}>{this.props.fieldId}</h1>
         </span>
-        <ReactTooltip id='active-field-header'>Deactivate</ReactTooltip>
-        <ReactTooltip id='field-header'>Activate</ReactTooltip>
         {buttons}
       </div>
     );

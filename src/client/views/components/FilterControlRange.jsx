@@ -1,6 +1,5 @@
 import React from 'react'
-import styles from './Filters.scss';
-import ReactTooltip from 'react-tooltip'
+import styles from './Filters.scss'
 
 class FilterControlRange extends React.Component {
   isNumeric(n) {
@@ -31,7 +30,6 @@ class FilterControlRange extends React.Component {
             this.props.onUpdateRange(this.props.filterId,range)
           }}
           data-tip data-for='range-input' />
-          <ReactTooltip id='range-input'>Set range</ReactTooltip>
       </div>
     )
   }

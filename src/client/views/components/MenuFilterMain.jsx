@@ -13,6 +13,7 @@ import DatasetCreateList from './DatasetCreateList'
 import Field from './Field'
 import FieldSet from './FieldSet'
 import MainPlot from './MainPlot'
+import ToolTips from './ToolTips'
 
 // const DatasetMenu = ({ selectedDataset, isFetching, datasetIds, onDatasetMount, onDatasetClick, offset }) => {
 //   return (
@@ -82,6 +83,7 @@ class FieldMenu extends React.Component {
         <DatasetApplyFilters />
         <DatasetCreateList />
         {fields}
+        <ToolTips set='filterMenu'/>
       </div>
     )
   }

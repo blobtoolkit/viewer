@@ -29,11 +29,15 @@ class CreateList extends React.Component {
   render(){
     return (
       <div className={styles.dataset_controls}>
-        <div className={styles.detail_container}>
-          New list &ndash; Name:&nbsp;
-          <input type='text' onChange={this.handleChange} value={this.state.id}/>
-          <span onClick={()=>this.props.onClick({id:this.state.id,list:this.props.list})} className={styles.button}>
-            Create
+        <div className={styles.detail_container + ' ' + styles.list_detail}>
+          <input type='text'
+            onChange={this.handleChange}
+            value={this.state.id}
+            data-tip data-for='create-list-input'/>
+          <span onClick={()=>this.props.onClick({id:this.state.id,list:this.props.list})}
+            className={styles.button + ' ' + styles.list_button}
+            data-tip data-for='create-list-button' >
+            Create List
           </span>
         </div>
       </div>

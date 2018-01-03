@@ -25,13 +25,16 @@ class ApplyFilters extends React.Component {
     //let percent = this.props.selected/this.props.count*100
     return (
       <div className={styles.dataset_controls}>
-        <div className={styles.detail_container}>
+        <div className={styles.detail_container}
+          data-tip data-place='bottom' data-for='filter-summary'>
           {text}
           <div className={styles.detail} style={{width:this.props.percentage}}>
             {text}
           </div>
         </div>
-        <span onClick={this.props.onClick} className={styles.button}>
+        <span onClick={this.props.onClick}
+          className={styles.button}
+          data-tip data-place='bottom' data-for='filter-button'>
           Filter
         </span>
       </div>
