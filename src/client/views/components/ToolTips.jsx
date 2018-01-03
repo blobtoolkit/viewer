@@ -7,6 +7,7 @@ import { getDetailsForFilterId } from '../reducers/preview'
 
 const sets = (set) => {
   let tips = {}
+
   tips.xAxis = {name:'xAxis',detail:'assign variable to x-axis',filterMenu:1}
   tips.yAxis = {name:'yAxis',detail:'assign variable to y-axis',filterMenu:1}
   tips.zAxis = {name:'zAxis',detail:'use variable to scale points/bins',filterMenu:1}
@@ -28,6 +29,23 @@ const sets = (set) => {
   tips['filter-summary'] = {name:'summary of filtered dataset',filterMenu:1}
   tips['filter-button'] = {name:'apply filter',filterMenu:1}
   tips['category-toggle'] = {name:'toggle category',filterMenu:1}
+
+  tips.squareShape = {name:'plot square bins',settingsMenu:1}
+  tips.hexShape = {name:'plot hexagonal bins',settingsMenu:1}
+  tips.circleShape = {name:'plot points as circles',settingsMenu:1}
+  tips.max = {name:'maximum z-value',settingsMenu:1}
+  tips.min = {name:'minimum z-value',settingsMenu:1}
+  tips.sum = {name:'sum of z-values',settingsMenu:1}
+  tips.count = {name:'count',settingsMenu:1}
+  tips.mean = {name:'mean z-value',settingsMenu:1}
+  tips.log = {name:'log scale',settingsMenu:1}
+  tips.linear = {name:'linear scale',settingsMenu:1}
+  tips.sqrt = {name:'squre-root scale',settingsMenu:1}
+  tips['size-slider'] = {name:'scale factor for point/bin size',filterMenu:1}
+  tips['select-palette'] = {name:'select palette',filterMenu:1}
+  tips['edit-swatch'] = {name:'adjust colour',filterMenu:1}
+
+
   return tips
 }
 

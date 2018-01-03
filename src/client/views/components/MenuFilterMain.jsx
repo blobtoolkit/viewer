@@ -73,7 +73,7 @@ class FieldMenu extends React.Component {
     if (!this.props.isActive){
       return (
         <div className={styles.menu} style={{left:this.props.offset}}>
-          <Spinner/>
+          Select a dataset to begin.
         </div>
       )
     }

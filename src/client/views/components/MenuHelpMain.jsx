@@ -7,10 +7,10 @@ const MenuHelpMain = ({}) => {
   return (
     <div className={styles.menu}>
       <p>
-        Interactive help will be added once the viewer is more feature-complete.
+        This is an alpha release, full documentation will be added once the viewer
+        is more feature-complete.
       </p>
-      Further information and code are available in the project
-      <a href="https://github.com/blobtoolkit/viewer">Github repository</a>.
+      Further information and code are available in the project <a href="https://github.com/blobtoolkit/viewer">Github repository</a>.
     </div>
   )
 };

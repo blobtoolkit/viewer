@@ -34,6 +34,7 @@ class Palette extends React.Component {
       <div className={styles.palette}>
         <div className={styles.title}
           onClick={()=>this.props.selectPalette(this.props.id)}
+          data-tip data-for='select-palette'
           >
           {this.props.id}
         </div>

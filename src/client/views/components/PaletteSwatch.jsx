@@ -36,7 +36,9 @@ class PaletteSwatch extends React.Component {
       this.props.editPalette(rgba)
     };
     return (
-      <div className={styles.block} style={{width:this.props.width}}>
+      <div className={styles.block}
+        style={{width:this.props.width}}
+        data-tip data-for='edit-swatch'>
         <div className={ styles.swatch } onClick={ ()=>{this.handleClick()} }>
           <div className={ styles.color }
             style={{backgroundColor:`rgba(${ this.state.color.r }, ${ this.state.color.g }, ${ this.state.color.b }, ${ this.state.color.a })`}} />

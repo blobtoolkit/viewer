@@ -57,6 +57,16 @@
   overflow-y: auto;
   box-shadow: 0px 0px 8px 4px $darkColor;
   opacity:0.96;
+  color:$lightColor;
+
+  a {
+    color:$paleColor;
+    text-decoration:underline;
+  }
+
+  a:visited {
+    color:$paleColor;
+  }
 }
 
 .menu_item {

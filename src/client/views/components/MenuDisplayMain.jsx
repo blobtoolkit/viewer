@@ -28,6 +28,7 @@ import linearIcon from './svg/linear.svg';
 import sqrtIcon from './svg/sqrt.svg';
 import Palettes from './Palettes'
 import MenuItem from './MenuItem'
+import ToolTips from './ToolTips'
 
 const DisplayMenu = ({
   title,
@@ -38,13 +39,22 @@ const DisplayMenu = ({
   transform, onChangeTransform }) => {
   return (
     <div className={styles.menu}>
+      <MenuItem name='palette' type='palette'/>
       <MenuDisplaySimple name='shape'>
         <SVGIcon sprite={squareIcon} active={shape == 'square'} onIconClick={()=>onSelectShape('square')}/>
         <SVGIcon sprite={hexIcon} active={shape == 'hex'} onIconClick={()=>onSelectShape('hex')}/>
         <SVGIcon sprite={circleIcon} active={shape == 'circle'} onIconClick={()=>onSelectShape('circle')}/>
       </MenuDisplaySimple>
       <MenuDisplaySimple name='size'>
-        <input onChange={(e)=>onChangeResolution(e.target.value)} type="range" value={resolution} min="5" max="50" step="1" className={styles.flip_horiz+' '+styles.full_height}/>
+        <input onChange={(e)=>onChangeResolution(e.target.value)}
+          type="range"
+          value={resolution}
+          min="5"
+          max="50"
+          step="1"
+          className={styles.flip_horiz+' '+styles.full_height}
+          data-tip data-for='size-slider'
+          />
       </MenuDisplaySimple>
       <MenuDisplaySimple name='reducer function'>
         <SVGIcon sprite={sumIcon} active={reducer.id == 'sum'} onIconClick={()=>onSelectReducer('sum')}/>
@@ -58,7 +68,6 @@ const DisplayMenu = ({
         <SVGIcon sprite={linearIcon} active={scale == 'scaleLinear'} onIconClick={()=>onSelectScale('scaleLinear')}/>
         <SVGIcon sprite={sqrtIcon} active={scale == 'scaleSqrt'} onIconClick={()=>onSelectScale('scaleSqrt')}/>
       </MenuDisplaySimple>
-      <MenuItem name='palette' type='palette'/>
       <br/>
       <label htmlFor='transform_x'>x position: {transform.x} </label>
       <br/>
@@ -71,6 +80,8 @@ const DisplayMenu = ({
       <label htmlFor='transform_factor'>factor: {transform.factor} </label>
       <br/>
       <input id='transform_factor' onChange={(e)=>onChangeTransform({factor:e.target.value})} type="range" value={transform.factor} min="-1" max="1" step="0.1"/>
+
+      <ToolTips set='settingsMenu'/>
     </div>
   )
 };
