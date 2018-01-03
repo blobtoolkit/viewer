@@ -72,7 +72,7 @@
   h1 {
     font-size:1em;
     margin:0 0 0 0.5em;
-
+    cursor: pointer;
   }
 
   .header_buttons {
@@ -108,10 +108,17 @@
 }
 
 
+.left_half {
+  display:inline-block;
+  width:50%;
+  height:100%;
+  cursor:pointer;
+}
+
 .outer.expanded {
   height:12em;
   overflow:hidden;
-  border-bottom: solid $shadeColor;
+  border-bottom: solid rgba($highlightColor,0.5);
 }
 
 
