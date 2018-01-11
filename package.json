@@ -53,6 +53,7 @@
     "react-history": "^0.18.2",
     "react-konva": "^1.1.4",
     "react-modal-dialog": "^4.0.7",
+    "react-pointable": "^1.1.1",
     "react-redux": "^5.0.6",
     "react-resizable": "^1.7.1",
     "react-resizable-box": "^2.0.6",
