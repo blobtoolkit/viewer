@@ -62,12 +62,14 @@ const HexGridSVG = ({ data, onClickCell, mouseDown, setMouseDown, setAddRecords 
       <Pointable
         key={i}
         tagName='g'
-        onPointerOver={()=>{
+        onPointerOver={(e)=>{
+          e.preventDefault()
           if (mouseDown){
             onClickCell(datum.ids)
           }
         }}
-        onPointerDown={()=>{
+        onPointerDown={(e)=>{
+          e.preventDefault()
           if (datum.selected){
             setAddRecords(false)
           }
@@ -76,7 +78,8 @@ const HexGridSVG = ({ data, onClickCell, mouseDown, setMouseDown, setAddRecords 
           }
           setMouseDown(true)
         }}
-        onPointerUp={()=>{
+        onPointerUp={(e)=>{
+          e.preventDefault()
           setMouseDown(false)
         }}
         >
