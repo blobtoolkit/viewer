@@ -15,13 +15,14 @@ import immutableUpdate from 'immutable-update';
 export const getHexGrid = createSelector(
   getPlotResolution,
   (res) => {
-    let size = 1000 // FIXME: magic number
-    let radius = (size/res)*(Math.sqrt(3)/3)
-    let height = radius
-    let width = Math.sqrt(3) * radius
+    let size = 900.1 // FIXME: magic number
+    let width = size / res
+    let jres = res * 3 / Math.sqrt(3)
+    let radius = width / Math.sqrt(3)
+    let height = radius * 2
     let data = [];
     for (let i = 0; i <= res; i++){
-      for (let j = 0; j <= res*(2/Math.sqrt(3)); j++){
+      for (let j = 0; j <= jres; j++){
         let points = drawPoints(i,j,radius,res)
         if (points) data.push({id:i+'_'+j,x:i,y:j,points})
       }
@@ -71,7 +72,7 @@ export const getAllScatterPlotData = createSelector(
       // if (axis == 'z'){
       //   scales[axis] = d3.scaleSqrt().domain(scales[axis].domain())
       // }
-      scales[axis].range([0,1000])
+      scales[axis].range([0,900])
     })
     let len = plotData.axes.x.values.length
     for (let i = 0; i < len; i++){
@@ -81,7 +82,7 @@ export const getAllScatterPlotData = createSelector(
       data.push({
         id:i,
         x: x,
-        y: 1000 - y,
+        y: 900 - y,
         z: plotData.axes.z.values[i]
       })
     }
@@ -169,9 +170,7 @@ export const getScatterPlotDataByHexBin = createSelector(
           if (hexes[x][y] && hexes[x][y].ids.length > 0){
             let z = zScale(reducer.func(hexes[x][y].zs))
             z = z > 1 ? z : 1;
-            // let scale = Math.log(Math.max(...hexes[x][y].zs))/8
             hexes[x][y].points = drawPoints(x,y,grid.radius,grid.res,z/grid.radius)
-            // hexes[x][y].points = drawPoints(x,y,grid.radius,grid.res)
             hexes[x][y].index = 0
             data.push(hexes[x][y])
           }

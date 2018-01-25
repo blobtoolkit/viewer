@@ -15,8 +15,8 @@ import immutableUpdate from 'immutable-update';
 export const getSquareGrid = createSelector(
   getPlotResolution,
   (res) => {
-    let size = 1000 // FIXME: magic number
-    let height = size/res
+    let size = 900.1 // FIXME: magic number
+    let height = size/(res*1+1)
     let width = height
     let data = []
     for (let i = 0; i <= res; i++){
@@ -28,6 +28,11 @@ export const getSquareGrid = createSelector(
   }
 )
 
+const setCoords = (datum,grid) => {
+  let coords = [Math.floor((datum.x)/grid.width),(Math.floor((datum.y)/grid.height))]
+  return coords
+}
+
 export const getAllScatterPlotDataBySquareBin = createSelector(
   getSquareGrid,
   getAllScatterPlotData,
@@ -38,7 +43,7 @@ export const getAllScatterPlotDataBySquareBin = createSelector(
       squares[d.i][d.j] = {id:d.id,i:d.i,j:d.j,ids:[],zs:[],indices:[]}
     })
     scatterData.data.forEach(datum=>{
-      let coords = [Math.floor(datum.x/grid.width),Math.floor(datum.y/grid.height)]
+      let coords = setCoords(datum,grid)
       if (squares[coords[0]] && squares[coords[0]][coords[1]]){
         squares[coords[0]][coords[1]].ids.push(datum.id)
         squares[coords[0]][coords[1]].indices.push(datum.index)
@@ -104,7 +109,7 @@ export const getScatterPlotDataBySquareBin = createSelector(
       squares[d.i][d.j] = {id:d.id,i:d.i,j:d.j,ids:[],zs:[],indices:[]}
     })
     scatterData.data.forEach(datum=>{
-      let coords = [Math.floor(datum.x/grid.width),Math.floor(datum.y/grid.height)]
+      let coords = setCoords(datum,grid)
       if (squares[coords[0]] && squares[coords[0]][coords[1]]){
         squares[coords[0]][coords[1]].indices.push(datum.index)
         squares[coords[0]][coords[1]].ids.push(datum.id)
@@ -286,7 +291,7 @@ export const getBinnedLinesByCategoryForAxis = createSelector(
       if (d.axis == axis){
         bins[d.index] = bins[d.index] || 0
         zs[d.index] = zs[d.index] ? zs[d.index] : 300
-        let x0 = d.bin * binnedData.grid.width
+        let x0 = d.bin * binnedData.grid.width + 50
         let x1 = x0 + binnedData.grid.width
         let z = 300 - zScale(reducer.func(d.zs))
         if (bins[d.index] == 0){

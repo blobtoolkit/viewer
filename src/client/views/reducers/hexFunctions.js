@@ -49,14 +49,14 @@ export const pixel_to_oddr = (x, y, radius) => {
 
 export const drawPoints = (i,j,radius,res,scale = 1) => {
   let center
-  let height = radius
-  let width = Math.sqrt(3) * radius
+  let width = radius * Math.sqrt(3)
+  let rowspacing = (3 / 2) * radius
   let corners = [0,1,2,3,4,5]
   if (j%2 == 0){
-    center = {x:(i)*width,y:(j)*height*(3/2)}
+    center = {x:(i)*width,y:(j)*rowspacing}
   }
-  else if (i < res) {
-    center = {x:(i)*width+width/2,y:(j)*height*(3/2)}
+  else {
+    center = {x:(i)*width+width/2,y:(j)*rowspacing}
   }
   if (center){
     radius = radius * scale

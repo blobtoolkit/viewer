@@ -15,6 +15,7 @@ import PlotAxisTitle from './PlotAxisTitle'
 import PlotParameters from './PlotParameters'
 import PlotTransformLines from './PlotTransformLines'
 import PlotSideBinsSVG from './PlotSideBinsSVG'
+import Pointable from 'react-pointable';
 
 export default class MainPlot extends React.Component {
   constructor(props) {
@@ -95,7 +96,44 @@ class PlotBox extends React.Component {
             {plotGrid}
             {xPlot}
             {yPlot}
+            <Pointable
+              tagName='g'
+              onPointerMove={(e)=>{
+                e.preventDefault()
+                console.log(e.layerX + ' ' + e.layerY)
+                if (1){//mouseDown){
+                //  onClickCell(datum.ids)
+                }
+              }}
+              onPointerLeave={(e)=>{
+                e.preventDefault()
+                //e.target.releasePointerCapture(e.pointerId)
+                console.log(e)
+                console.log('left')
+              }}
+              onPointerEnter={(e)=>{
+                e.preventDefault()
+                //e.target.releasePointerCapture(e.pointerId)
+                console.log('entered')
+              }}
+              onPointerDown={(e)=>{
+                e.preventDefault()
+                //e.target.setPointerCapture(e.pointerId)
+                if(1){//if (datum.selected){
+                //  setAddRecords(false)
+                }
+                else {
+                //  setAddRecords(true)
+                }
+                //setMouseDown(true)
+              }}
+              onPointerUp={(e)=>{
+                e.preventDefault()
+                //setMouseDown(false)
+              }}
+              >
             <rect className={styles.plot_boundary} x={0} y={0} width={1000} height={1000}/>
+            </Pointable>
             <PlotAxisTitle axis='x'/>
             <PlotAxisTitle axis='y'/>
           </svg>

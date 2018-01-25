@@ -46,32 +46,32 @@
     stroke:$paleColor;
     stroke-width:0.5;
     pointer-events:auto;
+    cursor:pointer;
 
     .hex {
       stroke:$paleColor;
       stroke-width:0.5;
       fill:$clearColor;
-      cursor:pointer;
     }
-    .hex:hover {
-      fill:rgba($highlightColor,0.5);
-    }
+    // .hex:hover {
+    //   fill:rgba($highlightColor,0.5);
+    // }
     .hex.selected {
       fill:rgba($highlightColor,0.75);
       stroke:rgba($highlightColor,1);
       stroke-width:4px;
     }
-    .hex.selected:hover {
-      fill:rgba($highlightColor,1);
-    }
+    // .hex.selected:hover {
+    //   fill:rgba($highlightColor,1);
+    // }
     .hex.selected.partial {
       fill:$clearColor;
       stroke:rgba($highlightColor,1);
       stroke-width:4px;
     }
-    .hex.selected.partial:hover {
-      fill:rgba($highlightColor,0.25);
-    }
+    // .hex.selected.partial:hover {
+    //   fill:rgba($highlightColor,0.25);
+    // }
 
     .square {
       stroke:$paleColor;
@@ -79,35 +79,42 @@
       fill:$clearColor;
       cursor:pointer;
     }
-    .square:hover {
-      fill:rgba($highlightColor,0.5);
-    }
+    // .square:hover {
+    //   fill:rgba($highlightColor,0.5);
+    // }
     .square.selected {
       fill:rgba($highlightColor,0.75);
       stroke:rgba($highlightColor,1);
       stroke-width:4px;
     }
-    .square.selected:hover {
-      fill:rgba($highlightColor,1);
-    }
+    // .square.selected:hover {
+    //   fill:rgba($highlightColor,1);
+    // }
     .square.selected.partial {
       fill:$clearColor;
       stroke:rgba($highlightColor,1);
       stroke-width:4px;
     }
-    .square.selected.partial:hover {
-      fill:rgba($highlightColor,0.25);
-    }
+    // .square.selected.partial:hover {
+    //   fill:rgba($highlightColor,0.25);
+    // }
   }
   .plot_boundary {
     stroke:$darkColor;
     stroke-width:2;
-    fill:$clearColor;
+    //fill:$clearColor;
+    fill: rgba(125,125,125,0.5);
+    cursor: pointer;
+    pointer-events: auto;
   }
 
   .axis_title {
     text-anchor:middle;
     font-size:3em;
+  }
+
+  .padded_main {
+    transform:translate(50px,50px)
   }
 }
 
@@ -127,9 +134,9 @@
   left: 0;
   bottom: 0;
   right: 0;
-  width: 70.42%;
-  height: 70.42%;
-  padding: 22.54% 22.54% 7.04% 7.04%;
+  width: 63.38%;/*70.42%;*/
+  height: 63.38%;/*70.42%;*/
+  padding: 26.06% 28.06% 12.56% 10.56%;/*22.54% 22.54% 7.04% 7.04%;*/
 }
 
 
@@ -197,9 +204,9 @@
     cursor:pointer;
   }
 
-  span:hover {
-    background-color:rgba($highlightColor,0.5);
-  }
+  // span:hover {
+  //   background-color:rgba($highlightColor,0.5);
+  // }
   .active {
     background-color:$highlightColor;
     color:$lightColor;

@@ -134,9 +134,9 @@ export const getTransformFunctionParams = createSelectorForTransformFunction(
 export const getTransformFunction = createSelector(
   getTransformFunctionParams,
   (props) => {
-  let factor = props.factor / 1000
+  let factor = props.factor / 900
   return (([x,y]) => {
-    let newY = y + ((Math.abs(props.x-x)**props.order) * (props.factor / 1000**(props.order-1)))
+    let newY = y + ((Math.abs(props.x-x)**props.order) * (props.factor / 900**(props.order-1)))
     return [x,newY]
   })
 })

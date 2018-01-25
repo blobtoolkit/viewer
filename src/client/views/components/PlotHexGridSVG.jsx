@@ -59,30 +59,43 @@ const HexGridSVG = ({ data, onClickCell, mouseDown, setMouseDown, setAddRecords 
       }
     }
     hexes.push(
-      <Pointable
-        key={i}
-        tagName='g'
-        onPointerOver={(e)=>{
-          e.preventDefault()
-          if (mouseDown){
-            onClickCell(datum.ids)
-          }
-        }}
-        onPointerDown={(e)=>{
-          e.preventDefault()
-          if (datum.selected){
-            setAddRecords(false)
-          }
-          else {
-            setAddRecords(true)
-          }
-          setMouseDown(true)
-        }}
-        onPointerUp={(e)=>{
-          e.preventDefault()
-          setMouseDown(false)
-        }}
-        >
+      // <Pointable
+      //   key={i}
+      //   tagName='g'
+      //   onPointerMove={(e)=>{
+      //     e.preventDefault()
+      //     console.log(e.layerX + ' ' + e.layerY)
+      //     if (mouseDown){
+      //       onClickCell(datum.ids)
+      //     }
+      //   }}
+      //   onPointerLeave={(e)=>{
+      //     e.preventDefault()
+      //     //e.target.releasePointerCapture(e.pointerId)
+      //     console.log(e)
+      //     console.log('left')
+      //   }}
+      //   onPointerEnter={(e)=>{
+      //     e.preventDefault()
+      //     //e.target.releasePointerCapture(e.pointerId)
+      //     console.log('entered')
+      //   }}
+      //   onPointerDown={(e)=>{
+      //     e.preventDefault()
+      //     //e.target.setPointerCapture(e.pointerId)
+      //     if (datum.selected){
+      //       setAddRecords(false)
+      //     }
+      //     else {
+      //       setAddRecords(true)
+      //     }
+      //     setMouseDown(true)
+      //   }}
+      //   onPointerUp={(e)=>{
+      //     e.preventDefault()
+      //     setMouseDown(false)
+      //   }}
+      //   >
         <polygon
           key={i}
           className={css}
@@ -127,10 +140,11 @@ const HexGridSVG = ({ data, onClickCell, mouseDown, setMouseDown, setAddRecords 
           //   e.preventDefault(); setMouseDown(false)
           // }}
         />
-      </Pointable>)
+      //</Pointable>
+    )
   })
   return (
-    <g className={styles.grid}>
+    <g className={styles.padded_main + ' ' + styles.grid}>
     {hexes}
     </g>
   )

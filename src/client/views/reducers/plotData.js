@@ -67,7 +67,7 @@ export const getScatterPlotData = createSelector(
       if (axis == 'z'){
         scales[axis] = d3.scaleSqrt().domain(scales[axis].domain())
       }
-      scales[axis].range([0,1000])
+      scales[axis].range([0,900])
     })
     let min = Number.POSITIVE_INFINITY
     let max = Number.NEGATIVE_INFINITY
@@ -81,7 +81,7 @@ export const getScatterPlotData = createSelector(
         id:list[i],
         index:i,
         x: x,
-        y: 1000 - y,
+        y: 900 - y,
         z: z
       })
       max = Math.max(max,z)
@@ -173,7 +173,7 @@ export const getCirclePlotDataForCategoryIndex = createSelectorForCircleCategory
   getZScale,
   getPlotResolution,
   (catData,details,scale, res) => {
-    let zScale = d3[scale]().domain(details.range).range([0,2*1000/res])
+    let zScale = d3[scale]().domain(details.range).range([0,2*900/res])
     catData.data.forEach(datum => {
       datum.r = zScale(datum.z)
     })
@@ -186,7 +186,7 @@ export const getSquareBinPlotDataForCategoryIndex = createSelectorForSquareCateg
   getScatterPlotDataForCategoryIndex,
   (plotData) => {
     console.log(plotData)
-    let size = 1000 // FIXME: magic number
+    let size = 900 // FIXME: magic number
     let res = 20 // FIXME: magic number
     let side = size/res
     let squares = []

@@ -77,7 +77,7 @@ const SquareGridSVG = ({ data, onClickCell, mouseDown, setMouseDown, setAddRecor
       />)
   })
   return (
-    <g className={styles.grid}>
+    <g className={styles.padded_main + ' ' + styles.grid}>
     {squares}
     </g>
   )

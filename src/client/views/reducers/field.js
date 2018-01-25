@@ -259,7 +259,7 @@ export function fetchRawData(id) {
             if (json.values[i] > max) max = json.values[i];
             if (json.values[i] < min) min = json.values[i];
           }
-          if (min == 0) min = 0.01
+          if (min == 0) min = 0.001
           let scale = meta.xScale.copy().domain([min,max]).nice(25)
           dispatch(editField({id,range:scale.domain()}))
           dispatch(editFilter({id,range:scale.domain(),limit:scale.domain()}))

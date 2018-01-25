@@ -17,6 +17,7 @@ async function main() {
   outFilePath = outFilePath.match(/^(.+?)([^\/]*)\/*$/)[1]
   dataset = new Dataset(id);
   dataset.loadBlobDB(blobDBFile).then(()=>{
+console.log(dataset)
     dataset.prepareMeta().then(()=>{
       dataset.outFilePath = outFilePath;
       dataset.storeMeta();

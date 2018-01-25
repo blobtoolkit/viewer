@@ -33,7 +33,7 @@ const SquareBinsSVG = ({ data = [], css = '' }) => {
     squares.push(<rect key={i} className={styles.square} color={color} x={datum.x} y={datum.y} height={datum.height} width={datum.width} />)
   })
   return (
-    <g>
+    <g className={styles.padded_main}>
     {squares}
     </g>
   )
