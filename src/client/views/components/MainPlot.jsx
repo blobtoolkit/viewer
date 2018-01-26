@@ -16,21 +16,36 @@ import PlotParameters from './PlotParameters'
 import PlotTransformLines from './PlotTransformLines'
 import PlotSideBinsSVG from './PlotSideBinsSVG'
 import Pointable from 'react-pointable';
+import { getScatterPlotDataByHexBin } from '../reducers/plotHexBins'
+import { pixel_to_oddr } from '../reducers/hexFunctions'
+import { addRecords, removeRecords } from '../reducers/select'
+import * as d3 from 'd3'
 
 export default class MainPlot extends React.Component {
   constructor(props) {
     super(props);
     this.mapStateToProps = () => {
-      return (state, props) => ({
-        plotShape:getPlotShape(state),
-        plotGraphics:getPlotGraphics(state)
-      })
+      return (state, props) => {
+        return {
+          plotShape:getPlotShape(state),
+          plotGraphics:getPlotGraphics(state),
+          hexes: getScatterPlotDataByHexBin(state).hexes,
+          radius: getScatterPlotDataByHexBin(state).radius
+        }
+      }
+    }
+    this.mapDispatchToProps = dispatch => {
+      return {
+        addRecords:(arr) => dispatch(addRecords(arr)),
+        removeRecords:(arr) => dispatch(removeRecords(arr))
+      }
     }
   }
 
   render(){
     const ConnectedMainPlot = connect(
-      this.mapStateToProps
+      this.mapStateToProps,
+      this.mapDispatchToProps
     )(PlotBox)
     return (
       <ConnectedMainPlot />
@@ -38,10 +53,59 @@ export default class MainPlot extends React.Component {
   }
 }
 
+const xScale = d3.scaleLinear().range([-55.556,955.556])
+const yScale = d3.scaleLinear().range([-55.556,955.556])
+
+const relativeCoords = event => {
+  let bounds = event.target.getBoundingClientRect();
+  //let width = bounds.right - bounds.left;
+  xScale.domain([bounds.left,bounds.right])
+  yScale.domain([bounds.top,bounds.bottom])
+  let x = xScale(event.clientX)
+  let y = yScale(event.clientY)
+  //let height = bounds.bottom - bounds.top;
+  //let x = ((event.clientX - bounds.left) - width * 0.05) / (width * 0.9) * 1000;
+  //let y = ((event.clientY - bounds.top) - height * 0.05) / (height * 0.9) * 1000;
+  console.log({x,y})
+  return {x,y}
+}
+
 class PlotBox extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {mouseDown:false,addRecords:true}
+  }
+
+  setMouseDown(bool){
+    this.setState({mouseDown:bool})
+  }
+
+  setAddRecords(bool){
+    this.setState({addRecords:bool})
+  }
+
+  toggleSelection(arr){
+    if (this.state.addRecords){
+      this.props.addRecords(arr)
+    }
+    else {
+      this.props.removeRecords(arr)
+    }
+  }
+
+  getHexByPixel(x,y,radius){
+    let oddr = pixel_to_oddr(x,y,radius)
+    let hex = {id:null,ids:[]}
+    if (this.props.hexes[oddr.i] && this.props.hexes[oddr.i][oddr.j]){
+      hex = this.props.hexes[oddr.i][oddr.j]
+    }
+    return hex
+  }
+
   render(){
     let plotContainer
     let plotGrid
+    let hexes = {}
     let viewbox = '-100 -320 1420 1420'
     let xPlot = <PlotSideBinsSVG axis='x'/>
     let yPlot = <PlotSideBinsSVG axis='y'/>
@@ -100,36 +164,36 @@ class PlotBox extends React.Component {
               tagName='g'
               onPointerMove={(e)=>{
                 e.preventDefault()
-                console.log(e.layerX + ' ' + e.layerY)
-                if (1){//mouseDown){
-                //  onClickCell(datum.ids)
+                if (this.state.mouseDown){
+                  let coords = relativeCoords(e)
+                  let hex = this.getHexByPixel(coords.x,coords.y,this.props.radius)
+                  if (!hexes[hex.id]){
+                    hexes[hex.id] = true;
+                  }
+                  this.toggleSelection(hex.ids)
                 }
               }}
               onPointerLeave={(e)=>{
                 e.preventDefault()
                 //e.target.releasePointerCapture(e.pointerId)
-                console.log(e)
-                console.log('left')
-              }}
-              onPointerEnter={(e)=>{
-                e.preventDefault()
-                //e.target.releasePointerCapture(e.pointerId)
-                console.log('entered')
+                this.setMouseDown(false)
               }}
               onPointerDown={(e)=>{
                 e.preventDefault()
-                //e.target.setPointerCapture(e.pointerId)
-                if(1){//if (datum.selected){
-                //  setAddRecords(false)
+                let coords = relativeCoords(e)
+                let hex = this.getHexByPixel(coords.x,coords.y,this.props.radius)
+                console.log(hex)
+                if (hex.ids.length > 0){
+                  // TODO: update this to be a meaningful test
+                  this.setAddRecords(true)
+                  hexes[hex.id] = true;
+                  this.props.addRecords(hex.ids)
                 }
-                else {
-                //  setAddRecords(true)
-                }
-                //setMouseDown(true)
+                this.setMouseDown(true)
               }}
               onPointerUp={(e)=>{
                 e.preventDefault()
-                //setMouseDown(false)
+                this.setMouseDown(false)
               }}
               >
             <rect className={styles.plot_boundary} x={0} y={0} width={1000} height={1000}/>

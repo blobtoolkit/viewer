@@ -2,6 +2,7 @@ const path = require('path');
 const webpack = require('webpack');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const combineLoaders = require('webpack-combine-loaders');
+const main = require('./src/config/main');
 
 const BUILD_DIR = path.resolve(__dirname, 'dist/public');
 const APP_DIR = path.resolve(__dirname, 'src/client/views');
@@ -21,6 +22,7 @@ const config = {
   },
   devServer: {
     historyApiFallback: true,
+    host:main.BTK_HOST,
     proxy: {
       '/api/**': { target: 'http://localhost:8000' }
     }

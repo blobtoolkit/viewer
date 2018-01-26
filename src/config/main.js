@@ -1,8 +1,8 @@
-if (process.env.NODE_ENV != 'test'){
+//if (process.env.NODE_ENV != 'test'){
   require('dotenv').config();
-}
+//}
 const appRoot = require('app-root-path');
-const BTK_HOST = process.env.BTK_HOST || 'localhost'
+const BTK_HOST = process.env.BTK_HOST || '192.168.1.67'
 
 const BTK_HTTPS = (String(process.env.BTK_HTTPS) === 'true')
 const BTK_ORIGINS = process.env.BTK_ORIGINS ? process.env.BTK_ORIGINS.split(' ') : ['localhost','null',BTK_HOST,(BTK_HTTPS ? 'https' : 'http') + '://'+BTK_HOST+':8080'];
@@ -30,7 +30,7 @@ module.exports = {
   // version
   'version': process.env.BTK_VERSION || 'test',
   // hostname
-  'hostname': BTK_HOST || 'localhost',
+  'hostname': BTK_HOST || '192.168.1.67',
   // location of certificate key file
   'keyFile': process.env.BTK_KEYFILE || appRoot + '/test/ssl/private.key',
   // location of certificate file
