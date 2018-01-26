@@ -16,7 +16,8 @@ import PlotParameters from './PlotParameters'
 import PlotTransformLines from './PlotTransformLines'
 import PlotSideBinsSVG from './PlotSideBinsSVG'
 import Pointable from 'react-pointable';
-import { getScatterPlotDataByHexBin } from '../reducers/plotHexBins'
+import { getScatterPlotDataByHexBin,
+  getSelectedHexGrid } from '../reducers/plotHexBins'
 import { pixel_to_oddr } from '../reducers/hexFunctions'
 import { addRecords, removeRecords } from '../reducers/select'
 import * as d3 from 'd3'
@@ -30,7 +31,8 @@ export default class MainPlot extends React.Component {
           plotShape:getPlotShape(state),
           plotGraphics:getPlotGraphics(state),
           hexes: getScatterPlotDataByHexBin(state).hexes,
-          radius: getScatterPlotDataByHexBin(state).radius
+          radius: getScatterPlotDataByHexBin(state).radius,
+          data: getSelectedHexGrid(state).data
         }
       }
     }
@@ -66,7 +68,6 @@ const relativeCoords = event => {
   //let height = bounds.bottom - bounds.top;
   //let x = ((event.clientX - bounds.left) - width * 0.05) / (width * 0.9) * 1000;
   //let y = ((event.clientY - bounds.top) - height * 0.05) / (height * 0.9) * 1000;
-  console.log({x,y})
   return {x,y}
 }
 
@@ -182,12 +183,15 @@ class PlotBox extends React.Component {
                 e.preventDefault()
                 let coords = relativeCoords(e)
                 let hex = this.getHexByPixel(coords.x,coords.y,this.props.radius)
-                console.log(hex)
-                if (hex.ids.length > 0){
-                  // TODO: update this to be a meaningful test
+                let index = this.props.data.findIndex(d => d.id == hex.id)
+                if (this.props.data[index].selected == 0){
                   this.setAddRecords(true)
                   hexes[hex.id] = true;
                   this.props.addRecords(hex.ids)
+                }
+                else {
+                  this.setAddRecords(false)
+                  this.props.removeRecords(hex.ids)
                 }
                 this.setMouseDown(true)
               }}
