@@ -277,7 +277,16 @@ export const getBinnedLinesByCategoryForAxis = createSelector(
   getZReducer,
   getZScale,
   (axis,binnedData,categories,palette,reducer,scale) => {
-    let zScale = d3[scale]().domain(binnedData.grid.range).range([0,200])
+    let min = Number.POSITIVE_INFINITY
+    let max = Number.NEGATIVE_INFINITY
+    binnedData.data.forEach(d=>{
+      let z = reducer.func(d.zs)
+      max = Math.max(max,z)
+      min = Math.min(min,z)
+    })
+
+    // let zScale = d3[scale]().domain(binnedData.grid.range).range([0,200])
+    let zScale = d3.scaleSqrt().domain([0,max]).range([0,300])
     let paths = [{name:'all',color:'#999999',path:'M0 300'}]
     if (categories.values.length > 0){
       for (let i = 0; i < categories.keys.length; i++){
