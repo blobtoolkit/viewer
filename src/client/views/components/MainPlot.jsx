@@ -74,7 +74,7 @@ const relativeCoords = event => {
 class PlotBox extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {mouseDown:false,addRecords:true}
+    this.state = {mouseDown:false,addRecords:true,hexes:{}}
   }
 
   setMouseDown(bool){
@@ -96,17 +96,27 @@ class PlotBox extends React.Component {
 
   getHexByPixel(x,y,radius){
     let oddr = pixel_to_oddr(x,y,radius)
-    let hex = {id:null,ids:[]}
+    let hex
     if (this.props.hexes[oddr.i] && this.props.hexes[oddr.i][oddr.j]){
       hex = this.props.hexes[oddr.i][oddr.j]
     }
+    else {
+      hex = {id:null,ids:[]}
+    }
     return hex
+  }
+
+  shouldComponentUpdate(nextProps, nextState){
+    if (this.props.plotShape != nextProps.plotShape){
+      return true
+    }
+    return false
   }
 
   render(){
     let plotContainer
     let plotGrid
-    let hexes = {}
+    let hexes = this.state.hexes
     let viewbox = '-100 -320 1420 1420'
     let xPlot = <PlotSideBinsSVG axis='x'/>
     let yPlot = <PlotSideBinsSVG axis='y'/>
@@ -167,11 +177,19 @@ class PlotBox extends React.Component {
                 e.preventDefault()
                 if (this.state.mouseDown){
                   let coords = relativeCoords(e)
-                  let hex = this.getHexByPixel(coords.x,coords.y,this.props.radius)
-                  if (!hexes[hex.id]){
-                    hexes[hex.id] = true;
+                  if (Math.floor(coords.x) % 2 == 0){
+                    let hex = this.getHexByPixel(coords.x,coords.y,this.props.radius)
+                    if (!hexes[hex.id] && this.state.addRecords){
+                      hexes[hex.id] = true;
+                      this.setState({hexes})
+                      this.toggleSelection(hex.ids)
+                    }
+                    else if (!this.state.addRecords) {
+                      delete hexes[hex.id];
+                      this.setState({hexes})
+                      this.toggleSelection(hex.ids)
+                    }
                   }
-                  this.toggleSelection(hex.ids)
                 }
               }}
               onPointerLeave={(e)=>{
@@ -187,10 +205,15 @@ class PlotBox extends React.Component {
                 if (this.props.data[index].selected == 0){
                   this.setAddRecords(true)
                   hexes[hex.id] = true;
+                  this.setState({hexes})
                   this.props.addRecords(hex.ids)
                 }
                 else {
                   this.setAddRecords(false)
+                  if (hexes[hex.id]){
+                    delete hexes[hex.id]
+                  }
+                  this.setState({hexes})
                   this.props.removeRecords(hex.ids)
                 }
                 this.setMouseDown(true)
@@ -200,7 +223,7 @@ class PlotBox extends React.Component {
                 this.setMouseDown(false)
               }}
               >
-            <rect className={styles.plot_boundary} x={0} y={0} width={1000} height={1000}/>
+              <rect className={styles.plot_boundary} x={0} y={0} width={1000} height={1000}/>
             </Pointable>
             <PlotAxisTitle axis='x'/>
             <PlotAxisTitle axis='y'/>

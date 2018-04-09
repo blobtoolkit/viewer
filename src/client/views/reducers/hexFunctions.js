@@ -43,9 +43,39 @@ export const pixel_to_hex = (x, y, radius) => {
   return hex_round({q, r})
 }
 
+
 export const pixel_to_oddr = (x, y, radius) => {
-  return cube_to_oddr(axial_to_cube(pixel_to_hex(x, y, radius)))
+  let q = Math.round((x * Math.sqrt(3)/3 - y / 3) / radius)
+  let r = Math.round(y * 2/3 / radius)
+  let i = q + (r - (r&1)) / 2
+  let j = r
+  return {i, j}
 }
+
+
+export const hex_to_oddr = hex => {
+  let i = hex.q + (hex.r - (hex.r&1)) / 2
+  let j = hex.r
+  return {i, j}
+}
+
+// export const pixel_to_oddr = (x, y, radius) => {
+//   return hex_to_oddr(pixel_to_hex(x, y, radius))
+// }
+
+// export const pixel_to_hex = (x, y, radius) => {
+//   let q = (x * Math.sqrt(3)/3 - y / 3) / radius
+//   let r = y * 2/3 / radius
+//   return hex_round({q, r})
+// }
+//
+// export const hex_round = hex => {
+//   return {q:Math.round(hex.q),r:Math.round(hex.r)}
+// }
+
+
+
+
 
 export const drawPoints = (i,j,radius,res,scale = 1) => {
   let center
