@@ -38,7 +38,11 @@ const prepareMeta = async function() {
   let readCovLibs = [];
   Object.keys(json.covLibs).forEach((key) => {
     let lib = json.covLibs[key];
-    covLibs.push(this.addField(key+'_cov',{name:lib.name,blobDBpath:['covs',key]}))
+    let info = {name:lib.name,blobDBpath:['covs',key]}
+    if (key == 'cov0'){
+      info['preload'] = true;
+    }
+    covLibs.push(this.addField(key+'_cov',info))
     readCovLibs.push(this.addField(key+'_read_cov',{name:lib.name,blobDBpath:['read_cov',key]}))
   })
   fields.push(this.addField('covs',{name:'Coverage',description:'coverage per contig',type:'variable',datatype:'float',range:[1,100000],scale:'scaleLog',children:covLibs}))
@@ -56,9 +60,13 @@ const prepareMeta = async function() {
     let taxlevels = [];
     levels.forEach((level) => {
       let data = [];
-      data.push(this.addField(rule+'_'+level+'_score',{name:'score',type:'variable',datatype:'float',range:[1,10000],scale:'scaleSqrt',blobDBpath:['taxonomy',rule,level,'score']}))
-      data.push(this.addField(rule+'_'+level+'_cindex',{name:'c_index',type:'variable',datatype:'integer',range:[1,10],scale:'scaleLinear',blobDBpath:['taxonomy',rule,level,'c_index']}))
-      taxlevels.push(this.addField(rule+'_'+level,{name:level,data:data,blobDBpath:['taxonomy',rule,level,'tax']}))
+      data.push(this.addField(rule+'_'+level+'_score',{name:'score',type:'variable',datatype:'float',range:[1,10000],scale:'scaleSqrt',blobDBpath:['taxonomy',rule,level,'score'],preload:false,active:false}))
+      data.push(this.addField(rule+'_'+level+'_cindex',{name:'c_index',type:'variable',datatype:'integer',range:[1,10],scale:'scaleLinear',blobDBpath:['taxonomy',rule,level,'c_index'],preload:false,active:false}))
+      let info = {name:level,data:data,blobDBpath:['taxonomy',rule,level,'tax']}
+      if (rule+'_'+level == 'bestsumorder_phylum'){
+        info['preload'] = true;
+      }
+      taxlevels.push(this.addField(rule+'_'+level,info))
     })
     taxrules.push(this.addField(rule,{children:taxlevels}))
   })

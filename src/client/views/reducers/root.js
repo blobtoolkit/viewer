@@ -25,6 +25,15 @@ const allReducers = Object.assign(
   plotParameterReducers
 );
 
-const rootReducer = combineReducers(allReducers);
+const appReducer = combineReducers(allReducers);
+
+const rootReducer = (state, action) => {
+  if (action.type === 'REFRESH') {
+    let availableDatasets = state.availableDatasets
+    state = {availableDatasets}
+  }
+
+  return appReducer(state, action)
+}
 
 export default rootReducer

@@ -104,8 +104,11 @@ export function fetchMeta(id) {
   }
 }
 
+export const refreshStore = createAction('REFRESH')
+
 export function loadDataset(id) {
   return function (dispatch) {
+    dispatch(refreshStore())
     dispatch(selectDataset(id))
     dispatch(setDatasetIsActive(false))
     dispatch(fetchMeta(id)).then(() => {
