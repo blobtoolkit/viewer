@@ -143,6 +143,7 @@ export const getOccupiedHexGrid = createSelector(
   }
 )
 
+
 export const getScatterPlotDataByHexBin = createSelector(
   getOccupiedHexGrid,
   getScatterPlotData,
@@ -177,9 +178,21 @@ export const getScatterPlotDataByHexBin = createSelector(
         }
       }
     }
-    return {data};
+    return {data,hexes,radius:grid.radius};
   }
 )
+
+// export const getOccupiedHexes = createSelector(
+//   getScatterPlotDataByHexBin,
+//   (grid) => {
+//     let hexes = {}
+//     grid.data.forEach(d=>{
+//       hexes[d.x] = hexes[d.x] || {}
+//       hexes[d.x][d.y] = {id:d.id,x:d.x,y:d.y,ids:[],zs:[],indices:[]}
+//     })
+//     return {hexes,radius:grid.radius};
+//   }
+// )
 
 export const getSelectedHexGrid = createSelector(
   getOccupiedHexGrid,

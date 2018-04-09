@@ -1,5 +1,5 @@
 
-const BTK_HOST = process.env.BTK_HOST || 'localhost'
+const BTK_HOST = process.env.BTK_HOST || '192.168.1.67'
 
 const BTK_HTTPS = (String(process.env.BTK_HTTPS) === 'true')
 
