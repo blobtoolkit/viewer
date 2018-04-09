@@ -18,6 +18,10 @@ import PlotSideBinsSVG from './PlotSideBinsSVG'
 import Pointable from 'react-pointable';
 import { getScatterPlotDataByHexBin,
   getSelectedHexGrid } from '../reducers/plotHexBins'
+import { getSquareGrid,
+  setCoords,
+  getScatterPlotDataBySquareBin,
+  getSelectedSquareGrid } from '../reducers/plotSquareBins'
 import { pixel_to_oddr } from '../reducers/hexFunctions'
 import { addRecords, removeRecords } from '../reducers/select'
 import * as d3 from 'd3'
@@ -27,12 +31,29 @@ export default class MainPlot extends React.Component {
     super(props);
     this.mapStateToProps = () => {
       return (state, props) => {
+        let plotShape = getPlotShape(state)
+        let plotGraphics = getPlotGraphics(state)
+        if (plotShape == 'hex'){
+          return {
+            plotShape,
+            plotGraphics,
+            bins: getScatterPlotDataByHexBin(state).hexes,
+            radius: getScatterPlotDataByHexBin(state).radius,
+            data: getSelectedHexGrid(state).data
+          }
+        }
+        else if (plotShape == 'square') {
+          return {
+            plotShape,
+            plotGraphics,
+            bins: getScatterPlotDataBySquareBin(state).squares,
+            data: getSelectedSquareGrid(state).data,
+            grid: getScatterPlotDataBySquareBin(state).grid
+          }
+        }
         return {
-          plotShape:getPlotShape(state),
-          plotGraphics:getPlotGraphics(state),
-          hexes: getScatterPlotDataByHexBin(state).hexes,
-          radius: getScatterPlotDataByHexBin(state).radius,
-          data: getSelectedHexGrid(state).data
+          plotShape,
+          plotGraphics
         }
       }
     }
@@ -74,7 +95,7 @@ const relativeCoords = event => {
 class PlotBox extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {mouseDown:false,addRecords:true,hexes:{}}
+    this.state = {mouseDown:false,addRecords:true,bins:{}}
   }
 
   setMouseDown(bool){
@@ -97,14 +118,27 @@ class PlotBox extends React.Component {
   getHexByPixel(x,y,radius){
     let oddr = pixel_to_oddr(x,y,radius)
     let hex
-    if (this.props.hexes[oddr.i] && this.props.hexes[oddr.i][oddr.j]){
-      hex = this.props.hexes[oddr.i][oddr.j]
+    if (this.props.bins[oddr.i] && this.props.bins[oddr.i][oddr.j]){
+      hex = this.props.bins[oddr.i][oddr.j]
     }
     else {
       hex = {id:null,ids:[]}
     }
     return hex
   }
+
+  getBinByPixel(xy,grid){
+    let bin
+    let coords = setCoords(xy,grid)
+    if (this.props.bins[coords[0]] && this.props.bins[coords[0]][coords[1]]){
+      bin = this.props.bins[coords[0]][coords[1]]
+    }
+    else {
+      bin = {id:null,ids:[]}
+    }
+    return bin
+  }
+
 
   shouldComponentUpdate(nextProps, nextState){
     if (this.props.plotShape != nextProps.plotShape){
@@ -116,7 +150,7 @@ class PlotBox extends React.Component {
   render(){
     let plotContainer
     let plotGrid
-    let hexes = this.state.hexes
+    let bins = this.state.bins
     let viewbox = '-100 -320 1420 1420'
     let xPlot = <PlotSideBinsSVG axis='x'/>
     let yPlot = <PlotSideBinsSVG axis='y'/>
@@ -178,16 +212,22 @@ class PlotBox extends React.Component {
                 if (this.state.mouseDown){
                   let coords = relativeCoords(e)
                   if (Math.floor(coords.x) % 2 == 0){
-                    let hex = this.getHexByPixel(coords.x,coords.y,this.props.radius)
-                    if (!hexes[hex.id] && this.state.addRecords){
-                      hexes[hex.id] = true;
-                      this.setState({hexes})
-                      this.toggleSelection(hex.ids)
+                    let bin
+                    if (this.props.plotShape == 'hex'){
+                      bin = this.getHexByPixel(coords.x,coords.y,this.props.radius)
+                    }
+                    else {
+                      bin = this.getBinByPixel(coords,this.props.grid)
+                    }
+                    if (!bins[bin.id] && this.state.addRecords){
+                      bins[bin.id] = true;
+                      this.setState({bins})
+                      this.toggleSelection(bin.ids)
                     }
                     else if (!this.state.addRecords) {
-                      delete hexes[hex.id];
-                      this.setState({hexes})
-                      this.toggleSelection(hex.ids)
+                      delete bins[bin.id];
+                      this.setState({bins})
+                      this.toggleSelection(bin.ids)
                     }
                   }
                 }
@@ -200,21 +240,27 @@ class PlotBox extends React.Component {
               onPointerDown={(e)=>{
                 e.preventDefault()
                 let coords = relativeCoords(e)
-                let hex = this.getHexByPixel(coords.x,coords.y,this.props.radius)
-                let index = this.props.data.findIndex(d => d.id == hex.id)
+                let bin
+                if (this.props.plotShape == 'hex'){
+                  bin = this.getHexByPixel(coords.x,coords.y,this.props.radius)
+                }
+                else {
+                  bin = this.getBinByPixel(coords,this.props.grid)
+                }
+                let index = this.props.data.findIndex(d => d.id == bin.id)
                 if (this.props.data[index].selected == 0){
                   this.setAddRecords(true)
-                  hexes[hex.id] = true;
-                  this.setState({hexes})
-                  this.props.addRecords(hex.ids)
+                  bins[bin.id] = true;
+                  this.setState({bins})
+                  this.props.addRecords(bin.ids)
                 }
                 else {
                   this.setAddRecords(false)
-                  if (hexes[hex.id]){
-                    delete hexes[hex.id]
+                  if (bins[bin.id]){
+                    delete bins[bin.id]
                   }
-                  this.setState({hexes})
-                  this.props.removeRecords(hex.ids)
+                  this.setState({bins})
+                  this.props.removeRecords(bin.ids)
                 }
                 this.setMouseDown(true)
               }}

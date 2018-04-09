@@ -28,7 +28,7 @@ export const getSquareGrid = createSelector(
   }
 )
 
-const setCoords = (datum,grid) => {
+export const setCoords = (datum,grid) => {
   let coords = [Math.floor((datum.x)/grid.width),(Math.floor((datum.y)/grid.height))]
   return coords
 }
@@ -135,7 +135,7 @@ export const getScatterPlotDataBySquareBin = createSelector(
         }
       }
     }
-    return {data,grid};
+    return {data,grid,squares};
   }
 )
 
