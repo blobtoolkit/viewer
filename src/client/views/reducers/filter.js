@@ -170,8 +170,9 @@ export function filterToList(val) {
         }
         else if (filters[id].type == 'list' || filters[id].type == 'category'){
           //let data_id = filters[id].clonedFrom || id
-
-          list = filterCategoriesToList(filters[id].keys,data[id].values,list,filters[id].invert)
+          if (data[id]){
+            list = filterCategoriesToList(filters[id].keys,data[id].values,list,filters[id].invert)
+          }
           //console.log(data_id)
         }
         // else if (filters[id].type == 'selection'){

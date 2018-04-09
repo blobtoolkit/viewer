@@ -12,6 +12,20 @@ import store from '../store'
 export const addPlot = createAction('ADD_PLOT')
 export const editPlot = createAction('EDIT_PLOT')
 
+const defaultPlot = () => {
+  return {
+    byId: {
+      default: {
+        x:'gc',
+        y:'cov0_cov',
+        z:'length',
+        cat:'bestsumorder_phylum'
+      }
+    },
+    allIds: ['default']
+  }
+}
+
 export const plots = handleActions(
   {
     ADD_PLOT: (state, action) => (
@@ -30,17 +44,7 @@ export const plots = handleActions(
       })
     }
   },
-  {
-    byId: {
-      default: {
-        x:'gc',
-        y:'velvet_cov',
-        z:'length',
-        cat:'bestsum_phylum'
-      }
-    },
-    allIds: ['default']
-  }
+  defaultPlot()
 )
 
 
