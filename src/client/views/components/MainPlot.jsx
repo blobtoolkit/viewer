@@ -2,7 +2,7 @@ import React from 'react'
 import { connect } from 'react-redux'
 import { getPlotShape, getPlotGraphics } from '../reducers/plotParameters'
 import styles from './Plot.scss'
-import MainPlotBox from './MainPlotBox'
+import MainPlotBoundary from './MainPlotBoundary'
 import PlotBubblesCanvasLayers from './PlotBubblesCanvasLayers'
 import PlotBubblesSVG from './PlotBubblesSVG'
 //import PlotSquareBinsCanvas from './PlotSquareBinsCanvas'
@@ -185,7 +185,7 @@ class PlotBox extends React.Component {
             <PlotTransformLines />
             {xPlot}
             {yPlot}
-            <rect className={styles.plot_boundary} x={0} y={0} width={1000} height={1000}/>
+            <MainPlotBoundary/>
             <PlotAxisTitle axis='x'/>
             <PlotAxisTitle axis='y'/>
           </svg>
@@ -248,7 +248,7 @@ class PlotBox extends React.Component {
                   bin = this.getBinByPixel(coords,this.props.grid)
                 }
                 let index = this.props.data.findIndex(d => d.id == bin.id)
-                if (this.props.data[index].selected == 0){
+                if (this.props.data[index] && this.props.data[index].selected == 0){
                   this.setAddRecords(true)
                   bins[bin.id] = true;
                   this.setState({bins})
@@ -269,7 +269,7 @@ class PlotBox extends React.Component {
                 this.setMouseDown(false)
               }}
               >
-              <rect className={styles.plot_boundary} x={0} y={0} width={1000} height={1000}/>
+              <MainPlotBoundary/>
             </Pointable>
             <PlotAxisTitle axis='x'/>
             <PlotAxisTitle axis='y'/>
