@@ -80,8 +80,10 @@ class FieldMenu extends React.Component {
     let fields = this.mapFields(this.props.fields)
     return (
       <div className={styles.menu} style={{left:this.props.offset,width:'30em'}}>
-        <DatasetApplyFilters />
-        <DatasetCreateList />
+        <div className={styles.sticky}>
+          <DatasetApplyFilters />
+          <DatasetCreateList />
+        </div>
         {fields}
         <ToolTips set='filterMenu'/>
       </div>
