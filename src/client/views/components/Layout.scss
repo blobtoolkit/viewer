@@ -89,6 +89,26 @@
   cursor:pointer;
 }
 
+.long_menu_item {
+  position:relative;
+  width:calc(100% - 2em);
+  height:auto;
+  margin-top:0.5em;
+  padding:1em;
+  background-color: $darkColor;
+  color:$paleColor;
+  .highlight {
+    font-weight: bold;
+    color:$highlightColor;
+  }
+  .colored_tab {
+    display:inline-block;
+    width:2em;
+    height:1.5em;
+    box-sizing:border-box;
+  }
+}
+
 .menu_subtitle {
   display:inline-block;
   position:absolute;
