@@ -3,6 +3,7 @@ import { connect } from 'react-redux'
 import ReactTooltip from 'react-tooltip'
 import { editFilter } from '../reducers/filter'
 import { getDetailsForFilterId } from '../reducers/preview'
+import isTouchDevice from 'is-touch-device'
 
 
 const sets = (set) => {
@@ -54,7 +55,7 @@ const ActiveToolTips = ( { set, detail } ) => {
   let toolTips = Object.keys(tips).map(tip=>(<ReactTooltip key={tip} id={tip}>{tips[tip].name}</ReactTooltip>))
   return (
     <span>
-      {toolTips}
+      {isTouchDevice() ? '' : toolTips}
     </span>
   )
 }
