@@ -16,8 +16,8 @@ const MainDiv = (active) => (
   <main>
     <BrowserRouter basename='/demo'>
       <Switch>
-        <Route path="/view/:datasetId" render={(props)=>(<Layout {...active} {...props}/>)}/>
-        <Route path="/layout" render={()=>(<Layout {...active}/>)}/>
+        <Route path="/#/view/:datasetId" render={(props)=>(<Layout {...active} {...props}/>)}/>
+        <Route path="/#/layout" render={()=>(<Layout {...active}/>)}/>
         <Route render={()=>(<Layout {...active}/>)}/>
       </Switch>
     </BrowserRouter>
