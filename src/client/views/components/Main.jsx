@@ -9,7 +9,7 @@ import { NotFound } from './Error';
 import { createHistory, createBrowserHistory } from 'history';
 
 const browserHistory = createBrowserHistory({
-  basename: "/visualisation/btk-promise/dist/public/"
+  basename: "/demo/"
 });
 
 const MainDiv = (active) => (
