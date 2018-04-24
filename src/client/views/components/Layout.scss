@@ -72,10 +72,23 @@
   .sticky {
     top: 0em;
     position: sticky;
-    height:5em;
+    height:5.5em;
+    width:30em;
     z-index:20;
-    background-color:$shadeColor;
+    background-color:$darkColor;
+    border-bottom: solid $paleColor;
+    border-top: solid $paleColor;
   }
+}
+
+.menu::-webkit-scrollbar {
+  background:$deepColor;
+  width:1em;
+}
+
+.menu::-webkit-scrollbar-thumb {
+  background:$paleColor;
+  border-radius:1em;
 }
 
 .menu_item {
