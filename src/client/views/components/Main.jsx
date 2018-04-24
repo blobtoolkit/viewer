@@ -1,6 +1,6 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import { BrowserRouter, Switch, Route } from 'react-router-dom'
+import { HashRouter, Switch, Route } from 'react-router-dom'
 import { getDatasetIsActive } from '../reducers/repository'
 import Dataset from './Dataset';
 import Layout from './Layout';
@@ -14,13 +14,13 @@ import { createHistory, createBrowserHistory } from 'history';
 
 const MainDiv = (active) => (
   <main>
-    <BrowserRouter basename='/demo'>
+    <HashRouter basename='/demo'>
       <Switch>
-        <Route path="/#/view/:datasetId" render={(props)=>(<Layout {...active} {...props}/>)}/>
-        <Route path="/#/layout" render={()=>(<Layout {...active}/>)}/>
+        <Route path="/view/:datasetId" render={(props)=>(<Layout {...active} {...props}/>)}/>
+        <Route path="/layout" render={()=>(<Layout {...active}/>)}/>
         <Route render={()=>(<Layout {...active}/>)}/>
       </Switch>
-    </BrowserRouter>
+    </HashRouter>
   </main>
 )
 
