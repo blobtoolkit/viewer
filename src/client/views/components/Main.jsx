@@ -15,7 +15,7 @@ const browserHistory = createBrowserHistory({
 const MainDiv = (active) => (
   <main>
     <Switch>
-      <Route history={browserHistory} path="/view/:datasetId" component={Dataset}/>
+      <Route history={browserHistory} path="/view/:datasetId" render={(props)=>(<Layout {...active} {...props}/>)}/>
       <Route history={browserHistory} path="/layout" render={()=>(<Layout {...active}/>)}/>
       <Route history={browserHistory} render={()=>(<Layout {...active}/>)}/>
     </Switch>

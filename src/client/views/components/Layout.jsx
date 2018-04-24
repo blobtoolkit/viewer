@@ -9,8 +9,11 @@ import MenuDisplayMain from './MenuDisplayMain'
 import MenuSummaryMain from './MenuSummaryMain'
 import MenuHelpMain from './MenuHelpMain'
 import MainPlot from './MainPlot'
+import { loadDataset } from '../reducers/repository'
+import { getSelectedDataset } from '../reducers/dataset'
 
-class Layout extends React.Component {
+
+class LayoutComponent extends React.Component {
   constructor(props) {
     super(props);
     this.state = {activeTabs:{'Datasets':1}}
@@ -23,6 +26,15 @@ class Layout extends React.Component {
       this.setState({activeTabs:{[tab]:1}})
     }
   }
+
+  componentDidMount(){
+    let datasetId = this.props.match.params.datasetId
+    let selectedId = this.props.selectedDataset
+    if (datasetId && datasetId != selectedId){
+      this.props.onMount(datasetId)
+    }
+  }
+
   render(){
     let labels = ['Datasets','Filters','Lists','Settings','Summary','Help']
     let tabs = []
@@ -45,5 +57,32 @@ class Layout extends React.Component {
     )
   }
 }
+
+
+
+class Layout extends React.Component {
+  constructor(props) {
+    super(props);
+    this.mapStateToProps = state => {
+      return {
+        selectedDataset: getSelectedDataset(state)
+      }
+    }
+    this.mapDispatchToProps = dispatch => {
+      return {
+        onMount: id => dispatch(loadDataset(id))
+      }
+    }
+  }
+
+  render(){
+    const ConnectedLayout = connect(
+      this.mapStateToProps,
+      this.mapDispatchToProps
+    )(LayoutComponent)
+    return <ConnectedLayout {...this.props}/>
+  }
+}
+
 
 export default Layout;
