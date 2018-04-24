@@ -28,10 +28,12 @@ class LayoutComponent extends React.Component {
   }
 
   componentDidMount(){
-    let datasetId = this.props.match.params.datasetId
-    let selectedId = this.props.selectedDataset
-    if (datasetId && datasetId != selectedId){
-      this.props.onMount(datasetId)
+    if (this.props.match.params){
+      let datasetId = this.props.match.params.datasetId
+      let selectedId = this.props.selectedDataset
+      if (datasetId && datasetId != selectedId){
+        this.props.onMount(datasetId)
+      }
     }
   }
 
