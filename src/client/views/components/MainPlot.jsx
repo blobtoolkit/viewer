@@ -1,6 +1,7 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import { getPlotShape, getPlotGraphics } from '../reducers/plotParameters'
+import { getPlotShape } from '../reducers/plotParameters'
+import { getPlotGraphics } from '../reducers/plotData'
 import styles from './Plot.scss'
 import MainPlotBoundary from './MainPlotBoundary'
 import PlotBubblesCanvasLayers from './PlotBubblesCanvasLayers'
@@ -146,6 +147,9 @@ class PlotBox extends React.Component {
     if (this.props.plotShape != nextProps.plotShape){
       return true
     }
+    else if (this.props.plotGraphics != nextProps.plotGraphics){
+      return true
+    }
     return false
   }
 
@@ -157,6 +161,7 @@ class PlotBox extends React.Component {
     let viewbox = '0 0 1420 1420'
     let xPlot = <PlotSideBinsSVG axis='x'/>
     let yPlot = <PlotSideBinsSVG axis='y'/>
+    console.log(this.props.plotGraphics)
     if (this.props.plotShape == 'circle'){
       if (this.props.plotGraphics == 'canvas'){
         plotCanvas = <PlotBubblesCanvasLayers />
@@ -202,7 +207,7 @@ class PlotBox extends React.Component {
             </g>
           </svg>
           {plotCanvas}
-          <a onClick={()=>(saveSvgAsPng.saveSvg(document.getElementById("main_plot"),"main_plot.svg"))}>save image</a>
+          <a className={styles.save_svg} onClick={()=>(saveSvgAsPng.saveSvg(document.getElementById("main_plot"),"main_plot.svg"))}>save image</a>
         </div>
       )
     }
@@ -290,7 +295,7 @@ class PlotBox extends React.Component {
               <PlotAxisTitle axis='y'/>
             </g>
           </svg>
-          <a onClick={()=>(saveSvgAsPng.saveSvg(document.getElementById("main_plot"),"main_plot.svg"))}>save image</a>
+          <a className={styles.save_svg} onClick={()=>(saveSvgAsPng.saveSvg(document.getElementById("main_plot"),"main_plot.svg"))}>save image</a>
         </div>
 
       )

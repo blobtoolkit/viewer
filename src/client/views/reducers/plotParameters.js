@@ -26,14 +26,14 @@ export const getPlotResolution = createSelectorForPlotResolution(
   res => res || 30
 )
 
-export const setPlotGraphics = createAction('SET_PLOT_GRAPHICS')
-export const plotGraphics = handleSimpleByDatasetAction('SET_PLOT_GRAPHICS')
-const createSelectorForPlotGraphics = byIdSelectorCreator();
-export const getPlotGraphics = createSelectorForPlotGraphics(
-  getSelectedDatasetId,
-  getSimpleByDatasetProperty('plotGraphics'),
-  graphics => graphics || 'svg'
-)
+// export const setPlotGraphics = createAction('SET_PLOT_GRAPHICS')
+// export const plotGraphics = handleSimpleByDatasetAction('SET_PLOT_GRAPHICS')
+// const createSelectorForPlotGraphics = byIdSelectorCreator();
+// export const getPlotGraphics = createSelectorForPlotGraphics(
+//   getSelectedDatasetId,
+//   getSimpleByDatasetProperty('plotGraphics'),
+//   graphics => graphics || 'svg'
+// )
 
 export const setPlotScale = createAction('SET_PLOT_SCALE')
 export const plotScale = handleSimpleByDatasetAction('SET_PLOT_SCALE')
@@ -145,7 +145,7 @@ export const getTransformFunction = createSelector(
 export const plotParameterReducers = {
   plotShape,
   plotResolution,
-  plotGraphics,
+  // plotGraphics,
   plotScale,
   zScale,
   zReducer,

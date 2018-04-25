@@ -92,6 +92,18 @@ export const getScatterPlotData = createSelector(
   }
 )
 
+export const getPlotGraphics = createSelector(
+  getFilteredList,
+  (list) => {
+    let threshold = 10000
+    let plotGraphics = 'canvas'
+    if (list.length < threshold){
+      plotGraphics = 'svg'
+    }
+    return plotGraphics;
+  }
+)
+
 export const getScatterPlotDataByCategory = createSelector(
   getMainPlotData,
   getScatterPlotData,
