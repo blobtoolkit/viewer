@@ -26,6 +26,8 @@
   circle {
     fill:currentColor;
     opacity:0.4;
+    stroke-width:1;
+    stroke:$shadeColor;
   }
 
   rect {
@@ -109,6 +111,7 @@
   }
 
   .axis_title {
+    font-family:sans-serif;
     text-anchor:middle;
     font-size:3em;
   }
@@ -134,9 +137,9 @@
   left: 0;
   bottom: 0;
   right: 0;
-  width: 63.38%;/*70.42%;*/
-  height: 63.38%;/*70.42%;*/
-  padding: 26.06% 28.06% 12.56% 10.56%;/*22.54% 22.54% 7.04% 7.04%;*/
+  width: 70.422%;
+  height: 70.422%;
+  padding: 26.056% 19.015% 3.522% 10.563%;
 }
 
 

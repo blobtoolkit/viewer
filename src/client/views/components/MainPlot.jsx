@@ -4,7 +4,7 @@ import { getPlotShape, getPlotGraphics } from '../reducers/plotParameters'
 import styles from './Plot.scss'
 import MainPlotBoundary from './MainPlotBoundary'
 import PlotBubblesCanvasLayers from './PlotBubblesCanvasLayers'
-import PlotBubblesSVG from './PlotBubblesSVG'
+import PlotBubblesSVGLayers from './PlotBubblesSVGLayers'
 //import PlotSquareBinsCanvas from './PlotSquareBinsCanvas'
 import PlotSquareBinsSVG from './PlotSquareBinsSVG'
 import PlotSquareGridSVG from './PlotSquareGridSVG'
@@ -25,6 +25,8 @@ import { getSquareGrid,
 import { pixel_to_oddr } from '../reducers/hexFunctions'
 import { addRecords, removeRecords } from '../reducers/select'
 import * as d3 from 'd3'
+import { renderToStaticMarkup } from 'react-dom/server';
+const saveSvgAsPng = require('save-svg-as-png/saveSvgAsPng.js')
 
 export default class MainPlot extends React.Component {
   constructor(props) {
@@ -150,15 +152,19 @@ class PlotBox extends React.Component {
   render(){
     let plotContainer
     let plotGrid
+    let plotCanvas
     let bins = this.state.bins
-    let viewbox = '-100 -320 1420 1420'
+    let viewbox = '0 0 1420 1420'
     let xPlot = <PlotSideBinsSVG axis='x'/>
     let yPlot = <PlotSideBinsSVG axis='y'/>
     if (this.props.plotShape == 'circle'){
-      //if (this.props.plotGraphics == 'canvas'){
-        plotContainer = <PlotBubblesCanvasLayers />
-      //}
-      //plotContainer = <PlotBubblesSVG />
+      if (this.props.plotGraphics == 'canvas'){
+        plotCanvas = <PlotBubblesCanvasLayers />
+        plotContainer = ''
+      }
+      else {
+        plotContainer = <PlotBubblesSVGLayers />
+      }
     }
     else if (this.props.plotShape == 'square'){
       if (this.props.plotGraphics == 'canvas'){
@@ -178,102 +184,113 @@ class PlotBox extends React.Component {
     if (this.props.plotShape == 'circle'){
       return (
         <div className={styles.outer}>
-          <svg ref={(elem) => { this.svg = elem; }}
+          <svg id="main_plot"
+            ref={(elem) => { this.svg = elem; }}
             className={styles.main_plot+' '+styles.fill_parent}
             viewBox={viewbox}
             preserveAspectRatio="xMidYMid meet">
-            <PlotTransformLines />
-            {xPlot}
-            {yPlot}
-            <MainPlotBoundary/>
-            <PlotAxisTitle axis='x'/>
-            <PlotAxisTitle axis='y'/>
+            <g transform={'translate(100,320)'} >
+              <PlotTransformLines />
+              <g transform="translate(50,50)">
+              {plotContainer}
+              </g>
+              {xPlot}
+              {yPlot}
+              <MainPlotBoundary/>
+              <PlotAxisTitle axis='x'/>
+              <PlotAxisTitle axis='y'/>
+            </g>
           </svg>
-          {plotContainer}
+          {plotCanvas}
+          <a onClick={()=>(saveSvgAsPng.saveSvg(document.getElementById("main_plot"),"main_plot.svg"))}>save image</a>
         </div>
       )
     }
     else {
       return (
         <div className={styles.outer}>
-          <svg ref={(elem) => { this.svg = elem; }}
+          <svg id="main_plot"
+            ref={(elem) => { this.svg = elem; }}
             className={styles.main_plot+' '+styles.fill_parent}
             viewBox={viewbox}
             preserveAspectRatio="xMidYMid meet">
-            <PlotTransformLines />
-            {plotContainer}
-            {plotGrid}
-            {xPlot}
-            {yPlot}
-            <Pointable
-              tagName='g'
-              onPointerMove={(e)=>{
-                e.preventDefault()
-                if (this.state.mouseDown){
+            <g transform={'translate(100,320)'} >
+              <PlotTransformLines />
+              {plotContainer}
+              {plotGrid}
+              {xPlot}
+              {yPlot}
+              <Pointable
+                tagName='g'
+                onPointerMove={(e)=>{
+                  e.preventDefault()
+                  if (this.state.mouseDown){
+                    let coords = relativeCoords(e)
+                    if (Math.floor(coords.x) % 2 == 0){
+                      let bin
+                      if (this.props.plotShape == 'hex'){
+                        bin = this.getHexByPixel(coords.x,coords.y,this.props.radius)
+                      }
+                      else {
+                        bin = this.getBinByPixel(coords,this.props.grid)
+                      }
+                      if (!bins[bin.id] && this.state.addRecords){
+                        bins[bin.id] = true;
+                        this.setState({bins})
+                        this.toggleSelection(bin.ids)
+                      }
+                      else if (!this.state.addRecords) {
+                        delete bins[bin.id];
+                        this.setState({bins})
+                        this.toggleSelection(bin.ids)
+                      }
+                    }
+                  }
+                }}
+                onPointerLeave={(e)=>{
+                  e.preventDefault()
+                  //e.target.releasePointerCapture(e.pointerId)
+                  this.setMouseDown(false)
+                }}
+                onPointerDown={(e)=>{
+                  e.preventDefault()
                   let coords = relativeCoords(e)
-                  if (Math.floor(coords.x) % 2 == 0){
-                    let bin
-                    if (this.props.plotShape == 'hex'){
-                      bin = this.getHexByPixel(coords.x,coords.y,this.props.radius)
-                    }
-                    else {
-                      bin = this.getBinByPixel(coords,this.props.grid)
-                    }
-                    if (!bins[bin.id] && this.state.addRecords){
-                      bins[bin.id] = true;
-                      this.setState({bins})
-                      this.toggleSelection(bin.ids)
-                    }
-                    else if (!this.state.addRecords) {
-                      delete bins[bin.id];
-                      this.setState({bins})
-                      this.toggleSelection(bin.ids)
-                    }
+                  let bin
+                  if (this.props.plotShape == 'hex'){
+                    bin = this.getHexByPixel(coords.x,coords.y,this.props.radius)
                   }
-                }
-              }}
-              onPointerLeave={(e)=>{
-                e.preventDefault()
-                //e.target.releasePointerCapture(e.pointerId)
-                this.setMouseDown(false)
-              }}
-              onPointerDown={(e)=>{
-                e.preventDefault()
-                let coords = relativeCoords(e)
-                let bin
-                if (this.props.plotShape == 'hex'){
-                  bin = this.getHexByPixel(coords.x,coords.y,this.props.radius)
-                }
-                else {
-                  bin = this.getBinByPixel(coords,this.props.grid)
-                }
-                let index = this.props.data.findIndex(d => d.id == bin.id)
-                if (this.props.data[index] && this.props.data[index].selected == 0){
-                  this.setAddRecords(true)
-                  bins[bin.id] = true;
-                  this.setState({bins})
-                  this.props.addRecords(bin.ids)
-                }
-                else {
-                  this.setAddRecords(false)
-                  if (bins[bin.id]){
-                    delete bins[bin.id]
+                  else {
+                    bin = this.getBinByPixel(coords,this.props.grid)
                   }
-                  this.setState({bins})
-                  this.props.removeRecords(bin.ids)
-                }
-                this.setMouseDown(true)
-              }}
-              onPointerUp={(e)=>{
-                e.preventDefault()
-                this.setMouseDown(false)
-              }}
-              >
-              <MainPlotBoundary/>
-            </Pointable>
-            <PlotAxisTitle axis='x'/>
-            <PlotAxisTitle axis='y'/>
+                  let index = this.props.data.findIndex(d => d.id == bin.id)
+                  if (this.props.data[index] && this.props.data[index].selected == 0){
+                    this.setAddRecords(true)
+                    bins[bin.id] = true;
+                    this.setState({bins})
+                    this.props.addRecords(bin.ids)
+                  }
+                  else {
+                    this.setAddRecords(false)
+                    if (bins[bin.id]){
+                      delete bins[bin.id]
+                    }
+                    this.setState({bins})
+                    this.props.removeRecords(bin.ids)
+                  }
+                  this.setMouseDown(true)
+                }}
+                onPointerUp={(e)=>{
+                  e.preventDefault()
+                  this.setMouseDown(false)
+                }}
+                >
+                <MainPlotBoundary/>
+              </Pointable>
+              <PlotAxisTitle axis='x'/>
+              <PlotAxisTitle axis='y'/>
+            </g>
           </svg>
+          <a onClick={()=>(saveSvgAsPng.saveSvg(document.getElementById("main_plot"),"main_plot.svg"))}>save image</a>
         </div>
 
       )

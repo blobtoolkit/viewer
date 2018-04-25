@@ -46,8 +46,8 @@ class BubblesCanvas extends React.Component {
       ctx.clearRect(0, 0, width, height);
       ctx.globalAlpha=0.4
       ctx.fillStyle = this.props.color;
-      ctx.lineWidth = 0.5;
-      ctx.strokeStyle = '#999';
+      ctx.lineWidth = 1;
+      ctx.strokeStyle = 'rgb(89, 101, 111)';
       this.props.data.map(bubble => {
         ctx.beginPath();
         ctx.arc(bubble.x, bubble.y, bubble.r, 0, 2 * Math.PI, false);
@@ -58,7 +58,7 @@ class BubblesCanvas extends React.Component {
     render() {
       return (
         <div className={styles.fill_parent}>
-          <canvas className={styles.main_canvas} ref={(elem) => { this.canvas = elem; }} width={900} height={900}/>
+          <canvas className={styles.main_canvas} ref={(elem) => { this.canvas = elem; }} width={this.canvas ? this.canvas.width : 1000 } height={this.canvas ? this.canvas.height : 1000}/>
         </div>
       );
     }

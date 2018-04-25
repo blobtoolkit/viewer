@@ -34,15 +34,16 @@ const PlotOutline = (data) => {
   let fontSize = 16
   return (
     <g>
-      <g  transform={'translate(0,1000)'} >
-        <Axis {...axisPropsFromTickScale(xScale, 10)} style={{orient: BOTTOM, tickFontSize: fontSize}}/>
-      </g>
-      <Axis {...axisPropsFromTickScale(yScale, 10)} style={{orient: LEFT, tickFontSize: fontSize}}/>
+      <rect className={styles.plot_boundary} x={0} y={0} width={1000} height={1000}/>
       <Axis {...axisPropsFromTickScale(xScale, 10)} style={{orient: BOTTOM, tickFontSize: 0}}/>
+      <Axis {...axisPropsFromTickScale(yScale, 10)} style={{orient: LEFT, tickFontSize: fontSize}}/>
       <g  transform={'translate(1000)'} >
         <Axis {...axisPropsFromTickScale(yScale, 10)} style={{orient: LEFT, tickFontSize: 0}}/>
       </g>
-      <rect className={styles.plot_boundary} x={0} y={0} width={1000} height={1000}/>
+      <g  transform={'translate(0,1000)'} >
+        <Axis {...axisPropsFromTickScale(xScale, 10)} style={{orient: BOTTOM, tickFontSize: fontSize}}/>
+
+      </g>
     </g>
   )
 }
