@@ -6,6 +6,7 @@ import { Link } from 'react-router-dom'
 import Spinner from './Spinner'
 import { createSelector } from 'reselect'
 import { getDatasetMeta } from '../reducers/repository'
+import { withRouter } from "react-router-dom";
 
 class MenuDataset extends React.Component {
   constructor(props) {
@@ -44,7 +45,12 @@ class MenuDataset extends React.Component {
 
 }
 
+// <div className={css} onClick={()=>this.props.onDatasetClick(this.props.id)}>
+
 class Dataset extends React.Component {
+  onDatasetClick(id){
+    this.props.history.push('/view/'+id)
+  }
   render(){
     if (!this.props.meta){
       return <Spinner/>
@@ -52,7 +58,7 @@ class Dataset extends React.Component {
     let css = styles.menu_item
     if (this.props.active) css += ' '+styles.active
     return (
-      <div className={css} onClick={()=>this.props.onDatasetClick(this.props.id)}>
+      <div className={css} onClick={()=>this.onDatasetClick(this.props.id)}>
         <h3>{this.props.meta.name}</h3>
         <span className={styles.menu_subtitle}>{this.props.meta.records} {this.props.meta.record_type}</span>
       </div>
@@ -60,5 +66,4 @@ class Dataset extends React.Component {
   }
 }
 
-
-export default MenuDataset
+export default withRouter(MenuDataset)

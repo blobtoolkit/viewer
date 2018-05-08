@@ -29,6 +29,8 @@ import sqrtIcon from './svg/sqrt.svg';
 import Palettes from './Palettes'
 import MenuItem from './MenuItem'
 import ToolTips from './ToolTips'
+import { withRouter } from 'react-router-dom'
+import { addQueryValues } from '../History'
 
 const DisplayMenu = ({
   title,
@@ -86,28 +88,52 @@ const DisplayMenu = ({
   )
 };
 
-const mapStateToProps = (state, props) => {
-  return {
-    title:getAxisTitle(state,'z'),
-    shape:getPlotShape(state),
-    resolution:getPlotResolution(state),
-    reducer:getZReducer(state),
-    scale:getZScale(state),
-    transform:getTransformFunctionParams(state)
-  }
-}
-const mapDispatchToProps = dispatch => {
-  return {
-    onSelectShape: shape => dispatch(setPlotShape(shape)),
-    onChangeResolution: value => dispatch(setPlotResolution(value)),
-    onSelectReducer: reducer => dispatch(setZReducer(reducer)),
-    onSelectScale: reducer => dispatch(setZScale(reducer)),
-    onChangeTransform: object => dispatch(setTransformFunction(object))
-  }
-}
-const MenuDisplayMain = connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(DisplayMenu)
+class MenuDisplayMain extends React.Component {
+  constructor(props) {
+    super(props);
+    this.resChange = null
+    this.mapDispatchToProps = dispatch => {
+      return {
+        onSelectShape: shape => {
+          addQueryValues({plotShape:shape})
+          return dispatch(setPlotShape(shape))
+        },
+        onChangeResolution: value => {
+          clearTimeout(this.resChange)
+          this.resChange = setTimeout(()=>addQueryValues({plotResolution:value}),500)
+          // addSearchItems(this.props.history,{plotResolution:value})
+          return dispatch(setPlotResolution(value))
+        },
+        onSelectReducer: reducer => {
+          addQueryValues({zReducer:reducer})
+          dispatch(setZReducer(reducer))
+        },
+        onSelectScale: reducer => {
+          addQueryValues({zScale:reducer})
+          dispatch(setZScale(reducer))
+        },
+        onChangeTransform: object => dispatch(setTransformFunction(object))
+      }
+    }
 
-export default MenuDisplayMain
+    this.mapStateToProps = (state, props) => {
+      return {
+        title:getAxisTitle(state,'z'),
+        shape:getPlotShape(state),
+        resolution:getPlotResolution(state),
+        reducer:getZReducer(state),
+        scale:getZScale(state),
+        transform:getTransformFunctionParams(state)
+      }
+    }
+  }
+
+  render(){
+    const DisplayMain = connect(
+      this.mapStateToProps,
+      this.mapDispatchToProps
+    )(DisplayMenu)
+    return <DisplayMain {...this.props}/>
+  }
+}
+export default withRouter(MenuDisplayMain)

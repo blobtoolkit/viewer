@@ -7,6 +7,7 @@ import { byIdSelectorCreator,
 import { getMainPlot } from './plot';
 import immutableUpdate from 'immutable-update';
 import store from '../store'
+import { queryValue } from '../History'
 
 export const setPlotShape = createAction('SET_PLOT_SHAPE')
 export const plotShape = handleSimpleByDatasetAction('SET_PLOT_SHAPE')
@@ -14,7 +15,9 @@ const createSelectorForPlotShape = byIdSelectorCreator();
 export const getPlotShape = createSelectorForPlotShape(
   getSelectedDatasetId,
   getSimpleByDatasetProperty('plotShape'),
-  (plotShape) => plotShape || 'hex'
+  (plotShape) => {
+    return plotShape || queryValue('plotShape') || 'hex'
+  }
 );
 
 export const setPlotResolution = createAction('SET_PLOT_RESOLUTION')
@@ -23,7 +26,7 @@ const createSelectorForPlotResolution = byIdSelectorCreator();
 export const getPlotResolution = createSelectorForPlotResolution(
   getSelectedDatasetId,
   getSimpleByDatasetProperty('plotResolution'),
-  res => res || 30
+  res => res || queryValue('plotResolution') || 30
 )
 
 // export const setPlotGraphics = createAction('SET_PLOT_GRAPHICS')
@@ -41,7 +44,7 @@ const createSelectorForPlotScale = byIdSelectorCreator();
 export const getPlotScale = createSelectorForPlotScale(
   getSelectedDatasetId,
   getSimpleByDatasetProperty('plotScale'),
-  scale => scale || 1
+  scale => scale || queryValue('plotScale') || 1
 )
 
 export const setZScale = createAction('SET_Z_SCALE')
@@ -50,7 +53,7 @@ const createSelectorForZScale = byIdSelectorCreator();
 export const getZScale = createSelectorForZScale(
   getSelectedDatasetId,
   getSimpleByDatasetProperty('zScale'),
-  scale => scale || 'scaleLog'
+  scale => scale || queryValue('zScale') || 'scaleLog'
 )
 
 export const setZReducer = createAction('SET_Z_REDUCER')
@@ -105,7 +108,15 @@ const createSelectorForZReducer = byIdSelectorCreator();
 export const getZReducer = createSelectorForZReducer(
   getSelectedDatasetId,
   getSimpleByDatasetProperty('zReducer'),
-  reducer => reducer || {id:'sum',func:zReducers.sum}
+  reducer => {
+    if (!reducer){
+      let qReducer = queryValue('zReducer')
+      if (qReducer){
+        reducer = {id:qReducer,func:zReducers[qReducer]}
+      }
+    }
+    return reducer || {id:'sum',func:zReducers.sum}
+  }
 )
 
 export const setTransformFunction = createAction('EDIT_Y_TRANSFORM')

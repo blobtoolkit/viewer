@@ -8,5 +8,20 @@
     "name":"Sample dataset",
     "id":"ds2",
     "description":"another example of a dataset"
+  },
+  {
+    "name": "Example dataset",
+    "id": "ds3",
+    "description":"an example dataset"
+  },
+  {
+    "name":"Sample dataset",
+    "id":"ds4",
+    "description":"another example of a dataset"
+  },
+  {
+    "name":"Sample dataset",
+    "id":"ds5",
+    "description":"another example of a dataset"
   }
 ]

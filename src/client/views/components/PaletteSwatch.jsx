@@ -1,6 +1,8 @@
 import React from 'react'
 import styles from './Palette.scss';
 import { SketchPicker } from 'react-color'
+import { withRouter } from 'react-router-dom'
+import { addQueryValues } from '../History'
 
 class PaletteSwatch extends React.Component {
   constructor(props) {
@@ -22,6 +24,8 @@ class PaletteSwatch extends React.Component {
   };
 
   handleClose() {
+    let rgb = 'rgb('+this.state.color.r+','+this.state.color.g+','+this.state.color.b+')'
+    addQueryValues({['color'+this.props.index]:rgb})
     this.setState({ displayColorPicker: false })
   };
 

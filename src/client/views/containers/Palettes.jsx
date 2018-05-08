@@ -2,6 +2,8 @@ import React from 'react'
 import { connect } from 'react-redux'
 import { getAllPalettes, selectPalette, editPalette } from '../reducers/color'
 import PalettesComp from '../components/Palettes'
+import { withRouter } from 'react-router-dom'
+import { addQueryValues } from '../History'
 
 class Palettes extends React.Component {
   constructor(props) {
@@ -13,7 +15,10 @@ class Palettes extends React.Component {
     }
     this.mapDispatchToProps = dispatch => {
       return {
-        selectPalette: (id) => {return dispatch(selectPalette(id))},
+        selectPalette: (id) => {
+          addQueryValues({palette:id})
+          return dispatch(selectPalette(id))
+        },
         editPalette: (obj) => {return dispatch(editPalette(obj))}
       }
     }
@@ -30,4 +35,4 @@ class Palettes extends React.Component {
   }
 }
 
-export default Palettes
+export default withRouter(Palettes)

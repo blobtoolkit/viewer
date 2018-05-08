@@ -11,29 +11,35 @@ import MenuHelpMain from './MenuHelpMain'
 import MainPlot from './MainPlot'
 import { loadDataset } from '../reducers/repository'
 import { getSelectedDataset } from '../reducers/dataset'
+import { withRouter } from 'react-router-dom'
+import { toggleHash, hashValue } from '../History'
 
 
 class LayoutComponent extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {activeTabs:{'Datasets':1}}
+    this.state = {activeTabs:(hashValue() ? {[hashValue()]:1} : {})}
   }
-  changeTab(tab){
-    if (this.state.activeTabs.hasOwnProperty(tab)){
-      this.setState({activeTabs:{}})
-    }
-    else {
-      this.setState({activeTabs:{[tab]:1}})
+
+  componentWillMount() {
+    let datasetId = this.props.match.params.datasetId
+    if (datasetId && datasetId != this.props.selectedDataset){
+      this.props.onMount(datasetId);
     }
   }
 
-  componentDidMount(){
-    if (this.props.match){
-      let datasetId = this.props.match.params.datasetId
-      let selectedId = this.props.selectedDataset
-      if (datasetId && datasetId != selectedId){
-        this.props.onMount(datasetId)
-      }
+  shouldComponentUpdate(nextProps, nextState){
+    if (nextProps.datasetId != this.props.datasetId){
+      return true
+    }
+    return false
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.datasetId !== this.props.datasetId) {
+    //  this.props.onMount(nextProps.datasetId);
+    console.log(nextProps)
+    console.log(this.props)
     }
   }
 
@@ -54,13 +60,11 @@ class LayoutComponent extends React.Component {
       <div className={styles.main}>
         { this.props.active ? <MainPlot /> : '' }
          {menu}
-        <Header tabs={tabs} onTabClick={(tab)=>this.changeTab(tab)}/>
+        <Header tabs={tabs} onTabClick={(tab)=>toggleHash(tab)}/>
       </div>
     )
   }
 }
-
-
 
 class Layout extends React.Component {
   constructor(props) {
@@ -86,5 +90,4 @@ class Layout extends React.Component {
   }
 }
 
-
-export default Layout;
+export default withRouter(Layout);

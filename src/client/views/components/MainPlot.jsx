@@ -161,7 +161,6 @@ class PlotBox extends React.Component {
     let viewbox = '0 0 1420 1420'
     let xPlot = <PlotSideBinsSVG axis='x'/>
     let yPlot = <PlotSideBinsSVG axis='y'/>
-    console.log(this.props.plotGraphics)
     if (this.props.plotShape == 'circle'){
       if (this.props.plotGraphics == 'canvas'){
         plotCanvas = <PlotBubblesCanvasLayers />

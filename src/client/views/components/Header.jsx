@@ -1,7 +1,7 @@
 import React from 'react'
-import { Link } from 'react-router-dom'
 import styles from './Layout.scss'
 import DOIBadge from './DOIBadge'
+
 
 const Header = ( { tabs, onTabClick } ) => {
   let children = tabs.map((tab,i) => {
