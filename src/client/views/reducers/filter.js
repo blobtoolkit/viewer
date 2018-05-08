@@ -9,7 +9,7 @@ import immutableUpdate from 'immutable-update';
 import deep from 'deep-get-set'
 import shallow from 'shallowequal'
 import store from '../store'
-import { queryValue, addQueryValues } from '../History'
+import { queryValue, addQueryValues, removeQueryValues } from '../History'
 
 export const addFilter = createAction('ADD_FILTER')
 export const editFilter = createAction('EDIT_FILTER')
@@ -192,18 +192,23 @@ export function filterToList(val) {
           //let data_id = filters[id].clonedFrom || id
           if (data[id]){
             list = filterCategoriesToList(filters[id].keys,data[id].values,list,filters[id].invert)
-            let values = {}
             let localID = id.replace(/^[^_]+_/,'')
             let keystr = 'keys'+localID
             let invstr = 'inv'+localID
-            values[keystr] = filters[id].keys.join()
-            if (filters[id].invert){
-              values[invstr] = true
+            if (filters[id].keys.length > 0){
+              let values = {}
+              values[keystr] = filters[id].keys.join()
+              if (filters[id].invert){
+                values[invstr] = true
+              }
+              else {
+                values[invstr] = false
+              }
+              addQueryValues(values)
             }
             else {
-              values[invstr] = false
+              removeQueryValues([keystr,invstr])
             }
-            addQueryValues(values)
           }
           //console.log(data_id)
         }

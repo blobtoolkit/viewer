@@ -22,6 +22,16 @@ export const addQueryValues = (values,hist=history) => {
   hist.push({hash:currentHash,search:qs.stringify(parsed)})
 }
 
+export const removeQueryValues = (values,hist=history) => {
+  let currentSearch = hist.location.search || ''
+  let currentHash = hist.location.hash || ''
+  let parsed = qs.parse(currentSearch.replace('?',''))
+  values.forEach(key => {
+    delete parsed[key]
+  })
+  hist.push({hash:currentHash,search:qs.stringify(parsed)})
+}
+
 export const hashValue = (hist=history) => {
   let currentHash = hist.location.hash || ''
   return currentHash.replace('#','')

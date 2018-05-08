@@ -273,7 +273,6 @@ export function fetchRawData(id) {
         else {
           let keystr = queryValue('keys'+id) || ''
           let keys = keystr.split(',').filter(Boolean).map(Number)
-          console.log(keys)
           let invert = queryValue('inv'+id) || false
           dispatch(editFilter({id,keys,invert}))
         }
