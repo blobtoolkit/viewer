@@ -5,6 +5,7 @@ import deep from 'deep-get-set'
 import shallow from 'shallowequal'
 import store from '../store'
 import { addAllFields } from './field'
+import { filterToList } from './filter'
 
 const apiUrl = window.apiURL || '/api/v1'
 
@@ -114,7 +115,10 @@ export function loadDataset(id) {
     dispatch(fetchMeta(id)).then(() => {
       let meta = deep(store.getState(),['availableDatasets','byId',id])
       addAllFields(dispatch,meta.fields,1,false,id)
-    }).then(()=>setTimeout(()=>dispatch(setDatasetIsActive(true)),1000))
+    }).then(()=>setTimeout(()=>{
+      dispatch(filterToList())
+      dispatch(setDatasetIsActive(true))
+    },1000))
   }
 }
 

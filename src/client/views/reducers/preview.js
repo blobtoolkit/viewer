@@ -14,6 +14,7 @@ import { getSelectedDatasetMeta } from './dataset'
 import { getColorPalette } from './color'
 import { getMainPlot } from './plot'
 import * as d3 from 'd3'
+import { queryValue } from '../History'
 
 const createSelectorForFilterId = byIdSelectorCreator();
 const _getFilterIdAsMemoKey = (state, filterId) => linkIdToDataset(filterId);
@@ -25,17 +26,19 @@ export const getDetailsForFilterId = createSelectorForFilterId(
   getDetailsForFieldId,
   (filterMeta = {}, fieldMeta = {}) => {
     let obj = {
-      filterId: filterMeta.id,
+      filterId: filterMeta.id
     }
     if (fieldMeta.meta.type == 'variable'){
-      obj.filterType = 'range',
-      obj.filterRange = filterMeta.range ? filterMeta.range.slice(0) : fieldMeta.range ? fieldMeta.range.slice(0) : [1,10],
-      obj.filterLimit = fieldMeta.range ? fieldMeta.range.slice(0) : [1,10],
+      obj.filterType = 'range'
+      let range = fieldMeta.range ? fieldMeta.range.slice(0) : [1,10]
+      range = [1*queryValue('min'+filterMeta.id) || range[0],1*queryValue('max'+filterMeta.id) || range[1]]
+      obj.filterRange = filterMeta.range ? filterMeta.range.slice(0) : range
+      obj.filterLimit = range
       obj.xScale = fieldMeta.xScale
     }
     if (fieldMeta.meta.type == 'category'){
       obj.filterType = 'category'
-      obj.toggled = filterMeta.toggled,
+      obj.toggled = filterMeta.toggled
       obj.keys = filterMeta.keys
     }
     if (fieldMeta.meta.type == 'selection'){

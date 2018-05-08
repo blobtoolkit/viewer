@@ -12,6 +12,7 @@ import { getSelectedDatasetMeta } from './dataset'
 import { addFilter, editFilter, filterToList } from './filter'
 import { getDimensionsbyDimensionId, setDimension } from './dimension'
 import * as d3 from 'd3'
+import { queryValue } from '../History'
 
 const apiUrl = window.apiURL || '/api/v1'
 
@@ -262,7 +263,19 @@ export function fetchRawData(id) {
           if (min == 0) min = 0.001
           let scale = meta.xScale.copy().domain([min,max]).nice(25)
           dispatch(editField({id,range:scale.domain()}))
-          dispatch(editFilter({id,range:scale.domain(),limit:scale.domain()}))
+          let range = scale.domain()
+          range[0] = 1*queryValue('min'+id) || range[0]
+          range[1] = 1*queryValue('max'+id) || range[1]
+          let invert = queryValue('inv'+id) || false
+
+          dispatch(editFilter({id,range,invert,limit:scale.domain()}))
+        }
+        else {
+          let keystr = queryValue('keys'+id) || ''
+          let keys = keystr.split(',').filter(Boolean).map(Number)
+          console.log(keys)
+          let invert = queryValue('inv'+id) || false
+          dispatch(editFilter({id,keys,invert}))
         }
         dispatch(receiveRawData({id,json}))
       })

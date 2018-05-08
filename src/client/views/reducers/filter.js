@@ -9,7 +9,7 @@ import immutableUpdate from 'immutable-update';
 import deep from 'deep-get-set'
 import shallow from 'shallowequal'
 import store from '../store'
-
+import { queryValue, addQueryValues } from '../History'
 
 export const addFilter = createAction('ADD_FILTER')
 export const editFilter = createAction('EDIT_FILTER')
@@ -166,12 +166,44 @@ export function filterToList(val) {
           let limit = fields[id].range
           if (!shallow(range,limit)){
             list = filterRangeToList(range[0],range[1],data[id].values,list,filters[id].invert)
+            let values = {}
+            let localID = id.replace(/^[^_]+_/,'')
+            let minstr = 'min'+localID
+            let maxstr = 'max'+localID
+            let invstr = 'inv'+localID
+            let qmin = queryValue(minstr)
+            let qmax = queryValue(maxstr)
+            if (range[0] > limit[0] || qmin){
+              values[minstr] = range[0]
+            }
+            if (range[1] < limit[1] || qmax){
+              values[maxstr] = range[1]
+            }
+            if (filters[id].invert){
+              values[invstr] = true
+            }
+            else if (queryValue(invstr)){
+              values[invstr] = false
+            }
+            addQueryValues(values)
           }
         }
         else if (filters[id].type == 'list' || filters[id].type == 'category'){
           //let data_id = filters[id].clonedFrom || id
           if (data[id]){
             list = filterCategoriesToList(filters[id].keys,data[id].values,list,filters[id].invert)
+            let values = {}
+            let localID = id.replace(/^[^_]+_/,'')
+            let keystr = 'keys'+localID
+            let invstr = 'inv'+localID
+            values[keystr] = filters[id].keys.join()
+            if (filters[id].invert){
+              values[invstr] = true
+            }
+            else {
+              values[invstr] = false
+            }
+            addQueryValues(values)
           }
           //console.log(data_id)
         }

@@ -39,7 +39,6 @@ const qsPalette = () => {
       colors[i] = colorToRGB(qsColor) || colors[i]
     }
   }
-  console.log(colors)
   return colors
 }
 

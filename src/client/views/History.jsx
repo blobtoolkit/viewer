@@ -6,7 +6,10 @@ export default history;
 export const queryValue = (value,hist=history) => {
   let currentQuery = hist.location.search || ''
   let parsed = qs.parse(currentQuery.replace('?',''))
-  return parsed[value]
+  if (parsed.hasOwnProperty(value) && parsed[value] != 'false'){
+    return parsed[value]
+  }
+  return false
 }
 
 export const addQueryValues = (values,hist=history) => {
