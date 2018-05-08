@@ -1,13 +1,13 @@
 import Dataset from '../../shared/models/dataset';
 import config from '../../config/client';
-import * as d3 from 'd3';
+import { json as d3json } from 'd3-json';
 
 export default Dataset;
 
 Dataset.prototype.loadMeta = function(error,callback) {
   if (!this.meta){
     let url = config.apiUrl+'/dataset/id/'+this.id;
-    d3.json(url,(err,data)=>{
+    d3json(url,(err,data)=>{
       if (err){
         error(err);
       }

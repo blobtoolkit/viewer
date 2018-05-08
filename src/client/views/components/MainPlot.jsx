@@ -25,7 +25,7 @@ import { getSquareGrid,
   getSelectedSquareGrid } from '../reducers/plotSquareBins'
 import { pixel_to_oddr } from '../reducers/hexFunctions'
 import { addRecords, removeRecords } from '../reducers/select'
-import * as d3 from 'd3'
+import { scaleLinear as d3scaleLinear } from 'd3-scale';
 import { renderToStaticMarkup } from 'react-dom/server';
 const saveSvgAsPng = require('save-svg-as-png/saveSvgAsPng.js')
 
@@ -79,8 +79,8 @@ export default class MainPlot extends React.Component {
   }
 }
 
-const xScale = d3.scaleLinear().range([-55.556,955.556])
-const yScale = d3.scaleLinear().range([-55.556,955.556])
+const xScale = d3scaleLinear().range([-55.556,955.556])
+const yScale = d3scaleLinear().range([-55.556,955.556])
 
 const relativeCoords = event => {
   let bounds = event.target.getBoundingClientRect();

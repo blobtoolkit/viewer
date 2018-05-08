@@ -1,5 +1,4 @@
 import { createSelector } from 'reselect'
-//import * as d3 from 'd3'
 import { getTransformFunction } from './plotParameters'
 import { getTransformFunctionParams } from './plotParameters'
 import { getSquareGrid } from './plotSquareBins'

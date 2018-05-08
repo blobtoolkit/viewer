@@ -9,7 +9,6 @@ import { getDetailsForFieldId, getBinsForFieldId } from './field'
 import { getMainPlot } from './plot';
 import { getZReducer, getZScale } from './plotParameters';
 import { getColorPalette } from './color';
-import * as d3 from 'd3'
 import immutableUpdate from 'immutable-update';
 
 

@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom'
 import styles from './Filters.scss';
 // import { DraggableCore } from 'react-draggable'
 import Pointable from 'react-pointable'
+import { format as d3format } from "d3-format";
 
 class FilterDisplayRange extends React.Component {
 
@@ -49,7 +50,7 @@ class FilterHandle extends React.Component {
   }
   updateRange(value,bound) {
     let range = this.props.filterRange.slice(0);
-    range[bound] = value;
+    range[bound] = d3format(".3r")(value);
     this.props.onUpdateRange(this.props.filterId,range)
     this.setState({offsetX:0})
   }

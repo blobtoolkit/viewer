@@ -3,13 +3,13 @@ import styles from './Fields.scss';
 import FieldBoxHeader from './FieldBoxHeader'
 import FieldRawDataPreview from './FieldRawDataPreview'
 import Filter from './Filter'
-import * as d3 from 'd3'
+import { scaleLinear as d3scaleLinear } from 'd3-scale';
 import { CSSTransitionGroup } from 'react-transition-group'
 
 class FieldBox extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {yScale:d3.scaleLinear().domain([0, 100]).range([100, 0])}
+    this.state = {yScale:d3scaleLinear().domain([0, 100]).range([100, 0])}
   }
   toggleState(key){
     let obj = {id:this.props.fieldId};

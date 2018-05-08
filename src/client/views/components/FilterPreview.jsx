@@ -2,7 +2,6 @@ import React from 'react'
 import styles from './Filters.scss'
 import { connect } from 'react-redux'
 import { getFilteredBarsForFieldId } from '../reducers/preview'
-import * as d3 from 'd3'
 import Spinner from './Spinner'
 import PreviewBars from './PreviewBars'
 

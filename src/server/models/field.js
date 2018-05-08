@@ -1,4 +1,3 @@
-const d3 = require('d3')
 const config = require('../../config/main');
 const io = require('../functions/io');
 const Filter = require('../../shared/models/filter');
