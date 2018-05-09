@@ -139,7 +139,7 @@ const filterArrayFromList = (arr,list) => {
   return ret
 }
 
-export function filterToList(val) {
+export function filterToList(readQueryString) {
   return function(dispatch){
     let state = store.getState();
     let filters = state.filters.byId;
@@ -162,22 +162,29 @@ export function filterToList(val) {
     state.filters.allIds.forEach(id => {
       if (fields[id] && fields[id].active && filters[id]){
         if (filters[id].type == 'range'){
+          let localID = id.replace(/^[^_]+_/,'')
+          let minstr = 'min'+localID
+          let maxstr = 'max'+localID
+          let invstr = 'inv'+localID
           let range = filters[id].range
           let limit = fields[id].range
+          let remove = []
+          let qmin = 1 * queryValue(minstr)
+          let qmax = 1 * queryValue(maxstr)
           if (!shallow(range,limit)){
             list = filterRangeToList(range[0],range[1],data[id].values,list,filters[id].invert)
             let values = {}
-            let localID = id.replace(/^[^_]+_/,'')
-            let minstr = 'min'+localID
-            let maxstr = 'max'+localID
-            let invstr = 'inv'+localID
-            let qmin = queryValue(minstr)
-            let qmax = queryValue(maxstr)
-            if (range[0] > limit[0] || qmin){
+            if (range[0] > limit[0]){
               values[minstr] = range[0]
             }
-            if (range[1] < limit[1] || qmax){
+            else {
+              remove.push(minstr)
+            }
+            if (range[1] < limit[1]){
               values[maxstr] = range[1]
+            }
+            else {
+              remove.push(maxstr)
             }
             if (filters[id].invert){
               values[invstr] = true
@@ -186,6 +193,13 @@ export function filterToList(val) {
               values[invstr] = false
             }
             addQueryValues(values)
+          }
+          else {
+            remove.push(minstr)
+            remove.push(maxstr)
+          }
+          if (remove.length > 0){
+            removeQueryValues(remove)
           }
         }
         else if (filters[id].type == 'list' || filters[id].type == 'category'){

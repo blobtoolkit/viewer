@@ -267,7 +267,6 @@ export function fetchRawData(id) {
           range[0] = 1*queryValue('min'+id) || range[0]
           range[1] = 1*queryValue('max'+id) || range[1]
           let invert = queryValue('inv'+id) || false
-
           dispatch(editFilter({id,range,invert,limit:scale.domain()}))
         }
         else {
@@ -316,6 +315,13 @@ export const addAllFields = (dispatch,fields,flag,meta) => {
     }
     else {
       if (field.type == 'variable'){
+        let range = field.range.slice(0)
+        let minstr = queryValue('min'+field.id)
+        minstr = minstr ? Number(minstr) : null
+        let maxstr = queryValue('max'+field.id)
+        maxstr = maxstr ? Number(maxstr) : null
+        // let invert = queryValue('inv'+field.id) == 'true'
+        range = [minstr || range[0],maxstr || range[1]]
         dispatch(addFilter({id:field.id,type:'range',range:field.range.slice(0)}))
       }
       if (field.type == 'category'){
@@ -334,7 +340,7 @@ export const addAllFields = (dispatch,fields,flag,meta) => {
       addAllFields(dispatch,field.data,false,field)
     }
   })
-  dispatch(filterToList())
+  //dispatch(filterToList())
 }
 
 
