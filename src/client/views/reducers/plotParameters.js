@@ -16,7 +16,7 @@ export const getPlotShape = createSelectorForPlotShape(
   getSelectedDatasetId,
   getSimpleByDatasetProperty('plotShape'),
   (plotShape) => {
-    return plotShape || queryValue('plotShape') || 'hex'
+    return plotShape || queryValue('plotShape') || 'square'
   }
 );
 
