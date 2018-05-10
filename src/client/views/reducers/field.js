@@ -355,10 +355,10 @@ export const getFieldHierarchy = createSelector(
     function processFields(list,fields) {
       let hierarchy = []
       list.forEach((id) => {
-          if (fields[id].type != 'variable' &&
+          if (!fields[id] || (fields[id].type != 'variable' &&
               fields[id].type != 'category' &&
               fields[id].id != 'userDefined' &&
-              fields[id].type != 'selection'){
+              fields[id].type != 'selection')){
                 return hierarchy
               }
           let base_id = id.replace(/^\w+?_/,'')
@@ -412,6 +412,7 @@ export const getBinsForFieldId = createBinSelectorForFieldId(
   getDetailsForFieldId,
   (rawData = {}, details = {}) => {
     let data = rawData.values || []
+    let keys = rawData.keys || {}
     let bins = []
     if (data){
       if (details.meta.type == 'variable'){
@@ -424,15 +425,33 @@ export const getBinsForFieldId = createBinSelectorForFieldId(
             (data);
       }
       if (details.meta.type == 'category'){
-        let sorted = d3.nest()
+        let nested = d3.nest()
           .key(d => d)
           .rollup(d => d.length)
           .entries(data)
+        let sorted = []
         if (!rawData.fixedOrder){
-          sorted = sorted.sort((a,b) => b.value - a.value);
+          let order = queryValue('sortOrder') || ''
+          order = order.split(',')
+          let sortFunction = (a,b) => {
+            let ia = order.indexOf(keys[a.key])
+            let ib = order.indexOf(keys[b.key])
+            if (ia >= 0 && ib >= 0){
+              return ia - ib
+            }
+            else if (ia >= 0){
+              return -1
+            }
+            else if (ib >= 0){
+              return 1
+            }
+            return b.value - a.value
+          }
+          sorted = nested.sort(sortFunction);
+          // sorted = nested.sort((a,b) => b.value - a.value);
         }
         else {
-          sorted = sorted.sort((a,b) => a.key - b.key);
+          sorted = nested.sort((a,b) => a.key - b.key);
         }
         if (sorted.length > 10){
           let count = sorted.slice(9).map(o=>o.value).reduce((a,b)=>a+b)
