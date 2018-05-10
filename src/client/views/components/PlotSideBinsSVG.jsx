@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux'
 import { getBinnedLinesByCategoryForAxis }  from '../reducers/plotSquareBins'
 import styles from './Plot.scss'
-import {Axis, axisPropsFromTickScale, LEFT} from 'react-d3-axis';
+import {Axis, axisPropsFromTickScale, LEFT, RIGHT} from 'react-d3-axis';
 import { format as d3Format } from 'd3-format'
 
 export default class PlotSideBinsSVG extends React.Component {
@@ -30,6 +30,22 @@ export default class PlotSideBinsSVG extends React.Component {
   }
 }
 
+const AxisX = ({ scale, fontSize }) => {
+  return (
+    <g>
+      <Axis {...axisPropsFromTickScale(scale, 5)} format={d3Format(".0e")} style={{orient: LEFT, tickFontSize: fontSize}}/>
+    </g>
+  )
+}
+
+const AxisY = ({ scale, fontSize }) => {
+  return (
+    <g transform='translate(1000)'>
+      <Axis {...axisPropsFromTickScale(scale, 5)} format={d3Format(".0e")} style={{orient: RIGHT, tickFontSize: fontSize}}/>
+    </g>
+  )
+}
+
 const SideBinsSVG = ({ paths = [], axis='x',scale }) => {
   let params = {}
   params.transform = axis == 'x' ? 'translate(0,-300)' : 'translate(1300,0),rotate(90)'
@@ -37,13 +53,17 @@ const SideBinsSVG = ({ paths = [], axis='x',scale }) => {
   params.width = axis == 'x' ? 1000 : 300
   scale.domain(scale.domain().reverse())
   let fontSize = 16
+  let tickMarks = <AxisX {...{scale,fontSize}}/>
+  if (axis == 'y'){
+    tickMarks = <AxisY {...{scale,fontSize}}/>
+  }
   return (
     <g {...params}>
       {paths.map((path,i) =>
         <path className={styles.side_bins} d={path.path} key={i} color={path.color}  />
       )}
       <rect className={styles.plot_boundary} x={0} y={0} width={1000} height={300}/>
-      <Axis {...axisPropsFromTickScale(scale, 5)} format={d3Format(".0e")} style={{orient: LEFT, tickFontSize: fontSize}}/>
+      {tickMarks}
     </g>
   )
 }
