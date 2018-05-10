@@ -26,12 +26,18 @@ export default class PlotLegend extends React.Component {
 
 const Legend = ({values,zAxis,bins,palette,other}) => {
   let items = []
+  let legendKey
   let format = d3format(".2s")
   if (bins){
     let offset = 0
     let w = 20
     let h = 20
     let gap = 5
+    legendKey = (
+      <g transform={'translate('+(w+gap)+','+(-gap)+')'}>
+        <text transform={'translate(260)'} style={{textAnchor:'end',fontWeight:'normal'}}>[count, sum length, n50]</text>
+      </g>
+    )
     bins.forEach((bin,i) => {
       let title = bin.id
       let color = palette.colors[i]
@@ -40,12 +46,10 @@ const Legend = ({values,zAxis,bins,palette,other}) => {
       let n50 = values.n50.binned[i]
       if (count){
         items.push(
-          <g key={i}>
-            <rect x={0} y={offset} width={w} height={h} style={{fill:color}} />
-            <text transform={'translate('+(w+gap)+','+(h+offset)+')'}>
-              <tspan>{title} </tspan>
-              <tspan>[{format(count)}, {format(reduced)}, {format(n50)}]</tspan>
-            </text>
+          <g key={i} transform={'translate(0,'+offset+')'}>
+            <rect x={0} y={0} width={w} height={h} style={{fill:color}} />
+            <text transform={'translate('+(w+gap)+','+(h-gap)+')'}>{title}</text>
+            <text transform={'translate('+(w+gap+260)+','+(h-gap)+')'} style={{textAnchor:'end'}}>[{format(count)}, {format(reduced)}, {format(n50)}]</text>
           </g>
         )
         offset += h + gap
@@ -54,6 +58,7 @@ const Legend = ({values,zAxis,bins,palette,other}) => {
   }
   return (
     <g>
+      {legendKey}
       {items}
     </g>
   )
