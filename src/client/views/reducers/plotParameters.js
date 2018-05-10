@@ -57,7 +57,7 @@ export const getZScale = createSelectorForZScale(
 )
 
 export const setZReducer = createAction('SET_Z_REDUCER')
-const zReducers = {
+export const zReducers = {
   sum: arr => {
       let sum = 0;
       let len = arr.length
@@ -91,6 +91,23 @@ const zReducers = {
         sum += arr[i]
       }
       return sum / arr.length
+    },
+  n50: arr => {
+      if (!arr.length > 0) return 0
+      arr.sort((a,b)=>b-a);
+      let len = arr.length
+      let sum = 0
+      for (let i = 0; i < len; i++){
+        sum += arr[i]
+      }
+      let csum = 0
+      for (let i = 0; i < len; i++){
+        csum += arr[i]
+        if (csum >= Math.floor(sum/2)){
+          return (arr[i])
+        }
+      }
+      return 0
     }
 }
 export const zReducer = handleAction(

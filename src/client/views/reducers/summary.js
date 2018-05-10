@@ -7,7 +7,7 @@ import { getScatterPlotDataByCategory,
 } from './plotData';
 import { getRawDataForFieldId, getDetailsForFieldId, getBinsForFieldId } from './field'
 import { getMainPlot } from './plot';
-import { getZReducer, getZScale } from './plotParameters';
+import { getZReducer, getZScale, zReducers } from './plotParameters';
 import { getColorPalette } from './color';
 import immutableUpdate from 'immutable-update';
 
@@ -62,10 +62,15 @@ export const getSummary = createSelector(
   (all,selected,reducer,palette,raw) => {
     let bins = selected.bins
     let zAxis = selected.zAxis
-    let values = {counts:{},reduced:{}}
+    let values = {counts:{},reduced:{},n50:{}}
     values.reduced.all = reducer.func(all.data.map(d=>d.z))
     values.reduced.sel = selected.selAll ? reducer.func(selected.selAll) : 0
-    values.counts.all = all.data.length
+    if (zAxis == 'length'){
+      values.n50.all = zReducers.n50(all.data.map(d=>d.z))
+      values.n50.sel = selected.selAll ? zReducers.n50(selected.selAll) : 0
+      values.n50.binned = []
+      values.n50.selBinned = []
+    }
     values.counts.sel = selected.selAll ? selected.selAll.length : 0
     values.reduced.binned = []
     values.reduced.selBinned = []
@@ -76,6 +81,10 @@ export const getSummary = createSelector(
       bins.forEach((bin,i) => {
         values.reduced.binned[i] = reducer.func(selected.byCat[i])
         values.reduced.selBinned[i] = selected.selAll ? reducer.func(selected.selByCat[i]) : 0
+        if (zAxis == 'length'){
+          values.n50.binned[i] = zReducers.n50(selected.byCat[i])
+          values.n50.selBinned[i] = selected.selAll ? zReducers.n50(selected.selByCat[i]) : 0
+        }
         values.counts.binned[i] = selected.byCat[i].length
         values.counts.selBinned[i] = selected.selAll ? selected.selByCat[i].length : 0
       })

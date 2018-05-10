@@ -37,13 +37,14 @@ const Legend = ({values,zAxis,bins,palette,other}) => {
       let color = palette.colors[i]
       let count = values.counts.binned[i]
       let reduced = values.reduced.binned[i]
+      let n50 = values.n50.binned[i]
       if (count){
         items.push(
           <g key={i}>
             <rect x={0} y={offset} width={w} height={h} style={{fill:color}} />
             <text transform={'translate('+(w+gap)+','+(h+offset)+')'}>
               <tspan>{title} </tspan>
-              <tspan>[{format(count)}, {format(reduced)}]</tspan>
+              <tspan>[{format(count)}, {format(reduced)}, {format(n50)}]</tspan>
             </text>
           </g>
         )

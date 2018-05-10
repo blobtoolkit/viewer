@@ -12,6 +12,7 @@ import { getDetailsForFieldId, getBinsForFieldId } from './field'
 import store from '../store'
 import * as d3 from 'd3'
 import cloneFunction from 'clone-function'
+import { queryValue } from '../History'
 // import React from 'react'
 // import { server } from 'react-dom'
 
@@ -37,11 +38,31 @@ export const getMainPlotData = createSelector(
   (state) => getDetailsForFieldId(state,getMainPlot(state).axes.cat),
   (mainPlot,xData,yData,zData,catData,xMeta,yMeta,zMeta,catMeta) => {
     let plotData = {id:mainPlot.id,axes:{},meta:{}};
-    plotData.axes.x = xData
+    plotData.axes.x = xData || {values:[]}
+    let xDomain = xMeta.xScale.domain().slice(0)
+    let xmin = queryValue('xmin')
+    if (xmin){
+      xDomain[0] = 1*xmin
+    }
+    let xmax = queryValue('xmax')
+    if (xmax){
+      xDomain[1] = 1*xmax
+    }
+    xMeta.xScale.domain(xDomain)
     plotData.meta.x = xMeta
-    plotData.axes.y = yData
+    plotData.axes.y = yData || {values:[]}
+    let yDomain = yMeta.xScale.domain().slice(0)
+    let ymin = queryValue('ymin')
+    if (ymin){
+      yDomain[0] = 1*ymin
+    }
+    let ymax = queryValue('ymax')
+    if (ymax){
+      yDomain[1] = 1*ymax
+    }
+    yMeta.xScale.domain(yDomain)
     plotData.meta.y = yMeta
-    plotData.axes.z = zData
+    plotData.axes.z = zData || {values:[]}
     plotData.meta.z = zMeta
     plotData.axes.cat = catData
     plotData.meta.cat = catMeta
@@ -94,7 +115,11 @@ export const getScatterPlotData = createSelector(
 
 export const getPlotGraphics = createSelector(
   getFilteredList,
-  (list) => {
+  () => queryValue('plotGraphics'),
+  (list,graphics) => {
+    if (graphics == 'svg' || graphics == 'canvas'){
+      return graphics
+    }
     let threshold = 10000
     let plotGraphics = 'canvas'
     if (list.length < threshold){

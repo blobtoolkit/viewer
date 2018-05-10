@@ -5,7 +5,7 @@ import { getBinsForFieldId } from './field';
 import { getFilteredDataForFieldId } from './preview'
 import { getMainPlot } from './plot';
 import { getSelectedRecordsAsObject } from './select';
-import { getScatterPlotData } from './plotData';
+import { getMainPlotData, getScatterPlotData } from './plotData';
 import { getZReducer, getZScale, getPlotResolution, getTransformFunction } from './plotParameters';
 import { getColorPalette } from './color';
 import { drawPoints, pixel_to_oddr } from './hexFunctions'
@@ -33,6 +33,7 @@ export const getHexGrid = createSelector(
 
 export const getAllMainPlotData = createSelector(
   getMainPlot,
+  getMainPlotData,
   (state) => getRawDataForFieldId(state,getMainPlot(state).axes.x),
   (state) => getRawDataForFieldId(state,getMainPlot(state).axes.y),
   (state) => getRawDataForFieldId(state,getMainPlot(state).axes.z),
@@ -41,11 +42,14 @@ export const getAllMainPlotData = createSelector(
   (state) => getDetailsForFieldId(state,getMainPlot(state).axes.y),
   (state) => getDetailsForFieldId(state,getMainPlot(state).axes.z),
   (state) => getDetailsForFieldId(state,getMainPlot(state).axes.cat),
-  (mainPlot,xData,yData,zData,catData,xMeta,yMeta,zMeta,catMeta) => {
+  (mainPlot,visibleData,xData,yData,zData,catData,xMeta,yMeta,zMeta,catMeta) => {
     let plotData = {id:mainPlot.id,axes:{},meta:{}};
     plotData.axes.x = xData || {values:[]}
+    console.log(visibleData)
+    xMeta.xScale = visibleData.meta.x.xScale.copy()
     plotData.meta.x = xMeta
     plotData.axes.y = yData || {values:[]}
+    yMeta.xScale = visibleData.meta.y.xScale.copy()
     plotData.meta.y = yMeta
     plotData.axes.z = zData || {values:[]}
     plotData.meta.z = zMeta
