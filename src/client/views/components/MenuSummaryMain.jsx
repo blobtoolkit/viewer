@@ -5,8 +5,8 @@ import { getSummary } from '../reducers/summary'
 import MenuSummary from './MenuSummary'
 
 
-const SummaryMenu = ({values,zAxis,bins,palette}) => {
-  let props = {values,zAxis,bins,palette}
+const SummaryMenu = ({values,zAxis,bins,palette,other}) => {
+  let props = {values,zAxis,bins,palette,other}
   return (
     <div className={styles.menu}>
       { bins ?

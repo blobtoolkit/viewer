@@ -36,11 +36,12 @@ const TabbedFraction = ({value,total,color='rgba(0,0,0,0)',title='total'}) => {
   )
 }
 
-const MenuSummary = ({values,zAxis,bins,palette}) => {
+const MenuSummary = ({values,zAxis,bins,palette,other}) => {
 
   let css = styles.long_menu_item
   let counts = []
   let reduced = []
+  let listDiv
   if (bins){
     bins.forEach((bin,i) => {
       let title = bin.id
@@ -54,6 +55,16 @@ const MenuSummary = ({values,zAxis,bins,palette}) => {
         reduced[i] = <TabbedFraction key={i} {...{value,total,color,title}}/>
       }
     })
+    if (other){
+      let list = []
+      other.forEach((id,i) => {
+        list.push(<span key={i}><span className={styles.no_break}>{id}</span>, </span>)
+      })
+      listDiv = (<div className={css}>
+        <h3>Other Taxa</h3>
+        {list}
+      </div>)
+    }
   }
   return (
     <div>
@@ -67,6 +78,7 @@ const MenuSummary = ({values,zAxis,bins,palette}) => {
         <TabbedFraction value={values.counts.sel} total={values.counts.all}/>
         {counts}
       </div>
+      {listDiv}
     </div>
   )
 }

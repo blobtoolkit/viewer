@@ -5,12 +5,11 @@ import { getScatterPlotDataByCategory,
   getMainPlotData,
   getScatterPlotData
 } from './plotData';
-import { getDetailsForFieldId, getBinsForFieldId } from './field'
+import { getRawDataForFieldId, getDetailsForFieldId, getBinsForFieldId } from './field'
 import { getMainPlot } from './plot';
 import { getZReducer, getZScale } from './plotParameters';
 import { getColorPalette } from './color';
 import immutableUpdate from 'immutable-update';
-
 
 export const getSelectedScatterPlotDataByCategory = createSelector(
   getMainPlotData,
@@ -50,7 +49,7 @@ export const getSelectedScatterPlotDataByCategory = createSelector(
         selAll.push(zs.values[i])
       }
     }
-    return {byCat,selByCat,selAll,zAxis,bins};
+    return {byCat,selByCat,selAll,zAxis,bins,catKeys};
   }
 )
 
@@ -59,7 +58,8 @@ export const getSummary = createSelector(
   getSelectedScatterPlotDataByCategory,
   getZReducer,
   getColorPalette,
-  (all,selected,reducer,palette) => {
+  (state) => getRawDataForFieldId(state,getMainPlot(state).axes.cat),
+  (all,selected,reducer,palette,raw) => {
     let bins = selected.bins
     let zAxis = selected.zAxis
     let values = {counts:{},reduced:{}}
@@ -71,6 +71,7 @@ export const getSummary = createSelector(
     values.reduced.selBinned = []
     values.counts.binned = []
     values.counts.selBinned = []
+    let other = []
     if (bins){
       bins.forEach((bin,i) => {
         values.reduced.binned[i] = reducer.func(selected.byCat[i])
@@ -78,7 +79,17 @@ export const getSummary = createSelector(
         values.counts.binned[i] = selected.byCat[i].length
         values.counts.selBinned[i] = selected.selAll ? selected.selByCat[i].length : 0
       })
+      if (bins[9] && bins[9].id == 'other'){
+        bins[9].keys.forEach((index) => {
+          other.push(raw.keys[index])
+        })
+        other = other.sort((a,b)=>{
+          if(a < b) return -1
+          if(a > b) return 1
+          return 0
+        })
+      }
     }
-    return { values,zAxis,bins,palette }
+    return { values,zAxis,bins,palette,other }
   }
 )

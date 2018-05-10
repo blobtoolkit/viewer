@@ -16,6 +16,7 @@ import PlotAxisTitle from './PlotAxisTitle'
 import PlotParameters from './PlotParameters'
 import PlotTransformLines from './PlotTransformLines'
 import PlotSideBinsSVG from './PlotSideBinsSVG'
+import PlotLegend from './PlotLegend'
 import Pointable from 'react-pointable';
 import { getScatterPlotDataByHexBin,
   getSelectedHexGrid } from '../reducers/plotHexBins'
@@ -161,6 +162,7 @@ class PlotBox extends React.Component {
     let viewbox = '0 0 1420 1420'
     let xPlot = <PlotSideBinsSVG axis='x'/>
     let yPlot = <PlotSideBinsSVG axis='y'/>
+    let legend = <g transform='translate(1010,-280)'><PlotLegend/></g>
     if (this.props.plotShape == 'circle'){
       if (this.props.plotGraphics == 'canvas'){
         plotCanvas = <PlotBubblesCanvasLayers />
@@ -200,6 +202,7 @@ class PlotBox extends React.Component {
               </g>
               {xPlot}
               {yPlot}
+              {legend}
               <MainPlotBoundary/>
               <PlotAxisTitle axis='x'/>
               <PlotAxisTitle axis='y'/>
@@ -224,6 +227,7 @@ class PlotBox extends React.Component {
               {plotGrid}
               {xPlot}
               {yPlot}
+              {legend}
               <Pointable
                 tagName='g'
                 onPointerMove={(e)=>{
