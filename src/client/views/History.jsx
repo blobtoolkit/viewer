@@ -3,6 +3,11 @@ import qs from 'qs'
 export const history = createHistory();
 export default history;
 
+export const parseQueryString = () => {
+  let currentQuery = hist.location.search || ''
+  return qs.parse(currentQuery.replace('?',''))
+}
+
 export const queryValue = (value,hist=history) => {
   let currentQuery = hist.location.search || ''
   let parsed = qs.parse(currentQuery.replace('?',''))

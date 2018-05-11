@@ -7,15 +7,16 @@ import { byIdSelectorCreator,
 import immutableUpdate from 'immutable-update';
 import deep from 'deep-get-set'
 import store from '../store'
-import { queryValue } from '../History'
+import { getQueryValue } from './history'
+import { editField } from './field'
 
 export const addPlot = createAction('ADD_PLOT')
 export const editPlot = createAction('EDIT_PLOT')
 
 const defaultPlot = () => {
-  let x = queryValue('xField') || 'gc'
-  let y = queryValue('yField') || 'cov0_cov'
-  let z = queryValue('zField') || 'length'
+  let x = getQueryValue('xField') || 'gc'
+  let y = getQueryValue('yField') || 'cov0_cov'
+  let z = getQueryValue('zField') || 'length'
   return {
     byId: {
       default: {

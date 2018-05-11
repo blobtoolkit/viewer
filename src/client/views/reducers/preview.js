@@ -15,6 +15,8 @@ import { getColorPalette } from './color'
 import { getMainPlot } from './plot'
 import * as d3 from 'd3'
 import { queryValue } from '../History'
+import { getQueryValue } from './history'
+
 
 const createSelectorForFilterId = byIdSelectorCreator();
 const _getFilterIdAsMemoKey = (state, filterId) => linkIdToDataset(filterId);
@@ -24,7 +26,8 @@ export const getDetailsForFilterId = createSelectorForFilterId(
   _getFilterIdAsMemoKey,
   getMetaDataForFilter,
   getDetailsForFieldId,
-  (filterMeta = {}, fieldMeta = {}) => {
+  getBinsForFieldId,
+  (filterMeta = {}, fieldMeta = {}, bins) => {
     let obj = {
       filterId: filterMeta.id
     }
@@ -38,8 +41,18 @@ export const getDetailsForFilterId = createSelectorForFilterId(
     }
     if (fieldMeta.meta.type == 'category'){
       obj.filterType = 'category'
-      obj.toggled = filterMeta.toggled
       obj.keys = filterMeta.keys
+      obj.toggled = []
+      if (obj.keys.length > 0){
+        bins.forEach((bin,i)=>{
+          obj.toggled[i] = bin.keys.some(key =>{
+            return obj.keys.indexOf(key) != -1
+          })
+        })
+      }
+      else {
+        obj.toggled = filterMeta.toggled
+      }
     }
     if (fieldMeta.meta.type == 'selection'){
       obj.filterType = 'selection'

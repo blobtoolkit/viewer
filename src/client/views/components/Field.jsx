@@ -15,6 +15,8 @@ import { getSelectionDisplay,
   selectAll,
   selectNone,
   invertSelection } from '../reducers/select'
+import { withRouter } from 'react-router-dom'
+import { addQueryValues } from '../History'
 
 class Field extends React.Component {
   constructor(props) {
@@ -39,7 +41,10 @@ class Field extends React.Component {
           // }
           dispatch(editField(obj))
         },
-        setAxes: (axis,id) => {dispatch(editPlot({id:'default',[axis]:id}))},
+        setAxes: (axis,id) => {
+          addQueryValues({[axis+'Field']:id})
+          dispatch(editPlot({id:'default',[axis]:id}))
+        },
         cloneField: (id) => {dispatch(cloneField({id}))},
         showData: (id) => dispatch(fetchRawData(id)),
         toggleSelection: (visible) => dispatch(toggleSelection(visible)),
