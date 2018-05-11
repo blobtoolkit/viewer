@@ -5,11 +5,12 @@ import { byIdSelectorCreator,
   getSimpleByDatasetProperty,
   getSelectedDatasetId,
   linkIdToDataset } from './selectorCreators'
-import { getIdentifiersForCurrentDataset } from './identifiers'
+import { getIdentifiersForCurrentDataset, fetchIdentifiers } from './identifiers'
 import immutableUpdate from 'immutable-update';
 import deep from 'deep-get-set'
 import shallow from 'shallowequal'
 import store from '../store'
+import { parseQueryString } from './history'
 
 
 export const addList = createAction('ADD_LIST')
@@ -82,7 +83,35 @@ export function createList(val) {
   return function(dispatch){
     val.id = val.id.replace(/\s/g,'_')
     let list = val
+    list.params = parseQueryString()
     dispatch(addList(list))
+  }
+}
+
+export function uploadedFileToList(acceptedFiles) {
+  return function(dispatch){
+    acceptedFiles.forEach(file => {
+      const reader = new FileReader();
+      reader.onload = () => {
+          const fileAsBinaryString = reader.result;
+          let obj = JSON.parse(fileAsBinaryString)
+          dispatch(fetchIdentifiers()).then(ids=>{
+            obj.list = []
+            obj.id = 'user_'+obj.id
+            if (ids.payload) ids = ids.payload
+            for (let i = 0,id; id = ids[i]; i++){
+              if (obj.identifiers.indexOf(id) != -1)
+              obj.list.push(i)
+            }
+            delete obj.identifiers
+            dispatch(addList(obj))
+          })
+      };
+      reader.onabort = () => console.log('file reading was aborted');
+      reader.onerror = () => console.log('file reading has failed');
+      reader.readAsBinaryString(file);
+      window.URL.revokeObjectURL(file.preview);
+    });
   }
 }
 

@@ -9,7 +9,7 @@ import immutableUpdate from 'immutable-update';
 import deep from 'deep-get-set'
 import shallow from 'shallowequal'
 import store from '../store'
-import { queryValue, addQueryValues, removeQueryValues } from '../History'
+import { queryValue, addQueryValues, removeQueryValues } from './history'
 
 export const addFilter = createAction('ADD_FILTER')
 export const editFilter = createAction('EDIT_FILTER')

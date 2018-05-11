@@ -6,7 +6,7 @@ import Dataset from './Dataset';
 import Layout from './Layout';
 import Repository from './Repository';
 import { NotFound } from './Error';
-import history from '../History';
+import history from '../reducers/history';
 
 // const browserHistory = createBrowserHistory({
 //   basename: '/demo'

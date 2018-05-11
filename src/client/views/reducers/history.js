@@ -5,24 +5,73 @@ import qs from 'qs'
 export const history = createHistory();
 export default history;
 
-export const parseQueryString = createSelector(
-  () => history,
-  (hist) => {
-    let currentQuery = hist.location.search || ''
+export const parseQueryString = (hist=history) => {
+    let currentQuery = ''
+    if (hist.location){
+      currentQuery = hist.location.search || ''
+    }
     return qs.parse(currentQuery.replace('?',''))
-  }
-)
+}
 
 const createSelectorForQueryValue = byIdSelectorCreator();
 
-const _getQueryIdAsMemoKey = (queryId) => {console.log(queryId); return queryId}
+const _getQueryIdAsMemoKey = (queryId) => queryId
 
 export const getQueryValue = createSelectorForQueryValue(
   _getQueryIdAsMemoKey,
   _getQueryIdAsMemoKey,
   parseQueryString,
   (id, parsed) => {
-    console.log(parsed[id])
     return parsed[id]
   }
 )
+
+// export const parseQueryString = () => {
+//   let currentQuery = hist.location.search || ''
+//   return qs.parse(currentQuery.replace('?',''))
+// }
+
+export const queryValue = (value,hist=history) => {
+  let currentQuery = hist.location.search || ''
+  let parsed = qs.parse(currentQuery.replace('?',''))
+  if (parsed.hasOwnProperty(value) && parsed[value] != 'false'){
+    return parsed[value]
+  }
+  return false
+}
+
+export const addQueryValues = (values,hist=history) => {
+  let currentSearch = hist.location.search || ''
+  let currentHash = hist.location.hash || ''
+  let parsed = qs.parse(currentSearch.replace('?',''))
+  Object.keys(values).forEach(key => {
+    parsed[key] = values[key]
+  })
+  hist.push({hash:currentHash,search:qs.stringify(parsed)})
+}
+
+export const removeQueryValues = (values,hist=history) => {
+  let currentSearch = hist.location.search || ''
+  let currentHash = hist.location.hash || ''
+  let parsed = qs.parse(currentSearch.replace('?',''))
+  values.forEach(key => {
+    delete parsed[key]
+  })
+  hist.push({hash:currentHash,search:qs.stringify(parsed)})
+}
+
+export const hashValue = (hist=history) => {
+  let currentHash = hist.location.hash || ''
+  return currentHash.replace('#','')
+}
+
+export const toggleHash = (value,hist=history) => {
+  let currentHash = hashValue()
+  let currentQuery = hist.location.search || ''
+  if (currentHash && currentHash == value){
+    hist.push({hash:'',search:currentQuery})
+  }
+  else {
+    hist.push({hash:'#'+value,search:currentQuery})
+  }
+}

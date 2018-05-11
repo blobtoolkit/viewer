@@ -14,8 +14,7 @@ import { getSelectedDatasetMeta } from './dataset'
 import { getColorPalette } from './color'
 import { getMainPlot } from './plot'
 import * as d3 from 'd3'
-import { queryValue } from '../History'
-import { getQueryValue } from './history'
+import { getQueryValue, queryValue } from './history'
 
 
 const createSelectorForFilterId = byIdSelectorCreator();

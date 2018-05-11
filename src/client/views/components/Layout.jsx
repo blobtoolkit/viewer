@@ -12,7 +12,7 @@ import MainPlot from './MainPlot'
 import { loadDataset } from '../reducers/repository'
 import { getSelectedDataset } from '../reducers/dataset'
 import { withRouter } from 'react-router-dom'
-import { toggleHash, hashValue } from '../History'
+import { toggleHash, hashValue } from '../reducers/history'
 
 
 class LayoutComponent extends React.Component {

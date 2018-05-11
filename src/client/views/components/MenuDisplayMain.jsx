@@ -30,7 +30,7 @@ import Palettes from './Palettes'
 import MenuItem from './MenuItem'
 import ToolTips from './ToolTips'
 import { withRouter } from 'react-router-dom'
-import { addQueryValues } from '../History'
+import { addQueryValues } from '../reducers/history'
 
 const DisplayMenu = ({
   title,

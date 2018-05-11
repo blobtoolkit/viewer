@@ -7,7 +7,7 @@ import { byIdSelectorCreator,
 import { getMainPlot } from './plot';
 import immutableUpdate from 'immutable-update';
 import store from '../store'
-import { queryValue } from '../History'
+import { queryValue } from './history'
 
 export const setPlotShape = createAction('SET_PLOT_SHAPE')
 export const plotShape = handleSimpleByDatasetAction('SET_PLOT_SHAPE')

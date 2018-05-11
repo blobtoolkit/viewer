@@ -16,7 +16,7 @@ import { getSelectionDisplay,
   selectNone,
   invertSelection } from '../reducers/select'
 import { withRouter } from 'react-router-dom'
-import { addQueryValues } from '../History'
+import { addQueryValues } from '../reducers/history'
 
 class Field extends React.Component {
   constructor(props) {

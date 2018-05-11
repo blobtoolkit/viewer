@@ -45,7 +45,6 @@ export const getAllMainPlotData = createSelector(
   (mainPlot,visibleData,xData,yData,zData,catData,xMeta,yMeta,zMeta,catMeta) => {
     let plotData = {id:mainPlot.id,axes:{},meta:{}};
     plotData.axes.x = xData || {values:[]}
-    console.log(visibleData)
     xMeta.xScale = visibleData.meta.x.xScale.copy()
     plotData.meta.x = xMeta
     plotData.axes.y = yData || {values:[]}

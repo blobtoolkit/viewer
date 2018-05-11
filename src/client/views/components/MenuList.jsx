@@ -9,13 +9,14 @@ import { fetchIdentifiers } from '../reducers/identifiers'
 import { getSelectedList, updateSelectedList, getIdentifiersForList } from '../reducers/list'
 import ListModal from './ListModal';
 
-const ListItem = ({id,list,onClick,identifiers,active}) => {
+const ListItem = ({id,list,params,onClick,identifiers,active}) => {
 
   let css = styles.menu_item
   if (active) css += ' '+styles.active
+  let obj = {id,params,identifiers}
   return (
     <div className={css} onClick={()=>onClick(id)}>
-    <ListModal name={id} selected={active} dismiss={()=>onClick(null)} identifiers={identifiers}>&nbsp;</ListModal>
+    <ListModal name={id} selected={active} dismiss={()=>onClick(null)} list={obj}>&nbsp;</ListModal>
       <h3>{id}</h3>
       <span className={styles.menu_subtitle}>{list.length}</span>
     </div>

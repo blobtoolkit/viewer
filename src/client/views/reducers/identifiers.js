@@ -9,7 +9,7 @@ import { byIdSelectorCreator,
   getSimpleByDatasetProperty,
   getSelectedDatasetId,
   linkIdToDataset } from './selectorCreators'
-  
+
 const apiUrl = window.apiURL || '/api/v1'
 
 const requestIdentifiers = createAction('REQUEST_IDENTIFIERS')
@@ -58,7 +58,7 @@ export function fetchIdentifiers() {
     let state = store.getState();
     let existing = getIdentifiersForCurrentDataset(state)
     if (existing.length > 0){
-      return existing
+      return new Promise (resolve => resolve(existing))
     }
     let id = getSelectedDatasetId()
     dispatch(requestIdentifiers(id))

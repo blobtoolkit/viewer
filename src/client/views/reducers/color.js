@@ -8,7 +8,7 @@ import immutableUpdate from 'immutable-update';
 import deep from 'deep-get-set'
 import shallow from 'shallowequal'
 import store from '../store'
-import { queryValue } from '../History'
+import { queryValue } from '../reducers/history'
 import convert from 'color-convert'
 
 const colorToRGB = (color) => {

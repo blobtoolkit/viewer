@@ -12,7 +12,7 @@ import { getSelectedDatasetMeta } from './dataset'
 import { addFilter, editFilter, filterToList } from './filter'
 import { getDimensionsbyDimensionId, setDimension } from './dimension'
 import * as d3 from 'd3'
-import { queryValue } from '../History'
+import { queryValue } from './history'
 
 const apiUrl = window.apiURL || '/api/v1'
 

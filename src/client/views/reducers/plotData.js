@@ -12,7 +12,7 @@ import { getDetailsForFieldId, getBinsForFieldId } from './field'
 import store from '../store'
 import * as d3 from 'd3'
 import cloneFunction from 'clone-function'
-import { queryValue } from '../History'
+import { queryValue } from './history'
 // import React from 'react'
 // import { server } from 'react-dom'
 

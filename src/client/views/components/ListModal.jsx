@@ -31,7 +31,7 @@ class ListModal extends React.Component {
             <ModalDialog onClose={()=>this.handleClose()}>
               <h1>List summary</h1>
               <h2>Name: {this.props.name}</h2>
-              <button onClick={()=>this._downloadJSONFile(this.props.name,this.props.identifiers)}>Download JSON</button>
+              <button onClick={()=>this._downloadJSONFile(this.props.name,this.props.list)}>Download JSON</button>
               <p>Metadata, view and copy list functions coming soon</p>
             </ModalDialog>
           </ModalContainer>

@@ -136,6 +136,51 @@
   color: $lightColor;
 }
 
+.dropzone_menu_item {
+  position:relative;
+  width:calc(100% - 2em);
+  height:4em;
+  margin-top:0.5em;
+  padding:1em;
+  background-color: $darkColor;
+  overflow:hidden;
+  color:$paleColor;
+}
+
+.dropzone {
+  width: 15em;
+  height: 4em;
+  color: $shadeColor;
+  border-width: 2px;
+  border-color: $shadeColor;
+  border-style: dashed;
+  border-radius: 5px;
+  box-sizing: border-box;
+  float: right;
+  cursor: pointer;
+  padding:0.4em;
+}
+
+.dropzone_active {
+  border-style: solid;
+  border-color: $highlightColor;
+  background-color:$darkColor;
+  color: $darkColor;
+}
+
+.dropzone_accept {
+  background-color:$highlightColor;
+  border-color: $highlightColor;
+  color:$lightColor;
+}
+
+.dropzone_reject {
+  border-color: $deepColor;
+  background-color:$darkColor;
+  color: $darkColor;
+}
+
+
 .doi_badge {
   float:right;
 }
