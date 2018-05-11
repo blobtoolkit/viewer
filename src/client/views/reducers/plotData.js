@@ -211,9 +211,14 @@ export const getCirclePlotDataForCategoryIndex = createSelectorForCircleCategory
   getPlotResolution,
   (catData,details,scale, res) => {
     let zScale = d3[scale]().domain(details.range).range([0,2*900/res])
-    catData.data.forEach(datum => {
-      datum.r = zScale(datum.z)
-    })
+    if (catData.data){
+      catData.data.forEach(datum => {
+        datum.r = zScale(datum.z)
+      })
+    }
+    else {
+      catData.data = []
+    }
     return catData
   }
 );
