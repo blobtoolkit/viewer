@@ -10,6 +10,7 @@ class Palettes extends React.Component {
         <Palette
           id={id}
           key={id}
+          location={this.props.location}
           colors={this.props.byId[id]}
           selectPalette={this.props.selectPalette}
           editPalette={(obj)=>this.props.editPalette(obj)}

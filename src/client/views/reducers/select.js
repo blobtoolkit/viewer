@@ -11,23 +11,17 @@ import store from '../store'
 
 
 export const toggleSelection = createAction('TOGGLE_SELECTION')
-const selectionDisplay = handleActions(
-  {
-    TOGGLE_SELECTION: (state, action) => {
-      return immutableUpdate(state, {
-        byDataset: { [getSelectedDatasetId()]: !action.payload }
-      })
-    }
-  },
-  {byDataset:{}}
+const selectionDisplay = handleAction(
+  'TOGGLE_SELECTION',
+  (state, action) => (
+    !action.payload
+  ),
+  true
 )
 
 const createSelectorForSelectionDisplay = byIdSelectorCreator();
-export const getSelectionDisplay = createSelectorForSelectionDisplay(
-  getSelectedDatasetId,
-  getSimpleByDatasetProperty('selectionDisplay'),
-  value => typeof(value) != "undefined" ? value : true
-)
+export const getSelectionDisplay = state => state.selectionDisplay
+
 
 export const addRecords = createAction('ADD_RECORDS')
 export const removeRecords = createAction('REMOVE_RECORDS')
@@ -36,7 +30,7 @@ export const selectNone = createAction('SELECT_NONE')
 export const selectedRecords = handleActions(
   {
     ADD_RECORDS: (state, action) => {
-      let current = state.byDataset[getSelectedDatasetId()] || []
+      let current = state || []
       let iLen = current.length
       let jLen = action.payload.length
       let combined = []
@@ -65,12 +59,10 @@ export const selectedRecords = handleActions(
         combined.push(action.payload[j])
         j++
       }
-      return immutableUpdate(state, {
-        byDataset: { [getSelectedDatasetId()]: combined }
-      })
+      return  combined
     },
     REMOVE_RECORDS: (state, action) => {
-      let current = state.byDataset[getSelectedDatasetId()] || []
+      let current = state
       let arr = []
       let iLen = current.length
       let jLen = action.payload.length
@@ -93,25 +85,16 @@ export const selectedRecords = handleActions(
         arr.push(current[i])
         i++
       }
-      return immutableUpdate(state, {
-        byDataset: { [getSelectedDatasetId()]: arr }
-      })
+      return arr
     },
     SELECT_NONE: (state, action) => {
-      return immutableUpdate(state, {
-        byDataset: { [getSelectedDatasetId()]: [] }
-      })
+      return []
     }
   },
-  {byDataset:{}}
+  []
 )
 
-const createSelectorForSelectedRecords = byIdSelectorCreator();
-export const getSelectedRecords = createSelectorForSelectedRecords(
-  getSelectedDatasetId,
-  getSimpleByDatasetProperty('selectedRecords'),
-  arr => arr || []
-)
+export const getSelectedRecords = state => state.selectedRecords
 
 export const getSelectedRecordsAsObject = createSelector(
   getSelectedRecords,
@@ -129,8 +112,8 @@ export const getSelectedRecordsAsObject = createSelector(
 export function selectAll() {
   return dispatch => {
     let state = store.getState()
-    let meta = getDatasetMeta(state,getSelectedDatasetId())
-    let all = getFilteredList(state,getSelectedDatasetId())
+    let meta = getDatasetMeta(state)
+    let all = getFilteredList(state)
     dispatch(addRecords(all))
   }
 }
@@ -138,9 +121,9 @@ export function selectAll() {
 export function invertSelection() {
   return dispatch => {
     let state = store.getState()
-    let meta = getDatasetMeta(state,getSelectedDatasetId())
-    let all = getFilteredList(state,getSelectedDatasetId())
-    let current = getSelectedRecordsAsObject(state,getSelectedDatasetId())
+    let meta = getDatasetMeta(state)
+    let all = getFilteredList(state)
+    let current = getSelectedRecordsAsObject(state)
     let rev = []
     for (let i = 0; i < all.length; i++){
       if (!current[all[i]]){
@@ -155,7 +138,7 @@ export function invertSelection() {
 export function selectInverse() {
   return dispatch => {
     let state = store.getState()
-    let meta = getDatasetMeta(state,getSelectedDatasetId())
+    let meta = getDatasetMeta(state)
     let all = []
     for (let i = 0; i < meta.records; i++){
       all.push(i)

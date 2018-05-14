@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux'
 import styles from './Layout.scss'
-import { getListsForCurrentDataset,
+import { getLists,
   getSelectedList,
   uploadedFileToList } from '../reducers/list'
 import MenuList from './MenuList'
@@ -21,7 +21,7 @@ const ListsMenu = ({lists,selectedList,onListClick,onDrop}) => {
 
 const mapStateToProps = state => {
   return {
-    lists: getListsForCurrentDataset(state),
+    lists: getLists(state),
     selectedList: getSelectedList(state),
   }
 }

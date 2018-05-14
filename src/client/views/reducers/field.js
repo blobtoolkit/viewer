@@ -2,9 +2,7 @@ import { createAction, handleAction, handleActions } from 'redux-actions'
 import { createSelector } from 'reselect'
 import { byIdSelectorCreator,
   handleSimpleByDatasetAction,
-  getSimpleByDatasetProperty,
-  getSelectedDatasetId,
-  linkIdToDataset } from './selectorCreators'
+  getSimpleByDatasetProperty } from './selectorCreators'
 import immutableUpdate from 'immutable-update';
 import deep from 'deep-get-set'
 import store from '../store'
@@ -19,20 +17,13 @@ const apiUrl = window.apiURL || '/api/v1'
 export const addTopLevelFields = createAction('ADD_TOP_LEVEL_FIELDS')
 export const topLevelFields = handleAction(
   'ADD_TOP_LEVEL_FIELDS',
-  (state, action) => {
-    let arr = action.payload.map(obj => {return linkIdToDataset(obj.id)})
-    return immutableUpdate(state, {
-      byDataset: { [getSelectedDatasetId()]: arr }
-    })
-  },
-  {byDataset:{}}
+  (state, action) => (
+    action.payload
+  ),
+  []
 )
-const createSelectorForTopLevelFields = byIdSelectorCreator();
-export const getTopLevelFields = createSelectorForTopLevelFields(
-  getSelectedDatasetId,
-  getSimpleByDatasetProperty('topLevelFields'),
-  list => list || []
-)
+export const getTopLevelFields = state => state.topLevelFields
+
 
 const addField = createAction('ADD_FIELD')
 export const editField = createAction('EDIT_FIELD')
@@ -45,32 +36,19 @@ export const fields = handleActions(
   {
     ADD_FIELD: (state, action) => (
       immutableUpdate(state, {
-        byId: { [linkIdToDataset(action.payload.id)]: action.payload },
-        allIds: [...state.allIds, linkIdToDataset(action.payload.id)]
+        byId: { [action.payload.id]: action.payload },
+        allIds: [...state.allIds, action.payload.id]
       })
     ),
     EDIT_FIELD: (state, action) => {
-      let id = linkIdToDataset(action.payload.id)
+      let id = action.payload.id
       let fields = Object.keys(action.payload).filter((key)=>{return key != 'id'})
       return immutableUpdate(state, {
         byId: {
           [id]: Object.assign(...fields.map(f => ({[f]: action.payload[f]})))
         }
       })
-    }//,
-    // CLONE_FIELD: (state, action) => {
-    //   let id = linkIdToDataset(action.payload.id)
-    //   let parent_id = linkIdToDataset('userDefined')
-    //   let new_id = id //+ '_1'
-    //   let child = {id: new_id, name: new_id, active: true}
-    //   return immutableUpdate(state, {
-    //     allIds: [...state.allIds, new_id],
-    //     byId: {
-    //       [new_id]: state.byId[id],
-    //       [parent_id]: {children:[...state.byId[parent_id].children,child]}
-    //     }
-    //   })
-    // }
+    }
   },
   {
     byId: {},
@@ -111,8 +89,8 @@ export function cloneField(obj) {
     let state = store.getState()
     let id = obj.id
     let new_id = id + '_1'
-    let linked_id = linkIdToDataset(obj.id)
-    let parent_id = linkIdToDataset('userDefined')
+    let linked_id = obj.id
+    let parent_id = 'userDefined'
     let field = Object.keys(state.fields.byId[linked_id])
         .filter((key)=>{return key != 'id'})
         .reduce((obj, key) => {
@@ -187,8 +165,8 @@ const hashCode = (json) => {
 // https://github.com/reactjs/reselect/issues/100
 const createSelectorForFieldId = byIdSelectorCreator();
 
-const _getFieldIdAsMemoKey = (state, fieldId) => linkIdToDataset(fieldId);
-export const getMetaDataForField = (state, fieldId) => state.fields ? state.fields.byId[linkIdToDataset(fieldId)] : {};
+const _getFieldIdAsMemoKey = (state, fieldId) => fieldId;
+export const getMetaDataForField = (state, fieldId) => state.fields ? state.fields.byId[fieldId] : {};
 
 export const getDetailsForFieldId = createSelectorForFieldId(
   _getFieldIdAsMemoKey,
@@ -222,8 +200,8 @@ export const rawData = handleActions(
     ),
     RECEIVE_RAW_DATA: (state, action) => (
       immutableUpdate(state, {
-        byId: { [linkIdToDataset(action.payload.id)]: action.payload.json },
-        allIds: [...state.allIds, linkIdToDataset(action.payload.id)]
+        byId: { [action.payload.id]: action.payload.json },
+        allIds: [...state.allIds, action.payload.id]
       })
     ),
     USE_STORED_RAW_DATA: (state, action) => (
@@ -240,7 +218,7 @@ export function fetchRawData(id) {
   return dispatch => {
     let state = store.getState()
     dispatch(requestRawData(id))
-    let json = deep(state,['rawData','byId',linkIdToDataset(id)]);
+    let json = deep(state,['rawData','byId',id]);
     if (json && json.values){
       dispatch(useStoredRawData(json))
       return Promise.resolve(useStoredRawData(json));
@@ -283,6 +261,7 @@ export function fetchRawData(id) {
 export const addAllFields = (dispatch,fields,flag,meta) => {
   if (flag) {
     dispatch(clearFields)
+    console.log(fields)
     dispatch(addTopLevelFields(fields))
   }
   dispatch(addField({
@@ -368,7 +347,7 @@ export const getFieldHierarchy = createSelector(
           }
           let children = (fields[id].children || []).concat(fields[id].data || [])
           if (children.length > 0){
-            obj.children = processFields(children.map(f=>linkIdToDataset(f.id)),fields)
+            obj.children = processFields(children.map(f=>f.id),fields)
           }
           hierarchy.push(obj)
       })
@@ -392,7 +371,7 @@ export const getFieldHierarchy = createSelector(
 
 const createRawDataSelectorForFieldId = byIdSelectorCreator();
 
-const getRawDataForField = (state, fieldId) => state.rawData ? state.rawData.byId[linkIdToDataset(fieldId)] : {};
+const getRawDataForField = (state, fieldId) => state.rawData ? state.rawData.byId[fieldId] : {};
 
 export const getRawDataForFieldId = createRawDataSelectorForFieldId(
   _getFieldIdAsMemoKey,

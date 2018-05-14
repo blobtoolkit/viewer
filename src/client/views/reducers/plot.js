@@ -2,97 +2,42 @@ import { createAction, handleAction, handleActions } from 'redux-actions'
 import { createSelector } from 'reselect'
 import { byIdSelectorCreator,
   handleSimpleByDatasetAction,
-  getSimpleByDatasetProperty,
-  getSelectedDatasetId } from './selectorCreators'
+  getSimpleByDatasetProperty } from './selectorCreators'
 import immutableUpdate from 'immutable-update';
 import deep from 'deep-get-set'
 import store from '../store'
 import { getQueryValue } from './history'
 import { editField } from './field'
 
-export const addPlot = createAction('ADD_PLOT')
 export const editPlot = createAction('EDIT_PLOT')
-
 const defaultPlot = () => {
   let x = getQueryValue('xField') || 'gc'
   let y = getQueryValue('yField') || 'cov0_cov'
   let z = getQueryValue('zField') || 'length'
   return {
-    byId: {
-      default: {
-        x,
-        y,
-        z,
-        cat:'bestsumorder_phylum'
-      }
-    },
-    allIds: ['default']
+    x,
+    y,
+    z,
+    cat:'bestsumorder_phylum'
   }
 }
-
-export const plots = handleActions(
-  {
-    ADD_PLOT: (state, action) => (
-      immutableUpdate(state, {
-        byId: { [action.payload.id]: action.payload },
-        allIds: [...state.allIds, action.payload.id]
-      })
-    ),
-    EDIT_PLOT: (state, action) => {
-      let id = action.payload.id
-      let fields = Object.keys(action.payload).filter((key)=>{return key != 'id'})
-      return immutableUpdate(state, {
-        byId: {
-          [id]: Object.assign(...fields.map(f => ({[f]: action.payload[f]})))
-        }
-      })
-    }
+export const plot = handleAction(
+  'EDIT_PLOT',
+  (state, action) => {
+    let fields = Object.keys(action.payload).filter((key)=>{return key != 'id'})
+    return immutableUpdate(state,
+      Object.assign(...fields.map(f => ({[f]: action.payload[f]})))
+    )
   },
   defaultPlot()
 )
-
-
-export const selectPlot = createAction('SELECT_PLOT')
-export const selectedPlot = handleSimpleByDatasetAction('SELECT_PLOT')
-const createSelectorForSelectedPlot = byIdSelectorCreator();
-export const getSelectedPlot = createSelectorForSelectedPlot(
-  getSelectedDatasetId,
-  getSimpleByDatasetProperty('selectedPlot'),
-  plot => plot || 'default'
-)
-
-export const getAllPlots = state => state.plots
-
-const createSelectorForPlotId = byIdSelectorCreator();
-const _getPlotIdAsMemoKey = (state, plotId) => plotId;
-const getMetaDataForPlot = (state, plotId) => state.plots ? state.plots.byId[plotId] : {};
-
-export const getPlotByPlotId = createSelectorForPlotId(
-  _getPlotIdAsMemoKey,
-  getMetaDataForPlot,
-  (plot) => plot
-);
+export const getPlot = state => state.plot
 
 export const getMainPlot = createSelector(
-  getSelectedPlot,
-  (state) => getPlotByPlotId(state,getSelectedPlot(state)),
-  (id, axes) => ({id,axes})
+  getPlot,
+  axes => ({id:'default',axes})
 )
 
-// export const setDisplayFirst = createAction('SET_DISPLAY_FIRST')
-//
-// export const displayFirst = handleAction(
-//   'SET_DISPLAY_FIRST',
-//   (state, action) => {
-//     return action.payload
-//   },
-//   5
-// )
-// export const getDisplayFirst = state => store.getState().displayFirst
-
-
 export const plotReducers = {
-  plots,
-  selectedPlot//,
-  // displayFirst
+  plot
 }

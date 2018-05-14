@@ -21,9 +21,9 @@ const getAxis = (state,axis) => axis
 export const getAxisTitle = createSelector(
   getAxis,
   getMainPlot,
-  (axis,plot) => (
-    plot.axes[axis]
-  )
+  (axis,plot) => {
+    return plot.axes[axis]
+  }
 )
 
 export const getMainPlotData = createSelector(
@@ -299,12 +299,11 @@ export const getSquareBinPlotDataForCategoryIndex = createSelectorForSquareCateg
  //   }
  // )
 
-const _getMainPlotCategory = state => state.plots.byId['default'].cat
 const createSelectorForMainPlotCategory = byIdSelectorCreator();
 
 export const getCategoryListForMainPlot = createSelectorForMainPlotCategory(
-  _getMainPlotCategory,
-  (state) => getPlainCategoryListForFieldId(state,_getMainPlotCategory(state)),
+  getAxisTitle,
+  (state) => getPlainCategoryListForFieldId(state,getAxisTitle(state,'cat')),
   (list) => {
     return list
   }

@@ -9,6 +9,7 @@ import { byIdSelectorCreator,
   getSimpleByDatasetProperty,
   getSelectedDatasetId,
   linkIdToDataset } from './selectorCreators'
+import { getSelectedDataset } from './dataset'
 
 const apiUrl = window.apiURL || '/api/v1'
 
@@ -23,24 +24,18 @@ const useStoredIdentifiers = createAction('USE_STORED_IDENTIFIERS')
 
 const defaultState = () => (
     {
-      allIds: [],
-      byId: {}
+      list: []
     }
 )
 
 export const identifiers = handleActions(
   {
     REQUEST_IDENTIFIERS: (state, action) => {
-      return immutableUpdate(state, {
-        byId: { [getSelectedDatasetId()]: {isFetching: true} }
-      })
+      return immutableUpdate(state, {isFetching: true})
     },
     RECEIVE_IDENTIFIERS: (state, action) => {
-      let id = getSelectedDatasetId()
-      return immutableUpdate(state, {
-        allIds: [...state.allIds, id],
-        byId: { [id]: {isFetching: false, list:action.payload, lastUpdated: action.meta.receivedAt} }
-      })
+      return immutableUpdate(state, {isFetching: false, list:action.payload, lastUpdated: action.meta.receivedAt}
+      )
     }
   },
   defaultState()
@@ -48,19 +43,17 @@ export const identifiers = handleActions(
 
 export const getIdentifiersIsFetching = state => deep(state,'identifiers','byId','isFetching') || false
 
-export const getIdentifiersForCurrentDataset = state => {
-  let dsId = getSelectedDatasetId();
-  return state.identifiers.byId[dsId] ? (state.identifiers.byId[dsId].list || []) : []
-}
+export const getIdentifiers = state => state.identifiers.list
+
 
 export function fetchIdentifiers() {
   return function (dispatch) {
     let state = store.getState();
-    let existing = getIdentifiersForCurrentDataset(state)
+    let existing = getIdentifiers(state)
     if (existing.length > 0){
       return new Promise (resolve => resolve(existing))
     }
-    let id = getSelectedDatasetId()
+    let id = getSelectedDataset(state)
     dispatch(requestIdentifiers(id))
     return fetch(apiUrl + '/identifiers/' + id)
       .then(

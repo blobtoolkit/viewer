@@ -11,6 +11,7 @@ import MenuHelpMain from './MenuHelpMain'
 import MainPlot from './MainPlot'
 import { loadDataset } from '../reducers/repository'
 import { getSelectedDataset } from '../reducers/dataset'
+import { getTopLevelFields } from '../reducers/field'
 import { withRouter } from 'react-router-dom'
 import { toggleHash, hashValue } from '../reducers/history'
 
@@ -23,7 +24,7 @@ class LayoutComponent extends React.Component {
 
   componentWillMount() {
     let datasetId = this.props.match.params.datasetId
-    if (datasetId && datasetId != this.props.selectedDataset){
+    if (datasetId && this.props.topLevelFields.length == 0){
       this.props.onMount(datasetId);
     }
   }
@@ -71,7 +72,8 @@ class Layout extends React.Component {
     super(props);
     this.mapStateToProps = state => {
       return {
-        selectedDataset: getSelectedDataset(state)
+        selectedDataset: getSelectedDataset(state),
+        topLevelFields: getTopLevelFields(state)
       }
     }
     this.mapDispatchToProps = dispatch => {

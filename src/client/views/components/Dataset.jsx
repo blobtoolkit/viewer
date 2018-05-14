@@ -35,6 +35,7 @@ const mapDispatchToProps = dispatch => {
 class Overview extends React.Component {
 
   componentDidMount(){
+    console.log(this.props.match)
     this.props.onMount(this.props.match.params.datasetId)
   }
 

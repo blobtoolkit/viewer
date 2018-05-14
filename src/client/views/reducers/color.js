@@ -2,8 +2,7 @@ import { createAction, handleAction, handleActions } from 'redux-actions'
 import { createSelector, createSelectorCreator } from 'reselect'
 import { byIdSelectorCreator,
   handleSimpleByDatasetAction,
-  getSimpleByDatasetProperty,
-  getSelectedDatasetId } from './selectorCreators'
+  getSimpleByDatasetProperty } from './selectorCreators'
 import immutableUpdate from 'immutable-update';
 import deep from 'deep-get-set'
 import shallow from 'shallowequal'
@@ -70,13 +69,14 @@ export const palettes = handleActions(
 
 
 export const selectPalette = createAction('SELECT_PALETTE')
-export const selectedPalette = handleSimpleByDatasetAction('SELECT_PALETTE')
-const createSelectorForSelectedPalette = byIdSelectorCreator();
-export const getSelectedPalette = createSelectorForSelectedPalette(
-  getSelectedDatasetId,
-  getSimpleByDatasetProperty('selectedPalette'),
-  palette => palette || queryValue('palette') || 'default'
+export const selectedPalette = handleAction(
+  'SELECT_PALETTE',
+  (state, action) => (
+    action.payload
+  ),
+  'default'
 )
+export const getSelectedPalette = state => state.selectedPalette
 
 export const getAllPalettes = state => state.palettes
 

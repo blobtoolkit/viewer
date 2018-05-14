@@ -1,10 +1,6 @@
 import { createAction, handleAction, handleActions } from 'redux-actions'
 import { createSelector } from 'reselect'
-import { byIdSelectorCreator,
-  handleSimpleByDatasetAction,
-  getSimpleByDatasetProperty,
-  getSelectedDatasetId,
-  linkIdToDataset } from './selectorCreators'
+import { byIdSelectorCreator } from './selectorCreators'
 import immutableUpdate from 'immutable-update';
 import deep from 'deep-get-set'
 import shallow from 'shallowequal'
@@ -23,15 +19,15 @@ export const filters = handleActions(
   {
     ADD_FILTER: (state, action) => (
       immutableUpdate(state, {
-        byId: { [linkIdToDataset(action.payload.id)]: action.payload },
-        allIds: [...state.allIds, linkIdToDataset(action.payload.id)]
+        byId: { [action.payload.id]: action.payload },
+        allIds: [...state.allIds, action.payload.id]
       })
     ),
     EDIT_FILTER: (state, action) => {
       // immutableUpdate(state, {
       //   byId: { [action.payload.id]: action.payload }
       // })
-      let id = linkIdToDataset(action.payload.id)
+      let id = action.payload.id
       let fields = Object.keys(action.payload).filter((key)=>{return key != 'id'})
       if (action.payload.range){
         let range = []
@@ -56,13 +52,14 @@ export const filters = handleActions(
 
 
 export const updateFilterList = createAction('UPDATE_FILTER_LIST')
-export const filteredList = handleSimpleByDatasetAction('UPDATE_FILTER_LIST')
-const createSelectorForFilteredList = byIdSelectorCreator();
-export const getFilteredList = createSelectorForFilteredList(
-  getSelectedDatasetId,
-  getSimpleByDatasetProperty('filteredList'),
-  list => list || []
+export const filteredList = handleAction(
+  'UPDATE_FILTER_LIST',
+  (state, action) => (
+    action.payload
+  ),
+  []
 )
+export const getFilteredList = state => state.filteredList
 
 const filterRangeToList = (low,high,arr,list,invert) => {
   let ret = []
@@ -146,9 +143,9 @@ export function filterToList(readQueryString) {
     let fields = state.fields.byId;
     let data = state.rawData.byId;
     let count = state.availableDatasets.byId[state.selectedDataset].records
-    let list = fields[linkIdToDataset('selection')].active ? state.selectedRecords.byDataset[state.selectedDataset] : undefined
+    let list = fields['selection'].active ? state.selectedRecords.byDataset[state.selectedDataset] : undefined
     let all = []
-    if (!list || list.length == 0 || filters[linkIdToDataset('selection')].invert){
+    if (!list || list.length == 0 || filters['selection'].invert){
       for (let i = 0; i < count; i++){
         all.push(i)
       }
@@ -156,7 +153,7 @@ export function filterToList(readQueryString) {
     if (!list || list.length == 0){
       list = all
     }
-    else if (fields[linkIdToDataset('selection')].active && filters[linkIdToDataset('selection')].invert){
+    else if (fields['selection'].active && filters['selection'].invert){
       list = filterArrayFromList(list,all)
     }
     state.filters.allIds.forEach(id => {

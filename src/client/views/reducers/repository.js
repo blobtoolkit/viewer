@@ -122,13 +122,22 @@ export function loadDataset(id) {
   }
 }
 
+import { history } from './history'
+
+let dataset = null
+if (history.location){
+  let path = history.location.pathname
+  dataset = path.replace('/view/','')
+  console.log(dataset)
+}
+
 export const selectDataset = createAction('SELECT_DATASET')
 export const selectedDataset = handleAction(
   'SELECT_DATASET',
   (state, action) => (
     action.payload
   ),
-  null
+  dataset
 )
 
 export const getDatasetMeta = (state,id) => deep(state,['availableDatasets','byId',id]) || {}

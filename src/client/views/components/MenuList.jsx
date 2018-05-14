@@ -10,7 +10,6 @@ import { getSelectedList, updateSelectedList, getIdentifiersForList } from '../r
 import ListModal from './ListModal';
 
 const ListItem = ({id,list,params,onClick,identifiers,active}) => {
-
   let css = styles.menu_item
   if (active) css += ' '+styles.active
   let obj = {id,params,identifiers}

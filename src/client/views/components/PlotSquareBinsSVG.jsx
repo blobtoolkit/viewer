@@ -27,14 +27,12 @@ export default class PlotSquareBinsSVG extends React.Component {
 }
 
 const SquareBinsSVG = ({ data = [], css = '' }) => {
-  let squares = []
-  data.forEach((datum,i)=>{
-    let color = datum.color || '#999'
-    squares.push(<rect key={i} className={styles.square} color={color} x={datum.x} y={datum.y} height={datum.height} width={datum.width} />)
-  })
+  css = styles.square
   return (
     <g className={styles.padded_main}>
-    {squares}
+    {data.map(square =>
+      <PlotSquareBinSVG key={square.id} {...square} css={css} />
+    )}
     </g>
   )
 }

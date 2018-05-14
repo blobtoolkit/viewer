@@ -4,7 +4,7 @@ import shallow from 'shallowequal'
 import immutableUpdate from 'immutable-update';
 import store from '../store'
 
-export const getSelectedDatasetId = () => store.getState().selectedDataset || false;
+export const getSelectedDatasetId = (state) => state.selectedDataset || false;
 
 export const linkIdToDataset = (id) => {
   let ds = getSelectedDatasetId()

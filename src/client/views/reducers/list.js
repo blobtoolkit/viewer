@@ -5,7 +5,7 @@ import { byIdSelectorCreator,
   getSimpleByDatasetProperty,
   getSelectedDatasetId,
   linkIdToDataset } from './selectorCreators'
-import { getIdentifiersForCurrentDataset, fetchIdentifiers } from './identifiers'
+import { getIdentifiers, fetchIdentifiers } from './identifiers'
 import immutableUpdate from 'immutable-update';
 import deep from 'deep-get-set'
 import shallow from 'shallowequal'
@@ -20,13 +20,12 @@ export const lists = handleActions(
   {
     ADD_LIST: (state, action) => (
       immutableUpdate(state, {
-        byId: { [linkIdToDataset(action.payload.id)]: action.payload },
-        allIds: [...state.allIds, linkIdToDataset(action.payload.id)],
-        byDatasetIds: {[getSelectedDatasetId()]: [...getListOfListsByDataset(), linkIdToDataset(action.payload.id)]}
+        byId: { [action.payload.id]: action.payload },
+        allIds: [...state.allIds, action.payload.id]
       })
     ),
     EDIT_LIST: (state, action) => {
-      let id = linkIdToDataset(action.payload.id)
+      let id = action.payload.id
       let fields = Object.keys(action.payload).filter((key)=>{return key != 'id'})
       return immutableUpdate(state, {
         byId: {
@@ -37,41 +36,40 @@ export const lists = handleActions(
   },
   {
     byId: {},
-    allIds: [],
-    byDatasetIds: {}
+    allIds: []
   }
 )
 
-const getListOfListsByDataset = () => {
-  let dsId = getSelectedDatasetId();
+const getListOfLists = () => {
   let state = store.getState()
-  let ids = state.lists ? (state.lists.byDatasetIds[dsId] || []) : []
+  let ids = state.lists.allIds || []
   return ids
 }
 
-export const getListsForCurrentDataset = (state) => {
-  let dsId = getSelectedDatasetId();
-  let ids = state.lists.byDatasetIds[dsId] || []
-  let lists = ids.map(i => state.lists.byId[i])
+export const getLists = (state) => {
+  let ids = state.lists.allIds || []
+  let lists = ids.map(i => state.lists.allIds[i])
   return lists
 }
 
 
 export const updateSelectedList = createAction('UPDATE_SELECTED_LIST')
-export const selectedList = handleSimpleByDatasetAction('UPDATE_SELECTED_LIST')
-const createSelectorForSelectedList = byIdSelectorCreator();
-export const getSelectedList = createSelectorForSelectedList(
-  getSelectedDatasetId,
-  getSimpleByDatasetProperty('selectedList'),
-  id => id
+export const selectedList = handleAction(
+  'UPDATE_SELECTED_LIST',
+  (state,action) => (
+    action.payload
+  ),
+  null
 )
+const createSelectorForSelectedList = byIdSelectorCreator();
+export const getSelectedList = state => state.selectedList
 
-const getListById = (state,id) => state.lists.byId[linkIdToDataset(getSelectedList(store.getState()))] || {}
+const getListById = (state,id) => state.lists.byId[getSelectedList(state)] || {}
 const createSelectorForListIdentifiers = byIdSelectorCreator();
 export const getIdentifiersForList = createSelectorForListIdentifiers(
   getSelectedList,
   getListById,
-  getIdentifiersForCurrentDataset,
+  getIdentifiers,
   (list,ids) => {
     let ret = [];
     (list.list || []).forEach(index => {ret.push(ids[index])})

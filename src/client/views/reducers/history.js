@@ -5,13 +5,17 @@ import qs from 'qs'
 export const history = createHistory();
 export default history;
 
-export const parseQueryString = (hist=history) => {
-    let currentQuery = ''
-    if (hist.location){
-      currentQuery = hist.location.search || ''
-    }
+export const parseQueryString = createSelector(
+  (state) => history.location ? history.location.search : '',
+  (loc) => {
+
+    let currentQuery = loc//''
+    // if (history.location){
+    //   currentQuery = history.location.search || ''
+    // }
     return qs.parse(currentQuery.replace('?',''))
-}
+  }
+)
 
 const createSelectorForQueryValue = byIdSelectorCreator();
 
@@ -22,17 +26,18 @@ export const getQueryValue = createSelectorForQueryValue(
   _getQueryIdAsMemoKey,
   parseQueryString,
   (id, parsed) => {
+    console.log(parsed)
     return parsed[id]
   }
 )
 
 // export const parseQueryString = () => {
-//   let currentQuery = hist.location.search || ''
+//   let currentQuery = history.location.search || ''
 //   return qs.parse(currentQuery.replace('?',''))
 // }
 
-export const queryValue = (value,hist=history) => {
-  let currentQuery = hist.location.search || ''
+export const queryValue = (value) => {
+  let currentQuery = history.location.search || ''
   let parsed = qs.parse(currentQuery.replace('?',''))
   if (parsed.hasOwnProperty(value) && parsed[value] != 'false'){
     return parsed[value]
@@ -40,38 +45,38 @@ export const queryValue = (value,hist=history) => {
   return false
 }
 
-export const addQueryValues = (values,hist=history) => {
-  let currentSearch = hist.location.search || ''
-  let currentHash = hist.location.hash || ''
+export const addQueryValues = (values,search,hash) => {
+  let currentSearch = search || history.location.search || ''
+  let currentHash = hash || history.location.hash || ''
   let parsed = qs.parse(currentSearch.replace('?',''))
   Object.keys(values).forEach(key => {
     parsed[key] = values[key]
   })
-  hist.push({hash:currentHash,search:qs.stringify(parsed)})
+  history.replace({hash:currentHash,search:qs.stringify(parsed)})
 }
 
-export const removeQueryValues = (values,hist=history) => {
-  let currentSearch = hist.location.search || ''
-  let currentHash = hist.location.hash || ''
+export const removeQueryValues = (values) => {
+  let currentSearch = history.location.search || ''
+  let currentHash = history.location.hash || ''
   let parsed = qs.parse(currentSearch.replace('?',''))
   values.forEach(key => {
     delete parsed[key]
   })
-  hist.push({hash:currentHash,search:qs.stringify(parsed)})
+  history.push({hash:currentHash,search:qs.stringify(parsed)})
 }
 
-export const hashValue = (hist=history) => {
-  let currentHash = hist.location.hash || ''
+export const hashValue = () => {
+  let currentHash = history.location.hash || ''
   return currentHash.replace('#','')
 }
 
-export const toggleHash = (value,hist=history) => {
+export const toggleHash = (value) => {
   let currentHash = hashValue()
-  let currentQuery = hist.location.search || ''
+  let currentQuery = history.location.search || ''
   if (currentHash && currentHash == value){
-    hist.push({hash:'',search:currentQuery})
+    history.push({hash:'',search:currentQuery})
   }
   else {
-    hist.push({hash:'#'+value,search:currentQuery})
+    history.push({hash:'#'+value,search:currentQuery})
   }
 }
