@@ -1,7 +1,6 @@
 import { createAction, handleAction, handleActions } from 'redux-actions'
 import { createSelector } from 'reselect'
-import { byIdSelectorCreator,
-  linkIdToDataset } from './selectorCreators'
+import { byIdSelectorCreator } from './selectorCreators'
 import immutableUpdate from 'immutable-update';
 import deep from 'deep-get-set'
 import store from '../store'
@@ -18,8 +17,8 @@ import { getQueryValue, queryValue } from './history'
 
 
 const createSelectorForFilterId = byIdSelectorCreator();
-const _getFilterIdAsMemoKey = (state, filterId) => linkIdToDataset(filterId);
-const getMetaDataForFilter = (state, filterId) => state.filters ? state.filters.byId[linkIdToDataset(filterId)] : {};
+const _getFilterIdAsMemoKey = (state, filterId) => filterId
+const getMetaDataForFilter = (state, filterId) => state.filters ? state.filters.byId[filterId] : {};
 
 export const getDetailsForFilterId = createSelectorForFilterId(
   _getFilterIdAsMemoKey,

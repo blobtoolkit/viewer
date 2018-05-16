@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom'
 import Spinner from './Spinner'
 import { createSelector } from 'reselect'
 import { fetchIdentifiers } from '../reducers/identifiers'
-import { getSelectedList, updateSelectedList, getIdentifiersForList } from '../reducers/list'
+import { getSelectedList, updateSelectedList, getIdentifiersForList, chooseList } from '../reducers/list'
 import ListModal from './ListModal';
 
 const ListItem = ({id,list,params,onClick,identifiers,active}) => {
@@ -34,7 +34,7 @@ class MenuList extends React.Component {
     this.mapDispatchToProps = dispatch => {
       return {
         onClick: (id) => {
-          dispatch(updateSelectedList(id))
+          dispatch(chooseList(id))
           dispatch(fetchIdentifiers())
         }
       }

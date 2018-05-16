@@ -3,13 +3,14 @@ import { connect } from 'react-redux'
 //import styles from './Plot.scss'
 import { getAxisTitle } from '../reducers/plotData'
 import { getPlotShape,
-  setPlotShape,
+  choosePlotShape,
   getPlotResolution,
   setPlotResolution,
+  choosePlotResolution,
   getZReducer,
-  setZReducer,
+  chooseZReducer,
   getZScale,
-  setZScale,
+  chooseZScale,
   getTransformFunctionParams,
   setTransformFunction } from '../reducers/plotParameters'
 import styles from './Layout.scss'
@@ -30,7 +31,7 @@ import Palettes from './Palettes'
 import MenuItem from './MenuItem'
 import ToolTips from './ToolTips'
 import { withRouter } from 'react-router-dom'
-import { addQueryValues } from '../reducers/history'
+import Timeout from './Timeout'
 
 const DisplayMenu = ({
   title,
@@ -94,24 +95,14 @@ class MenuDisplayMain extends React.Component {
     this.resChange = null
     this.mapDispatchToProps = dispatch => {
       return {
-        onSelectShape: shape => {
-          addQueryValues({plotShape:shape})
-          return dispatch(setPlotShape(shape))
-        },
+        onSelectShape: shape => dispatch(choosePlotShape(shape)),
         onChangeResolution: value => {
-          clearTimeout(this.resChange)
-          this.resChange = setTimeout(()=>addQueryValues({plotResolution:value}),500)
-          // addSearchItems(this.props.history,{plotResolution:value})
+          this.props.clearTimeouts()
+          this.props.setTimeout(()=>dispatch(choosePlotResolution(value)),500)
           return dispatch(setPlotResolution(value))
         },
-        onSelectReducer: reducer => {
-          addQueryValues({zReducer:reducer})
-          dispatch(setZReducer(reducer))
-        },
-        onSelectScale: reducer => {
-          addQueryValues({zScale:reducer})
-          dispatch(setZScale(reducer))
-        },
+        onSelectReducer: reducer => dispatch(chooseZReducer(reducer)),
+        onSelectScale: scale => dispatch(chooseZScale(scale)),
         onChangeTransform: object => dispatch(setTransformFunction(object))
       }
     }
@@ -136,4 +127,4 @@ class MenuDisplayMain extends React.Component {
     return <DisplayMain {...this.props}/>
   }
 }
-export default withRouter(MenuDisplayMain)
+export default Timeout(MenuDisplayMain)

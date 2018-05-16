@@ -70,6 +70,7 @@ class FieldMenu extends React.Component {
   }
 
   render(){
+    // console.log(this.props)
     if (!this.props.isActive){
       return (
         <div className={styles.menu} style={{left:this.props.offset}}>

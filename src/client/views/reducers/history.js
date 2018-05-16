@@ -26,7 +26,6 @@ export const getQueryValue = createSelectorForQueryValue(
   _getQueryIdAsMemoKey,
   parseQueryString,
   (id, parsed) => {
-    console.log(parsed)
     return parsed[id]
   }
 )
@@ -35,6 +34,10 @@ export const getQueryValue = createSelectorForQueryValue(
 //   let currentQuery = history.location.search || ''
 //   return qs.parse(currentQuery.replace('?',''))
 // }
+
+export const qsDefault = (param,value) => {
+  return queryValue(param) || value
+}
 
 export const queryValue = (value) => {
   let currentQuery = history.location.search || ''
@@ -63,6 +66,11 @@ export const removeQueryValues = (values) => {
     delete parsed[key]
   })
   history.push({hash:currentHash,search:qs.stringify(parsed)})
+}
+
+export const clearQuery = () => {
+  let currentHash = history.location.hash || ''
+  history.push({hash:currentHash,search:''})
 }
 
 export const hashValue = () => {

@@ -1,6 +1,6 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import { getAllPalettes, selectPalette, editPalette } from '../reducers/color'
+import { getAllPalettes, selectPalette, editPalette, choosePalette, chooseColors } from '../reducers/color'
 import PalettesComp from '../components/Palettes'
 import { withRouter } from 'react-router-dom'
 import { addQueryValues } from '../reducers/history'
@@ -16,10 +16,9 @@ class Palettes extends React.Component {
     this.mapDispatchToProps = dispatch => {
       return {
         selectPalette: (id) => {
-          addQueryValues({palette:id})
-          return dispatch(selectPalette(id))
+          return dispatch(choosePalette(id))
         },
-        editPalette: (obj) => {return dispatch(editPalette(obj))}
+        editPalette: (obj) => {return dispatch(chooseColors(obj))}
       }
     }
   }

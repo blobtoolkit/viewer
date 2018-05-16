@@ -261,7 +261,6 @@ export function fetchRawData(id) {
 export const addAllFields = (dispatch,fields,flag,meta) => {
   if (flag) {
     dispatch(clearFields)
-    console.log(fields)
     dispatch(addTopLevelFields(fields))
   }
   dispatch(addField({
@@ -333,21 +332,22 @@ export const getFieldHierarchy = createSelector(
   (list, fields) => {
     function processFields(list,fields) {
       let hierarchy = []
-      list.forEach((id) => {
+      list.forEach((field) => {
+          let id = field.id
           if (!fields[id] || (fields[id].type != 'variable' &&
               fields[id].type != 'category' &&
               fields[id].id != 'userDefined' &&
               fields[id].type != 'selection')){
                 return hierarchy
               }
-          let base_id = id.replace(/^\w+?_/,'')
+          let base_id = id//id.replace(/^\w+?_/,'')
           let obj = {id:base_id,hasRecords:true};
           if (fields[id].hasOwnProperty('children')){
             obj.hasRecords = false
           }
           let children = (fields[id].children || []).concat(fields[id].data || [])
           if (children.length > 0){
-            obj.children = processFields(children.map(f=>f.id),fields)
+            obj.children = processFields(children,fields)
           }
           hierarchy.push(obj)
       })

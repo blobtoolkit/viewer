@@ -6,49 +6,76 @@ import { byIdSelectorCreator,
 import { getMainPlot } from './plot';
 import immutableUpdate from 'immutable-update';
 import store from '../store'
-import { queryValue } from './history'
+import { queryValue, qsDefault } from './history'
+import queryToStore from '../querySync'
 
 export const setPlotShape = createAction('SET_PLOT_SHAPE')
+export const choosePlotShape = (plotShape) => {
+  return function (dispatch) {
+    queryToStore(dispatch,{plotShape})
+  }
+}
 export const plotShape = handleAction(
   'SET_PLOT_SHAPE',
   (state, action) => (
     action.payload
   ),
-  'square'
+  qsDefault('plotShape','square')
 )
 export const getPlotShape = state => state.plotShape
 
+
 export const setPlotResolution = createAction('SET_PLOT_RESOLUTION')
+export const choosePlotResolution = (plotResolution) => {
+  return function (dispatch) {
+    queryToStore(dispatch,{plotResolution})
+  }
+}
 export const plotResolution = handleAction(
   'SET_PLOT_RESOLUTION',
   (state, action) => (
     action.payload
   ),
-  30
+  qsDefault('plotResolution',30)
 )
 export const getPlotResolution = state => state.plotResolution
 
 export const setPlotScale = createAction('SET_PLOT_SCALE')
+export const choosePlotScale = (plotScale) => {
+  return function (dispatch) {
+    queryToStore(dispatch,{plotScale})
+  }
+}
 export const plotScale = handleAction(
   'SET_PLOT_SCALE',
   (state, action) => (
     action.payload
   ),
-  1
+  qsDefault('plotScale',1)
 )
 export const getPlotScale = state => state.plotScale
 
 export const setZScale = createAction('SET_Z_SCALE')
+export const chooseZScale = (zScale) => {
+  return function (dispatch) {
+    queryToStore(dispatch,{zScale})
+  }
+}
 export const zScale = handleAction(
   'SET_Z_SCALE',
   (state, action) => (
     action.payload
   ),
-  'scaleLog'
+  qsDefault('plotScale','scaleSqrt')
 )
 export const getZScale = state => state.zScale
 
 export const setZReducer = createAction('SET_Z_REDUCER')
+export const chooseZReducer = (zReducer) => {
+  return function (dispatch) {
+    queryToStore(dispatch,{zReducer})
+  }
+}
 export const zReducers = {
   sum: arr => {
       let sum = 0;
