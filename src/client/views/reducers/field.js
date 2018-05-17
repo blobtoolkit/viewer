@@ -7,7 +7,7 @@ import immutableUpdate from 'immutable-update';
 import deep from 'deep-get-set'
 import store from '../store'
 import { getSelectedDatasetMeta } from './dataset'
-import { addFilter, editFilter, filterToList } from './filter'
+import { addFilter, editFilter } from './filter'
 import { getDimensionsbyDimensionId, setDimension } from './dimension'
 import * as d3 from 'd3'
 import { queryValue } from './history'
@@ -331,7 +331,6 @@ export const addAllFields = (dispatch,fields,flag,meta) => {
       addAllFields(dispatch,field.data,false,field)
     }
   })
-  //dispatch(filterToList())
 }
 
 

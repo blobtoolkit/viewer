@@ -2,6 +2,8 @@ import { history, queryValue, parseQueryString } from './reducers/history'
 import qs from 'qs'
 import convert from 'color-convert'
 
+export const userColors = ['rgb(166,206,227)','rgb(31,120,180)','rgb(178,223,138)','rgb(51,160,44)','rgb(251,154,153)','rgb(227,26,28)','rgb(253,191,111)','rgb(255,127,0)','rgb(202,178,214)','rgb(106,61,154)']
+
 export const colorToRGB = (color) => {
   if (color.match('rgb')){
     return color
@@ -60,11 +62,10 @@ const mapDispatchToQuery = (
     userColors: {
       type: 'EDIT_PALETTE',
       payload: (k,v) => {
-        console.log(v)
         let user = []
         v.forEach(o=>{user[o.index] = colorToRGB(o.value)})
         return {id:'user',user}
-      },
+      }
     },
     axes: {
       type: 'EDIT_PLOT',
@@ -90,14 +91,12 @@ const mapDispatchToQuery = (
             if (!keyed(byId[val.field],'range')){
               byId[val.field].range = []
             }
-            console.log(v)
             byId[val.field].range[val.index == 'min' ? 0 : 1] = val.value
           }
           else {
             byId[val.field][val.index] = val.value
           }
         })
-        console.log(byId)
         Object.keys(byId).forEach(id =>{
           actions.push({
             type: 'EDIT_FILTER',
@@ -138,33 +137,43 @@ const mapDispatchToQuery = (
     },
     color0: {
       array: (k,v) => ({key:'userColors',index:0,value:v}),
+      default: userColors[0]
     },
     color1: {
       array: (k,v) => ({key:'userColors',index:1,value:v}),
+      default: userColors[1]
     },
     color2: {
       array: (k,v) => ({key:'userColors',index:2,value:v}),
+      default: userColors[2]
     },
     color3: {
       array: (k,v) => ({key:'userColors',index:3,value:v}),
+      default: userColors[3]
     },
     color4: {
       array: (k,v) => ({key:'userColors',index:4,value:v}),
+      default: userColors[4]
     },
     color5: {
       array: (k,v) => ({key:'userColors',index:5,value:v}),
+      default: userColors[5]
     },
     color6: {
       array: (k,v) => ({key:'userColors',index:6,value:v}),
+      default: userColors[6]
     },
     color7: {
       array: (k,v) => ({key:'userColors',index:7,value:v}),
+      default: userColors[7]
     },
     color8: {
       array: (k,v) => ({key:'userColors',index:8,value:v}),
+      default: userColors[8]
     },
     color9: {
       array: (k,v) => ({key:'userColors',index:9,value:v}),
+      default: userColors[9]
     },
     xField: {
       array: (k,v) => ({key:'axes',index:'x',value:v}),
@@ -197,7 +206,7 @@ const mapDispatchToQuery = (
       array: (k,v) => ({key:'field',index:'min',...v}),
     },
     Keys: {
-      array: (k,v) => ({key:'filter',field:v.field,index:'keys',value:v.value.split(',')}),
+      array: (k,v) => ({key:'filter',field:v.field,index:'keys',value:v.value.split(',').map(x=>x*1)}),
       default: ''
     }
   }

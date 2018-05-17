@@ -8,7 +8,7 @@ import { getDetailsForFieldId,
   getRawDataForFieldId,
   getBinsForFieldId } from './field'
 import { getDimensionsbyDimensionId } from './dimension'
-import { getFilteredList } from './filter'
+import { getFilteredList, updateFilterList } from './filter'
 import { getSelectedDatasetMeta } from './dataset'
 import { getColorPalette } from './color'
 import { getMainPlot } from './plot'
@@ -200,3 +200,183 @@ export const getFilteredSummary = createSelector(
     }
   }
 )
+//
+// const filterRangeToList = (low,high,arr,list,invert) => {
+//   let ret = []
+//   let len = list.length
+//   for (var i = 0; i < len; i++){
+//     if (invert){
+//       if (arr[list[i]] < low || arr[list[i]] > high){
+//         ret.push(list[i]);
+//       }
+//     }
+//     else {
+//       if (arr[list[i]] >= low && arr[list[i]] <= high){
+//         ret.push(list[i]);
+//       }
+//     }
+//   }
+//   return ret
+// }
+//
+// const filterCategoriesToList = (keys,arr,list,invert) => {
+//   let ret = []
+//   let len = list.length
+//   for (var i = 0; i < len; i++){
+//     if (invert){
+//       if (keys.includes(arr[list[i]])){
+//         ret.push(list[i]);
+//       }
+//     }
+//     else {
+//       if (!keys.includes(arr[list[i]])){
+//         ret.push(list[i]);
+//       }
+//     }
+//
+//   }
+//   return ret
+// }
+//
+// const filterArrayToList = (arr,list) => {
+//   let ret = []
+//   let a=0, l=0;
+//   while (a < arr.length && l < list.length){
+//     if (arr[a] < list[l] ){
+//       a++
+//     }
+//     else if (arr[a] > list[l]){
+//       l++
+//     }
+//     else {
+//       ret.push(arr[a])
+//       a++
+//       l++
+//     }
+//   }
+//   return ret
+// }
+//
+// const filterArrayFromList = (arr,list) => {
+//   let ret = []
+//   let a=0, l=0;
+//   while (a < arr.length && l < list.length){
+//     if (arr[a] < list[l] ){
+//       a++
+//     }
+//     else if (arr[a] > list[l]){
+//       ret.push(list[l])
+//       l++
+//     }
+//     else {
+//       a++
+//       l++
+//     }
+//   }
+//   return ret
+// }
+//
+// export function filterToList(readQueryString) {
+//   return function(dispatch){
+//     let state = store.getState();
+//     let filters = state.filters.byId;
+//     let fields = state.fields.byId;
+//     let data = state.rawData.byId;
+//     let count = state.availableDatasets.byId[state.selectedDataset].records
+//     let list = fields['selection'].active ? state.selectedRecords.byDataset[state.selectedDataset] : undefined
+//     let all = []
+//     if (!list || list.length == 0 || filters['selection'].invert){
+//       for (let i = 0; i < count; i++){
+//         all.push(i)
+//       }
+//     }
+//     if (!list || list.length == 0){
+//       list = all
+//     }
+//     else if (fields['selection'].active && filters['selection'].invert){
+//       list = filterArrayFromList(list,all)
+//     }
+//     state.filters.allIds.forEach(id => {
+//       if (fields[id] && fields[id].active && filters[id]){
+//         if (filters[id].type == 'range'){
+//           let minstr = id+'--Min'
+//           let maxstr = id+'--Max'
+//           let invstr = id+'--Inv'
+//           let range = filters[id].range
+//           let limit = fields[id].range
+//           let remove = []
+//           let qmin = 1 * queryValue(minstr)
+//           let qmax = 1 * queryValue(maxstr)
+//           if (!shallow(range,limit)){
+//             list = filterRangeToList(range[0],range[1],data[id].values,list,filters[id].invert)
+//             let values = {}
+//             if (range[0] > limit[0]){
+//               values[minstr] = range[0]
+//             }
+//             else {
+//               remove.push(minstr)
+//             }
+//             if (range[1] < limit[1]){
+//               values[maxstr] = range[1]
+//             }
+//             else {
+//               remove.push(maxstr)
+//             }
+//             if (filters[id].invert){
+//               values[invstr] = true
+//             }
+//             else if (queryValue(invstr)){
+//               values[invstr] = false
+//             }
+//             addQueryValues(values)
+//           }
+//           else {
+//             remove.push(minstr)
+//             remove.push(maxstr)
+//           }
+//           if (remove.length > 0){
+//             removeQueryValues(remove)
+//           }
+//         }
+//         else if (filters[id].type == 'list' || filters[id].type == 'category'){
+//           //let data_id = filters[id].clonedFrom || id
+//           if (data[id]){
+//             list = filterCategoriesToList(filters[id].keys,data[id].values,list,filters[id].invert)
+//             let keystr = id+'--Keys'
+//             let invstr = id+'--Inv'
+//             if (filters[id].keys.length > 0){
+//               let bins = getBinsForFieldId(state,id)
+//               let toggled = []
+//               bins.forEach((bin,i)=>{
+//                 toggled[i] = bin.keys.some(key =>{
+//                   return filters[id].keys.indexOf(key) != -1
+//                 })
+//               })
+//               console.log(filters[id].keys)
+//               console.log(bins)
+//               console.log(toggled)
+//               dispatch(editFilter({id,toggled}))
+//               let values = {}
+//               values[keystr] = filters[id].keys.join()
+//               if (filters[id].invert){
+//                 values[invstr] = true
+//               }
+//               else {
+//                 values[invstr] = false
+//               }
+//               addQueryValues(values)
+//             }
+//             else {
+//               removeQueryValues([keystr,invstr])
+//             }
+//           }
+//           //console.log(data_id)
+//         }
+//         // else if (filters[id].type == 'selection'){
+//         //   list = filterArrayToList(filters[id].list,list)
+//         // }
+//       }
+//     })
+//     dispatch(updateFilterList(list))
+//   }
+// }
