@@ -6,8 +6,8 @@ import { byIdSelectorCreator,
 import { getMainPlot } from './plot';
 import immutableUpdate from 'immutable-update';
 import store from '../store'
-import { queryValue, qsDefault } from './history'
-import queryToStore from '../querySync'
+import { queryValue } from './history'
+import { queryToStore, qsDefault } from '../querySync'
 
 export const setPlotShape = createAction('SET_PLOT_SHAPE')
 export const choosePlotShape = (plotShape) => {
@@ -20,7 +20,7 @@ export const plotShape = handleAction(
   (state, action) => (
     action.payload
   ),
-  qsDefault('plotShape','square')
+  qsDefault('plotShape')
 )
 export const getPlotShape = state => state.plotShape
 
@@ -36,7 +36,7 @@ export const plotResolution = handleAction(
   (state, action) => (
     action.payload
   ),
-  qsDefault('plotResolution',30)
+  qsDefault('plotResolution')
 )
 export const getPlotResolution = state => state.plotResolution
 
@@ -51,7 +51,7 @@ export const plotScale = handleAction(
   (state, action) => (
     action.payload
   ),
-  qsDefault('plotScale',1)
+  qsDefault('plotScale')
 )
 export const getPlotScale = state => state.plotScale
 
@@ -66,7 +66,7 @@ export const zScale = handleAction(
   (state, action) => (
     action.payload
   ),
-  qsDefault('plotScale','scaleSqrt')
+  qsDefault('zScale')
 )
 export const getZScale = state => state.zScale
 

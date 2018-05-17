@@ -35,10 +35,6 @@ export const getQueryValue = createSelectorForQueryValue(
 //   return qs.parse(currentQuery.replace('?',''))
 // }
 
-export const qsDefault = (param,value) => {
-  return queryValue(param) || value
-}
-
 export const queryValue = (value) => {
   let currentQuery = history.location.search || ''
   let parsed = qs.parse(currentQuery.replace('?',''))

@@ -159,10 +159,9 @@ export function filterToList(readQueryString) {
     state.filters.allIds.forEach(id => {
       if (fields[id] && fields[id].active && filters[id]){
         if (filters[id].type == 'range'){
-          let localID = id.replace(/^[^_]+_/,'')
-          let minstr = 'min'+localID
-          let maxstr = 'max'+localID
-          let invstr = 'inv'+localID
+          let minstr = id+'--Min'
+          let maxstr = id+'--Max'
+          let invstr = id+'--Inv'
           let range = filters[id].range
           let limit = fields[id].range
           let remove = []
@@ -203,9 +202,8 @@ export function filterToList(readQueryString) {
           //let data_id = filters[id].clonedFrom || id
           if (data[id]){
             list = filterCategoriesToList(filters[id].keys,data[id].values,list,filters[id].invert)
-            let localID = id.replace(/^[^_]+_/,'')
-            let keystr = 'keys'+localID
-            let invstr = 'inv'+localID
+            let keystr = id+'--Keys'
+            let invstr = id+'--Inv'
             if (filters[id].keys.length > 0){
               let values = {}
               values[keystr] = filters[id].keys.join()

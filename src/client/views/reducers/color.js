@@ -7,27 +7,9 @@ import immutableUpdate from 'immutable-update';
 import deep from 'deep-get-set'
 import shallow from 'shallowequal'
 import store from '../store'
-import queryToStore from '../querySync'
+import { queryToStore, colorToRGB, qsDefault } from '../querySync'
 import { queryValue } from '../reducers/history'
-import { addQueryValues, qsDefault } from '../reducers/history'
-import convert from 'color-convert'
-
-const colorToRGB = (color) => {
-  if (color.match('rgb')){
-    return color
-  }
-  else if (color.match('hsl')){
-    color = color.replace('hsl(','').replace(')','').split(',')
-    color = convert.hsl.rgb(color)
-  }
-  else {
-    color = convert.keyword.rgb(color)
-  }
-  if (color){
-    color = 'rgb('+color.join()+')'
-  }
-  return color
-}
+import { addQueryValues } from '../reducers/history'
 
 export const addPalette = createAction('ADD_PALETTE')
 export const editPalette = createAction('EDIT_PALETTE')
@@ -81,7 +63,7 @@ export const selectedPalette = handleAction(
   (state, action) => (
     action.payload
   ),
-  qsDefault('palette','default')
+  qsDefault('palette')
 )
 
 export const choosePalette = (palette) => {
@@ -94,6 +76,7 @@ export const choosePalette = (palette) => {
 export const chooseColors = (colors) => {
   return function (dispatch) {
     let existing = getColorPalette(store.getState())
+    console.log(colors)
     queryToStore(dispatch,{colors:{colors,existing}})
     //dispatch(selectPalette(palette))
   }

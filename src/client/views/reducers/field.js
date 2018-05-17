@@ -32,6 +32,11 @@ const addFields = createAction('ADD_FIELDS')
 const replaceFields = createAction('REPLACE_FIELDS')
 const clearFields = createAction('CLEAR_FIELDS')
 
+function isNumeric(n) {
+  if ((typeof n === 'undefined') || n == 'NaN') return false
+  return !isNaN(parseFloat(n)) && isFinite(n)
+}
+
 export const fields = handleActions(
   {
     ADD_FIELD: (state, action) => (
@@ -43,6 +48,11 @@ export const fields = handleActions(
     EDIT_FIELD: (state, action) => {
       let id = action.payload.id
       let fields = Object.keys(action.payload).filter((key)=>{return key != 'id'})
+      if (action.payload.range){
+        let current = state.byId[id].range.slice()
+        action.payload.range[0] = isNumeric(action.payload.range[0]) ? action.payload.range[0] : current[0]
+        action.payload.range[1] = isNumeric(action.payload.range[1]) ? action.payload.range[1] : current[1]
+      }
       return immutableUpdate(state, {
         byId: {
           [id]: Object.assign(...fields.map(f => ({[f]: action.payload[f]})))
@@ -240,17 +250,20 @@ export function fetchRawData(id) {
           }
           if (min == 0) min = 0.001
           let scale = meta.xScale.copy().domain([min,max]).nice(25)
-          dispatch(editField({id,range:scale.domain()}))
-          let range = scale.domain()
-          range[0] = 1*queryValue('min'+id) || range[0]
-          range[1] = 1*queryValue('max'+id) || range[1]
-          let invert = queryValue('inv'+id) || false
+          let limit = scale.domain().slice(0)
+          limit[0] = 1*queryValue(id+'--LimitMin') || limit[0]
+          limit[1] = 1*queryValue(id+'--LimitMax') || limit[1]
+          dispatch(editField({id,range:limit}))
+          let range = scale.domain().slice(0)
+          range[0] = 1*queryValue(id+'--Min') || range[0]
+          range[1] = 1*queryValue(id+'--Max') || range[1]
+          let invert = queryValue(id+'--Inv') || false
           dispatch(editFilter({id,range,invert,limit:scale.domain()}))
         }
         else {
-          let keystr = queryValue('keys'+id) || ''
+          let keystr = queryValue(id+'--Keys') || ''
           let keys = keystr.split(',').filter(Boolean).map(Number)
-          let invert = queryValue('inv'+id) || false
+          let invert = queryValue(id+'--Inv') || false
           dispatch(editFilter({id,keys,invert}))
         }
         dispatch(receiveRawData({id,json}))

@@ -8,18 +8,20 @@ import deep from 'deep-get-set'
 import store from '../store'
 import { getQueryValue } from './history'
 import { editField } from './field'
+import { qsDefault } from '../querySync'
 
 export const editPlot = createAction('EDIT_PLOT')
 const defaultPlot = () => {
-  let x = getQueryValue('xField') || 'gc'
-  let y = getQueryValue('yField') || 'cov0_cov'
-  let z = getQueryValue('zField') || 'length'
-  return {
-    x,
-    y,
-    z,
-    cat:'bestsumorder_phylum'
-  }
+  // let x = getQueryValue('xField') || 'gc'
+  // let y = getQueryValue('yField') || 'cov0_cov'
+  // let z = getQueryValue('zField') || 'length'
+  // return {
+  //   x,
+  //   y,
+  //   z,
+  //   cat:'bestsumorder_phylum'
+  // }
+  return qsDefault('axes')
 }
 export const plot = handleAction(
   'EDIT_PLOT',

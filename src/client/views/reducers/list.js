@@ -10,7 +10,8 @@ import immutableUpdate from 'immutable-update';
 import deep from 'deep-get-set'
 import shallow from 'shallowequal'
 import store from '../store'
-import { parseQueryString, clearQuery } from './history'
+import { history, parseQueryString, clearQuery } from './history'
+import { filterToList } from './filter'
 import queryToStore from '../querySync'
 
 export const addList = createAction('ADD_LIST')
@@ -52,8 +53,10 @@ export const updateSelectedList = createAction('UPDATE_SELECTED_LIST')
 export const chooseList = (id) => {
   return function (dispatch) {
     let list = store.getState().lists.byId[id]
-    clearQuery()
-    queryToStore(dispatch,list.params)
+    //clearQuery()
+    queryToStore(dispatch,Object.assign({},list.params),true).then((v)=>{
+      dispatch(filterToList())
+    })
     //dispatch(selectPalette(palette))
   }
 }
