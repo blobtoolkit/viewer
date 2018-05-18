@@ -6,18 +6,19 @@ import { Link } from 'react-router-dom'
 import Spinner from './Spinner'
 import { createSelector } from 'reselect'
 import { fetchIdentifiers } from '../reducers/identifiers'
+import { getSelectedDatasetMeta } from '../reducers/dataset'
 import { getSelectedList, updateSelectedList, getIdentifiersForList, chooseList } from '../reducers/list'
 import ListModal from './ListModal';
 
-const ListItem = ({id,list,params,onClick,identifiers,active}) => {
+const ListItem = ({id,list,params,onClick,identifiers,active,onChooseList, meta}) => {
   let css = styles.menu_item
   if (active) css += ' '+styles.active
   let obj = {id,params,identifiers}
   return (
     <div className={css} onClick={()=>onClick(id)}>
-    <ListModal name={id} selected={active} dismiss={()=>onClick(null)} list={obj}>&nbsp;</ListModal>
+    <ListModal name={id} selected={active} dismiss={()=>onClick(null)} list={obj} type={meta.record_type} chooseList={onChooseList}>&nbsp;</ListModal>
       <h3>{id}</h3>
-      <span className={styles.menu_subtitle}>{list.length}</span>
+      <span className={styles.menu_subtitle}>{list.length} {meta.record_type}</span>
     </div>
   )
 }
@@ -28,13 +29,17 @@ class MenuList extends React.Component {
     this.mapStateToProps = state => {
       return {
         identifiers: getIdentifiersForList(state),
-        active: getSelectedList(state) == this.props.id
+        active: getSelectedList(state) == this.props.id,
+        meta: getSelectedDatasetMeta(state)
       }
     }
     this.mapDispatchToProps = dispatch => {
       return {
-        onClick: (id) => {
+        onChooseList: (id) => {
           dispatch(chooseList(id))
+        },
+        onClick: (id) => {
+          dispatch(updateSelectedList(id))
           dispatch(fetchIdentifiers())
         }
       }

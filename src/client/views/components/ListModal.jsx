@@ -1,6 +1,8 @@
 import React from 'react';
 import {ModalContainer, ModalDialog} from 'react-modal-dialog';
 import { addQueryValues } from '../reducers/history'
+import styles from './Layout.scss'
+import JSONPretty from 'react-json-pretty';
 
 class ListModal extends React.Component {
   constructor(props) {
@@ -28,17 +30,26 @@ class ListModal extends React.Component {
   }
 
   render() {
+    let inParams = this.props.list.params;
+    let params = {};
+    Object.keys(inParams).sort().forEach(function(key) {
+      params[key] = inParams[key];
+    });
     return (
       <div style={{position:'absolute', top:0, right:0, bottom:0, left:0}} onClick={()=>this.handleClick()}>
         {
           this.state.isShowingModal &&
           <ModalContainer onClose={()=>this.handleClose()}>
             <ModalDialog onClose={()=>this.handleClose()}>
-              <h1>List summary</h1>
-              <h2>Name: {this.props.name}</h2>
-              <button onClick={()=>this._downloadJSONFile(this.props.name,this.props.list)}>Download JSON</button>
-              <button onClick={()=>this.loadFromList(this.props.list)}>Load List</button>
-              <p>Metadata, view and copy list functions coming soon</p>
+              <div className={styles.modal}>
+                <a className={styles.button} onClick={()=>this._downloadJSONFile(this.props.name,this.props.list)}>Download JSON</a>
+                &nbsp;<a className={styles.button} onClick={()=>{this.props.chooseList(this.props.name);this.handleClose()}}>Load List</a>
+                <h2>{this.props.name}</h2>
+                <p>{this.props.list.identifiers.length} {this.props.type}</p>
+                <div className={styles.code_block}>
+                  <JSONPretty id="json-pretty" json={params}/>
+                </div>
+              </div>
             </ModalDialog>
           </ModalContainer>
         }
