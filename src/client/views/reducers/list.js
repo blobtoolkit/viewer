@@ -13,6 +13,7 @@ import store from '../store'
 import { history, parseQueryString, clearQuery } from './history'
 import { filterToList } from './filter'
 import queryToStore from '../querySync'
+import { selectNone, addRecords } from './select'
 
 export const addList = createAction('ADD_LIST')
 export const editList = createAction('EDIT_LIST')
@@ -53,7 +54,8 @@ export const updateSelectedList = createAction('UPDATE_SELECTED_LIST')
 export const chooseList = (id) => {
   return function (dispatch) {
     let list = store.getState().lists.byId[id]
-    //clearQuery()
+    dispatch(selectNone())
+    dispatch(addRecords(list.list))
     queryToStore(dispatch,Object.assign({},list.params),true).then((v)=>{
       dispatch(filterToList())
     })

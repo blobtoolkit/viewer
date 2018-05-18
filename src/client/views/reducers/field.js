@@ -248,7 +248,7 @@ export function fetchRawData(id) {
             if (json.values[i] > max) max = json.values[i];
             if (json.values[i] < min) min = json.values[i];
           }
-          if (min == 0) min = 0.001
+          // if (min == 0) min = 0.001
           let scale = meta.xScale.copy().domain([min,max]).nice(25)
           let limit = scale.domain().slice(0)
           limit[0] = 1*queryValue(id+'--LimitMin') || limit[0]

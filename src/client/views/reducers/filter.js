@@ -143,7 +143,7 @@ export function filterToList(readQueryString) {
     let fields = state.fields.byId;
     let data = state.rawData.byId;
     let count = state.availableDatasets.byId[state.selectedDataset].records
-    let list = fields['selection'].active ? state.selectedRecords.byDataset[state.selectedDataset] : undefined
+    let list = fields['selection'].active ? state.selectedRecords : undefined
     let all = []
     if (!list || list.length == 0 || filters['selection'].invert){
       for (let i = 0; i < count; i++){

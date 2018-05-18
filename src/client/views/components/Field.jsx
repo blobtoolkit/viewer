@@ -11,10 +11,10 @@ import { makeGetFieldMetadata,
 import { editFilter, filterToList } from '../reducers/filter'
 import { editPlot } from '../reducers/plot'
 import { getSelectionDisplay,
-  toggleSelection,
-  selectAll,
   selectNone,
-  invertSelection } from '../reducers/select'
+  toggleSelection } from '../reducers/select'
+import { selectAll,
+  invertSelection } from '../reducers/selectTools'
 import { withRouter } from 'react-router-dom'
 import { addQueryValues } from '../reducers/history'
 
