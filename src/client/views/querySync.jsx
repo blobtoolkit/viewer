@@ -70,14 +70,14 @@ const mapDispatchToQuery = (
     axes: {
       type: 'EDIT_PLOT',
       payload: (k,v) => {
-        let obj = Object.assign({},v)
         let plot = {id:'default'}
-        Object.keys(obj).forEach(key=>{
-          plot[key] = obj[key].value
+        v.forEach(o=>{
+          plot[o.index] = o.value
         })
+        console.log(plot)
         return plot
       },
-      default: {x:'gc',y:'cov0_cov',z:'length',cat:'bestsumorder_phylum'}
+      default: {x:queryValue('xField'),y:queryValue('yField'),z:queryValue('zField'),cat:queryValue('catField')}
     },
     filter: {
       actions: (k,v) => {
@@ -100,7 +100,11 @@ const mapDispatchToQuery = (
         Object.keys(byId).forEach(id =>{
           actions.push({
             type: 'EDIT_FILTER',
-            payload: () => byId[id],
+            payload: () => byId[id]
+          })
+          actions.push({
+            type: 'EDIT_FIELD',
+            payload: () => ({id,active:true})
           })
         })
         return actions
@@ -113,7 +117,7 @@ const mapDispatchToQuery = (
         Object.keys(v).forEach(k =>{
           let val = v[k]
           if (!keyed(byId,val.field)){
-            byId[val.field] = {id:val.field}
+            byId[val.field] = {id:val.field,active:true}
           }
           if (val.index.match(/(min|max)/)){
             if (!keyed(byId[val.field],'range')){

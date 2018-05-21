@@ -272,6 +272,17 @@ export function fetchRawData(id) {
 }
 
 export const addAllFields = (dispatch,fields,flag,meta) => {
+  let axes = ['x','y','z','cat']
+  axes.forEach(axis=>{
+    let f = queryValue(axis+'Field')
+    if (f){
+      let index = fields.findIndex(field=>field.id==f)
+      if (index != -1){
+        fields[index].active = true
+        fields[index].preload = true
+      }
+    }
+  })
   if (flag) {
     dispatch(clearFields)
     dispatch(addTopLevelFields(fields))
@@ -300,6 +311,11 @@ export const addAllFields = (dispatch,fields,flag,meta) => {
         }
       })
     }
+    let params = ['Min','Max','Inv','Keys'].map(x=>field.id+'--'+x)
+    if (params.some(p=>queryValue(p))){
+      field.active = true
+      field.preload = true
+    }
     dispatch(addField(field))
     if (field.children){
       addAllFields(dispatch,field.children,false,field)
@@ -307,12 +323,12 @@ export const addAllFields = (dispatch,fields,flag,meta) => {
     else {
       if (field.type == 'variable'){
         let range = field.range.slice(0)
-        let minstr = queryValue('min'+field.id)
-        minstr = minstr ? Number(minstr) : null
-        let maxstr = queryValue('max'+field.id)
-        maxstr = maxstr ? Number(maxstr) : null
-        // let invert = queryValue('inv'+field.id) == 'true'
-        range = [minstr || range[0],maxstr || range[1]]
+        // let minstr = queryValue('min'+field.id)
+        // minstr = minstr ? Number(minstr) : null
+        // let maxstr = queryValue('max'+field.id)
+        // maxstr = maxstr ? Number(maxstr) : null
+        // // let invert = queryValue('inv'+field.id) == 'true'
+        // range = [minstr || range[0],maxstr || range[1]]
         dispatch(addFilter({id:field.id,type:'range',range:field.range.slice(0)}))
       }
       if (field.type == 'category'){

@@ -9,6 +9,7 @@ import store from '../store'
 import { getQueryValue } from './history'
 import { editField } from './field'
 import { qsDefault } from '../querySync'
+import { getDatasetMeta } from '../reducers/repository'
 
 export const editPlot = createAction('EDIT_PLOT')
 const defaultPlot = () => {
@@ -21,7 +22,7 @@ const defaultPlot = () => {
   //   z,
   //   cat:'bestsumorder_phylum'
   // }
-  return qsDefault('axes')
+  return {}
 }
 export const plot = handleAction(
   'EDIT_PLOT',
@@ -31,7 +32,7 @@ export const plot = handleAction(
       Object.assign(...fields.map(f => ({[f]: action.payload[f]})))
     )
   },
-  defaultPlot()
+  {}
 )
 export const getPlot = state => state.plot
 

@@ -6,6 +6,9 @@ import shallow from 'shallowequal'
 import store from '../store'
 import { addAllFields } from './field'
 import { filterToList } from './filter'
+import { editPlot } from './plot'
+import { qsDefault } from '../querySync'
+import { queryValue } from './history'
 
 const apiUrl = window.apiURL || '/api/v1'
 
@@ -114,6 +117,15 @@ export function loadDataset(id) {
     dispatch(setDatasetIsActive(false))
     dispatch(fetchMeta(id)).then(() => {
       let meta = deep(store.getState(),['availableDatasets','byId',id])
+      let plot = meta.plot
+      plot.id = 'default'
+      Object.keys(plot).forEach(key=>{
+        let qv = queryValue(key+'Field')
+        if (qv){
+          plot[key] = qv
+        }
+      })
+      dispatch(editPlot(plot))
       addAllFields(dispatch,meta.fields,1,false,id)
     }).then(()=>setTimeout(()=>{
       dispatch(filterToList())
