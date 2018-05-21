@@ -12,6 +12,7 @@ import shallow from 'shallowequal'
 import store from '../store'
 import { history, parseQueryString, clearQuery } from './history'
 import { filterToList } from './filter'
+import { fetchRawData } from './field'
 import queryToStore from '../querySync'
 import { selectNone, addRecords } from './select'
 
@@ -50,6 +51,22 @@ export const getLists = createSelector(
 )
 
 
+const getAllFields = state => state.fields.byId
+
+const getAllActiveFields = createSelector(
+  getAllFields,
+  fields => {
+    let active = {}
+    Object.keys(fields).forEach(key => {
+      if (fields[key].active){
+        active[key] = fields[key]
+      }
+    })
+    return active
+  }
+)
+
+
 export const updateSelectedList = createAction('UPDATE_SELECTED_LIST')
 export const chooseList = (id) => {
   return function (dispatch) {
@@ -57,6 +74,10 @@ export const chooseList = (id) => {
     dispatch(selectNone())
     dispatch(addRecords(list.list))
     queryToStore(dispatch,Object.assign({},list.params),true).then((v)=>{
+      let fields = getAllActiveFields(store.getState())
+      Object.keys(fields).forEach(field=>{
+        dispatch(fetchRawData(field))
+      })
       dispatch(filterToList())
     })
     //dispatch(selectPalette(palette))

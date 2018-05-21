@@ -42,7 +42,7 @@ class ListModal extends React.Component {
           <ModalContainer onClose={()=>this.handleClose()}>
             <ModalDialog onClose={()=>this.handleClose()}>
               <div className={styles.modal}>
-                <a className={styles.button} onClick={()=>this._downloadJSONFile(this.props.name,this.props.list)}>Download JSON</a>
+                <a className={styles.button} onClick={()=>this._downloadJSONFile(this.props.dataset+'.'+this.props.name,this.props.list)}>Download JSON</a>
                 &nbsp;<a className={styles.button} onClick={()=>{this.props.chooseList(this.props.name);this.handleClose()}}>Load List</a>
                 <h2>{this.props.name}</h2>
                 <p>{this.props.list.identifiers.length} {this.props.type}</p>

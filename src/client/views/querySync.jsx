@@ -68,14 +68,26 @@ const mapDispatchToQuery = (
       }
     },
     axes: {
-      type: 'EDIT_PLOT',
-      payload: (k,v) => {
+      actions: (k,v) => {
         let plot = {id:'default'}
         v.forEach(o=>{
           plot[o.index] = o.value
         })
-        console.log(plot)
-        return plot
+        let actions = [
+          {
+            type: 'EDIT_PLOT',
+            payload: () => plot
+          },
+        ]
+        Object.keys(plot).forEach(axis=>{
+          if (axis != 'id'){
+            actions.push({
+              type: 'EDIT_FIELD',
+              payload: () => ({id:plot[axis],active:true})
+            })
+          }
+        })
+        return actions
       },
       default: {x:queryValue('xField'),y:queryValue('yField'),z:queryValue('zField'),cat:queryValue('catField')}
     },
@@ -324,7 +336,7 @@ export const queryToStore = (dispatch,values,searchReplace,hash) => {
   })
   remove.forEach(key=>{delete parsed[key]})
   history.replace({hash:currentHash,search:qs.stringify(parsed)})
-  return new Promise (resolve => resolve(true))
+  return new Promise (resolve => resolve(parsed))
 }
 
 export default queryToStore;

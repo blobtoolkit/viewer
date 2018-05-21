@@ -99,6 +99,6 @@ export const getSummary = createSelector(
         })
       }
     }
-    return { values,zAxis,bins,palette,other }
+    return { values,zAxis,bins,palette,other,reducer:reducer.id }
   }
 )

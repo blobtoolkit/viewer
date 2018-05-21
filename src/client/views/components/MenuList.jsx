@@ -16,7 +16,7 @@ const ListItem = ({id,list,params,onClick,identifiers,active,onChooseList, meta}
   let obj = {id,params,identifiers}
   return (
     <div className={css} onClick={()=>onClick(id)}>
-    <ListModal name={id} selected={active} dismiss={()=>onClick(null)} list={obj} type={meta.record_type} chooseList={onChooseList}>&nbsp;</ListModal>
+    <ListModal name={id} selected={active} dismiss={()=>onClick(null)} list={obj} type={meta.record_type} dataset={meta.id} chooseList={onChooseList}>&nbsp;</ListModal>
       <h3>{id}</h3>
       <span className={styles.menu_subtitle}>{list.length} {meta.record_type}</span>
     </div>

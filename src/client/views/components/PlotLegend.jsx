@@ -24,7 +24,7 @@ export default class PlotLegend extends React.Component {
   }
 }
 
-const Legend = ({values,zAxis,bins,palette,other}) => {
+const Legend = ({values,zAxis,bins,palette,other,reducer}) => {
   let items = []
   let legendKey
   let format = d3format(".2s")
@@ -33,23 +33,35 @@ const Legend = ({values,zAxis,bins,palette,other}) => {
     let w = 20
     let h = 20
     let gap = 5
+    let headers = ['count']
+    if (reducer != 'count'){
+      headers.push(reducer+' '+zAxis)
+    }
+    if (zAxis == 'length'){
+      headers.push('n50')
+    }
     legendKey = (
       <g transform={'translate('+(w+gap)+','+(-gap)+')'}>
-        <text transform={'translate(260)'} style={{textAnchor:'end',fontWeight:'normal'}}>[count, sum length, n50]</text>
+        <text transform={'translate(260)'} style={{textAnchor:'end',fontWeight:'normal'}}>[{headers.join(', ')}]</text>
       </g>
     )
     bins.forEach((bin,i) => {
       let title = bin.id
       let color = palette.colors[i]
-      let count = values.counts.binned[i]
-      let reduced = values.reduced.binned[i]
-      let n50 = values.n50.binned[i]
+      let numbers = []
+      numbers.push(format(values.counts.binned[i]))
+      if (reducer != 'count'){
+        numbers.push(format(values.reduced.binned[i]))
+      }
+      if (zAxis == 'length'){
+        numbers.push(format(values.n50.binned[i]))
+      }
       if (count){
         items.push(
           <g key={i} transform={'translate(0,'+offset+')'}>
             <rect x={0} y={0} width={w} height={h} style={{fill:color}} />
             <text transform={'translate('+(w+gap)+','+(h-gap)+')'}>{title}</text>
-            <text transform={'translate('+(w+gap+260)+','+(h-gap)+')'} style={{textAnchor:'end'}}>[{format(count)}, {format(reduced)}, {format(n50)}]</text>
+            <text transform={'translate('+(w+gap+260)+','+(h-gap)+')'} style={{textAnchor:'end'}}>[{numbers.join(', ')}]</text>
           </g>
         )
         offset += h + gap
