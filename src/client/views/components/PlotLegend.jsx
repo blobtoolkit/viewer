@@ -49,6 +49,7 @@ const Legend = ({values,zAxis,bins,palette,other,reducer}) => {
       let title = bin.id
       let color = palette.colors[i]
       let numbers = []
+      let count = values.counts.binned[i] > 0
       numbers.push(format(values.counts.binned[i]))
       if (reducer != 'count'){
         numbers.push(format(values.reduced.binned[i]))
