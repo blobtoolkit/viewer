@@ -114,6 +114,7 @@ export function loadDataset(id) {
   return function (dispatch) {
     dispatch(refreshStore())
     dispatch(selectDataset(id))
+    console.log(id)
     dispatch(setDatasetIsActive(false))
     dispatch(fetchMeta(id)).then(() => {
       let meta = deep(store.getState(),['availableDatasets','byId',id])

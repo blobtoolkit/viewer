@@ -58,7 +58,7 @@ class Dataset extends React.Component {
     let css = styles.menu_item
     if (this.props.active) css += ' '+styles.active
     return (
-      <div className={css} onClick={()=>this.onDatasetClick(this.props.id)}>
+      <div className={css} onClick={()=>this.props.onDatasetClick(this.props.id)}>
         <h3>{this.props.meta.name}</h3>
         <span className={styles.menu_subtitle}>{this.props.meta.records} {this.props.meta.record_type}</span>
       </div>
