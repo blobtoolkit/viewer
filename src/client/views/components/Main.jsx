@@ -19,7 +19,7 @@ const MainDiv = (active) => (
   <main>
     <Router history={history}>
       <Switch>
-        <Route path="/demo/view/:datasetId?" render={(props)=>(<Layout {...active} {...props}/>)}/>
+        <Route path="/view/:datasetId?" render={(props)=>(<Layout {...active} {...props}/>)}/>
         <Route path="/layout" render={()=>(<Layout {...active}/>)}/>
         <Route render={()=>(<Layout {...active}/>)}/>
       </Switch>
