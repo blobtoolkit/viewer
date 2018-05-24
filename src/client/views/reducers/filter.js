@@ -33,7 +33,7 @@ export const filters = handleActions(
         let range = []
         range[0] = isNumeric(action.payload.range[0]) ? action.payload.range[0] : Number.NEGATIVE_INFINITY
         range[1] = isNumeric(action.payload.range[1]) ? action.payload.range[1] : Number.POSITIVE_INFINITY
-        let limit = action.payload.limit || state.byId[id].limit.slice()
+        let limit = action.payload.limit || (state.byId[id].limit || state.byId[id].range).slice()
         action.payload.range[0] = Math.max(range[0],limit[0])
         action.payload.range[1] = Math.min(range[1],limit[1])
       }
