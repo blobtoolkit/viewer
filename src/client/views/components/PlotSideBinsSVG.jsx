@@ -33,7 +33,7 @@ export default class PlotSideBinsSVG extends React.Component {
 const AxisX = ({ scale, fontSize }) => {
   return (
     <g>
-      <Axis {...axisPropsFromTickScale(scale, 5)} format={d3Format(".0e")} style={{orient: LEFT, tickFontSize: fontSize}}/>
+      <Axis {...axisPropsFromTickScale(scale, 5)} format={d3Format(".1e")} style={{orient: LEFT, tickFontSize: fontSize}}/>
     </g>
   )
 }
@@ -41,7 +41,7 @@ const AxisX = ({ scale, fontSize }) => {
 const AxisY = ({ scale, fontSize }) => {
   return (
     <g transform='translate(1000)'>
-      <Axis {...axisPropsFromTickScale(scale, 5)} format={d3Format(".0e")} style={{orient: RIGHT, tickFontSize: fontSize}}/>
+      <Axis {...axisPropsFromTickScale(scale, 5)} format={d3Format(".1e")} style={{orient: RIGHT, tickFontSize: fontSize}}/>
     </g>
   )
 }
