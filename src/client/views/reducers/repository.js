@@ -114,7 +114,6 @@ export function loadDataset(id) {
   return function (dispatch) {
     dispatch(refreshStore())
     dispatch(selectDataset(id))
-    console.log(id)
     dispatch(setDatasetIsActive(false))
     dispatch(fetchMeta(id)).then(() => {
       let meta = deep(store.getState(),['availableDatasets','byId',id])
@@ -141,7 +140,6 @@ let dataset = null
 if (history.location){
   let path = history.location.pathname
   dataset = path.replace('/view/','')
-  console.log(dataset)
 }
 
 export const selectDataset = createAction('SELECT_DATASET')

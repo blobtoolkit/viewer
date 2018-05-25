@@ -1,6 +1,8 @@
 import React from 'react';
 import { connect } from 'react-redux'
 import { getSummary }  from '../reducers/summary'
+import { getSelectedDataset } from '../reducers/dataset'
+import { getDatasetMeta } from '../reducers/repository'
 import styles from './Plot.scss'
 import { format as d3format} from 'd3-format'
 
@@ -8,9 +10,12 @@ export default class PlotLegend extends React.Component {
   constructor(props) {
     super(props);
     this.mapStateToProps = () => {
-      return (state, props) => (
-        getSummary(state)
-      )
+      return (state, props) => {
+        let summary = getSummary(state)
+        let id = getSelectedDataset(state)
+        let meta = getDatasetMeta(state,id)
+        return {meta,...summary}
+      }
     }
   }
 
@@ -24,15 +29,21 @@ export default class PlotLegend extends React.Component {
   }
 }
 
-const Legend = ({values,zAxis,bins,palette,other,reducer}) => {
+const Legend = ({values,zAxis,bins,palette,other,reducer,meta}) => {
   let items = []
   let legendKey
+  let ds
   let format = d3format(".2s")
   if (bins){
-    let offset = 0
+    let offset = 20
     let w = 20
     let h = 20
     let gap = 5
+    ds = (
+      <g transform={'translate('+0+','+0+')'}>
+        <text style={{fontWeight:'bold',fontSize:'150%'}}>{meta.name}</text>
+      </g>
+    )
     let headers = ['count']
     if (reducer != 'count'){
       headers.push(reducer+' '+zAxis)
@@ -41,7 +52,7 @@ const Legend = ({values,zAxis,bins,palette,other,reducer}) => {
       headers.push('n50')
     }
     legendKey = (
-      <g transform={'translate('+(w+gap)+','+(-gap)+')'}>
+      <g transform={'translate('+(w+gap)+','+(offset-gap)+')'}>
         <text transform={'translate(260)'} style={{textAnchor:'end',fontWeight:'normal'}}>[{headers.join(', ')}]</text>
       </g>
     )
@@ -71,6 +82,7 @@ const Legend = ({values,zAxis,bins,palette,other,reducer}) => {
   }
   return (
     <g>
+      {ds}
       {legendKey}
       {items}
     </g>
