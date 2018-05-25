@@ -223,11 +223,11 @@ const mapDispatchToQuery = (
       array: (k,v) => ({key:'field',index:'min',...v}),
     },
     Keys: {
-      array: (k,v) => ({key:'filter',field:v.field,index:'keys',value:v.value.split(',').map(x=>x*1)}),
+      array: (k,v) => ({key:'filter',field:v.field,index:'keys',value:(v.value || '').split(',').map(x=>x*1)}),
       default: ''
     },
     Order: {
-      array: (k,v) => ({key:'field',field:v.field,index:'order',value:v.value.split(',')}),
+      array: (k,v) => ({key:'field',field:v.field,index:'order',value:(v.value || '')}),
       default: []
     }
   }
