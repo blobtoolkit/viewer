@@ -6,6 +6,7 @@ import styles from './Layout.scss'
 import MenuDataset from './MenuDataset'
 import Spinner from './Spinner'
 import { clearQuery } from '../reducers/history'
+import ToolTips from './ToolTips'
 
 const DatasetMenu = ({ selectedDataset, isFetching, datasetIds, onDatasetMount, onDatasetClick }) => {
   return (
@@ -24,6 +25,7 @@ const DatasetMenu = ({ selectedDataset, isFetching, datasetIds, onDatasetMount, 
           />
         )}
       )}
+      <ToolTips set='datasetMenu'/>
     </div>
   )
 }

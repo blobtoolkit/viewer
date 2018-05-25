@@ -45,6 +45,8 @@ const sets = (set) => {
   tips['size-slider'] = {name:'scale factor for point/bin size',filterMenu:1}
   tips['select-palette'] = {name:'select palette',filterMenu:1}
   tips['edit-swatch'] = {name:'adjust colour',filterMenu:1}
+  tips['load-dataset'] = {name:'load dataset',datasetMenu:1}
+  tips['view-metadata'] = {name:'view metadata',datasetMenu:1}
 
 
   return tips

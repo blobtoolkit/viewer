@@ -125,7 +125,27 @@
   background-color: $darkColor;
   overflow:hidden;
   color:$paleColor;
-  cursor:pointer;
+
+  .right {
+    float:right;
+    border-radius:1em;
+    border: 0.2em solid $deepColor;
+    color:$lightColor;
+    padding: 0 0.5em;
+    cursor:pointer;
+  }
+
+  .most {
+    display:block;
+    position: absolute;
+    top:0;
+    left:0;
+    bottom:0;
+    padding:1em;
+    cursor:pointer;
+    right:30%;
+  }
+
 }
 
 .long_menu_item {
