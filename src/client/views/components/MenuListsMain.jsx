@@ -6,14 +6,13 @@ import { getLists,
   uploadedFileToList } from '../reducers/list'
 import MenuList from './MenuList'
 import ListUpload from './MenuListUpload'
+import DatasetCreateList from './DatasetCreateList'
 
 const ListsMenu = ({lists,selectedList,onListClick,onDrop}) => {
   return (
     <div className={styles.menu}>
-      { lists.length == 0 ?
-        'Create lists in the Filters menu' :
-        lists.map((list,i) => (<MenuList key={i} {...list} onListClick={onListClick}/>))
-      }
+      <DatasetCreateList />
+      { lists.map((list,i) => (<MenuList key={i} {...list} onListClick={onListClick}/>))}
       {<ListUpload active={false} onDrop={onDrop}/>}
     </div>
   )

@@ -83,7 +83,6 @@ class FieldMenu extends React.Component {
       <div className={styles.menu} style={{left:this.props.offset}}>
         <div className={styles.sticky}>
           <DatasetApplyFilters />
-          <DatasetCreateList />
         </div>
         {fields}
         <ToolTips set='filterMenu'/>
