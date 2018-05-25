@@ -14,9 +14,11 @@ class Palette extends React.Component {
             index={i}
             color={c}
             width={width+'%'}
+            selectPalette={this.props.selectPalette}
             editPalette={(color) => {
               let colors = this.props.colors.slice(0)
               colors[i] = color
+              this.props.selectPalette(this.props.id)
               this.props.editPalette({id:this.props.id,[this.props.id]:colors})
             }}
             />
@@ -30,9 +32,10 @@ class Palette extends React.Component {
         </span>
       )
     })
+    let css = this.props.active ? styles.title+' '+styles.active : styles.title
     return (
       <div className={styles.palette}>
-        <div className={styles.title}
+        <div className={css}
           onClick={()=>this.props.selectPalette(this.props.id)}
           data-tip data-for='select-palette'
           >

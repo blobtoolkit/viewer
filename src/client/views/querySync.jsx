@@ -27,13 +27,10 @@ let arrays = {}
 const mapDispatchToQuery = (
   {
     palette: {
-      actions: () => ([
-        {
-          type: 'SELECT_PALETTE',
-          payload: (k,v) => v
-        }
-      ]),
-      default: 'default'
+      type: 'SELECT_PALETTE',
+      payload: (k,v) => v,
+      default: 'default',
+      // params: () => ({palette:'default'})
     },
     plotShape: {
       type: 'SET_PLOT_SHAPE',
@@ -60,12 +57,22 @@ const mapDispatchToQuery = (
       payload: (k,v) => v
     },
     userColors: {
-      type: 'EDIT_PALETTE',
-      payload: (k,v) => {
-        let user = []
-        v.forEach(o=>{user[o.index] = colorToRGB(o.value)})
-        return {id:'user',user}
-      }
+      actions: (k,v) => ([
+        {
+          type: 'EDIT_PALETTE',
+          payload: (k,v) => {
+            let user = []
+            v.forEach(o=>{user[o.index] = colorToRGB(o.value)})
+            console.log(user)
+            return {id:'user',user}
+          }
+        },
+        // {
+        //   type: 'SELECT_PALETTE',
+        //   payload: () => 'user'
+        // }
+      ]),
+      // params: (k,v) => ({palette:'user'})
     },
     axes: {
       actions: (k,v) => {
@@ -332,6 +339,12 @@ export const queryToStore = (dispatch,values,searchReplace,hash) => {
         let payload = action.payload(key,value)
         dispatch({type,payload})
       })
+      if (keyed(obj,'params')){
+        console.log(key)
+        console.log(value)
+        let params = obj.params(key,value)
+        Object.keys(params).forEach(k=>{parsed[k] = params[k]})
+      }
     }
   })
   remove.forEach(key=>{delete parsed[key]})

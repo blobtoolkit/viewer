@@ -14,7 +14,13 @@
   cursor:pointer;
 }
 
+.active {
+  background-color:$highlightColor;
+  color: $lightColor;
+}
+
 .palette {
+  margin-top:0.5em;
 }
 
 .color {
