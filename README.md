@@ -1,4 +1,4 @@
-# BlobToolKit Viewer (v0.2-alpha)
+# BlobToolKit Viewer (v0.3)
 
  [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1134794.svg)](https://doi.org/10.5281/zenodo.1134794)
 
@@ -15,7 +15,6 @@ View a live demo at [blobtoolkit.genomehubs.org](http://blobtoolkit.genomehubs.o
 - yField=SRR000000_cov
 - zField=length
 - catField=bestsumorder_phylum
-- sortOrder=Arthropoda,Echinodermata,no-hit
 - color0=gold
 - color1=purple
 - color2=rgb(255,0,0)
@@ -26,6 +25,7 @@ View a live demo at [blobtoolkit.genomehubs.org](http://blobtoolkit.genomehubs.o
 - gc--LimitMax=1
 - gc--Inv=true|false
 - bestsumorder_phylum--Keys=3,7,12
+- bestsumorder_phylum--Order=Arthropoda,Echinodermata,no-hit
 - plotShape=square|hex|circle
 - plotResolution=30 (range: 5-50)
 - zReducer=sum|min|max|count|mean

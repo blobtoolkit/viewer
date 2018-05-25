@@ -438,7 +438,7 @@ export const getBinsForFieldId = createBinSelectorForFieldId(
           .entries(data)
         let sorted = []
         if (!rawData.fixedOrder){
-          let order = queryValue('sortOrder') || ''
+          let order = queryValue(details.meta.id+'--Order') || ''
           order = order.split(',')
           let sortFunction = (a,b) => {
             let ia = order.indexOf(keys[a.key])

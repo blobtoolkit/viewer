@@ -63,16 +63,10 @@ const mapDispatchToQuery = (
           payload: (k,v) => {
             let user = []
             v.forEach(o=>{user[o.index] = colorToRGB(o.value)})
-            console.log(user)
             return {id:'user',user}
           }
-        },
-        // {
-        //   type: 'SELECT_PALETTE',
-        //   payload: () => 'user'
-        // }
-      ]),
-      // params: (k,v) => ({palette:'user'})
+        }
+      ])
     },
     axes: {
       actions: (k,v) => {
@@ -231,6 +225,10 @@ const mapDispatchToQuery = (
     Keys: {
       array: (k,v) => ({key:'filter',field:v.field,index:'keys',value:v.value.split(',').map(x=>x*1)}),
       default: ''
+    },
+    Order: {
+      array: (k,v) => ({key:'field',field:v.field,index:'order',value:v.value.split(',')}),
+      default: []
     }
   }
 )
