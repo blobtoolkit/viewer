@@ -63,7 +63,7 @@ class Dataset extends React.Component {
     return (
       <div className={css}>
         <div data-tip data-for='view-metadata' className={styles.right} onClick={()=>this.setState({show:true})}>
-          meta
+          details
           <DatasetModal meta={this.props.meta} selected={this.state.show} dismiss={()=>this.setState({show:false})}/>
         </div>
         <a data-tip data-for='load-dataset' className={styles.most} href={'/demo/view/'+this.props.id}>
