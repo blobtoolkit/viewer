@@ -8,19 +8,13 @@ import Repository from './Repository';
 import { NotFound } from './Error';
 import history from '../reducers/history';
 
-// const browserHistory = createBrowserHistory({
-//   basename: '/demo'
-// });
-
-//<Route path="/view/:datasetId?" render={(props)=>(<Layout {...active} {...props}/>)}/>
-
 
 const MainDiv = (active) => (
   <main>
     <Router history={history}>
       <Switch>
-        <Route path="/view/:datasetId?" render={(props)=>(<Layout {...active} {...props}/>)}/>
-        <Route path="/layout" render={()=>(<Layout {...active}/>)}/>
+        <Route path="/dataset/:datasetId?" render={(props)=>(<Layout {...active} {...props}/>)}/>
+        <Route path="/search" render={()=>(<Layout {...active}/>)}/>
         <Route render={()=>(<Layout {...active}/>)}/>
       </Switch>
     </Router>

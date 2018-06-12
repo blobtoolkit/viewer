@@ -9,6 +9,8 @@ import { getDatasetMeta } from '../reducers/repository'
 import { withRouter } from 'react-router-dom';
 import { DatasetModal } from './DatasetModal'
 
+const basename = BASENAME || ''
+
 class MenuDataset extends React.Component {
   constructor(props) {
     super(props);
@@ -66,7 +68,7 @@ class Dataset extends React.Component {
           details
           <DatasetModal meta={this.props.meta} selected={this.state.show} dismiss={()=>this.setState({show:false})}/>
         </div>
-        <a data-tip data-for='load-dataset' className={styles.most} href={'/demo/view/'+this.props.id}>
+        <a data-tip data-for='load-dataset' className={styles.most} href={basename + '/dataset/'+this.props.id}>
           <h3>{this.props.meta.name}</h3>
         </a>
         <span className={styles.menu_subtitle}>{this.props.meta.records} {this.props.meta.record_type}</span>

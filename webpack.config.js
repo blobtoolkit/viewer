@@ -22,14 +22,19 @@ const config = {
   },
   devServer: {
     historyApiFallback: true,
-    host:main.BTK_HOST,
+    host:main.hostname,
     proxy: {
       '/api/**': { target: 'http://localhost:8000' }
     }
   },
   devtool: 'source-map',
   plugins: [
-    new ExtractTextPlugin('styles.css')
+    new ExtractTextPlugin('styles.css'),
+    new webpack.DefinePlugin({
+      API_URL: JSON.stringify(main.apiUrl),
+    	VERSION: JSON.stringify(main.version),
+    	BASENAME: JSON.stringify(main.basename)
+    })
   ],
   module: {
     loaders: [
@@ -39,16 +44,20 @@ const config = {
         loader: 'babel-loader',
         query: {
           presets: ["es2015","env","react"],
-          plugins: ["transform-object-rest-spread"]
+          plugins: [
+            "transform-object-rest-spread"
+          ]
         }
       },
       {
         test: /\.js$/,
-        include: APP_DIR,
+        include: [APP_DIR,/node_modules\/save-svg-as-png/],
         loader: 'babel-loader',
         query: {
           presets: ["es2015","env","react"],
-          plugins: ["transform-object-rest-spread"]
+          plugins: [
+            "transform-object-rest-spread"
+          ]
         }
       },
       {

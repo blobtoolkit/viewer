@@ -2,7 +2,8 @@ import { createSelector } from 'reselect'
 import { byIdSelectorCreator } from './selectorCreators'
 import createHistory from 'history/createBrowserHistory';
 import qs from 'qs'
-export const history = createHistory({ basename: '/demo' });
+const basename = BASENAME || ''
+export const history = createHistory({ basename });
 export default history;
 
 export const parseQueryString = createSelector(

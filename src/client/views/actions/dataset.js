@@ -1,6 +1,7 @@
 import fetch from 'isomorphic-fetch'
 import store from '../store'
-const apiUrl = '/api/v1'
+const main = require('./src/config/main');
+const apiUrl = main.apiUrl
 
 export const SELECT_DATASET = 'SELECT_DATASET'
 export function selectDataset(id) {
