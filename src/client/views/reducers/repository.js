@@ -8,7 +8,8 @@ import { addAllFields } from './field'
 import { filterToList } from './filter'
 import { editPlot } from './plot'
 import { qsDefault } from '../querySync'
-import { queryValue } from './history'
+import { history, queryValue } from './history'
+import { getSearchTerm, setSearchTerm } from './search'
 
 const apiUrl = window.apiURL || '/api/v1'
 
@@ -67,10 +68,12 @@ export const getRepositoryIsFetching = state => deep(state,'availableDatasets.is
 
 export const getAvailableDatasetIds = state => deep(state,'availableDatasets.allIds') || []
 
-export function fetchRepository(id) {
+export function fetchRepository(searchTerm) {
   return function (dispatch) {
     dispatch(requestRepository())
-    return fetch(apiUrl + '/dataset/all')
+    searchTerm = searchTerm || 'all'
+    dispatch(setSearchTerm(searchTerm))
+    return fetch(apiUrl + '/search/' + searchTerm)
       .then(
         response => response.json(),
         error => console.log('An error occured.', error)
@@ -125,6 +128,9 @@ export function loadDataset(id) {
           plot[key] = qv
         }
       })
+      let search = history.location.search || ''
+      let hash = history.location.hash || ''
+      history.replace({pathname:'/dataset/'+id,search,hash})
       dispatch(editPlot(plot))
       addAllFields(dispatch,meta.fields,1,false,id)
     }).then(()=>setTimeout(()=>{
@@ -133,8 +139,6 @@ export function loadDataset(id) {
     },1000))
   }
 }
-
-import { history } from './history'
 
 let dataset = null
 if (history.location){
@@ -162,6 +166,16 @@ export const datasetIsActive = handleAction(
   ),
   false
 )
+
+export function fetchSearchResults(str) {
+  return function (dispatch) {
+    fetch(apiUrl + '/search/' + str)
+      .then(
+        response => response.json(),
+        error => console.log('An error occured.', error)
+      )
+  }
+}
 
 export const getDatasetIsActive = state => state.datasetIsActive
 

@@ -5,7 +5,7 @@ import styles from './Layout.scss';
 import { Link } from 'react-router-dom'
 import Spinner from './Spinner'
 import { createSelector } from 'reselect'
-import { getDatasetMeta } from '../reducers/repository'
+import { getDatasetMeta, loadDataset } from '../reducers/repository'
 import { withRouter } from 'react-router-dom';
 import { DatasetModal } from './DatasetModal'
 
@@ -17,6 +17,11 @@ class MenuDataset extends React.Component {
     this.mapStateToProps = state => (
       {
         meta: getDatasetMeta(state,this.props.id)
+      }
+    )
+    this.mapDispatchToProps = dispatch => (
+      {
+        onDatasetClick: id => dispatch(loadDataset(id))
       }
     )
   }
@@ -62,13 +67,14 @@ class Dataset extends React.Component {
     let css = styles.menu_item
     if (this.props.active) css += ' '+styles.active
     // <div className={css} onClick={()=>this.props.onDatasetClick(this.props.id)}>
+    // <a data-tip data-for='load-dataset' className={styles.most} href={basename + '/dataset/'+this.props.id}>
     return (
       <div className={css}>
         <div data-tip data-for='view-metadata' className={styles.right} onClick={()=>this.setState({show:true})}>
           details
           <DatasetModal meta={this.props.meta} selected={this.state.show} dismiss={()=>this.setState({show:false})}/>
         </div>
-        <a data-tip data-for='load-dataset' className={styles.most} href={basename + '/dataset/'+this.props.id}>
+        <a data-tip data-for='load-dataset' className={styles.most} onClick={()=>this.props.onDatasetClick(this.props.id)}>
           <h3>{this.props.meta.name}</h3>
         </a>
         <span className={styles.menu_subtitle}>{this.props.meta.records} {this.props.meta.record_type}</span>

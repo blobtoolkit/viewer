@@ -1,5 +1,6 @@
 import { combineReducers } from 'redux'
 
+import { searchReducers } from './search'
 import { repositoryReducers } from './repository'
 import { fieldReducers } from './field'
 import { filterReducers } from './filter'
@@ -13,6 +14,7 @@ import { plotParameterReducers } from './plotParameters'
 
 const allReducers = Object.assign(
   {},
+  searchReducers,
   repositoryReducers,
   fieldReducers,
   filterReducers,

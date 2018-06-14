@@ -9,6 +9,7 @@ import MenuDisplayMain from './MenuDisplayMain'
 import MenuSummaryMain from './MenuSummaryMain'
 import MenuHelpMain from './MenuHelpMain'
 import MainPlot from './MainPlot'
+import GetStarted from './GetStarted'
 import { loadDataset } from '../reducers/repository'
 import { getSelectedDataset } from '../reducers/dataset'
 import { getTopLevelFields } from '../reducers/field'
@@ -59,7 +60,7 @@ class LayoutComponent extends React.Component {
     if (this.state.activeTabs.hasOwnProperty('Help')) menu = <MenuHelpMain offset='0em'/>
     return (
       <div className={styles.main}>
-        { this.props.active ? <MainPlot /> : '' }
+        { this.props.active ? <MainPlot /> : <GetStarted/> }
          {menu}
         <Header tabs={tabs} onTabClick={(tab)=>toggleHash(tab)}/>
       </div>

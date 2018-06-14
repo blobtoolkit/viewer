@@ -64,6 +64,7 @@
     "react-thunk": "^1.0.0",
     "react-tooltip": "^3.6.0",
     "react-transition-group": "^1.2.1",
+    "read-yaml": "^1.1.0",
     "redux": "^3.7.2",
     "redux-actions": "^2.4.0",
     "redux-logger": "^3.0.6",

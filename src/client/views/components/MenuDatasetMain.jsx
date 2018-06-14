@@ -7,10 +7,12 @@ import MenuDataset from './MenuDataset'
 import Spinner from './Spinner'
 import { clearQuery } from '../reducers/history'
 import ToolTips from './ToolTips'
+import Search from './Search'
 
 const DatasetMenu = ({ selectedDataset, isFetching, datasetIds, onDatasetMount, onDatasetClick }) => {
   return (
     <div className={styles.menu}>
+      <Search/>
       {isFetching ? <Spinner /> : null}
       {datasetIds.map(id => {
         let active = false
