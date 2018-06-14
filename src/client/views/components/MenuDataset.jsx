@@ -66,6 +66,11 @@ class Dataset extends React.Component {
     }
     let css = styles.menu_item
     if (this.props.active) css += ' '+styles.active
+    let records = this.props.meta.records || ''
+    let record_type = this.props.meta.record_type || ''
+    let taxon = this.props.meta.taxon || {}
+    taxon = taxon.name || ''
+    let accession = this.props.meta.accession || ''
     // <div className={css} onClick={()=>this.props.onDatasetClick(this.props.id)}>
     // <a data-tip data-for='load-dataset' className={styles.most} href={basename + '/dataset/'+this.props.id}>
     return (
@@ -76,8 +81,9 @@ class Dataset extends React.Component {
         </div>
         <a data-tip data-for='load-dataset' className={styles.most} onClick={()=>this.props.onDatasetClick(this.props.id)}>
           <h3>{this.props.meta.name}</h3>
+          <span className={styles.menu_subtitle}>{accession}<br/><em>{taxon}</em></span>
         </a>
-        <span className={styles.menu_subtitle}>{this.props.meta.records} {this.props.meta.record_type}</span>
+        <span className={styles.menu_count}>{records + ' ' + record_type}</span>
       </div>
 
     )
