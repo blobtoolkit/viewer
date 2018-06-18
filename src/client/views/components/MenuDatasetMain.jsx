@@ -5,7 +5,6 @@ import { getSelectedDataset } from '../reducers/dataset'
 import styles from './Layout.scss'
 import MenuDataset from './MenuDataset'
 import Spinner from './Spinner'
-import { clearQuery } from '../reducers/history'
 import ToolTips from './ToolTips'
 import Search from './Search'
 
@@ -42,7 +41,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    onDatasetClick: id => {clearQuery(); return dispatch(loadDataset(id))},
+    onDatasetClick: id => dispatch(loadDataset(id,true)),
     onDatasetMount: id => dispatch(fetchMeta(id))
   }
 }

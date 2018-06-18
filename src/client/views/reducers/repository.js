@@ -8,7 +8,7 @@ import { addAllFields } from './field'
 import { filterToList } from './filter'
 import { editPlot } from './plot'
 import { qsDefault } from '../querySync'
-import { history, queryValue } from './history'
+import { history, queryValue, clearQuery, addQueryValues } from './history'
 import { getSearchTerm, setSearchTerm } from './search'
 
 const apiUrl = window.apiURL || '/api/v1'
@@ -71,7 +71,17 @@ export const getAvailableDatasetIds = state => deep(state,'availableDatasets.all
 export function fetchRepository(searchTerm) {
   return function (dispatch) {
     dispatch(requestRepository())
-    searchTerm = searchTerm || 'all'
+    if (searchTerm){
+      addQueryValues({searchTerm})
+    }
+    let defaultTerm = queryValue('searchTerm')
+    if (!defaultTerm){
+      let pathname = history.location.pathname
+      if (pathname.match('dataset')){
+        defaultTerm = pathname.replace('/dataset/','')
+      }
+    }
+    searchTerm = searchTerm || defaultTerm || 'all'
     dispatch(setSearchTerm(searchTerm))
     return fetch(apiUrl + '/search/' + searchTerm)
       .then(
@@ -113,8 +123,13 @@ export function fetchMeta(id) {
 
 export const refreshStore = createAction('REFRESH')
 
-export function loadDataset(id) {
+export function loadDataset(id,clear) {
   return function (dispatch) {
+    let search = history.location.search || ''
+    if (clear){
+      let searchTerm = queryValue('searchTerm')
+      search = searchTerm ? '?searchTerm='+searchTerm : ''
+    }
     dispatch(refreshStore())
     dispatch(selectDataset(id))
     dispatch(setDatasetIsActive(false))
@@ -128,7 +143,6 @@ export function loadDataset(id) {
           plot[key] = qv
         }
       })
-      let search = history.location.search || ''
       let hash = history.location.hash || ''
       history.replace({pathname:'/dataset/'+id,search,hash})
       dispatch(editPlot(plot))

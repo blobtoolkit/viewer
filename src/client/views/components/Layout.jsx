@@ -61,7 +61,7 @@ class LayoutComponent extends React.Component {
     return (
       <div className={styles.main}>
         { this.props.active ? <MainPlot /> : <GetStarted/> }
-         {menu}
+         {this.props.active ? menu : menu ? menu : <MenuDatasetMain /> }
         <Header tabs={tabs} onTabClick={(tab)=>toggleHash(tab)}/>
       </div>
     )
