@@ -14,11 +14,9 @@ const parseMeta = (obj) => {
     })
   }
   if (obj.hasOwnProperty('taxon')){
-    let props = ['genus','name','taxid']
-    props.forEach(prop=>{
-      if (obj.taxon.hasOwnProperty(prop)){
-        meta[prop] = obj.taxon[prop]
-      }
+    let props = ['genus','name','taxid','phylum']
+    Object.keys(obj.taxon).forEach(prop=>{
+      meta[prop] = obj.taxon[prop]
     })
   }
   if (meta.hasOwnProperty('name')){
