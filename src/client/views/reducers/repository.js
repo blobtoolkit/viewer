@@ -146,11 +146,16 @@ export function loadDataset(id,clear) {
       let hash = history.location.hash || ''
       history.replace({pathname:'/dataset/'+id,search,hash})
       dispatch(editPlot(plot))
-      addAllFields(dispatch,meta.fields,1,false,id)
-    }).then(()=>setTimeout(()=>{
-      dispatch(filterToList())
-      dispatch(setDatasetIsActive(true))
-    },1000))
+      Promise.all(addAllFields(dispatch,meta.fields,1,false))
+      .then(()=>{
+        dispatch(filterToList())
+        dispatch(setDatasetIsActive(true))
+      })
+    })
+    // .then(()=>setTimeout(()=>{
+    //   dispatch(filterToList())
+    //   dispatch(setDatasetIsActive(true))
+    // },1000))
   }
 }
 

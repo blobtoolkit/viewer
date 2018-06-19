@@ -271,7 +271,8 @@ export function fetchRawData(id) {
    }
 }
 
-export const addAllFields = (dispatch,fields,flag,meta) => {
+export const addAllFields = (dispatch,fields,flag,meta,promises) => {
+  promises = promises || []
   let axes = ['x','y','z','cat']
   axes.forEach(axis=>{
     let f = queryValue(axis+'Field')
@@ -304,6 +305,7 @@ export const addAllFields = (dispatch,fields,flag,meta) => {
     children:[{id:'selection',active:false}]
   }))
   fields.forEach(field => {
+    let status
     if (meta){
       Object.keys(meta).forEach(key => {
         if (key != 'children' && key != 'data' && !field.hasOwnProperty(key)){
@@ -318,7 +320,7 @@ export const addAllFields = (dispatch,fields,flag,meta) => {
     }
     dispatch(addField(field))
     if (field.children){
-      addAllFields(dispatch,field.children,false,field)
+      promises.concat(addAllFields(dispatch,field.children,false,field,promises))
     }
     else {
       if (field.type == 'variable'){
@@ -340,13 +342,17 @@ export const addAllFields = (dispatch,fields,flag,meta) => {
         }))
       }
       if (field.preload == true){
-        dispatch(fetchRawData(field.id))
+        status = dispatch(fetchRawData(field.id))
       }
     }
     if (field.data){
-      addAllFields(dispatch,field.data,false,field)
+      promises.concat(addAllFields(dispatch,field.data,false,field,promises))
+    }
+    if (status){
+      promises.push(status)
     }
   })
+  return promises
 }
 
 
