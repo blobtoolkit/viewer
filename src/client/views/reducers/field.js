@@ -251,12 +251,15 @@ export function fetchRawData(id) {
           // if (min == 0) min = 0.001
           let scale = meta.xScale.copy().domain([min,max]).nice(25)
           let limit = scale.domain().slice(0)
-          limit[0] = 1*queryValue(id+'--LimitMin') || limit[0]
-          limit[1] = 1*queryValue(id+'--LimitMax') || limit[1]
+          let qLimit = [queryValue(id+'--LimitMin'),queryValue(id+'--LimitMax')]
+          limit[0] = qLimit[0].length > 0 ? 1*qLimit[0] : limit[0]
+          limit[1] = qLimit[1].length > 0 ? 1*qLimit[1] : limit[1]
+          console.log(limit)
           dispatch(editField({id,range:limit}))
           let range = scale.domain().slice(0)
-          range[0] = 1*queryValue(id+'--Min') || range[0]
-          range[1] = 1*queryValue(id+'--Max') || range[1]
+          let qRange = [1*queryValue(id+'--Min'),1*queryValue(id+'--Max')]
+          range[0] = qRange[0].length > 0 ? 1*qRange[0] : range[0]
+          range[1] = qRange[1].length > 0 ? 1*qRange[1] : range[1]
           let invert = queryValue(id+'--Inv') || false
           dispatch(editFilter({id,range,invert,limit:scale.domain()}))
         }
