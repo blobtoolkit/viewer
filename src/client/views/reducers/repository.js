@@ -152,8 +152,6 @@ export function loadDataset(id,clear) {
     dispatch(refreshStore())
     dispatch(selectDataset(id))
     dispatch(setDatasetIsActive(false))
-    console.log(searchTerm)
-    console.log(id)
     dispatch(fetchMeta(id)).then(() => {
       let meta = deep(store.getState(),['availableDatasets','byId',id])
       let plot = meta.plot
