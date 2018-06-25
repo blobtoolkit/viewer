@@ -46,7 +46,6 @@ function useStoredMeta(id) {
 
 export function fetchMeta(id) {
   return function (dispatch) {
-    dispatch(selectDataset(id))
     dispatch(requestMeta(id))
     let meta = store.getState().metadataByDataset[id].meta;
     if (meta.hasOwnProperty('id')){
@@ -59,6 +58,7 @@ export function fetchMeta(id) {
         error => console.log('An error occured.', error)
       )
       .then(json =>
+        dispatch(selectDataset(id))
         dispatch(receiveMeta(id, json))
       )
   }

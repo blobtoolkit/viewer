@@ -71,25 +71,40 @@ export const getAvailableDatasetIds = state => deep(state,'availableDatasets.all
 export function fetchRepository(searchTerm) {
   return function (dispatch) {
     dispatch(requestRepository())
+    let pathname = history.location.pathname
+    let defaultTerm = 'all'
+    let dataset = ''
+    if (pathname.match(/^.+\/dataset/)){
+      defaultTerm = pathname.replace(/^\//,'').replace(/\/.*/,'')
+      dataset = pathname.replace(/.*\/dataset\//,'')
+    }
     if (searchTerm){
-      addQueryValues({searchTerm})
+      pathname = '/'+searchTerm+'/dataset/'
     }
-    let defaultTerm = queryValue('searchTerm')
-    if (!defaultTerm){
-      let pathname = history.location.pathname
-      if (pathname.match('dataset')){
-        defaultTerm = pathname.replace('/dataset/','')
+    else {
+      if (pathname.match(/^dataset/)){
+        defaultTerm = pathname.replace('/dataset\/*/','')
       }
+      searchTerm = searchTerm || defaultTerm
     }
-    searchTerm = searchTerm || defaultTerm || 'all'
+    let search = history.location.search || ''
+    let hash = history.location.hash || ''
+    history.replace({pathname,search,hash})
     dispatch(setSearchTerm(searchTerm))
     return fetch(apiUrl + '/search/' + searchTerm)
       .then(
         response => response.json(),
         error => console.log('An error occured.', error)
       )
-      .then(json =>
-        dispatch(receiveRepository(json))
+      .then(json =>{
+          if (dataset){
+            if (json.find(o=>o.id==dataset)){
+              pathname += dataset
+              history.replace({pathname,search,hash})
+            }
+          }
+          dispatch(receiveRepository(json))
+        }
       )
   }
 }
@@ -127,12 +142,18 @@ export function loadDataset(id,clear) {
   return function (dispatch) {
     let search = history.location.search || ''
     if (clear){
-      let searchTerm = queryValue('searchTerm')
-      search = searchTerm ? '?searchTerm='+searchTerm : ''
+      search = ''
+    }
+    let pathname = history.location.pathname
+    let searchTerm = '/'
+    if (pathname.match(/^.+\/dataset/)){
+      searchTerm = pathname.replace(/dataset.*/,'')
     }
     dispatch(refreshStore())
     dispatch(selectDataset(id))
     dispatch(setDatasetIsActive(false))
+    console.log(searchTerm)
+    console.log(id)
     dispatch(fetchMeta(id)).then(() => {
       let meta = deep(store.getState(),['availableDatasets','byId',id])
       let plot = meta.plot
@@ -144,7 +165,7 @@ export function loadDataset(id,clear) {
         }
       })
       let hash = history.location.hash || ''
-      history.replace({pathname:'/dataset/'+id,search,hash})
+      history.replace({pathname:searchTerm+'dataset/'+id,search,hash})
       dispatch(editPlot(plot))
       Promise.all(addAllFields(dispatch,meta.fields,1,false))
       .then(()=>{
@@ -152,17 +173,13 @@ export function loadDataset(id,clear) {
         dispatch(setDatasetIsActive(true))
       })
     })
-    // .then(()=>setTimeout(()=>{
-    //   dispatch(filterToList())
-    //   dispatch(setDatasetIsActive(true))
-    // },1000))
   }
 }
 
 let dataset = null
 if (history.location){
   let path = history.location.pathname
-  dataset = path.replace('/view/','')
+  dataset = path.replace(/\/view\/.+?\/dataset\//,'')
 }
 
 export const selectDataset = createAction('SELECT_DATASET')

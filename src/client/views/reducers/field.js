@@ -254,7 +254,6 @@ export function fetchRawData(id) {
           let qLimit = [queryValue(id+'--LimitMin'),queryValue(id+'--LimitMax')]
           limit[0] = qLimit[0].length > 0 ? 1*qLimit[0] : limit[0]
           limit[1] = qLimit[1].length > 0 ? 1*qLimit[1] : limit[1]
-          console.log(limit)
           dispatch(editField({id,range:limit}))
           let range = scale.domain().slice(0)
           let qRange = [1*queryValue(id+'--Min'),1*queryValue(id+'--Max')]

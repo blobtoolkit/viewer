@@ -7,6 +7,7 @@ import Layout from './Layout';
 import Repository from './Repository';
 import { NotFound } from './Error';
 import history from '../reducers/history';
+// import { fetchRepository } from '../reducers/repository'
 
 
 const MainDiv = (active) => (
@@ -14,7 +15,7 @@ const MainDiv = (active) => (
     <Router history={history}>
       <Switch>
         <Route path="/dataset/:datasetId?" render={(props)=>(<Layout {...active} {...props}/>)}/>
-        <Route path="/search/:searchTerm?" render={()=>(<Layout {...active}/>)}/>
+        <Route path="/:searchTerm/dataset/:datasetId?" render={(props)=>(<Layout {...active} {...props}/>)}/>
         <Route render={()=>(<Layout {...active}/>)}/>
       </Switch>
     </Router>
@@ -29,12 +30,17 @@ class Main extends React.Component {
         active: getDatasetIsActive(state)
       }
     )
+    // this.mapDispatchToProps = dispatch => (
+    //   {
+    //     onLoadLayout: term => dispatch(fetchRepository(term))
+    //   }
+    // )
   }
 
   render(){
     const ConnectedMain = connect(
       this.mapStateToProps,
-      false
+      false//this.mapDispatchToProps
     )(MainDiv)
     return (
       <ConnectedMain {...this.props}/>

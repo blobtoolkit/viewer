@@ -10,7 +10,7 @@ const store = createStore(
   rootReducer,
   applyMiddleware(
     thunkMiddleware, // lets us dispatch() functions
-    // loggerMiddleware // neat middleware that logs actions
+    loggerMiddleware // neat middleware that logs actions
   ),
   // querySync
 )
