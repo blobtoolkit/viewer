@@ -23,3 +23,21 @@
   font-family:'Open Sans' sans-serif;
   font-size: 1.5em;
 }
+
+ul.autocomplete {
+
+  margin-top: 0;
+  padding-left: 0;
+  list-style-type: none;
+
+  li {
+    background-color: $deepColor;
+    display:block;
+    padding:0.5em;
+    cursor:pointer;
+  }
+
+  li:hover {
+    background-color: $highlightColor;
+  }
+}
