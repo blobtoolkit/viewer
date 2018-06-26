@@ -1,4 +1,6 @@
 import { createAction, handleAction } from 'redux-actions'
+import { history, urlSearchTerm } from './history'
+import { createSelector } from 'reselect'
 
 export const setSearchTerm = createAction('SET_SEARCH_TERM')
 

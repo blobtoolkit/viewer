@@ -8,7 +8,7 @@ import { addAllFields } from './field'
 import { filterToList } from './filter'
 import { editPlot } from './plot'
 import { qsDefault } from '../querySync'
-import { history, queryValue, clearQuery, addQueryValues } from './history'
+import { history, queryValue, clearQuery, addQueryValues, urlSearchTerm, urlDataset } from './history'
 import { getSearchTerm, setSearchTerm } from './search'
 
 const apiUrl = window.apiURL || '/api/v1'
@@ -71,24 +71,15 @@ export const getAvailableDatasetIds = state => deep(state,'availableDatasets.all
 export function fetchRepository(searchTerm) {
   return function (dispatch) {
     dispatch(requestRepository())
+    let state = store.getState()
     let pathname = history.location.pathname
-    let defaultTerm = ''
-    let dataset = ''
-    if (pathname.match(/^.+\/dataset/)){
-      defaultTerm = pathname.replace(/^\//,'').replace(/\/.*/,'')
-      dataset = pathname.replace(/.*\/dataset\//,'')
-    }
-    if (pathname.match(/dataset/)){
-      dataset = pathname.replace(/.*\/*dataset\//,'')
-    }
+    let defaultTerm = urlSearchTerm(state)
+    let dataset = urlDataset(state)
     if (searchTerm){
-      pathname = '/'+searchTerm+'/dataset/'
+      pathname = '/'+searchTerm
     }
     else {
-      if (pathname.match(/^dataset/)){
-        defaultTerm = pathname.replace('/dataset\/*/','')
-      }
-      searchTerm = searchTerm || defaultTerm
+      searchTerm = (searchTerm || defaultTerm || dataset)
     }
     let search = history.location.search || ''
     let hash = history.location.hash || ''
@@ -102,7 +93,7 @@ export function fetchRepository(searchTerm) {
       .then(json =>{
           if (dataset){
             if (json.find(o=>o.id==dataset)){
-              pathname += dataset
+              pathname += '/dataset/'+dataset
               history.replace({pathname,search,hash})
             }
           }
@@ -148,10 +139,10 @@ export function loadDataset(id,clear) {
       search = ''
     }
     let pathname = history.location.pathname
-    let searchTerm = '/'
-    if (pathname.match(/^.+\/dataset/)){
-      searchTerm = pathname.replace(/dataset.*/,'')
-    }
+    let state = store.getState()
+    let searchTerm = urlSearchTerm(state) || ''
+    if (!searchTerm.match(/^\//)) searchTerm = '/'+searchTerm
+    if (!searchTerm.match(/\/$/)) searchTerm += '/'
     dispatch(refreshStore())
     dispatch(setDatasetIsActive(false))
     dispatch(selectDataset(id))

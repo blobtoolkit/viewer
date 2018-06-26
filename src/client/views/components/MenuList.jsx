@@ -7,13 +7,14 @@ import Spinner from './Spinner'
 import { createSelector } from 'reselect'
 import { fetchIdentifiers } from '../reducers/identifiers'
 import { getSelectedDatasetMeta } from '../reducers/dataset'
+import { urlSearchTerm } from '../reducers/history'
 import { getSelectedList, updateSelectedList, getIdentifiersForList, chooseList } from '../reducers/list'
 import ListModal from './ListModal';
 
-const ListItem = ({id,list,params,onClick,identifiers,active,onChooseList, meta}) => {
+const ListItem = ({id,list,params,search,onClick,identifiers,active,onChooseList,meta}) => {
   let css = styles.menu_item
   if (active) css += ' '+styles.active
-  let obj = {id,params,identifiers}
+  let obj = {id,search,params,identifiers}
   return (
     <div className={css} onClick={()=>onClick(id)}>
     <ListModal name={id} selected={active} dismiss={()=>onClick(null)} list={obj} type={meta.record_type} dataset={meta.id} chooseList={onChooseList}>&nbsp;</ListModal>
@@ -27,10 +28,12 @@ class MenuList extends React.Component {
   constructor(props) {
     super(props);
     this.mapStateToProps = state => {
+      console.log(state)
       return {
         identifiers: getIdentifiersForList(state),
         active: getSelectedList(state) == this.props.id,
-        meta: getSelectedDatasetMeta(state)
+        meta: getSelectedDatasetMeta(state),
+        search: urlSearchTerm(state)
       }
     }
     this.mapDispatchToProps = dispatch => {

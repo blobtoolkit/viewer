@@ -18,6 +18,33 @@ export const parseQueryString = createSelector(
   }
 )
 
+export const urlSearchTerm = createSelector(
+  (state) => history.location ? history.location.pathname : '',
+  (pathname) => {
+    let defaultTerm = ''
+    if (history.location.pathname.match(/^.+\/dataset\//)){
+      defaultTerm = history.location.pathname.replace(/^\//,'').replace(/\/.*/,'')
+    }
+    else if (history.location.pathname.match(/^\/*[^\/]+\/*$/)){
+      defaultTerm = history.location.pathname.replace(/\//,'')
+    }
+    if (defaultTerm == 'dataset') defaultTerm = ''
+    return defaultTerm
+  }
+)
+
+export const urlDataset = createSelector(
+  (state) => history.location ? history.location.pathname : '',
+  (pathname) => {
+    let dataset = ''
+    if (history.location.pathname.match(/dataset/)){
+      dataset = pathname.replace(/.*\/dataset\//,'')
+    }
+    return dataset
+  }
+)
+
+
 const createSelectorForQueryValue = byIdSelectorCreator();
 
 const _getQueryIdAsMemoKey = (queryId) => queryId
