@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import Suggestions from './Suggestions'
 import styles from './Search.scss';
-import { fetchRepository } from '../reducers/repository'
+import { fetchRepository, getAvailableDatasetIds } from '../reducers/repository'
 // import { getSearhTerm,setSearchTerm } from '../reducers/search'
 
 
@@ -56,10 +56,11 @@ class SearchBox extends Component {
   }
 
   render(){
+    let placeholder = this.props.datasetIds.length == 0 ? "Search datasets to begin... (e.g. Nematoda)" : "Search for more datasets..."
     return (
       <form>
         <input
-          placeholder="Search datasets..."
+          placeholder={placeholder}
           ref={input => this.search = input}
           onChange={()=>this.handleInputChange()}
           className={styles.search_box}
@@ -73,6 +74,11 @@ class SearchBox extends Component {
 class Search extends React.Component {
   constructor(props) {
     super(props);
+    this.mapStateToProps = state => {
+      return {
+        datasetIds: getAvailableDatasetIds(state),
+      }
+    }
     this.mapDispatchToProps = dispatch => {
       return {
         onChangeText: (str) => {
@@ -87,7 +93,7 @@ class Search extends React.Component {
 
   render(){
     const ConnectedSearchBox = connect(
-      false,
+      this.mapStateToProps,
       this.mapDispatchToProps
     )(SearchBox)
     return (

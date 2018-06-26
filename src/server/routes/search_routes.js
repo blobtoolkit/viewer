@@ -130,4 +130,8 @@ module.exports = function(app, db) {
     res.setHeader('content-type', 'application/json');
     res.json(search(req.params.term))
   });
+  app.get('/api/v1/search', async (req, res) => {
+    res.setHeader('content-type', 'application/json');
+    res.json([])
+  });
 };

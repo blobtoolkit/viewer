@@ -72,11 +72,14 @@ export function fetchRepository(searchTerm) {
   return function (dispatch) {
     dispatch(requestRepository())
     let pathname = history.location.pathname
-    let defaultTerm = 'all'
+    let defaultTerm = ''
     let dataset = ''
     if (pathname.match(/^.+\/dataset/)){
       defaultTerm = pathname.replace(/^\//,'').replace(/\/.*/,'')
       dataset = pathname.replace(/.*\/dataset\//,'')
+    }
+    if (pathname.match(/dataset/)){
+      dataset = pathname.replace(/.*\/*dataset\//,'')
     }
     if (searchTerm){
       pathname = '/'+searchTerm+'/dataset/'
@@ -91,7 +94,7 @@ export function fetchRepository(searchTerm) {
     let hash = history.location.hash || ''
     history.replace({pathname,search,hash})
     dispatch(setSearchTerm(searchTerm))
-    return fetch(apiUrl + '/search/' + searchTerm)
+    return fetch(apiUrl + '/search/' + (searchTerm || dataset))
       .then(
         response => response.json(),
         error => console.log('An error occured.', error)
@@ -150,8 +153,8 @@ export function loadDataset(id,clear) {
       searchTerm = pathname.replace(/dataset.*/,'')
     }
     dispatch(refreshStore())
-    dispatch(selectDataset(id))
     dispatch(setDatasetIsActive(false))
+    dispatch(selectDataset(id))
     dispatch(fetchMeta(id)).then(() => {
       let meta = deep(store.getState(),['availableDatasets','byId',id])
       let plot = meta.plot

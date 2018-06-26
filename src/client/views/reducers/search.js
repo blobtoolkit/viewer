@@ -7,7 +7,7 @@ export const searchTerm = handleAction(
   (state, action) => (
     action.payload
   ),
-  'all'
+  ''
 )
 
 export const getSearchTerm = state => state.searchTerm
