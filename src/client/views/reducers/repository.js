@@ -96,6 +96,9 @@ export function fetchRepository(searchTerm) {
               pathname += '/dataset/'+dataset
               history.replace({pathname,search,hash})
             }
+            else {
+              dispatch(refreshStore())
+            }
           }
           dispatch(receiveRepository(json))
         }
