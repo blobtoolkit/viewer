@@ -79,7 +79,7 @@ class Layout extends React.Component {
     }
     this.mapDispatchToProps = dispatch => {
       return {
-        onMount: id => dispatch(loadDataset(id))
+        onMount: id => {}//dispatch(loadDataset(id))
       }
     }
   }
@@ -93,4 +93,4 @@ class Layout extends React.Component {
   }
 }
 
-export default withRouter(Layout);
+export default withRouter(Layout)

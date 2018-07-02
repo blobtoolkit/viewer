@@ -8,7 +8,15 @@ import { addAllFields } from './field'
 import { filterToList } from './filter'
 import { editPlot } from './plot'
 import { qsDefault } from '../querySync'
-import { history, queryValue, clearQuery, addQueryValues, urlSearchTerm, urlDataset } from './history'
+import { history,
+  queryValue,
+  clearQuery,
+  addQueryValues,
+  urlSearchTerm,
+  urlDataset,
+  urlViews,
+  viewsToPathname } from './history'
+import { getSelectedDataset } from '../reducers/dataset'
 import { getSearchTerm, setSearchTerm } from './search'
 
 const apiUrl = window.apiURL || '/api/v1'
@@ -72,31 +80,50 @@ export function fetchRepository(searchTerm) {
   return function (dispatch) {
     dispatch(requestRepository())
     let state = store.getState()
-    let pathname = history.location.pathname
-    let defaultTerm = urlSearchTerm(state)
-    let dataset = urlDataset(state)
-    if (searchTerm){
-      pathname = '/'+searchTerm
+    let views = urlViews(state)
+    let setSearch = false
+    if (!searchTerm){
+      searchTerm = views['search']
+      if (!searchTerm){
+        searchTerm = views['dataset']
+        if (searchTerm){
+          views['search'] = searchTerm
+          setSearch = true
+        }
+      }
+      else {
+        setSearch = true
+      }
     }
-    else {
-      searchTerm = (searchTerm || defaultTerm || dataset)
+    else if (searchTerm != views['search']){
+      views['search'] = searchTerm
+      setSearch = true
     }
+    let pathname = viewsToPathname(views)
     let search = history.location.search || ''
     let hash = history.location.hash || ''
     history.replace({pathname,search,hash})
-    dispatch(setSearchTerm(searchTerm))
-    return fetch(apiUrl + '/search/' + (searchTerm || dataset))
+    if (setSearch){
+      dispatch(setSearchTerm(searchTerm))
+    }
+    return fetch(apiUrl + '/search/' + searchTerm)
       .then(
         response => response.json(),
         error => console.log('An error occured.', error)
       )
       .then(json =>{
-          if (dataset){
-            if (json.find(o=>o.id==dataset)){
-              pathname += '/dataset/'+dataset
+          if (views['dataset']){
+            if (json.find(o=>o.id==views['dataset'])){
+              pathname = viewsToPathname(views)
               history.replace({pathname,search,hash})
+              if (getSelectedDataset(state) != views['dataset']){
+                dispatch(loadDataset(views['dataset']))
+              }
             }
             else {
+              delete views['dataset']
+              pathname = viewsToPathname(views)
+              history.replace({pathname,search:'',hash})
               dispatch(refreshStore())
             }
           }
@@ -141,11 +168,17 @@ export function loadDataset(id,clear) {
     if (clear){
       search = ''
     }
-    let pathname = history.location.pathname
     let state = store.getState()
-    let searchTerm = urlSearchTerm(state) || ''
-    if (!searchTerm.match(/^\//)) searchTerm = '/'+searchTerm
-    if (!searchTerm.match(/\/$/)) searchTerm += '/'
+    let views = urlViews(state)
+    if (id){
+      views['dataset'] = id
+    }
+    let hash = history.location.hash || ''
+    let pathname = viewsToPathname(views)
+    history.replace({pathname,search,hash})
+
+    // let pathname = history.location.pathname
+    // let searchTerm = views['search'] || ''
     dispatch(refreshStore())
     dispatch(setDatasetIsActive(false))
     dispatch(selectDataset(id))
@@ -159,8 +192,6 @@ export function loadDataset(id,clear) {
           plot[key] = qv
         }
       })
-      let hash = history.location.hash || ''
-      history.replace({pathname:searchTerm+'dataset/'+id,search,hash})
       dispatch(editPlot(plot))
       Promise.all(addAllFields(dispatch,meta.fields,1,false))
       .then(()=>{
@@ -171,19 +202,13 @@ export function loadDataset(id,clear) {
   }
 }
 
-let dataset = null
-if (history.location){
-  let path = history.location.pathname
-  dataset = path.replace(/\/view\/.+?\/dataset\//,'')
-}
-
 export const selectDataset = createAction('SELECT_DATASET')
 export const selectedDataset = handleAction(
   'SELECT_DATASET',
   (state, action) => (
     action.payload
   ),
-  dataset
+  null
 )
 
 export const getDatasetMeta = (state,id) => deep(state,['availableDatasets','byId',id]) || {}

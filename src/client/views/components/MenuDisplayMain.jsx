@@ -30,7 +30,6 @@ import sqrtIcon from './svg/sqrt.svg';
 import Palettes from './Palettes'
 import MenuItem from './MenuItem'
 import ToolTips from './ToolTips'
-import { withRouter } from 'react-router-dom'
 import Timeout from './Timeout'
 
 const DisplayMenu = ({

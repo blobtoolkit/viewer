@@ -15,7 +15,6 @@ import { getSelectionDisplay,
   toggleSelection } from '../reducers/select'
 import { selectAll,
   invertSelection } from '../reducers/selectTools'
-import { withRouter } from 'react-router-dom'
 import { addQueryValues } from '../reducers/history'
 
 class Field extends React.Component {

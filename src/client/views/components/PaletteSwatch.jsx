@@ -1,7 +1,6 @@
 import React from 'react'
 import styles from './Palette.scss';
 import { SketchPicker } from 'react-color'
-import { withRouter } from 'react-router-dom'
 import { addQueryValues } from '../reducers/history'
 
 class PaletteSwatch extends React.Component {

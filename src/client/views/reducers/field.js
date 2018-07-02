@@ -10,7 +10,7 @@ import { getSelectedDatasetMeta } from './dataset'
 import { addFilter, editFilter } from './filter'
 import { getDimensionsbyDimensionId, setDimension } from './dimension'
 import * as d3 from 'd3'
-import { queryValue } from './history'
+import { history, queryValue } from './history'
 
 const apiUrl = window.apiURL || '/api/v1'
 
@@ -256,7 +256,7 @@ export function fetchRawData(id) {
           limit[1] = qLimit[1].length > 0 ? 1*qLimit[1] : limit[1]
           dispatch(editField({id,range:limit}))
           let range = scale.domain().slice(0)
-          let qRange = [1*queryValue(id+'--Min'),1*queryValue(id+'--Max')]
+          let qRange = [queryValue(id+'--Min'),queryValue(id+'--Max')]
           range[0] = qRange[0].length > 0 ? 1*qRange[0] : range[0]
           range[1] = qRange[1].length > 0 ? 1*qRange[1] : range[1]
           let invert = queryValue(id+'--Inv') || false
@@ -327,13 +327,13 @@ export const addAllFields = (dispatch,fields,flag,meta,promises) => {
     else {
       if (field.type == 'variable'){
         let range = field.range.slice(0)
-        // let minstr = queryValue('min'+field.id)
-        // minstr = minstr ? Number(minstr) : null
-        // let maxstr = queryValue('max'+field.id)
-        // maxstr = maxstr ? Number(maxstr) : null
-        // // let invert = queryValue('inv'+field.id) == 'true'
-        // range = [minstr || range[0],maxstr || range[1]]
-        dispatch(addFilter({id:field.id,type:'range',range:field.range.slice(0)}))
+        let minstr = queryValue(field.id+'--Min')
+        minstr = minstr ? Number(minstr) : null
+        let maxstr = queryValue(field.id+'--Max')
+        maxstr = maxstr ? Number(maxstr) : null
+        let invert = queryValue(field.id+'--Inv') == 'true'
+        range = [minstr || range[0],maxstr || range[1]]
+        dispatch(addFilter({id:field.id,type:'range',range,invert}))
       }
       if (field.type == 'category'){
         dispatch(addFilter({

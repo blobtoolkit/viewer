@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom'
 import Spinner from './Spinner'
 import { createSelector } from 'reselect'
 import { getDatasetMeta, loadDataset } from '../reducers/repository'
-import { withRouter } from 'react-router-dom';
+// import { withRouter } from 'react-router-dom';
 import { DatasetModal } from './DatasetModal'
 
 const basename = BASENAME || ''
@@ -35,25 +35,11 @@ class MenuDataset extends React.Component {
       this.mapStateToProps,
       false
     )(Dataset)
-
-    // return (
-    //   <Link to={'/view/'+this.props.id}>
-    //     <div className={styles.menu_item} onClick={()=>{this.props.onMount(this.props.id)}}>
-    //       <ConnectedDataset/>
-    //     </div>
-    //   </Link>
-    // )
     return (
       <ConnectedDataset {...this.props}/>
-
     )
-
   }
-
-
 }
-
-// <div className={css} onClick={()=>this.props.onDatasetClick(this.props.id)}>
 
 class Dataset extends React.Component {
   constructor(props) {
@@ -71,8 +57,6 @@ class Dataset extends React.Component {
     let taxon = this.props.meta.taxon || {}
     taxon = taxon.name || ''
     let accession = this.props.meta.accession || ''
-    // <div className={css} onClick={()=>this.props.onDatasetClick(this.props.id)}>
-    // <a data-tip data-for='load-dataset' className={styles.most} href={basename + '/dataset/'+this.props.id}>
     return (
       <div className={css}>
         <div data-tip data-for='view-metadata' className={styles.right} onClick={()=>this.setState({show:true})}>
@@ -87,16 +71,8 @@ class Dataset extends React.Component {
       </div>
 
     )
-    // return (
-    //   <a href={'/demo/view/'+this.props.id}>
-    //     <div className={css}>
-    //       <h3>{this.props.meta.name}</h3>
-    //       <span className={styles.menu_subtitle}>{this.props.meta.records} {this.props.meta.record_type}</span>
-    //       <Albert/>
-    //     </div>
-    //   </a>
-    // )
   }
 }
 
-export default withRouter(MenuDataset)
+// export default withRouter(MenuDataset)
+export default MenuDataset

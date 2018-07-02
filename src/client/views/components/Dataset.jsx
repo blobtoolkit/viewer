@@ -27,17 +27,11 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    onDatasetClick: id => {},
-    onMount: id => dispatch(loadDataset(id))
+    onDatasetClick: id => {}
   }
 }
 
 class Overview extends React.Component {
-
-  componentDidMount(){
-    console.log(this.props.match)
-    this.props.onMount(this.props.match.params.datasetId)
-  }
 
   mapFields(fields){
     return (

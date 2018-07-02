@@ -18,27 +18,64 @@ export const parseQueryString = createSelector(
   }
 )
 
-export const urlSearchTerm = createSelector(
+const options = ['blob','cumulative','dataset','snail','table','treemap']
+
+export const urlViews = createSelector(
   (state) => history.location ? history.location.pathname : '',
   (pathname) => {
-    let defaultTerm = ''
-    if (history.location.pathname.match(/^.+\/dataset\//)){
-      defaultTerm = history.location.pathname.replace(/^\//,'').replace(/\/.*/,'')
+    let path = pathname.replace(/^\//,'').replace(/\/$/,'').split('/')
+    let views = {}
+    let nextView = undefined
+    for (let i = 0; i < path.length; i++){
+      if (options.includes(path[i])){
+        views[path[i]] = true
+        nextView = path[i]
+      }
+      else if (nextView == 'dataset') {
+        views['dataset'] = path[i]
+        nextView = undefined
+      }
+      else {
+        views['search'] = path[i]
+      }
     }
-    else if (history.location.pathname.match(/^\/*[^\/]+\/*$/)){
-      defaultTerm = history.location.pathname.replace(/\//,'')
+    return views
+  }
+)
+
+export const viewsToPathname = views => {
+  let pathname = ''
+  if (views['search']){
+    pathname += '/' + views['search']
+  }
+  if (views['dataset']){
+    pathname += '/dataset/' + views['dataset']
+  }
+  options.forEach(view => {
+    if (view != 'dataset' && views['view']){
+      pathname += '/' + view
     }
-    if (defaultTerm == 'dataset') defaultTerm = ''
-    return defaultTerm
+  })
+  return pathname
+}
+
+export const urlSearchTerm = createSelector(
+  urlViews,
+  (views) => {
+    let searchTerm = ''
+    if (views.search){
+      searchTerm = views.search
+    }
+    return searchTerm
   }
 )
 
 export const urlDataset = createSelector(
-  (state) => history.location ? history.location.pathname : '',
-  (pathname) => {
+  urlViews,
+  (views) => {
     let dataset = ''
-    if (history.location.pathname.match(/dataset/)){
-      dataset = pathname.replace(/.*\/dataset\//,'')
+    if (views.dataset){
+      dataset = views.dataset
     }
     return dataset
   }

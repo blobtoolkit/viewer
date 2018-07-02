@@ -2,7 +2,7 @@ import React from 'react'
 import { connect } from 'react-redux'
 import { getAllPalettes, selectPalette, editPalette, choosePalette, chooseColors, getSelectedPalette } from '../reducers/color'
 import PalettesComp from '../components/Palettes'
-import { withRouter } from 'react-router-dom'
+// import { withRouter } from 'react-router-dom'
 import { addQueryValues } from '../reducers/history'
 
 class Palettes extends React.Component {
@@ -36,4 +36,5 @@ class Palettes extends React.Component {
   }
 }
 
-export default withRouter(Palettes)
+// export default withRouter(Palettes)
+export default Palettes
