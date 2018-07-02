@@ -41,7 +41,7 @@ const Legend = ({values,zAxis,bins,palette,other,reducer,meta}) => {
     let gap = 5
     ds = (
       <g transform={'translate('+0+','+0+')'}>
-        <text style={{fontWeight:'bold',fontSize:'150%'}}>{meta.name}</text>
+        <text className={styles.legend_title}>{meta.name}</text>
       </g>
     )
     let headers = ['count']
@@ -53,7 +53,7 @@ const Legend = ({values,zAxis,bins,palette,other,reducer,meta}) => {
     }
     legendKey = (
       <g transform={'translate('+(w+gap)+','+(offset-gap)+')'}>
-        <text transform={'translate(260)'} style={{textAnchor:'end',fontWeight:'normal'}}>[{headers.join(', ')}]</text>
+        <text className={styles.legend} transform={'translate(260)'} style={{textAnchor:'end',fontWeight:'normal'}}>[{headers.join(', ')}]</text>
       </g>
     )
     bins.forEach((bin,i) => {
@@ -71,9 +71,9 @@ const Legend = ({values,zAxis,bins,palette,other,reducer,meta}) => {
       if (count){
         items.push(
           <g key={i} transform={'translate(0,'+offset+')'}>
-            <rect x={0} y={0} width={w} height={h} style={{fill:color}} />
-            <text transform={'translate('+(w+gap)+','+(h-gap)+')'}>{title}</text>
-            <text transform={'translate('+(w+gap+260)+','+(h-gap)+')'} style={{textAnchor:'end'}}>[{numbers.join(', ')}]</text>
+            <rect x={0} y={0} width={w} height={h} style={{fill:color,stroke:'black'}} />
+            <text className={styles.legend} transform={'translate('+(w+gap)+','+(h-gap)+')'}>{title}</text>
+            <text className={styles.legend} transform={'translate('+(w+gap+260)+','+(h-gap)+')'} style={{textAnchor:'end'}}>[{numbers.join(', ')}]</text>
           </g>
         )
         offset += h + gap

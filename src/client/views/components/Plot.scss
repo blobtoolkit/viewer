@@ -2,14 +2,6 @@
 
 .outer {
   position:relative;
-  /*top:15em;
-  left:30em;
-  background-color: $lightColor;
-  margin:1em;
-  height:50em;
-  width:50em;
-  border:2px solid $shadeColor;
-  box-sizing: border-box;*/
   top:4em;
   height: calc(100vh - 4em);
   max-height: 100vw;
@@ -24,22 +16,22 @@
   pointer-events:none;
 
   circle {
-    fill:currentColor;
+    // fill:currentColor;
     opacity:0.6;
     stroke-width:1;
     stroke:$shadeColor;
   }
 
   rect {
-    stroke:currentColor;
-    fill:currentColor;
+    // stroke:currentColor;
+    // fill:currentColor;
     stroke-width:3;
     box-sizing: border-box;
   }
 
   polygon {
-    stroke:currentColor;
-    fill:currentColor;
+    // stroke:currentColor;
+    // fill:currentColor;
     stroke-width:3;
     box-sizing: border-box;
   }
@@ -55,57 +47,37 @@
       stroke-width:0.5;
       fill:$clearColor;
     }
-    // .hex:hover {
-    //   fill:rgba($highlightColor,0.5);
-    // }
     .hex.selected {
       fill:rgba($highlightColor,0.75);
       stroke:rgba($highlightColor,1);
       stroke-width:4px;
     }
-    // .hex.selected:hover {
-    //   fill:rgba($highlightColor,1);
-    // }
     .hex.selected.partial {
       fill:$clearColor;
       stroke:rgba($highlightColor,1);
       stroke-width:4px;
     }
-    // .hex.selected.partial:hover {
-    //   fill:rgba($highlightColor,0.25);
-    // }
-
     .square {
       stroke:$paleColor;
       stroke-width:0.5;
       fill:$clearColor;
       cursor:pointer;
     }
-    // .square:hover {
-    //   fill:rgba($highlightColor,0.5);
-    // }
     .square.selected {
       fill:rgba($highlightColor,0.75);
       stroke:rgba($highlightColor,1);
       stroke-width:4px;
     }
-    // .square.selected:hover {
-    //   fill:rgba($highlightColor,1);
-    // }
     .square.selected.partial {
       fill:$clearColor;
       stroke:rgba($highlightColor,1);
       stroke-width:4px;
     }
-    // .square.selected.partial:hover {
-    //   fill:rgba($highlightColor,0.25);
-    // }
   }
   .plot_boundary {
     stroke:$darkColor;
     stroke-width:2;
     fill:$clearColor;
-    //fill: rgba(125,125,125,0.5);
     cursor: pointer;
     pointer-events: auto;
   }
@@ -118,6 +90,15 @@
 
   .padded_main {
     transform:translate(50px,50px)
+  }
+
+  .legend {
+    font-family:sans-serif;
+  }
+
+  .legend_title {
+    font-family:sans-serif;
+    font-size:1.5em;
   }
 }
 

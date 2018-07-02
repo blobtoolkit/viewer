@@ -59,6 +59,7 @@ const SquareGridSVG = ({ data, onClickCell, mouseDown, setMouseDown, setAddRecor
     squares.push(
       <rect key={i}
         className={css}
+        fill='none'
         x={datum.x}
         y={datum.y}
         height={datum.height}

@@ -32,7 +32,7 @@ export default class PlotBubblesSVG extends React.Component {
 }
 
 const BubblesSVG = ({ bubbles, color, bubblecss }) => (
-  <g color={color}>
+  <g fill={color}>
     {bubbles.map(bubble =>
       <PlotBubbleSVG key={bubble.id} {...bubble} css={bubblecss} />
     )}

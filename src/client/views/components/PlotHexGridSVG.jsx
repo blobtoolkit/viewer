@@ -100,7 +100,7 @@ const HexGridSVG = ({ data, onClickCell, mouseDown, setMouseDown, setAddRecords 
           key={i}
           className={css}
           points={datum.points}
-          style={{fill:datum.color}}
+          fill={datum.color}
           // onMouseOver={()=>{
           //   if (mouseDown){
           //     onClickCell(datum.ids)

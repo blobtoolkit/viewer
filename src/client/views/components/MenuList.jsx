@@ -28,7 +28,6 @@ class MenuList extends React.Component {
   constructor(props) {
     super(props);
     this.mapStateToProps = state => {
-      console.log(state)
       return {
         identifiers: getIdentifiersForList(state),
         active: getSelectedList(state) == this.props.id,
