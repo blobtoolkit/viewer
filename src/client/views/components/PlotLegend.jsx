@@ -60,7 +60,7 @@ const Legend = ({values,zAxis,bins,palette,other,reducer,meta}) => {
     let color = '#999'
     let numbers = []
     let count = values.counts.all > 0
-    numbers.push(format(values.counts.all))
+    numbers.push(values.counts.all)
     if (reducer != 'count'){
       numbers.push(format(values.reduced.all))
     }
@@ -82,7 +82,7 @@ const Legend = ({values,zAxis,bins,palette,other,reducer,meta}) => {
       let color = palette.colors[i]
       let numbers = []
       let count = values.counts.binned[i] > 0
-      numbers.push(format(values.counts.binned[i]))
+      numbers.push(values.counts.binned[i])
       if (reducer != 'count'){
         numbers.push(format(values.reduced.binned[i]))
       }
