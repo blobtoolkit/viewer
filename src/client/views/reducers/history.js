@@ -52,7 +52,7 @@ export const viewsToPathname = views => {
     pathname += '/dataset/' + views['dataset']
   }
   options.forEach(view => {
-    if (view != 'dataset' && views['view']){
+    if (view != 'dataset' && views[view]){
       pathname += '/' + view
     }
   })

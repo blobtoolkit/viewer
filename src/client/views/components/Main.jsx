@@ -10,42 +10,32 @@ import history from '../reducers/history';
 // import { fetchRepository } from '../reducers/repository'
 
 
-const MainDiv = (active) => (
+const Main = () => (
   <main>
-    <Router history={history}>
-      <Switch>
-        <Route path="/dataset/:datasetId?" render={(props)=>(<Layout {...active} {...props}/>)}/>
-        <Route path="/:searchTerm/dataset/:datasetId?" render={(props)=>(<Layout {...active} {...props}/>)}/>
-        <Route render={()=>(<Layout {...active}/>)}/>
-      </Switch>
-    </Router>
+    <Layout/>
   </main>
 )
 
-class Main extends React.Component {
-  constructor(props) {
-    super(props);
-    this.mapStateToProps = state => (
-      {
-        active: getDatasetIsActive(state)
-      }
-    )
-    // this.mapDispatchToProps = dispatch => (
-    //   {
-    //     onLoadLayout: term => dispatch(fetchRepository(term))
-    //   }
-    // )
-  }
-
-  render(){
-    const ConnectedMain = connect(
-      this.mapStateToProps,
-      false//this.mapDispatchToProps
-    )(MainDiv)
-    return (
-      <ConnectedMain {...this.props}/>
-    )
-  }
-}
-
-module.exports = Main;
+export default Main
+// class Main extends React.Component {
+//   constructor(props) {
+//     super(props);
+//     this.mapStateToProps = state => (
+//       {
+//         active: getDatasetIsActive(state)
+//       }
+//     )
+//
+//   }
+//
+//   render(){
+//     const ConnectedMain = connect(
+//       this.mapStateToProps
+//     )(MainDiv)
+//     return (
+//       <ConnectedMain {...this.props}/>
+//     )
+//   }
+// }
+//
+// module.exports = Main;

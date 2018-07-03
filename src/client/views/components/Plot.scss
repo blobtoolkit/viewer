@@ -15,6 +15,10 @@
   width:100%;
   pointer-events:none;
 
+  .bold_path {
+    stroke-width:5;
+  }
+
   circle {
     // fill:currentColor;
     opacity:0.6;

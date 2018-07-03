@@ -16,9 +16,14 @@ const ListItem = ({id,list,params,search,onClick,identifiers,active,onChooseList
   if (active) css += ' '+styles.active
   let obj = {id,search,params,identifiers}
   return (
-    <div className={css} onClick={()=>onClick(id)}>
-    <ListModal name={id} selected={active} dismiss={()=>onClick(null)} list={obj} type={meta.record_type} dataset={meta.id} chooseList={onChooseList}>&nbsp;</ListModal>
-      <h3>{id}</h3>
+    <div className={css}>
+      <div data-tip data-for='view-metadata' className={styles.right}>
+        details
+        <ListModal name={id} selected={active} dismiss={()=>onClick(null)} list={obj} type={meta.record_type} dataset={meta.id} chooseList={onChooseList}>&nbsp;</ListModal>
+      </div>
+      <a data-tip data-for='load-dataset' className={styles.most} onClick={()=>{}}>
+        <h3>{id}</h3>
+      </a>
       <span className={styles.menu_subtitle}>{list.length} {meta.record_type}</span>
     </div>
   )

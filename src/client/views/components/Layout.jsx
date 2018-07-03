@@ -1,5 +1,6 @@
 import React from 'react'
 import { connect } from 'react-redux'
+import { Router, Switch, Route } from 'react-router-dom'
 import Header from './Header'
 import styles from './Layout.scss'
 import MenuDatasetMain from './MenuDatasetMain'
@@ -10,11 +11,12 @@ import MenuSummaryMain from './MenuSummaryMain'
 import MenuHelpMain from './MenuHelpMain'
 import MainPlot from './MainPlot'
 import GetStarted from './GetStarted'
-import { loadDataset } from '../reducers/repository'
+import { loadDataset, getDatasetIsActive } from '../reducers/repository'
 import { getSelectedDataset } from '../reducers/dataset'
 import { getTopLevelFields } from '../reducers/field'
 import { withRouter } from 'react-router-dom'
 import { toggleHash, hashValue } from '../reducers/history'
+import { Routes } from './Routes'
 
 
 class LayoutComponent extends React.Component {
@@ -23,25 +25,12 @@ class LayoutComponent extends React.Component {
     this.state = {activeTabs:(hashValue() ? {[hashValue()]:1} : {})}
   }
 
-  componentWillMount() {
-    let datasetId = this.props.match.params.datasetId
-    if (datasetId && this.props.topLevelFields.length == 0){
-      this.props.onMount(datasetId);
+  toggleState(tab){
+    if (this.state.activeTabs.hasOwnProperty(tab)){
+      this.setState({activeTabs:{}})
     }
-  }
-
-  shouldComponentUpdate(nextProps, nextState){
-    if (nextProps.datasetId != this.props.datasetId){
-      return true
-    }
-    return false
-  }
-
-  componentWillReceiveProps(nextProps) {
-    if (nextProps.datasetId !== this.props.datasetId) {
-    //  this.props.onMount(nextProps.datasetId);
-    console.log(nextProps)
-    console.log(this.props)
+    else {
+      this.setState({activeTabs:{[tab]:1}})
     }
   }
 
@@ -60,9 +49,9 @@ class LayoutComponent extends React.Component {
     if (this.state.activeTabs.hasOwnProperty('Help')) menu = <MenuHelpMain offset='0em'/>
     return (
       <div className={styles.main}>
-        { this.props.active ? <MainPlot /> : <GetStarted/> }
+        { this.props.active ? <Routes active={this.props.active}/> : <GetStarted/> }
          {this.props.active ? menu : menu ? menu : <MenuDatasetMain /> }
-        <Header tabs={tabs} onTabClick={(tab)=>toggleHash(tab)}/>
+        <Header tabs={tabs} onTabClick={(tab)=>{this.toggleState(tab);toggleHash(tab)}}/>
       </div>
     )
   }
@@ -74,20 +63,16 @@ class Layout extends React.Component {
     this.mapStateToProps = state => {
       return {
         selectedDataset: getSelectedDataset(state),
-        topLevelFields: getTopLevelFields(state)
-      }
-    }
-    this.mapDispatchToProps = dispatch => {
-      return {
-        onMount: id => {}//dispatch(loadDataset(id))
+        topLevelFields: getTopLevelFields(state),
+        active: getDatasetIsActive(state),
+        hashValue: hashValue(state)
       }
     }
   }
 
   render(){
     const ConnectedLayout = connect(
-      this.mapStateToProps,
-      this.mapDispatchToProps
+      this.mapStateToProps
     )(LayoutComponent)
     return <ConnectedLayout {...this.props}/>
   }

@@ -11,7 +11,7 @@ import deep from 'deep-get-set'
 import shallow from 'shallowequal'
 import store from '../store'
 import { history, parseQueryString, clearQuery } from './history'
-import { filterToList } from './filter'
+import { filterToList, getFilteredList } from './filter'
 import { fetchRawData } from './field'
 import queryToStore from '../querySync'
 import { selectNone, addRecords } from './select'
@@ -47,7 +47,12 @@ const getListOfLists = state => state.lists
 
 export const getLists = createSelector(
   getListOfLists,
-  lol => lol.allIds.map(id => lol.byId[id])
+  getFilteredList,
+  (lol,list) => {
+    let ret = [{id:'current',list,params:{}}]
+    ret = ret.concat(lol.allIds.map(id => lol.byId[id]))
+    return ret
+  }
 )
 
 
@@ -70,7 +75,7 @@ const getAllActiveFields = createSelector(
 export const updateSelectedList = createAction('UPDATE_SELECTED_LIST')
 export const chooseList = (id) => {
   return function (dispatch) {
-    let list = store.getState().lists.byId[id]
+    let list = getListById(store.getState(),id)
     dispatch(selectNone())
     dispatch(addRecords(list.list))
     queryToStore(dispatch,Object.assign({},list.params),true).then((v)=>{
@@ -93,7 +98,7 @@ export const selectedList = handleAction(
 const createSelectorForSelectedList = byIdSelectorCreator();
 export const getSelectedList = state => state.selectedList
 
-const getListById = (state,id) => state.lists.byId[getSelectedList(state)] || {}
+const getListById = (state,id) => state.lists.byId[getSelectedList(state)] || {id,list:getFilteredList(state),params:{}}
 const createSelectorForListIdentifiers = byIdSelectorCreator();
 export const getIdentifiersForList = createSelectorForListIdentifiers(
   getSelectedList,
