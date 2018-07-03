@@ -35,9 +35,9 @@ const Legend = ({values,zAxis,bins,palette,other,reducer,meta}) => {
   let ds
   let format = d3format(".2s")
   if (bins){
-    let offset = 20
-    let w = 20
-    let h = 20
+    let offset = 10
+    let w = 19
+    let h = 19
     let gap = 5
     ds = (
       <g transform={'translate('+0+','+0+')'}>
@@ -56,6 +56,28 @@ const Legend = ({values,zAxis,bins,palette,other,reducer,meta}) => {
         <text className={styles.legend} transform={'translate(260)'} style={{textAnchor:'end',fontWeight:'normal'}}>[{headers.join(', ')}]</text>
       </g>
     )
+    let title = 'total'
+    let color = '#999'
+    let numbers = []
+    console.log(values)
+    let count = values.counts.all > 0
+    numbers.push(format(values.counts.all))
+    if (reducer != 'count'){
+      numbers.push(format(values.reduced.all))
+    }
+    if (zAxis == 'length'){
+      numbers.push(format(values.n50.all))
+    }
+    if (count){
+      items.push(
+        <g key='all' transform={'translate(0,'+offset+')'}>
+          <rect x={0} y={0} width={w} height={h} style={{fill:color,stroke:'black'}} />
+          <text className={styles.legend} transform={'translate('+(w+gap)+','+(h-gap)+')'}>{title}</text>
+          <text className={styles.legend} transform={'translate('+(w+gap+260)+','+(h-gap)+')'} style={{textAnchor:'end'}}>[{numbers.join(', ')}]</text>
+        </g>
+      )
+      offset += h + gap
+    }
     bins.forEach((bin,i) => {
       let title = bin.id
       let color = palette.colors[i]

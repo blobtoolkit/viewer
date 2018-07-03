@@ -75,6 +75,7 @@ export const getSummary = createSelector(
       values.n50.binned = []
       values.n50.selBinned = []
     }
+    values.counts.all = all.data.length
     values.counts.sel = selected.selAll ? selected.selAll.length : 0
     values.reduced.binned = []
     values.reduced.selBinned = []
