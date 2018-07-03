@@ -59,7 +59,6 @@ const Legend = ({values,zAxis,bins,palette,other,reducer,meta}) => {
     let title = 'total'
     let color = '#999'
     let numbers = []
-    console.log(values)
     let count = values.counts.all > 0
     numbers.push(format(values.counts.all))
     if (reducer != 'count'){

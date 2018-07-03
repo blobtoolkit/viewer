@@ -24,7 +24,8 @@ class Cumulative extends React.Component {
             d={d}
             key={i}
             fill='none'
-            stroke={colors[i]}/>
+            stroke={colors[i]}
+            strokeLinecap='round'/>
     ))
     return (
       <div className={styles.outer}>
@@ -34,13 +35,14 @@ class Cumulative extends React.Component {
           viewBox={viewbox}
           preserveAspectRatio="xMidYMid meet">
           <g transform={'translate(100,10)'} >
+            <CumulativePlotBoundary yValues={yValues}/>
             <path className={styles.bold_path}
                   d={all}
                   fill='none'
-                  stroke='#999'/>
+                  stroke='#999'
+                  strokeLinecap='round'/>
             {paths}
             {legend}
-            <CumulativePlotBoundary yValues={yValues}/>
             <AxisTitle axis='y' title={yLabel}/>
             <AxisTitle axis='x' title={xLabel}/>
           </g>

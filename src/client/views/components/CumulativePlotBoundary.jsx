@@ -14,15 +14,15 @@ export const CumulativePlotBoundary = (yValues,yLabel) => {
   let f = d3Format(".2s");
   return (
     <g>
-      <rect className={styles.plot_boundary} x={0} y={0} width={1000} height={1000} fill='none'/>
-      <Axis {...axisPropsFromTickScale(xScale, 10)} style={{orient: BOTTOM, tickFontSize: 0}}/>
+      <Axis {...axisPropsFromTickScale(xScale, 10)} style={{orient: BOTTOM, tickFontSize: 0, tickSizeInner:1000, tickSizeOuter:1000, strokeColor:'#eee'}}/>
       <Axis {...axisPropsFromTickScale(yScale, 10)} format={f} style={{orient: LEFT, tickFontSize: fontSize}}/>
       <g  transform={'translate(1000)'} >
-        <Axis {...axisPropsFromTickScale(yScale, 10)} style={{orient: LEFT, tickFontSize: 0}}/>
+        <Axis {...axisPropsFromTickScale(yScale, 10)} style={{orient: LEFT, tickFontSize: 0, tickSizeInner:1000, tickSizeOuter:1000, strokeColor:'#eee'}}/>
       </g>
       <g  transform={'translate(0,1000)'} >
         <Axis {...axisPropsFromTickScale(xScale, 10)} format={f} style={{orient: BOTTOM, tickFontSize: fontSize}}/>
       </g>
+      <rect className={styles.plot_boundary} x={0} y={0} width={1000} height={1000} fill='none'/>
     </g>
   )
 }
