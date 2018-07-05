@@ -81,7 +81,7 @@
   .plot_boundary {
     stroke:$darkColor;
     stroke-width:2;
-    fill:$clearColor;
+    fill:rgba($lightColor,0);
     cursor: pointer;
     pointer-events: auto;
   }

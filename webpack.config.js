@@ -62,7 +62,29 @@ const config = {
       },
       {
         test: /\.css$/,
-        exclude: /node_modules/,
+        use: [
+          {
+            loader: 'style-loader',
+            options: { singleton: true }
+          },
+          {
+            loader: 'css-loader',
+            options: {
+              modules: false
+            }
+          }
+        ],
+        include: [
+          /node_modules/,
+          path.resolve(__dirname, 'src/client/views/style/node_modules.css')
+        ]
+      },
+      {
+        test: /\.css$/,
+        exclude: [
+          /node_modules/,
+          path.resolve(__dirname, '/src/client/views/components/style/node_modules.css')
+        ],
         use: ExtractTextPlugin.extract({
           fallback: 'style-loader',
           use: [

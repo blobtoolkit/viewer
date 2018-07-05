@@ -5,8 +5,10 @@ import { getScatterPlotDataByCategory,
   getMainPlotData,
   getScatterPlotData
 } from './plotData';
-import { getRawDataForFieldId, getDetailsForFieldId, getBinsForFieldId } from './field'
+import { getRawDataForFieldId, getDetailsForFieldId, getBinsForFieldId, getAllActiveFields } from './field'
 import { getMainPlot } from './plot';
+import { getFilteredList } from './filter';
+import { getFilteredDataForFieldId } from './preview';
 import { getZReducer, getZScale, zReducers } from './plotParameters';
 import { getColorPalette } from './color';
 import immutableUpdate from 'immutable-update';
@@ -14,6 +16,7 @@ import { scaleLinear as d3scaleLinear } from 'd3-scale';
 import { line as d3Line } from 'd3-shape';
 import { format as d3Format } from 'd3-format'
 import { default as Simplify } from 'simplify-js'
+import { getIdentifiersForList } from './list'
 
 export const getSelectedScatterPlotDataByCategory = createSelector(
   getMainPlotData,
@@ -154,4 +157,65 @@ export const cumulativeCurves = createSelector(
     })
     return { values,paths,zAxis,palette }
   }
+)
+
+export const getTableData = createSelector(
+  getMainPlotData,
+  getAllActiveFields,
+  getSelectedRecordsAsObject,
+  getFilteredList,
+  (state) => {
+    let data = {}
+    Object.keys(getAllActiveFields(state)).forEach(field=>{
+      data[field] = getFilteredDataForFieldId(state,field)
+    })
+    return data
+  },
+  (state) => {
+    let bins = {}
+    let fields = getAllActiveFields(state)
+    Object.keys(fields).forEach(field=>{
+      if (fields[field].type == 'category'){
+        bins[field] = getBinsForFieldId(state,field)
+      }
+    })
+    return bins
+  },
+  getIdentifiersForList,
+  (plotData,fields,selected,list,data,bins,identifiers) => {
+    let values = []
+    let keys = {}
+    let plot = plotData.meta
+    list.forEach((id,index) => {
+      let row = {sel:Boolean(selected[id]),id}
+      Object.keys(fields).forEach(field=>{
+        row[field] = data[field].values[index]
+      })
+      if(identifiers[index]){
+        row['name'] = identifiers[index]
+      }
+      values.push(row)
+    })
+    Object.keys(fields).forEach(field=>{
+      if (data[field].keys){
+        keys[field] = data[field].keys
+      }
+    })
+    return {values,keys,plot,fields}
+  }
+)
+
+export const getBinnedColors = createSelector(
+  getColorPalette,
+  (state) => getBinsForFieldId(state,getMainPlot(state).axes.cat),
+  (palette,bins) => {
+    let colors = []
+    bins.forEach((bin,i) => {
+      bin.keys.forEach(k=>{
+        colors[k] = palette.colors[i]
+      })
+    })
+    return colors
+  }
+
 )

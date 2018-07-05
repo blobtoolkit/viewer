@@ -13,6 +13,7 @@ import { getPlotShape,
   chooseZScale,
   getTransformFunctionParams,
   setTransformFunction } from '../reducers/plotParameters'
+import { chooseView } from '../reducers/repository'
 import styles from './Layout.scss'
 import MenuDisplaySimple from './MenuDisplaySimple'
 import SVGIcon from './SVGIcon'
@@ -38,7 +39,8 @@ const DisplayMenu = ({
   resolution, onChangeResolution,
   reducer, onSelectReducer,
   scale, onSelectScale,
-  transform, onChangeTransform }) => {
+  transform, onChangeTransform,
+  onSelectView }) => {
   return (
     <div className={styles.menu}>
       <MenuItem name='palette' type='palette'/>
@@ -70,23 +72,30 @@ const DisplayMenu = ({
         <SVGIcon sprite={linearIcon} active={scale == 'scaleLinear'} onIconClick={()=>onSelectScale('scaleLinear')}/>
         <SVGIcon sprite={sqrtIcon} active={scale == 'scaleSqrt'} onIconClick={()=>onSelectScale('scaleSqrt')}/>
       </MenuDisplaySimple>
-      <br/>
-      <label htmlFor='transform_x'>x position: {transform.x} </label>
-      <br/>
-      <input id='transform_x' onChange={(e)=>onChangeTransform({x:e.target.value})} type="range" value={transform.x} min="0" max="1000" step="50"/>
-      <br/>
-      <label htmlFor='transform_order'>order: {transform.order} </label>
-      <br/>
-      <input id='transform_order' onChange={(e)=>onChangeTransform({order:e.target.value})} type="range" value={transform.order} min="0.25" max="3" step="0.25"/>
-      <br/>
-      <label htmlFor='transform_factor'>factor: {transform.factor} </label>
-      <br/>
-      <input id='transform_factor' onChange={(e)=>onChangeTransform({factor:e.target.value})} type="range" value={transform.factor} min="-1" max="1" step="0.1"/>
+      <MenuDisplaySimple name='view'>
+        <a className={styles.view_link} onClick={()=>onSelectView('blob')}>blobplot</a>
+        <a className={styles.view_link} onClick={()=>onSelectView('cumulative')}>cumulative</a>
+        <a className={styles.view_link} onClick={()=>onSelectView('table')}>table</a>
+
+      </MenuDisplaySimple>
 
       <ToolTips set='settingsMenu'/>
     </div>
   )
 };
+// <br/>
+// <label htmlFor='transform_x'>x position: {transform.x} </label>
+// <br/>
+// <input id='transform_x' onChange={(e)=>onChangeTransform({x:e.target.value})} type="range" value={transform.x} min="0" max="1000" step="50"/>
+// <br/>
+// <label htmlFor='transform_order'>order: {transform.order} </label>
+// <br/>
+// <input id='transform_order' onChange={(e)=>onChangeTransform({order:e.target.value})} type="range" value={transform.order} min="0.25" max="3" step="0.25"/>
+// <br/>
+// <label htmlFor='transform_factor'>factor: {transform.factor} </label>
+// <br/>
+// <input id='transform_factor' onChange={(e)=>onChangeTransform({factor:e.target.value})} type="range" value={transform.factor} min="-1" max="1" step="0.1"/>
+
 
 class MenuDisplayMain extends React.Component {
   constructor(props) {
@@ -102,6 +111,7 @@ class MenuDisplayMain extends React.Component {
         },
         onSelectReducer: reducer => dispatch(chooseZReducer(reducer)),
         onSelectScale: scale => dispatch(chooseZScale(scale)),
+        onSelectView: view => dispatch(chooseView(view)),
         onChangeTransform: object => dispatch(setTransformFunction(object))
       }
     }

@@ -227,7 +227,6 @@ export const getSquareBinPlotDataForCategoryIndex = createSelectorForSquareCateg
   _getCategoryIndexAsMemoKey,
   getScatterPlotDataForCategoryIndex,
   (plotData) => {
-    console.log(plotData)
     let size = 900 // FIXME: magic number
     let res = 20 // FIXME: magic number
     let side = size/res

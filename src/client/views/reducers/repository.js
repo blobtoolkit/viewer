@@ -133,6 +133,24 @@ export function fetchRepository(searchTerm) {
   }
 }
 
+export function chooseView(view) {
+  return function (dispatch) {
+    dispatch(requestRepository())
+    let state = store.getState()
+    let views = urlViews(state)
+    let newViews = {
+      search:views.search,
+      dataset:views.dataset,
+      [view]:true
+    }
+    let pathname = viewsToPathname(newViews)
+    let search = history.location.search || ''
+    let hash = history.location.hash || ''
+    history.replace({pathname,search,hash})
+  }
+}
+
+
 function clearUnderscores(obj) {
   let str = JSON.stringify(obj);
   str = str.replace(/"_/g,'"');

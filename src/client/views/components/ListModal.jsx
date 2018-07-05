@@ -35,6 +35,8 @@ class ListModal extends React.Component {
     Object.keys(inParams).sort().forEach(function(key) {
       params[key] = inParams[key];
     });
+    let loadButton = (<a className={styles.button} onClick={()=>{this.props.chooseList(this.props.name);this.handleClose()}}>Load List</a>)
+    let loadList = this.props.name == 'current' ? '' : loadButton
     return (
       <div style={{position:'absolute', top:0, right:0, bottom:0, left:0}} onClick={()=>this.handleClick()}>
         {
@@ -43,7 +45,7 @@ class ListModal extends React.Component {
             <ModalDialog onClose={()=>this.handleClose()}>
               <div className={styles.modal}>
                 <a className={styles.button} onClick={()=>this._downloadJSONFile(this.props.dataset+'.'+this.props.name,this.props.list)}>Download JSON</a>
-                &nbsp;<a className={styles.button} onClick={()=>{this.props.chooseList(this.props.name);this.handleClose()}}>Load List</a>
+                {loadList}
                 <h2>{this.props.name}</h2>
                 <p>{this.props.list.identifiers.length} {this.props.type}</p>
                 <div className={styles.code_block}>

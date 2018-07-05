@@ -164,12 +164,34 @@
     font-weight: bold;
     color:$highlightColor;
   }
-  .colored_tab {
-    display:inline-block;
-    width:2em;
-    height:1.5em;
-    box-sizing:border-box;
-  }
+}
+.colored_tab {
+  display:inline-block;
+  width:1.4em;
+  height:1.4em;
+  box-sizing:border-box;
+  margin-right:0.4em;
+}
+
+.colored_tab.highlight, .colored_tab.clear {
+  border: 2px solid $shadeColor;
+  border-radius: 2px;
+  cursor: pointer;
+}
+
+.view_link {
+  display:inline-block;
+  color: $lightColor;
+  margin: 0 0.2em;
+  cursor:pointer;
+}
+
+.colored_tab.highlight {
+  background-color: $highlightColor;
+}
+
+.colored_tab.clear {
+  background-color: $lightColor;
 }
 
 .menu_subtitle {

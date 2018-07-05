@@ -12,7 +12,7 @@ import shallow from 'shallowequal'
 import store from '../store'
 import { history, parseQueryString, clearQuery } from './history'
 import { filterToList, getFilteredList } from './filter'
-import { fetchRawData } from './field'
+import { fetchRawData, getAllActiveFields } from './field'
 import queryToStore from '../querySync'
 import { selectNone, addRecords } from './select'
 
@@ -52,22 +52,6 @@ export const getLists = createSelector(
     let ret = [{id:'current',list,params:{}}]
     ret = ret.concat(lol.allIds.map(id => lol.byId[id]))
     return ret
-  }
-)
-
-
-const getAllFields = state => state.fields.byId
-
-const getAllActiveFields = createSelector(
-  getAllFields,
-  fields => {
-    let active = {}
-    Object.keys(fields).forEach(key => {
-      if (fields[key].active){
-        active[key] = fields[key]
-      }
-    })
-    return active
   }
 )
 

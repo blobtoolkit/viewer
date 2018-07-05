@@ -520,6 +520,18 @@ export const getBarsForFieldId = createBarSelectorForFieldId(
   }
 );
 
+export const getAllActiveFields = createSelector(
+  getFields,
+  fields => {
+    let active = {}
+    Object.keys(fields).forEach(key => {
+      if (fields[key].active){
+        active[key] = fields[key]
+      }
+    })
+    return active
+  }
+)
 
 export const fieldReducers = {
   fields,
