@@ -13,6 +13,7 @@ import { getSelectedDatasetMeta } from '../reducers/dataset'
 const saveSvgAsPng = require('save-svg-as-png/saveSvgAsPng.js')
 import AxisTitle from './AxisTitle'
 import ReactTable from 'react-table'
+import ExternalLink from './ExternalLink'
 import { fetchIdentifiers } from '../reducers/identifiers'
 
 const CategoryLabel = ({index,keys,colors}) => {
@@ -62,22 +63,23 @@ class Table extends React.Component {
       if (field.type == 'category'){
         let cat = {
           id: field.name,
-          Header: field.name,
+          Header: () => field.name.replace('_',' '),
           accessor: d => d[id]
         }
         if (id == plotCategory){
           cat.Cell = props => <CategoryLabel index={props.value} keys={keys[id]} colors={binnedColors}/>
         }
         else {
-          cat.Cell = props => keys[id][props.value]
+          cat.Cell = props => keys[id] ? keys[id][props.value] : 0
         }
         categories.columns.push(cat)
       }
       if (field.type == 'variable'){
         variables.columns.push({
           id: field.name,
-          Header: field.name,
-          accessor: d => d[id]
+          Header: () => field.name.replace('_',' '),
+          accessor: d => d[id],
+          minWidth: 50
         })
       }
     })
@@ -86,6 +88,7 @@ class Table extends React.Component {
   render(){
     let keys = this.props.data.keys
     let data = this.props.data.values
+    let links = this.props.data.links
     let ids = data.map(o=>o.id)
     let toggleSelect = this.props.toggleSelect
     let columns = [{
@@ -95,17 +98,28 @@ class Table extends React.Component {
         {
           accessor: 'selected',
           Cell: props => <RecordSelector selected={props.original.sel} id={[props.original.id]} toggleSelect={toggleSelect}/>,
-          minWidth: 18,
+          width: 30,
           Header: props => <RecordSelector selected={this.props.selectAll} id={ids} toggleSelect={toggleSelect}/>,
+          resizable: false
+        },
+        {
+          Header: '#',
+          accessor: '_id',
+          width: 65
         },
         {
           Header: 'ID',
-          accessor: 'id'
+          accessor: 'id',
+          show:(data[0] && data[0].id) ? true : false
         },
         {
-          Header: 'Name',
-          accessor: 'name',
-          show:(data[0] && data[0].name) ? true : false
+          Header: 'Links',
+          id: 'links',
+          accessor: d => (
+            links.record.map((link,i)=>(
+              <ExternalLink key={i} title={link.title} target='_blank' url={link.func(d)}/>
+            ))
+          )
         }
       ]
     }]

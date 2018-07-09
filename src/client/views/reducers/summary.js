@@ -7,6 +7,7 @@ import { getScatterPlotDataByCategory,
 } from './plotData';
 import { getRawDataForFieldId, getDetailsForFieldId, getBinsForFieldId, getAllActiveFields } from './field'
 import { getMainPlot } from './plot';
+import { getSelectedDatasetMeta } from './dataset';
 import { getFilteredList } from './filter';
 import { getFilteredDataForFieldId } from './preview';
 import { getZReducer, getZScale, zReducers } from './plotParameters';
@@ -177,6 +178,39 @@ export const cumulativeCurves = createSelector(
   }
 )
 
+const funcFromPattern = pattern => {
+  return (def) => {
+    let url = ''
+    let parts = pattern.split(/[\{\}]/)
+    for (let i = 0; i < parts.length; i++){
+      if (parts[i]){
+        url += i % 2 == 0 ? parts[i] : def[parts[i]]
+      }
+    }
+    return url
+  }
+}
+
+export const getLinks = createSelector(
+  getSelectedDatasetMeta,
+  (meta) => {
+    let links = {dataset:[],record:[]}
+    if (meta.dataset_links){
+      Object.keys(meta.dataset_links).forEach(title=>{
+        let pattern = meta.dataset_links[title]
+        links.dataset.push({title,func:funcFromPattern(pattern)})
+      })
+    }
+    if (meta.record_links){
+      Object.keys(meta.record_links).forEach(title=>{
+        let pattern = meta.record_links[title]
+        links.record.push({title,func:funcFromPattern(pattern)})
+      })
+    }
+    return links
+  }
+)
+
 export const getTableData = createSelector(
   getMainPlotData,
   getAllActiveFields,
@@ -200,17 +234,18 @@ export const getTableData = createSelector(
     return bins
   },
   getIdentifiersForList,
-  (plotData,fields,selected,list,data,bins,identifiers) => {
+  getLinks,
+  (plotData,fields,selected,list,data,bins,identifiers,links) => {
     let values = []
     let keys = {}
     let plot = plotData.meta
-    list.forEach((id,index) => {
-      let row = {sel:Boolean(selected[id]),id}
+    list.forEach((_id,index) => {
+      let row = {sel:Boolean(selected[_id]),_id}
       Object.keys(fields).forEach(field=>{
-        row[field] = data[field].values[index]
+        row[field] = data[field].values[index] || 0
       })
       if(identifiers[index]){
-        row['name'] = identifiers[index]
+        row['id'] = identifiers[index]
       }
       values.push(row)
     })
@@ -219,7 +254,7 @@ export const getTableData = createSelector(
         keys[field] = data[field].keys
       }
     })
-    return {values,keys,plot,fields}
+    return {values,keys,plot,fields,links}
   }
 )
 

@@ -179,7 +179,6 @@ export const curveOrigin = handleAction(
 )
 export const getCurveOrigin = state => state.curveOrigin
 
-
 export const plotParameterReducers = {
   plotShape,
   plotResolution,
