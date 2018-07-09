@@ -135,7 +135,7 @@ export function fetchRepository(searchTerm) {
 
 export function chooseView(view) {
   return function (dispatch) {
-    dispatch(requestRepository())
+    // dispatch(fetchRepository())
     let state = store.getState()
     let views = urlViews(state)
     let newViews = {
