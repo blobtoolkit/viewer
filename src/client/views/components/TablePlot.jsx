@@ -15,6 +15,7 @@ import AxisTitle from './AxisTitle'
 import ReactTable from 'react-table'
 import ExternalLink from './ExternalLink'
 import { fetchIdentifiers } from '../reducers/identifiers'
+import DownloadCSV from './TableCSV'
 
 const CategoryLabel = ({index,keys,colors}) => {
   return (
@@ -89,7 +90,7 @@ class Table extends React.Component {
     let keys = this.props.data.keys
     let data = this.props.data.values
     let links = this.props.data.links
-    let ids = data.map(o=>o.id)
+    let ids = data.map(o=>o._id)
     let toggleSelect = this.props.toggleSelect
     let columns = [{
       Header:'',
@@ -97,7 +98,7 @@ class Table extends React.Component {
       [
         {
           accessor: 'selected',
-          Cell: props => <RecordSelector selected={props.original.sel} id={[props.original.id]} toggleSelect={toggleSelect}/>,
+          Cell: props => <RecordSelector selected={props.original.sel} id={[props.original._id]} toggleSelect={toggleSelect}/>,
           width: 30,
           Header: props => <RecordSelector selected={this.props.selectAll} id={ids} toggleSelect={toggleSelect}/>,
           resizable: false
@@ -134,6 +135,7 @@ class Table extends React.Component {
             columns={columns}
             defaultPageSize={Math.min(this.state.pageSize,data.length)}
           />
+          <DownloadCSV data={data}/>
       </div>
     )
   }

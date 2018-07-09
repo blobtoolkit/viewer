@@ -258,6 +258,29 @@ export const getTableData = createSelector(
   }
 )
 
+export const getCSVdata = createSelector(
+  getTableData,
+  data => {
+    let values = data.values
+    let keys = data.keys
+    let arr = values.map(o=>{
+      let entry = {}
+      Object.keys(o).forEach(k=>{
+        if (k != '_id' && k != 'sel'){
+          if (keys[k]){
+            entry[k] = keys[k][o[k]]
+          }
+          else {
+            entry[k] = o[k]
+          }
+        }
+      })
+      return entry
+    })
+    return arr
+  }
+)
+
 export const getBinnedColors = createSelector(
   getColorPalette,
   (state) => getBinsForFieldId(state,getMainPlot(state).axes.cat),
