@@ -26,9 +26,13 @@ export const urlViews = createSelector(
     let path = pathname.replace(/^\//,'').replace(/\/$/,'').split('/')
     let views = {}
     let nextView = undefined
+    let primary = undefined
     for (let i = 0; i < path.length; i++){
       if (options.includes(path[i])){
         views[path[i]] = true
+        if (!primary && path[i] != 'search' && path[i] != 'dataset'){
+          primary = path[i]
+        }
         nextView = path[i]
       }
       else if (nextView == 'dataset') {
@@ -39,6 +43,7 @@ export const urlViews = createSelector(
         views['search'] = path[i]
       }
     }
+    views.primary = primary
     return views
   }
 )

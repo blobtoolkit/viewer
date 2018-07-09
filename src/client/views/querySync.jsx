@@ -56,6 +56,11 @@ const mapDispatchToQuery = (
       type: 'SET_Z_REDUCER',
       payload: (k,v) => v
     },
+    curveOrigin: {
+      type: 'SET_CURVE_ORIGIN',
+      payload: (k,v) => v,
+      default: '0'
+    },
     userColors: {
       actions: (k,v) => ([
         {

@@ -164,6 +164,22 @@ export const getTransformFunction = createSelector(
   })
 })
 
+export const setCurveOrigin = createAction('SET_CURVE_ORIGIN')
+export const chooseCurveOrigin = (curveOrigin) => {
+  return function (dispatch) {
+    queryToStore(dispatch,{curveOrigin})
+  }
+}
+export const curveOrigin = handleAction(
+  'SET_CURVE_ORIGIN',
+  (state, action) => (
+    action.payload
+  ),
+  qsDefault('curveOrigin')
+)
+export const getCurveOrigin = state => state.curveOrigin
+
+
 export const plotParameterReducers = {
   plotShape,
   plotResolution,
@@ -171,5 +187,6 @@ export const plotParameterReducers = {
   plotScale,
   zScale,
   zReducer,
-  transformFunction
+  transformFunction,
+  curveOrigin
 }

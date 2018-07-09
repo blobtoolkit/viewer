@@ -12,11 +12,14 @@ import { getPlotShape,
   getZScale,
   chooseZScale,
   getTransformFunctionParams,
-  setTransformFunction } from '../reducers/plotParameters'
+  setTransformFunction,
+  getCurveOrigin,
+  chooseCurveOrigin } from '../reducers/plotParameters'
 import { chooseView } from '../reducers/repository'
 import styles from './Layout.scss'
 import MenuDisplaySimple from './MenuDisplaySimple'
 import SVGIcon from './SVGIcon'
+import TextIcon from './TextIcon'
 import squareIcon from './svg/squareShape.svg';
 import hexIcon from './svg/hexShape.svg';
 import circleIcon from './svg/circleShape.svg';
@@ -28,17 +31,21 @@ import meanIcon from './svg/mean.svg';
 import logIcon from './svg/log.svg';
 import linearIcon from './svg/linear.svg';
 import sqrtIcon from './svg/sqrt.svg';
+import xIcon from './svg/xLetter.svg';
+import yIcon from './svg/yLetter.svg';
+import zeroIcon from './svg/zero.svg';
 import Palettes from './Palettes'
 import MenuItem from './MenuItem'
 import ToolTips from './ToolTips'
 import Timeout from './Timeout'
 
 const DisplayMenu = ({
-  title,
+  title, view,
   shape, onSelectShape,
   resolution, onChangeResolution,
   reducer, onSelectReducer,
   scale, onSelectScale,
+  curveOrigin, onSelectCurveOrigin,
   transform, onChangeTransform,
   onSelectView }) => {
   return (
@@ -73,11 +80,16 @@ const DisplayMenu = ({
         <SVGIcon sprite={sqrtIcon} active={scale == 'scaleSqrt'} onIconClick={()=>onSelectScale('scaleSqrt')}/>
       </MenuDisplaySimple>
       <MenuDisplaySimple name='view'>
-        <a className={styles.view_link} onClick={()=>onSelectView('blob')}>blobplot</a>
-        <a className={styles.view_link} onClick={()=>onSelectView('cumulative')}>cumulative</a>
-        <a className={styles.view_link} onClick={()=>onSelectView('table')}>table</a>
-
+        <TextIcon title='blobplot' active={view == 'blob'} onIconClick={()=>onSelectView('blob')}/>
+        <TextIcon title='cumulative' active={view == 'cumulative'} onIconClick={()=>onSelectView('cumulative')}/>
+        <TextIcon title='table' active={view == 'table'} onIconClick={()=>onSelectView('table')}/>
       </MenuDisplaySimple>
+      <MenuDisplaySimple name='curve origin'>
+        <SVGIcon sprite={zeroIcon} active={curveOrigin == '0'} onIconClick={()=>onSelectCurveOrigin('0')}/>
+        <SVGIcon sprite={xIcon} active={curveOrigin == 'x'} onIconClick={()=>onSelectCurveOrigin('x')}/>
+        <SVGIcon sprite={yIcon} active={curveOrigin == 'y'} onIconClick={()=>onSelectCurveOrigin('y')}/>
+      </MenuDisplaySimple>
+
 
       <ToolTips set='settingsMenu'/>
     </div>
@@ -112,6 +124,7 @@ class MenuDisplayMain extends React.Component {
         onSelectReducer: reducer => dispatch(chooseZReducer(reducer)),
         onSelectScale: scale => dispatch(chooseZScale(scale)),
         onSelectView: view => dispatch(chooseView(view)),
+        onSelectCurveOrigin: origin => dispatch(chooseCurveOrigin(origin)),
         onChangeTransform: object => dispatch(setTransformFunction(object))
       }
     }
@@ -123,6 +136,7 @@ class MenuDisplayMain extends React.Component {
         resolution:getPlotResolution(state),
         reducer:getZReducer(state),
         scale:getZScale(state),
+        curveOrigin:getCurveOrigin(state),
         transform:getTransformFunctionParams(state)
       }
     }

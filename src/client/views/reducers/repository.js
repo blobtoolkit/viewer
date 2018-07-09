@@ -133,9 +133,20 @@ export function fetchRepository(searchTerm) {
   }
 }
 
+export const setView = createAction('SET_VIEW')
+
+export const view = handleAction(
+  'SET_VIEW',
+  (state, action) => (
+    action.payload
+  ),
+  urlViews().primary || 'blob'
+)
+export const getView = state => state.view
+
+
 export function chooseView(view) {
   return function (dispatch) {
-    // dispatch(fetchRepository())
     let state = store.getState()
     let views = urlViews(state)
     let newViews = {
@@ -147,6 +158,7 @@ export function chooseView(view) {
     let search = history.location.search || ''
     let hash = history.location.hash || ''
     history.replace({pathname,search,hash})
+    dispatch(setView(view))
   }
 }
 
@@ -257,5 +269,6 @@ export const repositoryReducers = {
   selectedDataset,
   availableDatasets,
   fetchRepository,
-  datasetIsActive
+  datasetIsActive,
+  view
 }

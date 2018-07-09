@@ -149,12 +149,30 @@ export const cumulativeCurves = createSelector(
     let f = d3Format(".3f");
     let line = d3Line().x(d=>f(d.x)).y(d=>f(d.y))
     let xyScale = arr => [0].concat(arr).map((y,x)=>({x:xScale(x),y:yScale(y)}))
-    let paths = {all:'',byCat:[]}
+    let paths = {all:'',scaled:[],byCat:[],offsets:[],count_offsets:[]}
     // values.all = Simplify(scaled)
-    paths.all = line(Simplify(xyScale(all),0.5))
-    byCat.forEach((arr,i)=>{
-      paths.byCat[i] = line(Simplify(xyScale(arr),0.5))
+    let counts = byCat.map((arr,i)=>({i,l:arr.length}))
+    let spans = byCat.map((arr,i)=>({i,l:arr[arr.length-1]}))
+    let offset = {x:0,y:0}
+    paths.scaled = byCat.map(arr=>xyScale(arr))
+    spans.sort((a,b)=>b.l-a.l).forEach(o=>{
+      paths.offsets[o.i] = {...offset}
+      let scaled = paths.scaled[o.i]
+      offset.x += scaled[scaled.length-1].x - 50
+      offset.y += 950 - scaled[scaled.length-1].y
+      paths.byCat[o.i] = line(Simplify(scaled,0.5))
     })
+    offset = {x:0,y:0}
+    counts.sort((a,b)=>b.l-a.l).forEach(o=>{
+      paths.count_offsets[o.i] = {...offset}
+      let scaled = paths.scaled[o.i]
+      offset.x += scaled[scaled.length-1].x - 50
+      offset.y += 950 - scaled[scaled.length-1].y
+    })
+    paths.all = line(Simplify(xyScale(all),0.5))
+    // byCat.forEach((arr,i)=>{
+    //   paths.byCat[i] = line(Simplify(xyScale(arr),0.5))
+    // })
     return { values,paths,zAxis,palette }
   }
 )

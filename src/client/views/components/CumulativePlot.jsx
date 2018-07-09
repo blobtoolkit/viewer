@@ -2,6 +2,7 @@ import React from 'react'
 import { connect } from 'react-redux'
 import styles from './Plot.scss'
 import { cumulativeCurves } from '../reducers/summary'
+import { getCurveOrigin } from '../reducers/plotParameters'
 import PlotLegend from './PlotLegend'
 import PlotAxisTitle from './PlotAxisTitle'
 import CumulativePlotBoundary from './CumulativePlotBoundary'
@@ -17,16 +18,28 @@ class Cumulative extends React.Component {
     let all = this.props.cumulative.paths.all
     let yValues = this.props.cumulative.values.all
     let byCat = this.props.cumulative.paths.byCat
+    let transform = 'translate(0,0)'
     let yLabel = 'Cumulative ' + this.props.cumulative.zAxis
     let xLabel = (this.props.meta.record_type || '') + ' number'
-    let paths = byCat.map((d,i)=>(
-      <path className={styles.bold_path}
-            d={d}
-            key={i}
-            fill='none'
-            stroke={colors[i]}
-            strokeLinecap='round'/>
-    ))
+    let paths = byCat.map((d,i)=>{
+      if (this.props.origin == 'y'){
+        let offsets = this.props.cumulative.paths.offsets
+        transform = 'translate('+offsets[i].x+','+-offsets[i].y+')'
+      }
+      if (this.props.origin == 'x'){
+        let offsets = this.props.cumulative.paths.count_offsets
+        transform = 'translate('+offsets[i].x+','+-offsets[i].y+')'
+      }
+      return (
+        <path className={styles.bold_path}
+              d={d}
+              key={i}
+              fill='none'
+              stroke={colors[i]}
+              transform={transform}
+              strokeLinecap='round'/>
+      )
+    })
     return (
       <div className={styles.outer}>
         <svg id="cumulative_plot"
@@ -59,7 +72,8 @@ class CumulativePlot extends React.Component {
     this.mapStateToProps = state => {
       return {
         cumulative: cumulativeCurves(state),
-        meta: getSelectedDatasetMeta(state,this.props.datasetId)
+        meta: getSelectedDatasetMeta(state,this.props.datasetId),
+        origin: getCurveOrigin(state)
       }
     }
   }

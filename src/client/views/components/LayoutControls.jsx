@@ -1,6 +1,6 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import { Router, Switch, Route } from 'react-router-dom'
+import { Router, Switch, Route, withRouter } from 'react-router-dom'
 import Header from './Header'
 import styles from './Layout.scss'
 import MenuDatasetMain from './MenuDatasetMain'
@@ -9,10 +9,9 @@ import MenuListsMain from './MenuListsMain'
 import MenuDisplayMain from './MenuDisplayMain'
 import MenuSummaryMain from './MenuSummaryMain'
 import MenuHelpMain from './MenuHelpMain'
-import { loadDataset, getDatasetIsActive } from '../reducers/repository'
+import { loadDataset, getDatasetIsActive,getView,chooseView } from '../reducers/repository'
 import { getSelectedDataset } from '../reducers/dataset'
 import { getTopLevelFields } from '../reducers/field'
-import { withRouter } from 'react-router-dom'
 import { toggleHash, hashValue } from '../reducers/history'
 
 
@@ -41,7 +40,7 @@ class ControlsLayoutComponent extends React.Component {
     if (this.state.activeTabs.hasOwnProperty('Datasets')) menu = <MenuDatasetMain />
     if (this.state.activeTabs.hasOwnProperty('Filters')) menu = <MenuFilterMain offset='0em'/>
     if (this.state.activeTabs.hasOwnProperty('Lists')) menu = <MenuListsMain offset='0em'/>
-    if (this.state.activeTabs.hasOwnProperty('Settings')) menu = <MenuDisplayMain offset='0em'/>
+    if (this.state.activeTabs.hasOwnProperty('Settings')) menu = <MenuDisplayMain offset='0em' view={this.props.view}/>
     if (this.state.activeTabs.hasOwnProperty('Summary')) menu = <MenuSummaryMain offset='0em'/>
     if (this.state.activeTabs.hasOwnProperty('Help')) menu = <MenuHelpMain offset='0em'/>
     return (
@@ -61,7 +60,8 @@ class LayoutControls extends React.Component {
         selectedDataset: getSelectedDataset(state),
         topLevelFields: getTopLevelFields(state),
         active: getDatasetIsActive(state),
-        hashValue: hashValue(state)
+        hashValue: hashValue(state),
+        view: getView(state)
       }
     }
   }
@@ -74,4 +74,4 @@ class LayoutControls extends React.Component {
   }
 }
 
-export default LayoutControls
+export default withRouter(LayoutControls)
