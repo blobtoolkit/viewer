@@ -119,7 +119,8 @@ class Table extends React.Component {
             links.record.map((link,i)=>(
               <ExternalLink key={i} title={link.title} target='_blank' url={link.func(d)}/>
             ))
-          )
+          ),
+          show:(links.record[0] && links.record[0].title) ? true : false
         }
       ]
     }]
