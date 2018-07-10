@@ -82,6 +82,7 @@ const DisplayMenu = ({
       <MenuDisplaySimple name='view'>
         <TextIcon title='blobplot' active={view == 'blob'} onIconClick={()=>onSelectView('blob')}/>
         <TextIcon title='cumulative' active={view == 'cumulative'} onIconClick={()=>onSelectView('cumulative')}/>
+        <TextIcon title='snail' active={view == 'snail'} onIconClick={()=>onSelectView('snail')}/>
         <TextIcon title='table' active={view == 'table'} onIconClick={()=>onSelectView('table')}/>
       </MenuDisplaySimple>
       <MenuDisplaySimple name='curve origin'>
