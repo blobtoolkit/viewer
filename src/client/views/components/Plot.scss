@@ -17,14 +17,17 @@
 
   .bold_path {
     stroke-width:5;
+    opacity:1;
   }
 
   .axis_path {
     stroke-width:3;
+    opacity:1;
   }
 
   .fine_path {
     stroke-width:1;
+    opacity:1;
   }
 
   .axis_label {
@@ -127,6 +130,16 @@
     font-family:sans-serif;
     font-size:2em;
   }
+
+
+}
+
+input.scale {
+  height: 25px;
+  border: 2px solid black;
+  font-size: 1.2em;
+  z-index:10;
+  pointer-events: auto;
 }
 
 .save_svg, .save_csv {

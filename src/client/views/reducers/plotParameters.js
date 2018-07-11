@@ -179,6 +179,37 @@ export const curveOrigin = handleAction(
 )
 export const getCurveOrigin = state => state.curveOrigin
 
+export const setCircumferenceScale = createAction('SET_CIRCUMFERENCE_SCALE')
+export const chooseCircumferenceScale = (circumferenceScale) => {
+  return function (dispatch) {
+    queryToStore(dispatch,{circumferenceScale})
+  }
+}
+export const circumferenceScale = handleAction(
+  'SET_CIRCUMFERENCE_SCALE',
+  (state, action) => (
+    action.payload
+  ),
+  qsDefault('circumferenceScale')
+)
+export const getCircumferenceScale = state => state.circumferenceScale
+
+export const setRadiusScale = createAction('SET_RADIUS_SCALE')
+export const chooseRadiusScale = (radiusScale) => {
+  return function (dispatch) {
+    queryToStore(dispatch,{radiusScale})
+  }
+}
+export const radiusScale = handleAction(
+  'SET_RADIUS_SCALE',
+  (state, action) => (
+    action.payload
+  ),
+  qsDefault('radiusScale')
+)
+export const getRadiusScale = state => state.radiusScale
+
+
 export const plotParameterReducers = {
   plotShape,
   plotResolution,
@@ -187,5 +218,7 @@ export const plotParameterReducers = {
   zScale,
   zReducer,
   transformFunction,
-  curveOrigin
+  curveOrigin,
+  circumferenceScale,
+  radiusScale
 }

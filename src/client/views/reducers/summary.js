@@ -10,7 +10,7 @@ import { getMainPlot } from './plot';
 import { getSelectedDatasetMeta } from './dataset';
 import { getFilteredList } from './filter';
 import { getFilteredDataForFieldId } from './preview';
-import { getZReducer, getZScale, zReducers } from './plotParameters';
+import { getZReducer, getZScale, zReducers, getCircumferenceScale, getRadiusScale } from './plotParameters';
 import { getColorPalette } from './color';
 import immutableUpdate from 'immutable-update';
 import { scaleLinear as d3scaleLinear } from 'd3-scale';
@@ -222,28 +222,40 @@ export const getCircular = createSelector(
 export const circularCurves = createSelector(
   getCircular,
   getColorPalette,
-  (circular,palette) => {
+  getCircumferenceScale,
+  getRadiusScale,
+  (circular,palette,circumference,radius,invert=false) => {
     let values = circular.values
     let composition = circular.composition
     let gc = values.gc
     let nX = values.nX
     let lX = values.lX
     let sum = values.sum
+    let rRange = [350,0]
+    let lRange = [0,250]
+    if (invert){
+      rRange = [0,350]
+      lRange = [350,100]
+    }
+    circumference = Math.max(circumference,sum[999])
+    let maxAngle = 2*Math.PI*sum[999]/circumference
     let all = values.all
-    let max = nX[0]
+    let max = all[0].z
+    radius = Math.max(radius,max)
     let min = 0
-    let cScale = d3scaleLinear().range([0,2*Math.PI]).domain([0,999])
-    let rScale = d3scaleSqrt().range([350,0]).domain([min,max])
-    let lScale = d3scaleLog().range([1,250]).domain([1,10000000])
+    let cScale = d3scaleLinear().range([0,maxAngle]).domain([0,999])
+    let rScale = d3scaleSqrt().range(rRange).domain([min,radius])
+    let lScale = d3scaleLog().range(lRange).domain([1,10000000])
     let oScale = d3scaleLinear().range([350,425]).domain([0,1])
     let f = d3Format(".3f");
+    let si = d3Format(".2s");
     let paths = {}
     let pathProps = {}
     paths.lX = d3RadialLine()(
       [[cScale(0),lScale(lX[lX.length-1])]]
       .concat(
         lX.map((n,i)=>[cScale(i),lScale(n)])
-      )
+      ).concat(lX.map((n,i)=>[cScale(999-i),lScale(1)]))
     )
     pathProps.lX = {
       fill:palette.colors[8],
@@ -253,7 +265,7 @@ export const circularCurves = createSelector(
       paths['lXTick_'+count] = d3RadialLine()(
         lX.map((n,i)=>[cScale(i),lScale(count)])
       )
-      pathProps['lXTick_'+count] = {fill:'none',stroke:'#ffffff'}
+      pathProps['lXTick_'+count] = {fill:'none',stroke:'#ffffff',strokeWidth:3}
     }
     paths.nX = d3RadialLine()(
       [[cScale(0),rScale(min)]]
@@ -263,7 +275,6 @@ export const circularCurves = createSelector(
       .concat(nX.map((n,i)=>[cScale(999-i),rScale(min)]))
     )
     pathProps.nX = {fill:'#999999',stroke:'#999999'}
-    console.log(all[0])
     paths.longest = d3Arc()({
       startAngle: cScale(0),
       endAngle: cScale(Math.floor(1000 * all[0].z / sum[999])),
@@ -306,11 +317,17 @@ export const circularCurves = createSelector(
     )
     pathProps.meanGC = {fill:palette.colors[1],stroke:palette.colors[1]}
     paths.minGC = d3RadialLine()(gc.map((n,i)=>[cScale(i),oScale(n.min)]))
-    pathProps.minGC = {fill:'none',stroke:palette.colors[0]}
+    pathProps.minGC = {fill:'none',stroke:palette.colors[0],strokeWidth:1}
     paths.maxGC = d3RadialLine()(gc.map((n,i)=>[cScale(i),oScale(n.max)]))
-    pathProps.maxGC = {fill:'none',stroke:palette.colors[1]}
+    pathProps.maxGC = {fill:'none',stroke:palette.colors[1],strokeWidth:1}
+    // pathProps.maxGC = {fill:'none',stroke:'none',strokeWidth:1}
+    paths.startGC = d3RadialLine()([
+      [cScale(0),oScale(0)],
+      [cScale(0),oScale(1)]
+    ])
+    pathProps.startGC = {fill:'none',stroke:'#cccccc',strokeWidth:2}
 
-    let axes = {inner:{},outer:{},radial:{},outer_radial:{}}
+    let axes = {inner:{},outer:{},radial:{},end_radial:{}}
     axes.inner.path = d3RadialLine()(
       gc.map((n,i)=>[cScale(i),oScale(0)])
     )
@@ -335,8 +352,8 @@ export const circularCurves = createSelector(
         axes.inner.ticks.labels.push(
           {
             path: d3RadialLine()([
-              [cScale(a-5),oScale(0.4)],
-              [cScale(a+5),oScale(0.4)]
+              [cScale(a-10),oScale(0.4)],
+              [cScale(a+10),oScale(0.4)]
             ]),
             text: pct
           }
@@ -361,14 +378,82 @@ export const circularCurves = createSelector(
     axes.outer.path = d3RadialLine()(
       gc.map((n,i)=>[cScale(i),oScale(1)])
     )
-    axes.radial.path = d3Line()([
-      [cScale(0),rScale(max)],
-      [cScale(0),-oScale(0)]
+    axes.radial.path = d3RadialLine()([
+      [cScale(0),rScale(radius)],
+      [cScale(0),rScale(0)]
     ])
-    axes.outer_radial.path = d3Line()([
-      [cScale(0),rScale(max)],
-      [cScale(0),-oScale(0)]
-    ])
+    axes.radial.ticks = {major:[],minor:[],labels:[]}
+    for (let r = radius; r > 10; r /= 10){
+      let len = String(Math.floor(r)).length-1
+      let value = Math.pow(10,len)
+      axes.radial.ticks.major.push(
+        d3Line()([
+          [cScale(0),-rScale(value)],
+          [cScale(0)-2*len,-rScale(value)]
+        ])
+      )
+      for (let m = 2; m < 10; m++){
+        if (m*value < radius){
+          axes.radial.ticks.minor.push(
+            d3Line()([
+              [cScale(0),-rScale(m*value)],
+              [cScale(0)-len,-rScale(m*value)]
+            ])
+          )
+        }
+      }
+      if (r > radius / 1000){
+        axes.radial.ticks.labels.push(
+          {
+            path: d3Line()([
+              [cScale(0)-2*len-80,-rScale(value)],
+              [cScale(0)-2*len-5,-rScale(value)]
+            ]),
+            text: si(value),
+            align: 'right'
+          }
+        )
+        let points = []
+        nX.forEach((n,i)=>{
+          if (value <= nX[i])
+          points.push([cScale(i),rScale(value)])
+        })
+        paths['radial_'+len] = d3RadialLine()(points)
+        pathProps['radial_'+len] = {fill:'none',stroke:'#cccccc',strokeWidth:1, strokeDasharray:16}
+      }
+    }
+
+
+    if (sum[999] < circumference){
+      axes.inner.ticks.major.push(
+        d3RadialLine()([
+          [cScale(999),oScale(0)],
+          [cScale(999),oScale(0.25)]
+        ])
+      )
+      axes.outer.ticks.major.push(
+        d3RadialLine()([
+          [cScale(999),oScale(1)],
+          [cScale(999),oScale(0.75)]
+        ])
+      )
+      if (sum[999] < circumference * 0.98 && sum[999] > circumference * 0.25){
+        axes.inner.ticks.labels.push(
+          {
+            path: d3RadialLine()([
+              [cScale(959),oScale(0.4)],
+              [cScale(1039),oScale(0.4)]
+            ]),
+            text: '100%'
+          }
+        )
+      }
+      paths.endGC = d3RadialLine()([
+        [cScale(999),oScale(0)],
+        [cScale(999),oScale(1)]
+      ])
+      pathProps.endGC = {fill:'none',stroke:'#cccccc',strokeWidth:2}
+    }
 
     let format = d3format(".2s")
     let gcFormat = d3format(".1f")
@@ -413,8 +498,11 @@ export const circularCurves = createSelector(
         }
       ]
     }
-
-    return { paths, pathProps, axes, legend }
+    let scale = {
+      circumference,
+      radius
+    }
+    return { paths, pathProps, axes, legend, scale }
   }
 )
 

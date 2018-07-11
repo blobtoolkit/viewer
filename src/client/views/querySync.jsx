@@ -61,6 +61,16 @@ const mapDispatchToQuery = (
       payload: (k,v) => v,
       default: '0'
     },
+    circumferenceScale: {
+      type: 'SET_CIRCUMFERENCE_SCALE',
+      payload: (k,v) => v,
+      default: '0'
+    },
+    radiusScale: {
+      type: 'SET_RADIUS_SCALE',
+      payload: (k,v) => v,
+      default: '0'
+    },
     userColors: {
       actions: (k,v) => ([
         {
