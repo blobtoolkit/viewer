@@ -209,6 +209,21 @@ export const radiusScale = handleAction(
 )
 export const getRadiusScale = state => state.radiusScale
 
+export const setSnailOrigin = createAction('SET_SNAIL_ORIGIN')
+export const chooseSnailOrigin = (snailOrigin) => {
+  return function (dispatch) {
+    queryToStore(dispatch,{snailOrigin})
+  }
+}
+export const snailOrigin = handleAction(
+  'SET_SNAIL_ORIGIN',
+  (state, action) => (
+    action.payload
+  ),
+  qsDefault('snailOrigin')
+)
+export const getSnailOrigin = state => state.snailOrigin
+
 
 export const plotParameterReducers = {
   plotShape,
@@ -220,5 +235,6 @@ export const plotParameterReducers = {
   transformFunction,
   curveOrigin,
   circumferenceScale,
-  radiusScale
+  radiusScale,
+  snailOrigin
 }

@@ -71,6 +71,11 @@ const mapDispatchToQuery = (
       payload: (k,v) => v,
       default: '0'
     },
+    snailOrigin: {
+      type: 'SET_SNAIL_ORIGIN',
+      payload: (k,v) => v,
+      default: 'outer'
+    },
     userColors: {
       actions: (k,v) => ([
         {

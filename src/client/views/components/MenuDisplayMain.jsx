@@ -14,7 +14,9 @@ import { getPlotShape,
   getTransformFunctionParams,
   setTransformFunction,
   getCurveOrigin,
-  chooseCurveOrigin } from '../reducers/plotParameters'
+  chooseCurveOrigin,
+  getSnailOrigin,
+  chooseSnailOrigin } from '../reducers/plotParameters'
 import { chooseView } from '../reducers/repository'
 import styles from './Layout.scss'
 import MenuDisplaySimple from './MenuDisplaySimple'
@@ -34,6 +36,7 @@ import sqrtIcon from './svg/sqrt.svg';
 import xIcon from './svg/xLetter.svg';
 import yIcon from './svg/yLetter.svg';
 import zeroIcon from './svg/zero.svg';
+import invertIcon from './svg/invert.svg';
 import Palettes from './Palettes'
 import MenuItem from './MenuItem'
 import ToolTips from './ToolTips'
@@ -46,6 +49,7 @@ const DisplayMenu = ({
   reducer, onSelectReducer,
   scale, onSelectScale,
   curveOrigin, onSelectCurveOrigin,
+  snailOrigin, onSelectSnailOrigin,
   transform, onChangeTransform,
   onSelectView }) => {
   return (
@@ -90,6 +94,10 @@ const DisplayMenu = ({
         <SVGIcon sprite={xIcon} active={curveOrigin == 'x'} onIconClick={()=>onSelectCurveOrigin('x')}/>
         <SVGIcon sprite={yIcon} active={curveOrigin == 'y'} onIconClick={()=>onSelectCurveOrigin('y')}/>
       </MenuDisplaySimple>
+      <MenuDisplaySimple name='snail origin'>
+        <SVGIcon sprite={invertIcon} active={snailOrigin == 'center'} onIconClick={()=>onSelectSnailOrigin(snailOrigin == 'center' ? 'outer' : 'center')}/>
+      </MenuDisplaySimple>
+
 
 
       <ToolTips set='settingsMenu'/>
@@ -126,6 +134,7 @@ class MenuDisplayMain extends React.Component {
         onSelectScale: scale => dispatch(chooseZScale(scale)),
         onSelectView: view => dispatch(chooseView(view)),
         onSelectCurveOrigin: origin => dispatch(chooseCurveOrigin(origin)),
+        onSelectSnailOrigin: origin => dispatch(chooseSnailOrigin(origin)),
         onChangeTransform: object => dispatch(setTransformFunction(object))
       }
     }
@@ -138,6 +147,7 @@ class MenuDisplayMain extends React.Component {
         reducer:getZReducer(state),
         scale:getZScale(state),
         curveOrigin:getCurveOrigin(state),
+        snailOrigin:getSnailOrigin(state),
         transform:getTransformFunctionParams(state)
       }
     }

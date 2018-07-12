@@ -10,7 +10,7 @@ import { getMainPlot } from './plot';
 import { getSelectedDatasetMeta } from './dataset';
 import { getFilteredList } from './filter';
 import { getFilteredDataForFieldId } from './preview';
-import { getZReducer, getZScale, zReducers, getCircumferenceScale, getRadiusScale } from './plotParameters';
+import { getZReducer, getZScale, zReducers, getCircumferenceScale, getRadiusScale, getSnailOrigin } from './plotParameters';
 import { getColorPalette } from './color';
 import immutableUpdate from 'immutable-update';
 import { scaleLinear as d3scaleLinear } from 'd3-scale';
@@ -224,7 +224,9 @@ export const circularCurves = createSelector(
   getColorPalette,
   getCircumferenceScale,
   getRadiusScale,
-  (circular,palette,circumference,radius,invert=true) => {
+  getSnailOrigin,
+  (circular,palette,circumference,radius,origin) => {
+    let invert = origin == 'center'
     let values = circular.values
     let composition = circular.composition
     let gc = values.gc
