@@ -5,6 +5,7 @@ import { cumulativeCurves } from '../reducers/summary'
 import { getCircular, circularCurves } from '../reducers/summary'
 import { getCurveOrigin, chooseCircumferenceScale, chooseRadiusScale } from '../reducers/plotParameters'
 import { getSelectedDatasetMeta } from '../reducers/dataset'
+import { editField, getDetailsForFieldId, fetchRawData } from '../reducers/field'
 import SnailPlotLegend from './SnailPlotLegend'
 import SnailPlotScale from './SnailPlotScale'
 import { format as d3format} from 'd3-format'
@@ -82,6 +83,12 @@ class Snail extends React.Component {
       h:320,
       ratio,
       overlay:false
+    }
+  }
+
+  componentDidMount(){
+    if (!this.props.active){
+      this.props.activate('ncount')
     }
   }
 
@@ -301,6 +308,7 @@ class SnailPlot extends React.Component {
     this.mapStateToProps = state => {
       return {
         data: getCircular(state),
+        active: getDetailsForFieldId(state,'ncount').active,
         circular: circularCurves(state),
         meta: getSelectedDatasetMeta(state,this.props.datasetId)
       }
@@ -308,7 +316,11 @@ class SnailPlot extends React.Component {
     this.mapDispatchToProps = dispatch => {
       return {
         onChangeCircumference: (value)=>dispatch(chooseCircumferenceScale(value)),
-        onChangeRadius: (value)=>dispatch(chooseRadiusScale(value))
+        onChangeRadius: (value)=>dispatch(chooseRadiusScale(value)),
+        activate: (id) => {
+          dispatch(editField({id,active:true}));
+          dispatch(fetchRawData(id))
+        }
       }
     }
   }
