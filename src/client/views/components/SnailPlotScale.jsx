@@ -39,7 +39,7 @@ export class SnailPlotScale extends React.Component {
     let items = []
     let title = this.props.title
     let scale = this.props.scale
-    let offset = 20
+    let offset = 15
     let w = 25
     let h = 25
     let gap = 10

@@ -188,7 +188,7 @@ const mean = arr => arr.reduce((a,b) => a + b, 0) / arr.length
 export const getCircular = createSelector(
   getMainPlotData,
   (plotData) => {
-    let values = {nX:[],lX:[],gc:[],sum:[]}
+    let values = {nXlen:[],nXnum:[],gc:[],sum:[]}
     let xAxis = plotData.meta.x.meta.id
     let zAxis = plotData.meta.z.meta.id
     let arr = []
@@ -198,7 +198,7 @@ export const getCircular = createSelector(
     arr.sort((a,b)=>b.z-a.z)
     let sum = arr.reduce((a, x, i) => [...a, x.z + (a[i-1] || 0)], [])
     let tot = sum[sum.length-1]
-    values.nX = []
+    values.nXlen = []
     let i = 0
     for (let x = 1; x <= 1000; x++){
       let l = Math.ceil(tot * x / 1000)
@@ -208,8 +208,8 @@ export const getCircular = createSelector(
         gc.push(arr[i].x)
       }
       values.sum[x-1] = sum[i]
-      values.nX[x-1] = arr[i].z
-      values.lX[x-1] = i+1
+      values.nXlen[x-1] = arr[i].z
+      values.nXnum[x-1] = i+1
       values.gc[x-1] = {gc,min:Math.min(...gc),max:Math.max(...gc),mean:mean(gc)}
     }
     let meanGC = mean(values.gc.map(o=>o.mean))
@@ -228,8 +228,8 @@ export const circularCurves = createSelector(
     let values = circular.values
     let composition = circular.composition
     let gc = values.gc
-    let nX = values.nX
-    let lX = values.lX
+    let nXlen = values.nXlen
+    let nXnum = values.nXnum
     let sum = values.sum
     let rRange = [350,0]
     let lRange = [0,250]
@@ -251,30 +251,30 @@ export const circularCurves = createSelector(
     let si = d3Format(".2s");
     let paths = {}
     let pathProps = {}
-    paths.lX = d3RadialLine()(
-      [[cScale(0),lScale(lX[lX.length-1])]]
+    paths.nXnum = d3RadialLine()(
+      [[cScale(0),lScale(nXnum[nXnum.length-1])]]
       .concat(
-        lX.map((n,i)=>[cScale(i),lScale(n)])
-      ).concat(lX.map((n,i)=>[cScale(999-i),lScale(1)]))
+        nXnum.map((n,i)=>[cScale(i),lScale(n)])
+      ).concat(nXnum.map((n,i)=>[cScale(999-i),lScale(1)]))
     )
-    pathProps.lX = {
+    pathProps.nXnum = {
       fill:palette.colors[8],
       stroke:palette.colors[8]
     }
     for (let count = 10; count < 10000000; count *=10){
-      paths['lXTick_'+count] = d3RadialLine()(
-        lX.map((n,i)=>[cScale(i),lScale(count)])
+      paths['nXnumTick_'+count] = d3RadialLine()(
+        nXnum.map((n,i)=>[cScale(i),lScale(count)])
       )
-      pathProps['lXTick_'+count] = {fill:'none',stroke:'#ffffff',strokeWidth:3}
+      pathProps['nXnumTick_'+count] = {fill:'none',stroke:'#ffffff',strokeWidth:3}
     }
-    paths.nX = d3RadialLine()(
+    paths.nXlen = d3RadialLine()(
       [[cScale(0),rScale(min)]]
       .concat(
-        nX.map((n,i)=>[cScale(i),rScale(n)])
+        nXlen.map((n,i)=>[cScale(i),rScale(n)])
       )
-      .concat(nX.map((n,i)=>[cScale(999-i),rScale(min)]))
+      .concat(nXlen.map((n,i)=>[cScale(999-i),rScale(min)]))
     )
-    pathProps.nX = {fill:'#999999',stroke:'#999999'}
+    pathProps.nXlen = {fill:'#999999',stroke:'#999999'}
     paths.longest = d3Arc()({
       startAngle: cScale(0),
       endAngle: cScale(Math.floor(1000 * all[0].z / sum[999])),
@@ -285,14 +285,14 @@ export const circularCurves = createSelector(
     paths.n90 = d3Arc()({
       startAngle: cScale(0),
       endAngle: cScale(899),
-      innerRadius: rScale(nX[899]),
+      innerRadius: rScale(nXlen[899]),
       outerRadius: rScale(min)
     })
     pathProps.n90 = {fill:palette.colors[6],stroke:'none'}
     paths.n50 = d3Arc()({
       startAngle: cScale(0),
       endAngle: cScale(499),
-      innerRadius: rScale(nX[499]),
+      innerRadius: rScale(nXlen[499]),
       outerRadius: rScale(min)
     })
     pathProps.n50 = {fill:palette.colors[7],stroke:palette.colors[7]}
@@ -332,7 +332,7 @@ export const circularCurves = createSelector(
       gc.map((n,i)=>[cScale(i),oScale(0)])
     )
     axes.inner.ticks = {major:[],minor:[],labels:[]}
-    axes.outer.ticks = {major:[],minor:[]}
+    axes.outer.ticks = {major:[],minor:[],labels:[]}
     for (let a = 0; a < 1000; a += 20){
       if (a % 100 == 0){
         let pct = Math.floor(a/10)
@@ -356,6 +356,20 @@ export const circularCurves = createSelector(
               [cScale(a+10),oScale(0.4)]
             ]),
             text: pct
+          }
+        )
+        let b = a > 0 ? a : 1000
+        axes.outer.ticks.labels.push(
+          {
+            path: d3RadialLine()(
+              ([...Array(35).keys()]).map(i=>(
+                [cScale(b+i-34),oScale(1.05)],
+                [cScale(b+i-34),oScale(1.05)]
+              ))
+            ),
+            text: si(sum[b-1]),
+            fontSize: '1em',
+            align:'right'
           }
         )
 
@@ -414,8 +428,8 @@ export const circularCurves = createSelector(
           }
         )
         let points = []
-        nX.forEach((n,i)=>{
-          if (value <= nX[i])
+        nXlen.forEach((n,i)=>{
+          if (value <= nXlen[i])
           points.push([cScale(i),rScale(value)])
         })
         paths['radial_'+len] = d3RadialLine()(points)
@@ -476,12 +490,12 @@ export const circularCurves = createSelector(
         },
         {
           label: 'N50 length',
-          value: format(nX[499]),
+          value: format(nXlen[499]),
           color: palette.colors[7]
         },
         {
           label: 'N90 length',
-          value: format(nX[899]),
+          value: format(nXlen[899]),
           color: palette.colors[6]
         }
       ],
