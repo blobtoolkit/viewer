@@ -27,12 +27,12 @@ const radialCoords = event => {
   return {theta,h}
 }
 
-const SegmentStats = ({theta,h,ratio,overlay,sums,nXlens,nXnums,gcs}) => {
+const SegmentStats = ({theta,h,ratio,overlay,sums,nXlens,nXnums,gcs,ns}) => {
   if (!overlay) return {}
   let cScale = d3scaleLinear().domain([0,2*Math.PI*ratio]).range([0,100])
   let start = Math.floor(cScale(theta))
   let end = start + 1
-  let gc = {}, allGC = [], nX = {}, path
+  let gc = {}, allGC = [], allN = [], nX = {}, path, N = {}
   if (start < 100){
     let innerRadius = 0
     let outerRadius = 350
@@ -41,7 +41,12 @@ const SegmentStats = ({theta,h,ratio,overlay,sums,nXlens,nXnums,gcs}) => {
       outerRadius = 425
       for (let i = start*10; i < end*10; i++){
         allGC = allGC.concat(gcs[i].gc)
+        allN = allN.concat(ns[i].n)
       }
+      N.min = Math.min(...allN)
+      N.max = Math.max(...allN)
+      N.count = allN.length
+      N.mean = allN.reduce((a=0,b)=>a+b)/N.count
       gc.min = Math.min(...allGC)
       gc.max = Math.max(...allGC)
       gc.count = allGC.length
@@ -59,7 +64,7 @@ const SegmentStats = ({theta,h,ratio,overlay,sums,nXlens,nXnums,gcs}) => {
       outerRadius
     })
   }
-  return ({pct:end,path,gc,nX})
+  return ({pct:end,path,gc,N,nX})
 }
 
 const SnailSegment = ({path}) => (
@@ -101,7 +106,8 @@ class Snail extends React.Component {
     let nXlens = this.props.data.values.nXlen
     let nXnums = this.props.data.values.nXnum
     let gcs = this.props.data.values.gc
-    let stats = SegmentStats({...this.state,sums,gcs,nXlens,nXnums})
+    let ns = this.props.data.values.n
+    let stats = SegmentStats({...this.state,sums,gcs,ns,nXlens,nXnums})
     let topLeft, topRight, bottomRight
     if (stats.path){
       segment = <SnailSegment path={stats.path}/>
@@ -114,10 +120,15 @@ class Snail extends React.Component {
       ))
       if (stats.gc && stats.gc.mean){
         let gcs = [stats.gc.mean,stats.gc.min,stats.gc.max]
+        let ns = [stats.N.mean,stats.N.min,stats.N.max]
         list[0].label = pctFormat(gcs[0])
         list[0].value = pctFormat(gcs[1])+'–'+pctFormat(gcs[2])
         list[1].label = pctFormat(1-gcs[0])
         list[1].value = pctFormat(1-gcs[2])+'–'+pctFormat(1-gcs[1])
+        if (list[2]){
+          list[2].label = pctFormat(ns[0])
+          list[2].value = pctFormat(ns[2])+'–'+pctFormat(ns[1])
+        }
       }
       bottomRight = <SnailPlotLegend title={'Composition'} list={list}/>
       if (stats.nX && stats.nX.len){

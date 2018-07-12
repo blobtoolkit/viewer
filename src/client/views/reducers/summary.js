@@ -186,14 +186,16 @@ export const cumulativeCurves = createSelector(
 const mean = arr => arr.reduce((a,b) => a + b, 0) / arr.length
 
 export const getCircular = createSelector(
-  getMainPlotData,
-  (plotData) => {
-    let values = {nXlen:[],nXnum:[],gc:[],sum:[]}
-    let xAxis = plotData.meta.x.meta.id
-    let zAxis = plotData.meta.z.meta.id
+  (state) => getFilteredDataForFieldId(state,'gc'),
+  (state) => getFilteredDataForFieldId(state,'length'),
+  (state) => getFilteredDataForFieldId(state,'ncount'),
+  (gc,length,ncount) => {
+    let values = {nXlen:[],nXnum:[],gc:[],sum:[],n:[]}
+    let xAxis = 'gc'
+    let zAxis = 'length'
     let arr = []
-    plotData.axes.x.values.forEach((x,i)=>{
-      arr[i] = {x,z:plotData.axes.z.values[i]}
+    gc.values.forEach((x,i)=>{
+      arr[i] = {x,z:length.values[i],n:ncount.values[i] ? ncount.values[i]/length.values[i] : 0}
     })
     arr.sort((a,b)=>b.z-a.z)
     let sum = arr.reduce((a, x, i) => [...a, x.z + (a[i-1] || 0)], [])
@@ -203,17 +205,21 @@ export const getCircular = createSelector(
     for (let x = 1; x <= 1000; x++){
       let l = Math.ceil(tot * x / 1000)
       let gc = [arr[i].x]
+      let n = [arr[i].n]
       while (sum[i] < l){
         i++
         gc.push(arr[i].x)
+        n.push(arr[i].n)
       }
       values.sum[x-1] = sum[i]
       values.nXlen[x-1] = arr[i].z
       values.nXnum[x-1] = i+1
       values.gc[x-1] = {gc,min:Math.min(...gc),max:Math.max(...gc),mean:mean(gc)}
+      values.n[x-1] = {n,min:Math.min(...n),max:Math.max(...n),mean:mean(n)}
     }
+    let meanN = mean(values.n.map(o=>o.mean))
     let meanGC = mean(values.gc.map(o=>o.mean))
-    let composition = {gc:meanGC,at:1-meanGC}
+    let composition = {gc:meanGC,at:1-meanGC,n:meanN}
     values.all = arr
     return { values,composition,xAxis,zAxis }
   }
@@ -230,6 +236,7 @@ export const circularCurves = createSelector(
     let values = circular.values
     let composition = circular.composition
     let gc = values.gc
+    let ns = values.n
     let nXlen = values.nXlen
     let nXnum = values.nXnum
     let sum = values.sum
@@ -284,13 +291,6 @@ export const circularCurves = createSelector(
       outerRadius: rScale(min)
     })
     pathProps.longest = {fill:palette.colors[5],stroke:'none'}
-    paths.n90 = d3Arc()({
-      startAngle: cScale(0),
-      endAngle: cScale(899),
-      innerRadius: rScale(nXlen[899]),
-      outerRadius: rScale(min)
-    })
-    pathProps.n90 = {fill:palette.colors[6],stroke:'none'}
     paths.n50 = d3Arc()({
       startAngle: cScale(0),
       endAngle: cScale(499),
@@ -298,31 +298,68 @@ export const circularCurves = createSelector(
       outerRadius: rScale(min)
     })
     pathProps.n50 = {fill:palette.colors[7],stroke:palette.colors[7]}
+    paths.n90 = d3Arc()({
+      startAngle: cScale(0),
+      endAngle: cScale(899),
+      innerRadius: rScale(nXlen[899]),
+      outerRadius: rScale(min)
+    })
+    pathProps.n90 = {fill:palette.colors[6],stroke:'none'}
+    paths.n50stroke = paths.n50
+    pathProps.n50stroke = {fill:'none',stroke:palette.colors[7],strokeWidth:3}
     paths.longestStroke = paths.longest
-    pathProps.longestStroke = {fill:'none',stroke:palette.colors[5]}
-    paths.n90stroke = paths.n90
-    pathProps.n90stroke = {fill:'none',stroke:palette.colors[6]}
+    pathProps.longestStroke = {fill:'none',stroke:palette.colors[5],strokeWidth:3}
     paths.meanAT = d3RadialLine()(
       [[cScale(0),oScale(1)]]
       .concat(
         gc.map((n,i)=>[cScale(i),oScale(n.mean)])
       )
-      .concat(gc.map((n,i)=>[cScale(999-i),oScale(1)]))
+      .concat(gc.map((n,i)=>[cScale(999-i),oScale(1-ns[999-i].mean/2)]))
     )
-    pathProps.meanAT = {fill:palette.colors[0],stroke:palette.colors[0]}
+    pathProps.meanAT = {fill:palette.colors[0],stroke:'none'}
     paths.meanGC = d3RadialLine()(
       [[cScale(0),oScale(0)]]
       .concat(
         gc.map((n,i)=>[cScale(i),oScale(n.mean)])
       )
-      .concat(gc.map((n,i)=>[cScale(999-i),oScale(0)]))
+      .concat(gc.map((n,i)=>[cScale(999-i),oScale(0+ns[999-i].mean/2)]))
     )
-    pathProps.meanGC = {fill:palette.colors[1],stroke:palette.colors[1]}
-    paths.minGC = d3RadialLine()(gc.map((n,i)=>[cScale(i),oScale(n.min)]))
-    pathProps.minGC = {fill:'none',stroke:palette.colors[0],strokeWidth:1}
-    paths.maxGC = d3RadialLine()(gc.map((n,i)=>[cScale(i),oScale(n.max)]))
-    pathProps.maxGC = {fill:'none',stroke:palette.colors[1],strokeWidth:1}
-    // pathProps.maxGC = {fill:'none',stroke:'none',strokeWidth:1}
+    pathProps.meanGC = {fill:palette.colors[1],stroke:'none'}
+    // paths.maxNupper = d3RadialLine()(ns.map((n,i)=>[cScale(i),oScale(n.max/2)]))
+    // pathProps.maxNupper = {fill:'none',stroke:'rgba(255,255,255,0.9)',strokeWidth:1}
+    paths.maxNlower = d3RadialLine()(
+      [[cScale(0),oScale(1)]]
+      .concat(ns.map((n,i)=>[cScale(i),oScale(1-n.max/2)]))
+      .concat(ns.map((n,i)=>[cScale(999-i),oScale(1)]))
+    )
+    pathProps.maxNlower = {fill:'rgba(255,255,255,0.2)',stroke:'rgba(255,255,255,0.4)',strokeWidth:0.5}
+    paths.maxNupper = d3RadialLine()(
+      [[cScale(0),oScale(0)]]
+      .concat(ns.map((n,i)=>[cScale(i),oScale(n.max/2)]))
+      .concat(ns.map((n,i)=>[cScale(999-i),oScale(0)]))
+    )
+    pathProps.maxNupper = {fill:'rgba(255,255,255,0.2)',stroke:'rgba(255,255,255,0.4)',strokeWidth:0.5}
+    paths.maxGC = d3RadialLine()(
+      [[cScale(0),oScale(1)]]
+      .concat(gc.map((n,i)=>[cScale(i),oScale(n.max)]))
+      .concat(gc.map((n,i)=>[cScale(999-i),oScale(gc[999-i].mean)]))
+    )
+    let stroke1 = palette.colors[1].replace('rgb','rgba').replace(')',',0.6)')
+    let fill1 = palette.colors[1].replace('rgb','rgba').replace(')',',0.4)')
+    pathProps.maxGC = {fill:fill1,stroke:stroke1,strokeWidth:1}
+    paths.minGC = d3RadialLine()(
+      [[cScale(0),oScale(0)]]
+      .concat(gc.map((n,i)=>[cScale(i),oScale(n.min)]))
+      .concat(gc.map((n,i)=>[cScale(999-i),oScale(gc[999-i].mean)]))
+    )
+    let stroke0 = palette.colors[0].replace('rgb','rgba').replace(')',',0.6)')
+    let fill0 = palette.colors[0].replace('rgb','rgba').replace(')',',0.4)')
+    pathProps.minGC = {fill:fill0,stroke:stroke0,strokeWidth:1}
+    paths.meanGCstroke = d3RadialLine()(
+      gc.map((n,i)=>[cScale(i),oScale(n.mean)])
+    )
+    pathProps.meanGCstroke = {fill:'none',stroke:palette.colors[1],strokeWidth:1}
+
     paths.startGC = d3RadialLine()([
       [cScale(0),oScale(0)],
       [cScale(0),oScale(1)]
@@ -514,6 +551,16 @@ export const circularCurves = createSelector(
         }
       ]
     }
+    if (composition.n > 0){
+      legend.composition.push(
+        {
+          label: 'N',
+          value: gcFormat(100*composition.n)+'%',
+          color: 'white'
+        }
+      )
+    }
+
     let scale = {
       circumference,
       radius
