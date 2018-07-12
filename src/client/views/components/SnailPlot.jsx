@@ -122,8 +122,11 @@ class Snail extends React.Component {
       bottomRight = <SnailPlotLegend title={'Composition'} list={list}/>
       if (stats.nX && stats.nX.len){
         let list = [{
-          label: stats.nX.num + ' ' + this.props.meta.record_type + ' ≥ ' + commaFormat(stats.nX.len),
-          color:'#999999'
+          label: 'count: ' + commaFormat(stats.nX.num),
+          color:legend.stats[0].color
+        },{
+          label: 'length: ' + commaFormat(stats.nX.len),
+          color:legend.stats[1].color
         }]
         topRight = <SnailPlotLegend title={'N'+stats.pct} list={list}/>
       }
@@ -271,7 +274,7 @@ class Snail extends React.Component {
           <g transform={'translate(800,860)'} >
             {bottomRight}
           </g>
-          <g transform={'translate(775,80)'} >
+          <g transform={'translate(800,35)'} >
             {topRight}
           </g>
         </svg>

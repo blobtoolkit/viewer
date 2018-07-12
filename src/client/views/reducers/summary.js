@@ -224,7 +224,7 @@ export const circularCurves = createSelector(
   getColorPalette,
   getCircumferenceScale,
   getRadiusScale,
-  (circular,palette,circumference,radius,invert=false) => {
+  (circular,palette,circumference,radius,invert=true) => {
     let values = circular.values
     let composition = circular.composition
     let gc = values.gc
