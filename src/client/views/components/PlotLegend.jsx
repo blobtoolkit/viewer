@@ -34,6 +34,7 @@ const Legend = ({values,zAxis,bins,palette,other,reducer,meta}) => {
   let legendKey
   let ds
   let format = d3format(".2s")
+  let commaFormat = d3format(",")
   if (bins){
     let offset = 10
     let w = 19
@@ -53,14 +54,14 @@ const Legend = ({values,zAxis,bins,palette,other,reducer,meta}) => {
     }
     legendKey = (
       <g transform={'translate('+(w+gap)+','+(offset-gap)+')'}>
-        <text className={styles.legend} transform={'translate(260)'} style={{textAnchor:'end',fontWeight:'normal'}}>[{headers.join(', ')}]</text>
+        <text className={styles.legend} transform={'translate(260)'} style={{textAnchor:'end',fontWeight:'normal'}}>[{headers.join('; ')}]</text>
       </g>
     )
     let title = 'total'
     let color = '#999'
     let numbers = []
     let count = values.counts.all > 0
-    numbers.push(values.counts.all)
+    numbers.push(commaFormat(values.counts.all))
     if (reducer != 'count'){
       numbers.push(format(values.reduced.all))
     }
@@ -72,7 +73,7 @@ const Legend = ({values,zAxis,bins,palette,other,reducer,meta}) => {
         <g key='all' transform={'translate(0,'+offset+')'}>
           <rect x={0} y={0} width={w} height={h} style={{fill:color,stroke:'black'}} />
           <text className={styles.legend} transform={'translate('+(w+gap)+','+(h-gap)+')'}>{title}</text>
-          <text className={styles.legend} transform={'translate('+(w+gap+260)+','+(h-gap)+')'} style={{textAnchor:'end'}}>[{numbers.join(', ')}]</text>
+          <text className={styles.legend} transform={'translate('+(w+gap+260)+','+(h-gap)+')'} style={{textAnchor:'end'}}>[{numbers.join('; ')}]</text>
         </g>
       )
       offset += h + gap
@@ -82,7 +83,7 @@ const Legend = ({values,zAxis,bins,palette,other,reducer,meta}) => {
       let color = palette.colors[i]
       let numbers = []
       let count = values.counts.binned[i] > 0
-      numbers.push(values.counts.binned[i])
+      numbers.push(commaFormat(values.counts.binned[i]))
       if (reducer != 'count'){
         numbers.push(format(values.reduced.binned[i]))
       }
@@ -94,7 +95,7 @@ const Legend = ({values,zAxis,bins,palette,other,reducer,meta}) => {
           <g key={i} transform={'translate(0,'+offset+')'}>
             <rect x={0} y={0} width={w} height={h} style={{fill:color,stroke:'black'}} />
             <text className={styles.legend} transform={'translate('+(w+gap)+','+(h-gap)+')'}>{title}</text>
-            <text className={styles.legend} transform={'translate('+(w+gap+260)+','+(h-gap)+')'} style={{textAnchor:'end'}}>[{numbers.join(', ')}]</text>
+            <text className={styles.legend} transform={'translate('+(w+gap+260)+','+(h-gap)+')'} style={{textAnchor:'end'}}>[{numbers.join('; ')}]</text>
           </g>
         )
         offset += h + gap
