@@ -198,10 +198,18 @@ export const getCircular = createSelector(
       arr[i] = {x,z:length.values[i],n:ncount.values[i] ? ncount.values[i]/length.values[i] : 0}
     })
     arr.sort((a,b)=>b.z-a.z)
-    let sum = arr.reduce((a, x, i) => [...a, x.z + (a[i-1] || 0)], [])
+    // console.time('getCircularReduce');
+    // // ~1000 times slower than replacement below!
+    // let sum = arr.reduce((a, x, i) => [...a, x.z + (a[i-1] || 0)], [])
+    // console.timeEnd('getCircularReduce');
+    let sum = []
+    arr.forEach((o, i) => {
+      sum[i] = o.z + (sum[i-1] || 0)
+    })
     let tot = sum[sum.length-1]
     values.nXlen = []
     let i = 0
+
     for (let x = 1; x <= 1000; x++){
       let l = Math.ceil(tot * x / 1000)
       let gc = [arr[i].x]
@@ -267,14 +275,14 @@ export const circularCurves = createSelector(
       ).concat(nXnum.map((n,i)=>[cScale(999-i),lScale(1)]))
     )
     pathProps.nXnum = {
-      fill:palette.colors[8],
-      stroke:palette.colors[8]
+      fill:'#dddddd',//palette.colors[8],
+      stroke:'none'//palette.colors[8]
     }
     for (let count = 10; count < 10000000; count *=10){
       paths['nXnumTick_'+count] = d3RadialLine()(
         nXnum.map((n,i)=>[cScale(i),lScale(count)])
       )
-      pathProps['nXnumTick_'+count] = {fill:'none',stroke:'#ffffff',strokeWidth:3}
+      pathProps['nXnumTick_'+count] = {fill:'none',stroke:'#ffffff',strokeWidth:2}
     }
     paths.nXlen = d3RadialLine()(
       [[cScale(0),rScale(min)]]
@@ -515,7 +523,7 @@ export const circularCurves = createSelector(
         {
           label: 'Log10 scaffold count',
           value: 'total '+format(all.length),
-          color: palette.colors[8]
+          color: '#dddddd' // palette.colors[8]
         },
         {
           label: 'Scaffold length',
