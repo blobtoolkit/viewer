@@ -9,16 +9,12 @@ export default history;
 export const parseQueryString = createSelector(
   (state) => history.location ? history.location.search : '',
   (loc) => {
-
-    let currentQuery = loc//''
-    // if (history.location){
-    //   currentQuery = history.location.search || ''
-    // }
+    let currentQuery = loc
     return qs.parse(currentQuery.replace('?',''))
   }
 )
 
-const options = ['blob','cumulative','dataset','snail','table','treemap']
+const options = ['blob','cumulative','dataset','snail','table','treemap','gallery']
 
 export const urlViews = createSelector(
   (state) => history.location ? history.location.pathname : '',
@@ -114,24 +110,49 @@ export const queryValue = (value) => {
   return false
 }
 
-export const addQueryValues = (values,search,hash) => {
-  let currentSearch = search || history.location.search || ''
-  let currentHash = hash || history.location.hash || ''
-  let parsed = qs.parse(currentSearch.replace('?',''))
+export const addQueryValues = (values,newSearch,newHash) => {
+  let currentSearch = newSearch || history.location.search || ''
+  let currentHash = newHash || history.location.hash || ''
+  currentSearch = currentSearch.replace('?','')
+  let parsed = qs.parse(currentSearch)
   Object.keys(values).forEach(key => {
     parsed[key] = values[key]
   })
-  history.replace({hash:currentHash,search:qs.stringify(parsed)})
+  let search = qs.stringify(parsed)
+  if (search != currentSearch){
+    history.push({hash:currentHash,search})
+  }
 }
 
 export const removeQueryValues = (values) => {
   let currentSearch = history.location.search || ''
-  let currentHash = history.location.hash || ''
-  let parsed = qs.parse(currentSearch.replace('?',''))
+  currentSearch = currentSearch.replace('?','')
+  let hash = history.location.hash || ''
+  let parsed = qs.parse(currentSearch)
   values.forEach(key => {
     delete parsed[key]
   })
-  history.push({hash:currentHash,search:qs.stringify(parsed)})
+  let search = qs.stringify(parsed)
+  if (search != currentSearch){
+    history.push({hash,search})
+  }
+}
+
+export const updateQueryValues = (values,remove = []) => {
+  let currentSearch = history.location.search || ''
+  let hash = history.location.hash || ''
+  currentSearch = currentSearch.replace('?','')
+  let parsed = qs.parse(currentSearch)
+  Object.keys(values).forEach(key => {
+    parsed[key] = values[key]
+  })
+  remove.forEach(key => {
+    delete parsed[key]
+  })
+  let search = qs.stringify(parsed)
+  if (search != currentSearch){
+    history.push({hash,search})
+  }
 }
 
 export const clearQuery = () => {

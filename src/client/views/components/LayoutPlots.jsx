@@ -31,6 +31,21 @@ class PlotsLayoutComponent extends React.Component {
       case 'treemap':
         view = <TreeMapPlot {...this.props}/>
         break
+      case 'gallery':
+        view = (
+          <div className={styles.fill_parent}>
+            <div className={styles.quarter}>
+              <MainPlot {...this.props}/>
+            </div>
+            <div className={styles.quarter}>
+              <CumulativePlot {...this.props}/>
+            </div>
+            <div className={styles.quarter}>
+              <SnailPlot {...this.props}/>
+            </div>
+          </div>
+        )
+        break
     }
     return (
       <div className={styles.fill_parent}>

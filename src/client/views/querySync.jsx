@@ -376,7 +376,11 @@ export const queryToStore = (dispatch,values,searchReplace,hash) => {
     }
   })
   remove.forEach(key=>{delete parsed[key]})
-  history.replace({hash:currentHash,search:qs.stringify(parsed)})
+  let search = qs.stringify(parsed)
+  if (search != currentSearch){
+    history.push({hash:currentHash,search})
+    dispatch({type:'SET_QUERY_STRING',payload:search})
+  }
   return new Promise (resolve => resolve(parsed))
 }
 

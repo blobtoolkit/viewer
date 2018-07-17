@@ -115,8 +115,11 @@ export function fetchRepository(searchTerm) {
           if (views['dataset']){
             if (json.find(o=>o.id==views['dataset'])){
               pathname = viewsToPathname(views)
-              if (getSelectedDataset(state) != views['dataset']){
-                history.replace({pathname,search:'',hash})
+              let dataset = getSelectedDataset(state)
+              if (dataset != views['dataset']){
+                if (dataset){
+                  history.replace({pathname,search:'',hash})
+                }
                 dispatch(loadDataset(views['dataset']))
               }
             }
@@ -128,7 +131,6 @@ export function fetchRepository(searchTerm) {
             }
           }
           else if (json.length == 1){
-            console.log(json[0].id)
             views['dataset'] = json[0].id
             pathname = viewsToPathname(views)
             history.replace({pathname,search:'',hash})
@@ -164,7 +166,7 @@ export function chooseView(view) {
     let pathname = viewsToPathname(newViews)
     let search = history.location.search || ''
     let hash = history.location.hash || ''
-    history.replace({pathname,search,hash})
+    history.push({pathname,search,hash})
     dispatch(setView(view))
   }
 }

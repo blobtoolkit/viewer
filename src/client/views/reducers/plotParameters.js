@@ -3,7 +3,7 @@ import { createSelector } from 'reselect'
 import { byIdSelectorCreator,
   handleSimpleByDatasetAction,
   getSimpleByDatasetProperty } from './selectorCreators'
-import { getFilteredList } from './filter'
+// import { getFilteredList } from './filter'
 import { getMainPlot } from './plot';
 import immutableUpdate from 'immutable-update';
 import store from '../store'
@@ -259,17 +259,27 @@ const _getPlotGraphics = state => state.plotGraphics
 export const getPlotGraphics = createSelector(
   _getPlotGraphics,
   getSVGThreshold,
-  getFilteredList,
+  // getFilteredList,
   (graphics,threshold,list)=>{
     if (graphics != 'svg'){
       graphics = 'canvas'
-      if (threshold >= list.length){
-        graphics = 'svg'
-      }
+      // if (threshold >= list.length){
+      //   graphics = 'svg'
+      // }
     }
     return graphics
   }
 )
+
+export const setQueryString = createAction('SET_QUERY_STRING')
+export const queryString = handleAction(
+  'SET_QUERY_STRING',
+  (state, action) => (
+    action.payload
+  ),
+  ''
+)
+const getQueryString = state => state.queryString
 
 
 export const plotParameterReducers = {
@@ -284,5 +294,6 @@ export const plotParameterReducers = {
   curveOrigin,
   circumferenceScale,
   radiusScale,
-  snailOrigin
+  snailOrigin,
+  queryString
 }

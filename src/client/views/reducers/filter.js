@@ -5,7 +5,8 @@ import immutableUpdate from 'immutable-update';
 import deep from 'deep-get-set'
 import shallow from 'shallowequal'
 import store from '../store'
-import { queryValue, addQueryValues, removeQueryValues } from './history'
+import { queryValue, addQueryValues, removeQueryValues, updateQueryValues } from './history'
+import { getQueryString } from './plotParameters'
 
 export const addFilter = createAction('ADD_FILTER')
 export const editFilter = createAction('EDIT_FILTER')
@@ -59,7 +60,7 @@ export const filteredList = handleAction(
   ),
   []
 )
-export const getFilteredList = state => state.filteredList
+const getFilteredList = state => state.filteredList
 
 const filterRangeToList = (low,high,arr,list,invert) => {
   let ret = []
@@ -156,6 +157,8 @@ export function filterToList(readQueryString) {
     else if (fields['selection'].active && filters['selection'].invert){
       list = filterArrayFromList(list,all)
     }
+    let remove = []
+    let values = {}
     state.filters.allIds.forEach(id => {
       if (fields[id] && fields[id].active && filters[id]){
         if (filters[id].type == 'range'){
@@ -164,12 +167,10 @@ export function filterToList(readQueryString) {
           let invstr = id+'--Inv'
           let range = filters[id].range
           let limit = fields[id].range
-          let remove = []
           let qmin = 1 * queryValue(minstr)
           let qmax = 1 * queryValue(maxstr)
           if (!shallow(range,limit)){
             list = filterRangeToList(range[0],range[1],data[id].values,list,filters[id].invert)
-            let values = {}
             if (range[0] > limit[0]){
               values[minstr] = range[0]
             }
@@ -188,15 +189,16 @@ export function filterToList(readQueryString) {
             else if (queryValue(invstr)){
               values[invstr] = false
             }
-            addQueryValues(values)
+            // addQueryValues(values)
           }
           else {
             remove.push(minstr)
             remove.push(maxstr)
           }
-          if (remove.length > 0){
-            removeQueryValues(remove)
-          }
+          // if (remove.length > 0){
+          //   console.log(10)
+          //   removeQueryValues(remove)
+          // }
         }
         else if (filters[id].type == 'list' || filters[id].type == 'category'){
           //let data_id = filters[id].clonedFrom || id
@@ -213,10 +215,13 @@ export function filterToList(readQueryString) {
               else {
                 values[invstr] = false
               }
-              addQueryValues(values)
+              // console.log(11)
+              // addQueryValues(values)
             }
             else {
-              removeQueryValues([keystr,invstr])
+              remove.push(keystr)
+              remove.push(invstr)
+            //  removeQueryValues([keystr,invstr])
             }
           }
           //console.log(data_id)
@@ -226,6 +231,7 @@ export function filterToList(readQueryString) {
         // }
       }
     })
+    updateQueryValues(values,remove)
     dispatch(updateFilterList(list))
   }
 }

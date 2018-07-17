@@ -95,9 +95,9 @@ const DisplayMenu = ({
             <SVGIcon sprite={sqrtIcon} active={scale == 'scaleSqrt'} onIconClick={()=>onSelectScale('scaleSqrt')}/>
           </MenuDisplaySimple>
           <MenuDisplaySimple name='plot graphics'>
-            <label htmlFor="#svgThreshold">svg circle threshold: </label>
+            <label htmlFor="#svgThreshold">Threshold&nbsp;</label>
             <input type="number" id="svgThreshold" value={threshold} onChange={(event)=>onChangeThreshold(event.target.value)}/>
-            <SVGIcon sprite={svgIcon} active={graphics == 'svg'} onIconClick={()=>onChangeGraphics(graphics == 'svg' ? 'canvas' : 'svg')}/>
+            &nbsp;or&nbsp;<SVGIcon sprite={svgIcon} active={graphics == 'svg'} onIconClick={()=>onChangeGraphics(graphics == 'svg' ? 'canvas' : 'svg')}/>
           </MenuDisplaySimple>
         </span>
       )
