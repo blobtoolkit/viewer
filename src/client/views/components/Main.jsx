@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 import { Router, Switch, Route } from 'react-router-dom'
 import { getDatasetIsActive } from '../reducers/repository'
 import Dataset from './Dataset';
-import Layout from './Layout';
+import Routes from './Routes';
 import Repository from './Repository';
 import { NotFound } from './Error';
 import history from '../reducers/history';
@@ -11,9 +11,9 @@ import history from '../reducers/history';
 
 
 const Main = () => (
-  <main>
-    <Layout/>
-  </main>
+  <div>
+    <Routes/>
+  </div>
 )
 
 export default Main

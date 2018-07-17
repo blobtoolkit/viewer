@@ -46,7 +46,7 @@ class Cumulative extends React.Component {
           ref={(elem) => { this.svg = elem; }}
           className={styles.main_plot+' '+styles.fill_parent}
           viewBox={viewbox}
-          preserveAspectRatio="xMidYMid meet">
+          preserveAspectRatio="xMinYMin">
           <g transform={'translate(100,10)'} >
             <CumulativePlotBoundary yValues={yValues}/>
             <path className={styles.bold_path}

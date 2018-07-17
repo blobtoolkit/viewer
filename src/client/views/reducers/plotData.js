@@ -113,21 +113,22 @@ export const getScatterPlotData = createSelector(
   }
 )
 
-export const getPlotGraphics = createSelector(
-  getFilteredList,
-  () => queryValue('plotGraphics'),
-  (list,graphics) => {
-    if (graphics == 'svg' || graphics == 'canvas'){
-      return graphics
-    }
-    let threshold = 10000
-    let plotGraphics = 'canvas'
-    if (list.length < threshold){
-      plotGraphics = 'svg'
-    }
-    return plotGraphics;
-  }
-)
+// export const getPlotGraphics = createSelector(
+//   getFilteredList,
+//   () => queryValue('plotGraphics'),
+//   (list,graphics) => {
+//     console.log(graphics)
+//     if (graphics == 'svg' || graphics == 'canvas'){
+//       return graphics
+//     }
+//     let threshold = 10000
+//     let plotGraphics = 'canvas'
+//     if (list.length < threshold){
+//       plotGraphics = 'svg'
+//     }
+//     return plotGraphics;
+//   }
+// )
 
 export const getScatterPlotDataByCategory = createSelector(
   getMainPlotData,

@@ -11,7 +11,7 @@ export const PlotTextInput = ({x,y,height,width,display,content,onChange,onKeyUp
         <div xmlns="http://www.w3.org/1999/xhtml">
           <input
             className={styles.scale}
-            type='text'
+            type='number'
             value={content}
             onChange={e=>onChange(e.target.value)}
             onKeyUp={e=>onKeyUp(e.key,e.target.value)}

@@ -1,5 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux'
+import { withRouter } from 'react-router-dom'
 //import styles from './Plot.scss'
 import { getAxisTitle } from '../reducers/plotData'
 import { getPlotShape,
@@ -7,6 +8,10 @@ import { getPlotShape,
   getPlotResolution,
   setPlotResolution,
   choosePlotResolution,
+  getPlotGraphics,
+  choosePlotGraphics,
+  getSVGThreshold,
+  chooseSVGThreshold,
   getZReducer,
   chooseZReducer,
   getZScale,
@@ -25,6 +30,7 @@ import TextIcon from './TextIcon'
 import squareIcon from './svg/squareShape.svg';
 import hexIcon from './svg/hexShape.svg';
 import circleIcon from './svg/circleShape.svg';
+import svgIcon from './svg/svg.svg';
 import sumIcon from './svg/sum.svg';
 import maxIcon from './svg/max.svg';
 import minIcon from './svg/min.svg';
@@ -43,62 +49,96 @@ import ToolTips from './ToolTips'
 import Timeout from './Timeout'
 
 const DisplayMenu = ({
-  title, view,
+  title, match,
   shape, onSelectShape,
   resolution, onChangeResolution,
+  graphics, onChangeGraphics,
+  threshold, onChangeThreshold,
   reducer, onSelectReducer,
   scale, onSelectScale,
   curveOrigin, onSelectCurveOrigin,
   snailOrigin, onSelectSnailOrigin,
   transform, onChangeTransform,
   onSelectView }) => {
+  let context
+  let view = match.params.view || 'blob'
+  switch (view) {
+    case 'blob':
+      context = (
+        <span>
+          <MenuDisplaySimple name='shape'>
+            <SVGIcon sprite={squareIcon} active={shape == 'square'} onIconClick={()=>onSelectShape('square')}/>
+            <SVGIcon sprite={hexIcon} active={shape == 'hex'} onIconClick={()=>onSelectShape('hex')}/>
+            <SVGIcon sprite={circleIcon} active={shape == 'circle'} onIconClick={()=>onSelectShape('circle')}/>
+          </MenuDisplaySimple>
+          <MenuDisplaySimple name='size'>
+            <input onChange={(e)=>onChangeResolution(e.target.value)}
+              type="range"
+              value={resolution}
+              min="5"
+              max="50"
+              step="1"
+              className={styles.flip_horiz+' '+styles.full_height}
+              data-tip data-for='size-slider'
+              />
+          </MenuDisplaySimple>
+          <MenuDisplaySimple name='reducer function'>
+            <SVGIcon sprite={sumIcon} active={reducer.id == 'sum'} onIconClick={()=>onSelectReducer('sum')}/>
+            <SVGIcon sprite={maxIcon} active={reducer.id == 'max'} onIconClick={()=>onSelectReducer('max')}/>
+            <SVGIcon sprite={minIcon} active={reducer.id == 'min'} onIconClick={()=>onSelectReducer('min')}/>
+            <SVGIcon sprite={countIcon} active={reducer.id == 'count'} onIconClick={()=>onSelectReducer('count')}/>
+            <SVGIcon sprite={meanIcon} active={reducer.id == 'mean'} onIconClick={()=>onSelectReducer('mean')}/>
+          </MenuDisplaySimple>
+          <MenuDisplaySimple name='scale function'>
+            <SVGIcon sprite={logIcon} active={scale == 'scaleLog'} onIconClick={()=>onSelectScale('scaleLog')}/>
+            <SVGIcon sprite={linearIcon} active={scale == 'scaleLinear'} onIconClick={()=>onSelectScale('scaleLinear')}/>
+            <SVGIcon sprite={sqrtIcon} active={scale == 'scaleSqrt'} onIconClick={()=>onSelectScale('scaleSqrt')}/>
+          </MenuDisplaySimple>
+          <MenuDisplaySimple name='plot graphics'>
+            <label htmlFor="#svgThreshold">svg circle threshold: </label>
+            <input type="number" id="svgThreshold" value={threshold} onChange={(event)=>onChangeThreshold(event.target.value)}/>
+            <SVGIcon sprite={svgIcon} active={graphics == 'svg'} onIconClick={()=>onChangeGraphics(graphics == 'svg' ? 'canvas' : 'svg')}/>
+          </MenuDisplaySimple>
+        </span>
+      )
+      break
+    case 'cumulative':
+      context = (
+        <span>
+          <MenuDisplaySimple name='curve origin'>
+            <SVGIcon sprite={zeroIcon} active={curveOrigin == '0'} onIconClick={()=>onSelectCurveOrigin('0')}/>
+            <SVGIcon sprite={xIcon} active={curveOrigin == 'x'} onIconClick={()=>onSelectCurveOrigin('x')}/>
+            <SVGIcon sprite={yIcon} active={curveOrigin == 'y'} onIconClick={()=>onSelectCurveOrigin('y')}/>
+          </MenuDisplaySimple>
+        </span>
+      )
+      break
+    case 'snail':
+      context = (
+        <span>
+          <MenuDisplaySimple name='snail origin'>
+            <SVGIcon sprite={invertIcon} active={snailOrigin == 'center'} onIconClick={()=>onSelectSnailOrigin(snailOrigin == 'center' ? 'outer' : 'center')}/>
+          </MenuDisplaySimple>
+        </span>
+      )
+      break
+    case 'table':
+      view = 'Table text'
+      break
+    case 'treemap':
+      view = 'TreeMap text'
+      break
+  }
   return (
-    <div className={styles.menu}>
-      <MenuItem name='palette' type='palette'/>
-      <MenuDisplaySimple name='shape'>
-        <SVGIcon sprite={squareIcon} active={shape == 'square'} onIconClick={()=>onSelectShape('square')}/>
-        <SVGIcon sprite={hexIcon} active={shape == 'hex'} onIconClick={()=>onSelectShape('hex')}/>
-        <SVGIcon sprite={circleIcon} active={shape == 'circle'} onIconClick={()=>onSelectShape('circle')}/>
-      </MenuDisplaySimple>
-      <MenuDisplaySimple name='size'>
-        <input onChange={(e)=>onChangeResolution(e.target.value)}
-          type="range"
-          value={resolution}
-          min="5"
-          max="50"
-          step="1"
-          className={styles.flip_horiz+' '+styles.full_height}
-          data-tip data-for='size-slider'
-          />
-      </MenuDisplaySimple>
-      <MenuDisplaySimple name='reducer function'>
-        <SVGIcon sprite={sumIcon} active={reducer.id == 'sum'} onIconClick={()=>onSelectReducer('sum')}/>
-        <SVGIcon sprite={maxIcon} active={reducer.id == 'max'} onIconClick={()=>onSelectReducer('max')}/>
-        <SVGIcon sprite={minIcon} active={reducer.id == 'min'} onIconClick={()=>onSelectReducer('min')}/>
-        <SVGIcon sprite={countIcon} active={reducer.id == 'count'} onIconClick={()=>onSelectReducer('count')}/>
-        <SVGIcon sprite={meanIcon} active={reducer.id == 'mean'} onIconClick={()=>onSelectReducer('mean')}/>
-      </MenuDisplaySimple>
-      <MenuDisplaySimple name='scale function'>
-        <SVGIcon sprite={logIcon} active={scale == 'scaleLog'} onIconClick={()=>onSelectScale('scaleLog')}/>
-        <SVGIcon sprite={linearIcon} active={scale == 'scaleLinear'} onIconClick={()=>onSelectScale('scaleLinear')}/>
-        <SVGIcon sprite={sqrtIcon} active={scale == 'scaleSqrt'} onIconClick={()=>onSelectScale('scaleSqrt')}/>
-      </MenuDisplaySimple>
+    <div className={styles.fill_parent}>
       <MenuDisplaySimple name='view'>
         <TextIcon title='blobplot' active={view == 'blob'} onIconClick={()=>onSelectView('blob')}/>
         <TextIcon title='cumulative' active={view == 'cumulative'} onIconClick={()=>onSelectView('cumulative')}/>
         <TextIcon title='snail' active={view == 'snail'} onIconClick={()=>onSelectView('snail')}/>
         <TextIcon title='table' active={view == 'table'} onIconClick={()=>onSelectView('table')}/>
       </MenuDisplaySimple>
-      <MenuDisplaySimple name='curve origin'>
-        <SVGIcon sprite={zeroIcon} active={curveOrigin == '0'} onIconClick={()=>onSelectCurveOrigin('0')}/>
-        <SVGIcon sprite={xIcon} active={curveOrigin == 'x'} onIconClick={()=>onSelectCurveOrigin('x')}/>
-        <SVGIcon sprite={yIcon} active={curveOrigin == 'y'} onIconClick={()=>onSelectCurveOrigin('y')}/>
-      </MenuDisplaySimple>
-      <MenuDisplaySimple name='snail origin'>
-        <SVGIcon sprite={invertIcon} active={snailOrigin == 'center'} onIconClick={()=>onSelectSnailOrigin(snailOrigin == 'center' ? 'outer' : 'center')}/>
-      </MenuDisplaySimple>
-
-
+      {context}
+      <MenuItem name='palette' type='palette'/>
 
       <ToolTips set='settingsMenu'/>
     </div>
@@ -130,6 +170,8 @@ class MenuDisplayMain extends React.Component {
           this.props.setTimeout(()=>dispatch(choosePlotResolution(value)),500)
           return dispatch(setPlotResolution(value))
         },
+        onChangeGraphics: graphics => dispatch(choosePlotGraphics(graphics)),
+        onChangeThreshold: threshold => dispatch(chooseSVGThreshold(threshold)),
         onSelectReducer: reducer => dispatch(chooseZReducer(reducer)),
         onSelectScale: scale => dispatch(chooseZScale(scale)),
         onSelectView: view => dispatch(chooseView(view)),
@@ -144,6 +186,8 @@ class MenuDisplayMain extends React.Component {
         title:getAxisTitle(state,'z'),
         shape:getPlotShape(state),
         resolution:getPlotResolution(state),
+        graphics:getPlotGraphics(state),
+        threshold:getSVGThreshold(state),
         reducer:getZReducer(state),
         scale:getZScale(state),
         curveOrigin:getCurveOrigin(state),
@@ -157,7 +201,7 @@ class MenuDisplayMain extends React.Component {
     const DisplayMain = connect(
       this.mapStateToProps,
       this.mapDispatchToProps
-    )(DisplayMenu)
+    )(withRouter(DisplayMenu))
     return <DisplayMain {...this.props}/>
   }
 }

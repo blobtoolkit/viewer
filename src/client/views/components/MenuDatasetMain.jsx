@@ -10,7 +10,7 @@ import Search from './Search'
 
 const DatasetMenu = ({ selectedDataset, isFetching, datasetIds, onDatasetMount, onDatasetClick }) => {
   return (
-    <div className={styles.menu}>
+    <div className={styles.fill_parent}>
       <Search/>
       {isFetching ? <Spinner /> : null}
       {datasetIds.map(id => {

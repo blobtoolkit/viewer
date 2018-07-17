@@ -1,7 +1,6 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import { getPlotShape } from '../reducers/plotParameters'
-import { getPlotGraphics } from '../reducers/plotData'
+import { getPlotShape,getPlotGraphics } from '../reducers/plotParameters'
 import styles from './Plot.scss'
 import MainPlotBoundary from './MainPlotBoundary'
 import PlotBubblesCanvasLayers from './PlotBubblesCanvasLayers'
@@ -164,8 +163,16 @@ class PlotBox extends React.Component {
     let yPlot = <PlotSideBinsSVG axis='y'/>
     let legend = <g transform='translate(1010,-280)'><PlotLegend/></g>
     if (this.props.plotShape == 'circle'){
-      if (this.props.plotGraphics == 'canvas'){
-        plotCanvas = <PlotBubblesCanvasLayers />
+      if (this.props.plotGraphics != 'svg'){
+        plotCanvas = (
+          <g>
+            <foreignObject width={900} height={900}>
+              <div xmlns="http://www.w3.org/1999/xhtml" className={styles.fill_parent}>
+                <PlotBubblesCanvasLayers />
+              </div>
+            </foreignObject>
+          </g>
+        )
         plotContainer = ''
       }
       else {
@@ -173,17 +180,10 @@ class PlotBox extends React.Component {
       }
     }
     else if (this.props.plotShape == 'square'){
-      if (this.props.plotGraphics == 'canvas'){
-        //plotContainer = <PlotSquareBinsCanvas />
-      }
       plotContainer = <PlotSquareBinsSVG />
-      //plotContainer = <PlotHexBinsSVG />
       plotGrid = <PlotSquareGridSVG />
     }
     else if (this.props.plotShape == 'hex'){
-      if (this.props.plotGraphics == 'canvas'){
-        //plotContainer = <PlotHexBinsCanvas />
-      }
       plotContainer = <PlotHexBinsSVG />
       plotGrid = <PlotHexGridSVG />
     }
@@ -194,11 +194,12 @@ class PlotBox extends React.Component {
             ref={(elem) => { this.svg = elem; }}
             className={styles.main_plot+' '+styles.fill_parent}
             viewBox={viewbox}
-            preserveAspectRatio="xMidYMid meet">
+            preserveAspectRatio="xMinYMin">
             <g transform={'translate(100,320)'} >
               <PlotTransformLines />
               <g transform="translate(50,50)">
               {plotContainer}
+              {plotCanvas}
               </g>
               {xPlot}
               {yPlot}
@@ -208,7 +209,6 @@ class PlotBox extends React.Component {
               <PlotAxisTitle axis='y'/>
             </g>
           </svg>
-          {plotCanvas}
           <a className={styles.save_svg} onClick={()=>(saveSvgAsPng.saveSvg(document.getElementById("main_plot"),"main_plot.svg"))}>save image</a>
         </div>
       )
@@ -220,7 +220,7 @@ class PlotBox extends React.Component {
             ref={(elem) => { this.svg = elem; }}
             className={styles.main_plot+' '+styles.fill_parent}
             viewBox={viewbox}
-            preserveAspectRatio="xMidYMid meet">
+            preserveAspectRatio="xMinYMin">
             <g transform={'translate(100,320)'} >
               <PlotTransformLines />
               {plotContainer}

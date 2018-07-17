@@ -2,17 +2,39 @@ import React from 'react'
 import { connect } from 'react-redux'
 import { Router, Switch, Route } from 'react-router-dom'
 import styles from './Layout.scss'
-import GetStarted from './GetStarted'
 import { loadDataset, getDatasetIsActive } from '../reducers/repository'
 import { withRouter } from 'react-router-dom'
-import { Routes } from './Routes'
+import GetStarted from './GetStarted'
+import MainPlot from './MainPlot'
+import CumulativePlot from './CumulativePlot'
+import SnailPlot from './SnailPlot'
+import TablePlot from './TablePlot'
+import TreeMapPlot from './TreeMapPlot'
 
 
 class PlotsLayoutComponent extends React.Component {
   render(){
+    let view = <GetStarted {...this.props}/>
+    switch (this.props.match.params.view || 'blob') {
+      case 'blob':
+        view = <MainPlot {...this.props}/>
+        break
+      case 'cumulative':
+        view = <CumulativePlot {...this.props}/>
+        break
+      case 'snail':
+        view = <SnailPlot {...this.props}/>
+        break
+      case 'table':
+        view = <TablePlot {...this.props}/>
+        break
+      case 'treemap':
+        view = <TreeMapPlot {...this.props}/>
+        break
+    }
     return (
       <div className={styles.fill_parent}>
-        {this.props.active ? <Routes active={this.props.active}/> : <GetStarted/>}
+        {this.props.active ? view : <GetStarted/>}
       </div>
     )
   }

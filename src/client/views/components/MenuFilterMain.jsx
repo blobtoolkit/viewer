@@ -73,14 +73,14 @@ class FieldMenu extends React.Component {
     // console.log(this.props)
     if (!this.props.isActive){
       return (
-        <div className={styles.menu} style={{left:this.props.offset}}>
+        <div className={styles.fill_parent}>
           Select a dataset to begin.
         </div>
       )
     }
     let fields = this.mapFields(this.props.fields)
     return (
-      <div className={styles.menu} style={{left:this.props.offset}}>
+      <div className={styles.fill_parent}>
         <div className={styles.sticky}>
           <DatasetApplyFilters />
         </div>

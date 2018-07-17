@@ -1,5 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux'
+import styles from './Plot.scss'
 import PlotBubblesCanvas from './PlotBubblesCanvas'
 import { getCategoryListForMainPlot }  from '../reducers/plotData'
 
@@ -24,7 +25,7 @@ export default class PlotBubblesCanvasLayers extends React.Component {
 }
 
 const BubblesCanvasLayers = ({ bins }) => (
-    <div>
+    <div className={styles.fill_parent}>
       {bins.map((layer,i) =>
         <PlotBubblesCanvas key={layer.id} x0={layer.x0} />
       )}

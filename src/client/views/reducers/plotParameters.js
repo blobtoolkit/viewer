@@ -3,6 +3,7 @@ import { createSelector } from 'reselect'
 import { byIdSelectorCreator,
   handleSimpleByDatasetAction,
   getSimpleByDatasetProperty } from './selectorCreators'
+import { getFilteredList } from './filter'
 import { getMainPlot } from './plot';
 import immutableUpdate from 'immutable-update';
 import store from '../store'
@@ -225,10 +226,57 @@ export const snailOrigin = handleAction(
 export const getSnailOrigin = state => state.snailOrigin
 
 
+export const setSVGThreshold = createAction('SET_SVG_THRESHOLD')
+export const chooseSVGThreshold = (svgThreshold) => {
+  return function (dispatch) {
+    queryToStore(dispatch,{svgThreshold})
+  }
+}
+export const svgThreshold = handleAction(
+  'SET_SVG_THRESHOLD',
+  (state, action) => (
+    action.payload
+  ),
+  qsDefault('svgThreshold')
+)
+export const getSVGThreshold = state => state.svgThreshold
+
+export const setPlotGraphics = createAction('SET_PLOT_GRAPHICS')
+export const choosePlotGraphics = (plotGraphics) => {
+  return function (dispatch) {
+    queryToStore(dispatch,{plotGraphics})
+  }
+}
+export const plotGraphics = handleAction(
+  'SET_PLOT_GRAPHICS',
+  (state, action) => (
+    action.payload
+  ),
+  qsDefault('plotGraphics')
+)
+const _getPlotGraphics = state => state.plotGraphics
+
+export const getPlotGraphics = createSelector(
+  _getPlotGraphics,
+  getSVGThreshold,
+  getFilteredList,
+  (graphics,threshold,list)=>{
+    if (graphics != 'svg'){
+      graphics = 'canvas'
+      if (threshold >= list.length){
+        graphics = 'svg'
+      }
+    }
+    return graphics
+  }
+)
+
+
 export const plotParameterReducers = {
   plotShape,
   plotResolution,
-  // plotGraphics,
+  plotGraphics,
+  svgThreshold,
   plotScale,
   zScale,
   zReducer,

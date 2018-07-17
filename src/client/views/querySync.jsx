@@ -47,6 +47,16 @@ const mapDispatchToQuery = (
       payload: (k,v) => v,
       default: 1
     },
+    plotGraphics: {
+      type: 'SET_PLOT_GRAPHICS',
+      payload: (k,v) => v,
+      default: 'auto'
+    },
+    svgThreshold: {
+      type: 'SET_SVG_THRESHOLD',
+      payload: (k,v) => v,
+      default: 10000
+    },
     zScale: {
       type: 'SET_Z_SCALE',
       payload: (k,v) => v,

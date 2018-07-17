@@ -10,7 +10,7 @@ import DatasetCreateList from './DatasetCreateList'
 
 const ListsMenu = ({lists,selectedList,onListClick,onDrop}) => {
   return (
-    <div className={styles.menu}>
+    <div className={styles.fill_parent}>
       <DatasetCreateList />
       { lists.map((list,i) => (<MenuList key={i} {...list} onListClick={onListClick}/>))}
       {<ListUpload active={false} onDrop={onDrop}/>}

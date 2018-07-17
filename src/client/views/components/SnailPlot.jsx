@@ -246,7 +246,7 @@ class Snail extends React.Component {
           ref={(elem) => { this.svg = elem; }}
           className={styles.main_plot+' '+styles.fill_parent}
           viewBox={viewbox}
-          preserveAspectRatio="xMidYMid meet">
+          preserveAspectRatio="xMinYMin">
           <g transform={'translate(500,45)'} >
             <text className={styles.axis_title}>
               {this.props.meta.id}

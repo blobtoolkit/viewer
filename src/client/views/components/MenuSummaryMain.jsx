@@ -8,7 +8,7 @@ import MenuSummary from './MenuSummary'
 const SummaryMenu = ({values,zAxis,bins,palette,other}) => {
   let props = {values,zAxis,bins,palette,other}
   return (
-    <div className={styles.menu}>
+    <div className={styles.fill_parent}>
       { bins ?
         <MenuSummary {...props}/> :
         'Select a dataset to view summary statistics'

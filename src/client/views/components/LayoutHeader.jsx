@@ -1,6 +1,7 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import { Router, Switch, Route, withRouter } from 'react-router-dom'
+import Header from './Header'
 import styles from './Layout.scss'
 import MenuDatasetMain from './MenuDatasetMain'
 import MenuFilterMain from './MenuFilterMain'
@@ -12,7 +13,7 @@ import { getTopLevelFields } from '../reducers/field'
 import { toggleHash, hashValue } from '../reducers/history'
 
 
-class ControlsLayoutComponent extends React.Component {
+class HeaderLayoutComponent extends React.Component {
   constructor(props) {
     super(props);
   }
@@ -24,38 +25,28 @@ class ControlsLayoutComponent extends React.Component {
     labels.forEach(tab=>{
       tabs.push({id:tab,active:activeTab == tab})
     })
-    let menu
-    if (activeTab == 'Datasets') menu = <MenuDatasetMain />
-    if (activeTab == 'Filters') menu = <MenuFilterMain/>
-    if (activeTab == 'Lists') menu = <MenuListsMain/>
-    if (activeTab == 'Settings') menu = <MenuDisplayMain/>
-    if (activeTab == 'Summary') menu = <MenuSummaryMain/>
-    if (activeTab == 'Help') menu = <MenuHelpMain/>
     return (
-      <div className={styles.fill_parent}>
-        {menu}
-      </div>
+      <Header tabs={tabs} onTabClick={(tab)=>{toggleHash(tab)}}/>
     )
   }
 }
 
-class LayoutControls extends React.Component {
+class LayoutHeader extends React.Component {
   constructor(props) {
     super(props);
     this.mapStateToProps = state => {
       return {
-        topLevelFields: getTopLevelFields(state),
         hashValue: hashValue(state)
       }
     }
   }
 
   render(){
-    const ConnectedLayout = connect(
+    const ConnectedLayoutHeader = connect(
       this.mapStateToProps
-    )(ControlsLayoutComponent)
-    return <ConnectedLayout {...this.props}/>
+    )(HeaderLayoutComponent)
+    return <ConnectedLayoutHeader {...this.props}/>
   }
 }
 
-export default withRouter(LayoutControls)
+export default withRouter(LayoutHeader)
