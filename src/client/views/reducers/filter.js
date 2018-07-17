@@ -6,7 +6,6 @@ import deep from 'deep-get-set'
 import shallow from 'shallowequal'
 import store from '../store'
 import { queryValue, addQueryValues, removeQueryValues, updateQueryValues } from './history'
-import { getQueryString } from './plotParameters'
 
 export const addFilter = createAction('ADD_FILTER')
 export const editFilter = createAction('EDIT_FILTER')
@@ -60,7 +59,7 @@ export const filteredList = handleAction(
   ),
   []
 )
-const getFilteredList = state => state.filteredList
+export const getFilteredList = state => state.filteredList
 
 const filterRangeToList = (low,high,arr,list,invert) => {
   let ret = []
