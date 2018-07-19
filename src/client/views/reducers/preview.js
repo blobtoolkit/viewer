@@ -49,7 +49,7 @@ export const getDetailsForFilterId = createSelectorForFilterId(
         })
       }
       else {
-        obj.toggled = filterMeta.toggled
+        //obj.toggled = filterMeta.toggled
       }
     }
     if (fieldMeta.meta.type == 'selection'){

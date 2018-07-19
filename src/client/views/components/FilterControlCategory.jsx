@@ -4,6 +4,7 @@ import styles from './Filters.scss';
 import { getCategoryListForFieldId } from '../reducers/preview'
 import { editFilter } from '../reducers/filter'
 import { setDisplayFirst, getMainPlot } from '../reducers/plot'
+import { queryToStore } from '../querySync'
 
 function remove(array, element) {
     const index = array.indexOf(element);
@@ -35,7 +36,15 @@ class FilterControlCategory extends React.Component {
             })
             keys = filter.keys
           }
-          console.log(this.props.filterId+' '+keys.length)
+          if (keys.length > 0){
+            dispatch(queryToStore({
+              values:{[this.props.filterId+'--Keys']:keys.join(',')},
+              action:'FILTER'
+            }))
+          }
+          else {
+            dispatch(queryToStore({remove:[this.props.filterId+'--Keys'],action:'FILTER'}))
+          }
           dispatch(editFilter({id:this.props.filterId,toggled:filter.toggled,keys:keys}))
         }
       }

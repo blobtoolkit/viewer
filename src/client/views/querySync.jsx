@@ -271,7 +271,7 @@ const mapDispatchToQuery = (
       array: (k,v) => ({key:'field',index:'min',...v}),
     },
     Keys: {
-      array: (k,v) => ({key:'filter',field:v.field,index:'keys',value:(v.value || '').split(',').map(x=>x*1)}),
+      array: (k,v) => ({key:'filter',field:v.field,index:'keys',value:(v.value ? v.value.split(',').map(x=>x*1) : [])}),
       default: ''
     },
     Order: {
