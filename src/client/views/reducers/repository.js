@@ -18,6 +18,7 @@ import { history,
   viewsToPathname } from './history'
 import { getSelectedDataset } from '../reducers/dataset'
 import { getSearchTerm, setSearchTerm } from './search'
+import { fetchIdentifiers } from './identifiers'
 
 const apiUrl = window.apiURL || '/api/v1'
 
@@ -238,6 +239,10 @@ export function loadDataset(id,clear) {
         dispatch(filterToList())
         dispatch(setDatasetIsActive(true))
       })
+      .then(()=>{
+        dispatch(fetchIdentifiers())
+      })
+
     })
   }
 }

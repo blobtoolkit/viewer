@@ -5,6 +5,7 @@ import SVGIcon from './SVGIcon'
 import invertIcon from './svg/invert.svg';
 import { editFilter } from '../reducers/filter'
 import { getDetailsForFilterId } from '../reducers/preview'
+import { queryToStore } from '../querySync'
 
 class FieldBoxHeaderFilterButtons extends React.Component {
   constructor(props) {
@@ -16,7 +17,16 @@ class FieldBoxHeaderFilterButtons extends React.Component {
     }
     this.mapDispatchToProps = dispatch => {
       return {
-        toggleInvert: (id,value) => dispatch(editFilter({id,invert:!value}))
+        toggleInvert: (id,value) => {
+          value = !value
+          if (value){
+            dispatch(queryToStore({values:{[id+'--Inv']:value},action:'FILTER'}))
+          }
+          else {
+            dispatch(queryToStore({values:{},remove:[id+'--Inv'],action:'FILTER'}))
+          }
+          dispatch(editFilter({id,invert:value}))
+        }
       }
     }
   }

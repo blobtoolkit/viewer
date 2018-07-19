@@ -13,7 +13,8 @@ import { queryToStore, qsDefault } from '../querySync'
 export const setPlotShape = createAction('SET_PLOT_SHAPE')
 export const choosePlotShape = (plotShape) => {
   return function (dispatch) {
-    queryToStore(dispatch,{plotShape})
+    let values = {plotShape}
+    dispatch(queryToStore({values}))
   }
 }
 export const plotShape = handleAction(
@@ -29,7 +30,8 @@ export const getPlotShape = state => state.plotShape
 export const setPlotResolution = createAction('SET_PLOT_RESOLUTION')
 export const choosePlotResolution = (plotResolution) => {
   return function (dispatch) {
-    queryToStore(dispatch,{plotResolution})
+    let values = {plotResolution}
+    dispatch(queryToStore({values}))
   }
 }
 export const plotResolution = handleAction(
@@ -44,7 +46,8 @@ export const getPlotResolution = state => state.plotResolution
 export const setPlotScale = createAction('SET_PLOT_SCALE')
 export const choosePlotScale = (plotScale) => {
   return function (dispatch) {
-    queryToStore(dispatch,{plotScale})
+    let values = {plotScale}
+    dispatch(queryToStore({values}))
   }
 }
 export const plotScale = handleAction(
@@ -59,7 +62,8 @@ export const getPlotScale = state => state.plotScale
 export const setZScale = createAction('SET_Z_SCALE')
 export const chooseZScale = (zScale) => {
   return function (dispatch) {
-    queryToStore(dispatch,{zScale})
+    let values = {zScale}
+    dispatch(queryToStore({values}))
   }
 }
 export const zScale = handleAction(
@@ -74,7 +78,8 @@ export const getZScale = state => state.zScale
 export const setZReducer = createAction('SET_Z_REDUCER')
 export const chooseZReducer = (zReducer) => {
   return function (dispatch) {
-    queryToStore(dispatch,{zReducer})
+    let values = {zReducer}
+    dispatch(queryToStore({values}))
   }
 }
 export const zReducers = {
@@ -168,7 +173,8 @@ export const getTransformFunction = createSelector(
 export const setCurveOrigin = createAction('SET_CURVE_ORIGIN')
 export const chooseCurveOrigin = (curveOrigin) => {
   return function (dispatch) {
-    queryToStore(dispatch,{curveOrigin})
+    let values = {curveOrigin}
+    dispatch(queryToStore({values}))
   }
 }
 export const curveOrigin = handleAction(
@@ -183,7 +189,8 @@ export const getCurveOrigin = state => state.curveOrigin
 export const setCircumferenceScale = createAction('SET_CIRCUMFERENCE_SCALE')
 export const chooseCircumferenceScale = (circumferenceScale) => {
   return function (dispatch) {
-    queryToStore(dispatch,{circumferenceScale})
+    let values = {circumferenceScale}
+    dispatch(queryToStore({values}))
   }
 }
 export const circumferenceScale = handleAction(
@@ -198,7 +205,8 @@ export const getCircumferenceScale = state => state.circumferenceScale
 export const setRadiusScale = createAction('SET_RADIUS_SCALE')
 export const chooseRadiusScale = (radiusScale) => {
   return function (dispatch) {
-    queryToStore(dispatch,{radiusScale})
+    let values = {radiusScale}
+    dispatch(queryToStore({values}))
   }
 }
 export const radiusScale = handleAction(
@@ -213,7 +221,8 @@ export const getRadiusScale = state => state.radiusScale
 export const setSnailOrigin = createAction('SET_SNAIL_ORIGIN')
 export const chooseSnailOrigin = (snailOrigin) => {
   return function (dispatch) {
-    queryToStore(dispatch,{snailOrigin})
+    let values = {snailOrigin}
+    dispatch(queryToStore({values}))
   }
 }
 export const snailOrigin = handleAction(
@@ -229,7 +238,8 @@ export const getSnailOrigin = state => state.snailOrigin
 export const setSVGThreshold = createAction('SET_SVG_THRESHOLD')
 export const chooseSVGThreshold = (svgThreshold) => {
   return function (dispatch) {
-    queryToStore(dispatch,{svgThreshold})
+    let values = {svgThreshold}
+    dispatch(queryToStore({values}))
   }
 }
 export const svgThreshold = handleAction(
@@ -244,7 +254,8 @@ export const getSVGThreshold = state => state.svgThreshold
 export const setPlotGraphics = createAction('SET_PLOT_GRAPHICS')
 export const choosePlotGraphics = (plotGraphics) => {
   return function (dispatch) {
-    queryToStore(dispatch,{plotGraphics})
+    let values = {plotGraphics}
+    dispatch(queryToStore({values}))
   }
 }
 export const plotGraphics = handleAction(

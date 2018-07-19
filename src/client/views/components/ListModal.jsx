@@ -3,6 +3,7 @@ import {ModalContainer, ModalDialog} from 'react-modal-dialog';
 import { addQueryValues } from '../reducers/history'
 import styles from './Layout.scss'
 import JSONPretty from 'react-json-pretty';
+import { queryToStore } from '../querySync'
 
 class ListModal extends React.Component {
   constructor(props) {
@@ -27,6 +28,7 @@ class ListModal extends React.Component {
 
   loadFromList(list){
     addQueryValues(list.params,'?')
+    // TODO: move function to dispatch queryToStore(dispatch,{values})
   }
 
   render() {

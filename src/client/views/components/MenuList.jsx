@@ -42,7 +42,6 @@ class MenuList extends React.Component {
         },
         onClick: (id) => {
           dispatch(updateSelectedList(id))
-          dispatch(fetchIdentifiers())
         }
       }
     }

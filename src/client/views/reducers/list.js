@@ -62,12 +62,13 @@ export const chooseList = (id) => {
     let list = getListById(store.getState(),id)
     dispatch(selectNone())
     dispatch(addRecords(list.list))
-    queryToStore(dispatch,Object.assign({},list.params),true).then((v)=>{
+    let values = Object.assign({},list.params)
+    dispatch(queryToStore({values,searchReplace:true})).then((v)=>{
       let fields = getAllActiveFields(store.getState())
       Object.keys(fields).forEach(field=>{
         dispatch(fetchRawData(field))
       })
-      dispatch(filterToList())
+      // dispatch(filterToList())
     })
     //dispatch(selectPalette(palette))
   }

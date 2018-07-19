@@ -16,6 +16,7 @@ import { getSelectionDisplay,
 import { selectAll,
   invertSelection } from '../reducers/selectTools'
 import { addQueryValues } from '../reducers/history'
+import { queryToStore } from '../querySync'
 
 class Field extends React.Component {
   constructor(props) {
@@ -41,7 +42,9 @@ class Field extends React.Component {
           dispatch(editField(obj))
         },
         setAxes: (axis,id) => {
-          addQueryValues({[axis+'Field']:id})
+          // addQueryValues({[axis+'Field']:id})
+          let values = {[axis+'Field']:id}
+          dispatch(queryToStore({values}))
           dispatch(editPlot({id:'default',[axis]:id}))
         },
         cloneField: (id) => {dispatch(cloneField({id}))},

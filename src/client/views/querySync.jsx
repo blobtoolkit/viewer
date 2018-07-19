@@ -169,7 +169,6 @@ const mapDispatchToQuery = (
     },
     field: {
       actions: (k,v) => {
-        console.log(v)
         let byId = {}
         let actions = []
         Object.keys(v).forEach(k =>{
@@ -254,7 +253,7 @@ const mapDispatchToQuery = (
       default: window.plot ? window.plot.cat : null
     },
     Inv: {
-      array: (k,v) => ({key:'filter',field:v.field,index:'invert',value:v.value=='true'}),
+      array: (k,v) => ({key:'filter',index:'invert',...v}),
       default: false
     },
     Max: {
@@ -288,191 +287,197 @@ export const qsDefault = (param) => {
   return queryValue(param) || defaultValue(param)
 }
 
-export const queryToStore = (dispatch,values,searchReplace,hash,currentSearch) => {
-  let arrays = {}
-  currentSearch = currentSearch || history.location.search || ''
-  let currentHash = hash || history.location.hash || ''
-  let parsed = qs.parse(currentSearch.replace('?',''))
-  if (keyed(values,'colors')){
-    let oldCols = values.colors.existing.colors
-    let newCols = values.colors.colors[values.colors.colors.id]
-    newCols.forEach((col,i) => {
-      if (newCols[i] != oldCols[i]){
-        values['color'+i] = newCols[i]
-      }
-    })
-    delete values.colors
-  }
-  let remove = []
-  if (Object.keys(parsed).length > 0 && searchReplace){
-    Object.keys(parsed).forEach(key => {
-      if (!keyed(values,key)){
-        let [f,k] = key.split('--')
-        k = k || key
-        if (keyed(mapDispatchToQuery,k)){
-          let obj = mapDispatchToQuery[k]
-          if (keyed(obj,'default')){
-            values[key] = obj.default
-            remove.push(key)
-          }
-          else {
-            console.log(key)
-          }
+export const queryToStore = (options = {}) => {
+  return function (dispatch) {
+    let values = options.values || {}
+    let searchReplace = options.searchReplace || false
+    let currentHash = options.hash || history.location.hash || ''
+    let currentSearch = options.currentSearch || history.location.search || ''
+    let remove = options.remove || []
+    let action = options.action || 'REPLACE'
+    let arrays = {}
+    let parsed = qs.parse(currentSearch.replace('?',''))
+    if (keyed(values,'colors')){
+      let oldCols = values.colors.existing.colors
+      let newCols = values.colors.colors[values.colors.colors.id]
+      newCols.forEach((col,i) => {
+        if (newCols[i] != oldCols[i]){
+          values['color'+i] = newCols[i]
         }
-      }
-    })
-    parsed = {}
-  }
-  else if (searchReplace){
-    Object.keys(mapDispatchToQuery).forEach(key=>{
-      if (keyed(mapDispatchToQuery[key],'type')){
-        remove.push(key)
-      }
-    })
-  }
-  Object.keys(values).forEach(key => {
-    let value = values[key]
-    let [field,k] = key.split('--')
-    let fullKey = key
-    if (k){
-      key = k
-      value = {value,field}
-    }
-    if (keyed(mapDispatchToQuery,key)){
-      let obj = mapDispatchToQuery[key]
-      let actions = []
-      if (keyed(obj,'array')){
-        let entry = obj.array(key,value)
-        if (!keyed(arrays,entry.key)){
-          arrays[entry.key] = []
-        }
-        arrays[entry.key].push(entry)
-      }
-      else if (keyed(obj,'actions')){
-        actions = obj.actions(key,value)
-      }
-      else {
-        actions = [{...obj}]
-      }
-      actions.forEach(action=>{
-        let type = action.type
-        let payload = action.payload(key,value)
-        dispatch({type,payload})
       })
-      if (keyed(obj,'params')){
-        let params = obj.params(key,value)
-        Object.keys(params).forEach(k=>{parsed[k] = params[k]})
+      delete values.colors
+    }
+    if (Object.keys(parsed).length > 0 && searchReplace){
+      Object.keys(parsed).forEach(key => {
+        if (!keyed(values,key)){
+          let [f,k] = key.split('--')
+          k = k || key
+          if (keyed(mapDispatchToQuery,k)){
+            let obj = mapDispatchToQuery[k]
+            if (keyed(obj,'default')){
+              values[key] = obj.default
+              remove.push(key)
+            }
+            else {
+              console.log(key)
+            }
+          }
+        }
+      })
+      parsed = {}
+    }
+    else if (searchReplace){
+      Object.keys(mapDispatchToQuery).forEach(key=>{
+        if (keyed(mapDispatchToQuery[key],'type')){
+          remove.push(key)
+        }
+      })
+    }
+    Object.keys(values).forEach(key => {
+      let value = values[key]
+      let [field,k] = key.split('--')
+      let fullKey = key
+      if (k){
+        key = k
+        value = {value,field}
       }
-      else {
-        if (k){
-          parsed[fullKey] = values[fullKey]
+      if (keyed(mapDispatchToQuery,key)){
+        let obj = mapDispatchToQuery[key]
+        let actions = []
+        if (keyed(obj,'array')){
+          let entry = obj.array(key,value)
+          if (!keyed(arrays,entry.key)){
+            arrays[entry.key] = []
+          }
+          arrays[entry.key].push(entry)
+        }
+        else if (keyed(obj,'actions')){
+          actions = obj.actions(key,value)
         }
         else {
-          parsed[key] = value
+          actions = [{...obj}]
+        }
+        actions.forEach(action=>{
+          let type = action.type
+          let payload = action.payload(key,value)
+          dispatch({type,payload})
+        })
+        if (keyed(obj,'params')){
+          let params = obj.params(key,value)
+          Object.keys(params).forEach(k=>{parsed[k] = params[k]})
+        }
+        else {
+          if (k){
+            parsed[fullKey] = values[fullKey]
+          }
+          else {
+            parsed[key] = value
+          }
         }
       }
-    }
-    else {
-      parsed[key] = value
-    }
-  })
-  Object.keys(arrays).forEach(key => {
-    let value = arrays[key]
-    if (keyed(mapDispatchToQuery,key)){
-      let obj = mapDispatchToQuery[key]
-      let actions = []
-      if (keyed(obj,'actions')){
-        actions = obj.actions(key,value)
-      }
       else {
-        actions.push(obj)
+        parsed[key] = value
       }
-      actions.forEach(action => {
-        let type = action.type
-        let payload = action.payload(key,value)
-        dispatch({type,payload})
-      })
-      if (keyed(obj,'params')){
-        let params = obj.params(key,value)
-        Object.keys(params).forEach(k=>{parsed[k] = params[k]})
-      }
-    }
-  })
-  remove.forEach(key=>{
-    let value = values[key]
-    let [field,k] = key.split('--')
-    delete parsed[key]
-    if (k){
-      key = k
-      value = {value,field}
-    }
-    if (keyed(mapDispatchToQuery,key)){
-      let obj = mapDispatchToQuery[key]
-      let actions = []
-      if (keyed(obj,'array')){
-        let entry = obj.array(key,value)
-        if (!keyed(arrays,entry.key)){
-          arrays[entry.key] = []
+    })
+    Object.keys(arrays).forEach(key => {
+      let value = arrays[key]
+      if (keyed(mapDispatchToQuery,key)){
+        let obj = mapDispatchToQuery[key]
+        let actions = []
+        if (keyed(obj,'actions')){
+          actions = obj.actions(key,value)
         }
-        arrays[entry.key].push(entry)
-      }
-      else if (keyed(obj,'actions')){
-        actions = obj.actions(key,value)
-      }
-      else {
-        actions = [{...obj}]
-      }
-      actions.forEach(action=>{
-        let type = action.type
-        let payload = action.default
-        dispatch({type,payload})
-      })
-    }
-    else if (keyed(mapDispatchToQuery,k)){
-      let obj = mapDispatchToQuery[k]
-      if (keyed(obj,'array')){
-        let entry = obj.array(k,value)
-        if (!keyed(arrays,entry.key)){
-          arrays[entry.key] = []
+        else {
+          actions.push(obj)
         }
-        arrays[entry.key].push(entry)
+        actions.forEach(action => {
+          let type = action.type
+          let payload = action.payload(key,value)
+          dispatch({type,payload})
+        })
+        if (keyed(obj,'params')){
+          let params = obj.params(key,value)
+          Object.keys(params).forEach(k=>{parsed[k] = params[k]})
+        }
       }
-    }
-  })
-  Object.keys(arrays).forEach(key => {
-    let value = arrays[key]
-    if (keyed(mapDispatchToQuery,key)){
-      let obj = mapDispatchToQuery[key]
-      let actions = []
-      if (keyed(obj,'actions')){
-        actions = obj.actions(key,value)
+    })
+    arrays = {}
+    remove.forEach(key=>{
+      let value = values[key]
+      let [field,k] = key.split('--')
+      delete parsed[key]
+      if (k){
+        key = k
+        value = {value,field}
       }
-      else {
-        actions.push(obj)
+      if (keyed(mapDispatchToQuery,key)){
+        let obj = mapDispatchToQuery[key]
+        let actions = []
+        if (keyed(obj,'array')){
+          let entry = obj.array(key,value)
+          if (!keyed(arrays,entry.key)){
+            arrays[entry.key] = []
+          }
+          arrays[entry.key].push(entry)
+        }
+        else if (keyed(obj,'actions')){
+          actions = obj.actions(key,value)
+        }
+        else {
+          actions = [{...obj}]
+        }
+        actions.forEach(action=>{
+          let type = action.type
+          let payload = action.default
+          dispatch({type,payload})
+        })
       }
-      actions.forEach(action => {
-        let type = action.type
-        let payload = action.payload(key,value)
-        dispatch({type,payload})
-      })
-      if (keyed(obj,'params')){
-        let params = obj.params(key,value)
-        Object.keys(params).forEach(k=>{parsed[k] = params[k]})
+      else if (keyed(mapDispatchToQuery,k)){
+        let obj = mapDispatchToQuery[k]
+        if (keyed(obj,'array')){
+          let entry = obj.array(k,value)
+          if (!keyed(arrays,entry.key)){
+            arrays[entry.key] = []
+          }
+          arrays[entry.key].push(entry)
+        }
       }
-    }
-  })
+    })
+    Object.keys(arrays).forEach(key => {
+      let value = arrays[key]
+      if (keyed(mapDispatchToQuery,key)){
+        let obj = mapDispatchToQuery[key]
+        let actions = []
+        if (keyed(obj,'actions')){
+          actions = obj.actions(key,value)
+        }
+        else {
+          actions.push(obj)
+        }
+        actions.forEach(action => {
+          let type = action.type
+          let payload = action.payload(key,value)
+          dispatch({type,payload})
+        })
+        if (keyed(obj,'params')){
+          let params = obj.params(key,value)
+          Object.keys(params).forEach(k=>{parsed[k] = params[k]})
+        }
+      }
+    })
 
-  let search = qs.stringify(parsed)
-  if (search != currentSearch){
-    if (searchReplace){
-      history.replace({hash:currentHash,search})
+    let search = qs.stringify(parsed)
+    if (search != currentSearch){
+      if (action != 'POP'){
+        history.push({hash:currentHash,search})
+      }
+      // else if (action == 'FILTER'){
+      //   history.push({hash:currentHash,search})
+      // }
+      dispatch({type:'SET_QUERY_STRING',payload:search})
     }
-    else {
-      history.replace({hash:currentHash,search})
-    }
-    dispatch({type:'SET_QUERY_STRING',payload:search})
+    return new Promise (resolve => resolve(parsed))
   }
-  return new Promise (resolve => resolve(parsed))
 }
 
 export default queryToStore;

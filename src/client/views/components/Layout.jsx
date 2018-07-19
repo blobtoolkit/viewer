@@ -16,7 +16,7 @@ class LayoutComponent extends React.Component {
     let newSearch = this.props.location.search.replace('?','')
     if (this.props.active && this.props.history.action == 'POP'){
       if (this.props.queryString != newSearch){
-        this.props.updateStore(newSearch,this.props.queryString)
+        this.props.updateStore(newSearch,this.props.queryString,'POP')
       }
       //this.props.updateStore(this.props.location.search)
     }
@@ -63,9 +63,9 @@ class Layout extends React.Component {
     }
     this.mapDispatchToProps = dispatch => {
       return {
-        updateStore: (str,qStr) => {
+        updateStore: (str,currentSearch,action) => {
           let values = qs.parse(str.replace('?',''))
-          queryToStore(dispatch,values,true,false,qStr)
+          dispatch(queryToStore({values,searchReplace:true,currentSearch,action}))
         },
         updateQueryString: (qStr) => dispatch(setQueryString(qStr))
       }

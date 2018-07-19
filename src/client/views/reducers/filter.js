@@ -6,6 +6,10 @@ import deep from 'deep-get-set'
 import shallow from 'shallowequal'
 import store from '../store'
 import { queryValue, addQueryValues, removeQueryValues, updateQueryValues } from './history'
+import { queryToStore } from '../querySync'
+import qs from 'qs'
+import { getSelectedRecords } from './select'
+import { getDatasetIsActive } from './repository'
 
 export const addFilter = createAction('ADD_FILTER')
 export const editFilter = createAction('EDIT_FILTER')
@@ -51,15 +55,15 @@ export const filters = handleActions(
 )
 
 
-export const updateFilterList = createAction('UPDATE_FILTER_LIST')
-export const filteredList = handleAction(
-  'UPDATE_FILTER_LIST',
-  (state, action) => (
-    action.payload
-  ),
-  []
-)
-export const getFilteredList = state => state.filteredList
+// export const updateFilterList = createAction('UPDATE_FILTER_LIST')
+// export const filteredList = handleAction(
+//   'UPDATE_FILTER_LIST',
+//   (state, action) => (
+//     action.payload
+//   ),
+//   []
+// )
+// export const getFilteredList = state => state.filteredList
 
 const filterRangeToList = (low,high,arr,list,invert) => {
   let ret = []
@@ -136,12 +140,15 @@ const filterArrayFromList = (arr,list) => {
   return ret
 }
 
+const keyed = (o,k) => Object.prototype.hasOwnProperty.call(o,k)
+
 export function filterToList(readQueryString) {
   return function(dispatch){
     let state = store.getState();
     let filters = state.filters.byId;
     let fields = state.fields.byId;
     let data = state.rawData.byId;
+    let parsed = qs.parse(state.queryString)
     let count = state.availableDatasets.byId[state.selectedDataset].records
     let list = fields['selection'].active ? state.selectedRecords : undefined
     let all = []
@@ -173,13 +180,13 @@ export function filterToList(readQueryString) {
             if (range[0] > limit[0]){
               values[minstr] = range[0]
             }
-            else {
+            else if (keyed(parsed,minstr)){
               remove.push(minstr)
             }
             if (range[1] < limit[1]){
               values[maxstr] = range[1]
             }
-            else {
+            else if (keyed(parsed,maxstr)){
               remove.push(maxstr)
             }
             if (filters[id].invert){
@@ -191,13 +198,13 @@ export function filterToList(readQueryString) {
             // addQueryValues(values)
           }
           else {
-            remove.push(minstr)
-            remove.push(maxstr)
+            if (keyed(parsed,minstr)){
+              remove.push(minstr)
+            }
+            if (keyed(parsed,maxstr)){
+              remove.push(maxstr)
+            }
           }
-          // if (remove.length > 0){
-          //   console.log(10)
-          //   removeQueryValues(remove)
-          // }
         }
         else if (filters[id].type == 'list' || filters[id].type == 'category'){
           //let data_id = filters[id].clonedFrom || id
@@ -218,9 +225,12 @@ export function filterToList(readQueryString) {
               // addQueryValues(values)
             }
             else {
-              remove.push(keystr)
-              remove.push(invstr)
-            //  removeQueryValues([keystr,invstr])
+              if (keyed(parsed,keystr)){
+                remove.push(keystr)
+              }
+              if (keyed(parsed,invstr)){
+                remove.push(invstr)
+              }
             }
           }
           //console.log(data_id)
@@ -230,12 +240,59 @@ export function filterToList(readQueryString) {
         // }
       }
     })
-    updateQueryValues(values,remove)
-    dispatch(updateFilterList(list))
+    // updateQueryValues(values,remove)
+    dispatch(queryToStore({values,remove}))
+    //dispatch(updateFilterList(list))
   }
 }
 
+export const getFilteredList = createSelector(
+  (state) => state.filters,
+  (state) => state.fields.byId,
+  (state) => state.rawData.byId,
+  (state) => {
+    let meta = state.availableDatasets.byId || false
+    meta = meta ? meta[state.selectedDataset] : false
+    meta = meta ? meta.records : 0
+    return meta
+  },
+  getSelectedRecords,
+  (state) => getDatasetIsActive(state),
+  (filters,fields,data,count,list,active) => {
+    let all = []
+    if (!list || list.length == 0 || filters.byId['selection'].invert){
+      for (let i = 0; i < count; i++){
+        all.push(i)
+      }
+    }
+    if (!list || list.length == 0){
+      list = all
+    }
+    else if (fields['selection'].active && filters.byId['selection'].invert){
+      list = filterArrayFromList(list,all)
+    }
+    let values = {}
+    filters.allIds.forEach(id => {
+      if (fields[id] && fields[id].active && filters.byId[id] && data[id]){
+        if (filters.byId[id].type == 'range'){
+          let range = filters.byId[id].range
+          let limit = fields[id].range
+          if (!shallow(range,limit)){
+            list = filterRangeToList(range[0],range[1],data[id].values,list,filters.byId[id].invert)
+          }
+        }
+        else if (filters.byId[id].type == 'list' || filters.byId[id].type == 'category'){
+          if (data[id]){
+            list = filterCategoriesToList(filters.byId[id].keys,data[id].values,list,filters.byId[id].invert)
+          }
+        }
+      }
+    })
+    return list
+  }
+)
+
 export const filterReducers = {
   filters,
-  filteredList
+  // filteredList
 }

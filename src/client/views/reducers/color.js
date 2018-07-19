@@ -68,7 +68,8 @@ export const selectedPalette = handleAction(
 
 export const choosePalette = (palette) => {
   return function (dispatch) {
-    queryToStore(dispatch,{palette})
+    let values = {palette}
+    dispatch(queryToStore({values}))
     //dispatch(selectPalette(palette))
   }
 }
@@ -76,7 +77,8 @@ export const choosePalette = (palette) => {
 export const chooseColors = (colors) => {
   return function (dispatch) {
     let existing = getColorPalette(store.getState())
-    queryToStore(dispatch,{colors:{colors,existing}})
+    let values = {colors:{colors,existing}}
+    dispatch(queryToStore({values}))
     //dispatch(selectPalette(palette))
   }
 }

@@ -50,9 +50,20 @@ class FilterHandle extends React.Component {
   }
   updateRange(value,bound) {
     let range = this.props.filterRange.slice(0);
-    range[bound] = d3format(".3r")(value);
-    this.props.onUpdateRange(this.props.filterId,range)
     this.setState({offsetX:0})
+    let index = bound + 1
+    let v = value
+    if (bound == 0){
+      v = Math.max(this.props.filterLimit[0],value)
+    }
+    else {
+      v = Math.min(this.props.filterLimit[1],value)
+    }
+    range[bound] = d3format(".3r")(v)
+    if (v != value){
+      index *= -1
+    }
+    this.props.onUpdateRange(this.props.filterId,range,index)
   }
   render(){
     return (
@@ -71,15 +82,15 @@ class FilterHandle extends React.Component {
         onPointerUp={(e)=>{
           e.preventDefault()
           if (this.state.mouseDown){
-            this.updateRange(this.props.xScale.invert(e.x - this.props.parentX),this.bound())
             this.setMouseDown(false)
+            this.updateRange(this.props.xScale.invert(e.x - this.props.parentX),this.bound())
           }
         }}
         onPointerLeave={(e)=>{
           e.preventDefault()
           if (this.state.mouseDown){
-            this.updateRange(this.props.xScale.invert(e.x - this.props.parentX),this.bound())
             this.setMouseDown(false)
+            this.updateRange(this.props.xScale.invert(e.x - this.props.parentX),this.bound())
           }
         }}
         >

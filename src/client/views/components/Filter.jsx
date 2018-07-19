@@ -4,6 +4,7 @@ import FilterBox from './FilterBox'
 import { connect } from 'react-redux'
 import { editFilter } from '../reducers/filter'
 import { getDetailsForFilterId } from '../reducers/preview'
+import { queryToStore } from '../querySync'
 
 class Filter extends React.Component {
   constructor(props) {
@@ -15,7 +16,24 @@ class Filter extends React.Component {
     }
     this.mapDispatchToProps = dispatch => {
       return {
-        onUpdateRange: (id,range) => {return dispatch(editFilter({id,range}))}
+        onUpdateRange: (id,range,index) => {
+          let values = {}
+          let remove = []
+          if (index == 1){
+            values[id+'--Min'] = range[0]
+          }
+          else if (index == 2){
+            values[id+'--Max'] = range[1]
+          }
+          else if (index == -2) {
+            remove.push(id+'--Max')
+          }
+          else if (index == -1) {
+            remove.push(id+'--Min')
+          }
+          dispatch(queryToStore({values,remove,action:'FILTER'}))
+          dispatch(editFilter({id,range}))
+        }
       }
     }
   }

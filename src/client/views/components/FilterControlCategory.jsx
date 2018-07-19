@@ -35,6 +35,7 @@ class FilterControlCategory extends React.Component {
             })
             keys = filter.keys
           }
+          console.log(this.props.filterId+' '+keys.length)
           dispatch(editFilter({id:this.props.filterId,toggled:filter.toggled,keys:keys}))
         }
       }
