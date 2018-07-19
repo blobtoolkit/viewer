@@ -224,6 +224,7 @@ export function loadDataset(id,clear) {
     dispatch(fetchMeta(id)).then(() => {
       let meta = deep(store.getState(),['availableDatasets','byId',id])
       let plot = meta.plot
+      window.plot = plot
       plot.id = 'default'
       Object.keys(plot).forEach(key=>{
         let qv = queryValue(key+'Field')

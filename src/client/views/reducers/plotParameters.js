@@ -279,7 +279,7 @@ export const queryString = handleAction(
   ),
   ''
 )
-const getQueryString = state => state.queryString
+export const getQueryString = state => state.queryString
 
 
 export const plotParameterReducers = {

@@ -21,8 +21,8 @@ export const colorToRGB = (color) => {
   return color
 }
 
+const keyed = (o,k) => Object.prototype.hasOwnProperty.call(o,k)
 
-let arrays = {}
 
 const mapDispatchToQuery = (
   {
@@ -64,7 +64,8 @@ const mapDispatchToQuery = (
     },
     zReducer: {
       type: 'SET_Z_REDUCER',
-      payload: (k,v) => v
+      payload: (k,v) => v,
+      default: 'sum'
     },
     curveOrigin: {
       type: 'SET_CURVE_ORIGIN',
@@ -100,9 +101,17 @@ const mapDispatchToQuery = (
     },
     axes: {
       actions: (k,v) => {
-        let plot = {id:'default'}
+        let plot = {}
+        if (window.plot){
+          Object.keys(window.plot).forEach(key=>{
+            plot[key] = window.plot[key]
+          })
+        }
+        plot.id = 'default'
         v.forEach(o=>{
-          plot[o.index] = o.value
+          if (o.value){
+            plot[o.index] = o.value
+          }
         })
         let actions = [
           {
@@ -120,7 +129,12 @@ const mapDispatchToQuery = (
         })
         return actions
       },
-      default: {x:queryValue('xField'),y:queryValue('yField'),z:queryValue('zField'),cat:queryValue('catField')}
+      default: keyed(window,'plot') ? (
+        {x:queryValue('xField') || window.plot.x || null, y:queryValue('yField') || window.plot.y || null, z:queryValue('zField') || window.plot.z || null, cat:queryValue('catField') || window.plot.cat || null}
+      ) : (
+        {x:queryValue('xField') || null, y:queryValue('yField') || null, z:queryValue('zField') || null ,cat:queryValue('catField') || null}
+      )
+
     },
     filter: {
       actions: (k,v) => {
@@ -155,6 +169,7 @@ const mapDispatchToQuery = (
     },
     field: {
       actions: (k,v) => {
+        console.log(v)
         let byId = {}
         let actions = []
         Object.keys(v).forEach(k =>{
@@ -224,15 +239,19 @@ const mapDispatchToQuery = (
     },
     xField: {
       array: (k,v) => ({key:'axes',index:'x',value:v}),
+      default: window.plot ? window.plot.x : null
     },
     yField: {
       array: (k,v) => ({key:'axes',index:'y',value:v}),
+      default: window.plot ? window.plot.y : null
     },
     zField: {
       array: (k,v) => ({key:'axes',index:'z',value:v}),
+      default: window.plot ? window.plot.z : null
     },
     catField: {
       array: (k,v) => ({key:'axes',index:'cat',value:v}),
+      default: window.plot ? window.plot.cat : null
     },
     Inv: {
       array: (k,v) => ({key:'filter',field:v.field,index:'invert',value:v.value=='true'}),
@@ -269,10 +288,9 @@ export const qsDefault = (param) => {
   return queryValue(param) || defaultValue(param)
 }
 
-const keyed = (o,k) => Object.prototype.hasOwnProperty.call(o,k)
-
-export const queryToStore = (dispatch,values,searchReplace,hash) => {
-  let currentSearch = history.location.search || ''
+export const queryToStore = (dispatch,values,searchReplace,hash,currentSearch) => {
+  let arrays = {}
+  currentSearch = currentSearch || history.location.search || ''
   let currentHash = hash || history.location.hash || ''
   let parsed = qs.parse(currentSearch.replace('?',''))
   if (keyed(values,'colors')){
@@ -304,6 +322,13 @@ export const queryToStore = (dispatch,values,searchReplace,hash) => {
       }
     })
     parsed = {}
+  }
+  else if (searchReplace){
+    Object.keys(mapDispatchToQuery).forEach(key=>{
+      if (keyed(mapDispatchToQuery[key],'type')){
+        remove.push(key)
+      }
+    })
   }
   Object.keys(values).forEach(key => {
     let value = values[key]
@@ -368,17 +393,83 @@ export const queryToStore = (dispatch,values,searchReplace,hash) => {
         dispatch({type,payload})
       })
       if (keyed(obj,'params')){
-        console.log(key)
-        console.log(value)
         let params = obj.params(key,value)
         Object.keys(params).forEach(k=>{parsed[k] = params[k]})
       }
     }
   })
-  remove.forEach(key=>{delete parsed[key]})
+  remove.forEach(key=>{
+    let value = values[key]
+    let [field,k] = key.split('--')
+    delete parsed[key]
+    if (k){
+      key = k
+      value = {value,field}
+    }
+    if (keyed(mapDispatchToQuery,key)){
+      let obj = mapDispatchToQuery[key]
+      let actions = []
+      if (keyed(obj,'array')){
+        let entry = obj.array(key,value)
+        if (!keyed(arrays,entry.key)){
+          arrays[entry.key] = []
+        }
+        arrays[entry.key].push(entry)
+      }
+      else if (keyed(obj,'actions')){
+        actions = obj.actions(key,value)
+      }
+      else {
+        actions = [{...obj}]
+      }
+      actions.forEach(action=>{
+        let type = action.type
+        let payload = action.default
+        dispatch({type,payload})
+      })
+    }
+    else if (keyed(mapDispatchToQuery,k)){
+      let obj = mapDispatchToQuery[k]
+      if (keyed(obj,'array')){
+        let entry = obj.array(k,value)
+        if (!keyed(arrays,entry.key)){
+          arrays[entry.key] = []
+        }
+        arrays[entry.key].push(entry)
+      }
+    }
+  })
+  Object.keys(arrays).forEach(key => {
+    let value = arrays[key]
+    if (keyed(mapDispatchToQuery,key)){
+      let obj = mapDispatchToQuery[key]
+      let actions = []
+      if (keyed(obj,'actions')){
+        actions = obj.actions(key,value)
+      }
+      else {
+        actions.push(obj)
+      }
+      actions.forEach(action => {
+        let type = action.type
+        let payload = action.payload(key,value)
+        dispatch({type,payload})
+      })
+      if (keyed(obj,'params')){
+        let params = obj.params(key,value)
+        Object.keys(params).forEach(k=>{parsed[k] = params[k]})
+      }
+    }
+  })
+
   let search = qs.stringify(parsed)
   if (search != currentSearch){
-    history.push({hash:currentHash,search})
+    if (searchReplace){
+      history.replace({hash:currentHash,search})
+    }
+    else {
+      history.replace({hash:currentHash,search})
+    }
     dispatch({type:'SET_QUERY_STRING',payload:search})
   }
   return new Promise (resolve => resolve(parsed))

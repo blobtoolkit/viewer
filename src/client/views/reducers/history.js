@@ -3,8 +3,13 @@ import { byIdSelectorCreator } from './selectorCreators'
 import createHistory from 'history/createBrowserHistory';
 import qs from 'qs'
 const basename = BASENAME || ''
-export const history = createHistory({ basename });
+export const history = createHistory({
+  basename
+})
+
 export default history;
+
+history.goBack = () => console.log('going')
 
 export const parseQueryString = createSelector(
   (state) => history.location ? history.location.search : '',
