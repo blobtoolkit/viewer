@@ -14,7 +14,7 @@ export const Routes = (active) => {
       <Switch>
         <Route path="/dataset/:datasetId/:view?" render={(props)=>(<Layout {...props}/>)}/>
         <Route path="/:searchTerm/dataset/:datasetId/:view?" render={(props)=>(<Layout {...props}/>)}/>
-        <Route path="/:searchTerm" render={(props)=>(<Layout {...props}/>)}/>
+        <Route path="/:searchTerm?" render={(props)=>(<Layout {...props}/>)}/>
       </Switch>
     </Router>
   )

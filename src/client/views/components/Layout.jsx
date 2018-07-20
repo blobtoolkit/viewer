@@ -22,9 +22,6 @@ class LayoutComponent extends React.Component {
     // this.setState({scrollTop:e.target.scrollTop})
     window.scrollTop[tab] = e.target.scrollTop
   }
-  shouldComponentUumount(){
-    return false
-  }
   componentDidMount() {
     let menuDiv = this.refs.menuDiv
     // menuDiv.scrollTop = this.state.scrollTop
@@ -56,6 +53,9 @@ class LayoutComponent extends React.Component {
 
   render(){
     let activeTab = window.location.hash.replace('#','')
+    if (!activeTab && !this.props.match.params.datasetId){
+      activeTab = 'Datasets'
+    }
     let menu = activeTab ? (<div className={styles.menu} ref='menuDiv'><LayoutControls/></div>) : null
     return (
       <div className={styles.main}>
