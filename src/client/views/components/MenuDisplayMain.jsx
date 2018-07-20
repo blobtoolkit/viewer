@@ -96,7 +96,7 @@ const DisplayMenu = ({
           </MenuDisplaySimple>
           <MenuDisplaySimple name='plot graphics'>
             <label htmlFor="#svgThreshold">Threshold&nbsp;</label>
-            <input type="number" id="svgThreshold" value={threshold} onChange={(event)=>onChangeThreshold(event.target.value)}/>
+            <NumericInput initialValue={threshold} onChange={onChangeThreshold}/>
             &nbsp;or&nbsp;<SVGIcon sprite={svgIcon} active={graphics == 'svg'} onIconClick={()=>onChangeGraphics(graphics == 'svg' ? 'canvas' : 'svg')}/>
           </MenuDisplaySimple>
         </span>
@@ -157,6 +157,37 @@ const DisplayMenu = ({
 // <br/>
 // <input id='transform_factor' onChange={(e)=>onChangeTransform({factor:e.target.value})} type="range" value={transform.factor} min="-1" max="1" step="0.1"/>
 
+
+class NumericInput extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {value:this.props.initialValue}
+  }
+  render(){
+    return (
+      <input
+        type='number'
+        className={styles.range_input}
+        value={this.state.value}
+        onChange={e=>{
+          this.setState({value:e.target.value})
+        }}
+        onKeyUp={
+          (e)=>{
+            if (e.key === 'Enter') {
+              e.target.blur()
+            }
+          }
+        }
+        onBlur={
+          (e)=>{
+            this.props.onChange(e.target.value)
+          }
+        }
+      />
+    )
+  }
+}
 
 class MenuDisplayMain extends React.Component {
   constructor(props) {
