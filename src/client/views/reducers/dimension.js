@@ -21,9 +21,9 @@ export const dimensions = handleAction(
   {
     byId: {
       preview:{
-        width:100,
+        width:400,
         height:100,
-        xDomain:[0,100],
+        xDomain:[0,400],
         yDomain:[0,100],
         xScale:'scaleLinear',
         yScale:'scaleLinear'

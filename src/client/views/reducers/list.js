@@ -173,12 +173,6 @@ export function uploadedFileToList(acceptedFiles) {
             obj.list = []
             obj.id = 'user_'+obj.id
             if (ids.payload) ids = ids.payload
-            console.log(ids)
-            console.time('loadList')
-            // for (let i = 0,id; id = ids[i]; i++){
-            //   if (obj.identifiers.indexOf(id) != -1)
-            //   obj.list.push(i)
-            // }
             let set = {}
             obj.identifiers.forEach(id=>{
               set[id]=true
@@ -188,7 +182,6 @@ export function uploadedFileToList(acceptedFiles) {
                 obj.list.push(i)
               }
             }
-            console.timeEnd('loadList')
             delete obj.identifiers
             dispatch(addList(obj))
           })

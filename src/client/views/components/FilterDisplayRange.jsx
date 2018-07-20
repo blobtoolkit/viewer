@@ -6,7 +6,6 @@ import Pointable from 'react-pointable'
 import { format as d3format } from "d3-format";
 
 class FilterDisplayRange extends React.Component {
-
   render(){
     return (
       <FilterHandles {...this.props}>
@@ -16,19 +15,11 @@ class FilterDisplayRange extends React.Component {
 }
 
 class FilterHandles extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {container:undefined}
-  }
-  componentDidMount() {
-    let container = ReactDOM.findDOMNode(this)
-    this.setState({container:container,offsetX:container.getBoundingClientRect().left})
-  }
   render() {
     return (
-      <div className={styles.handles_container}>
-        <FilterHandle {...this.props} key='right' handlePosition='right' parent={this.state.container} parentX={this.state.offsetX} />
-        <FilterHandle {...this.props} key='left' handlePosition='left' parent={this.state.container} parentX={this.state.offsetX} />
+      <div className={styles.handles_container} ref='handleDiv'>
+        <FilterHandle {...this.props} key='right' handlePosition='right' />
+        <FilterHandle {...this.props} key='left' handlePosition='left' />
       </div>
     )
   }
@@ -72,7 +63,7 @@ class FilterHandle extends React.Component {
         onPointerMove={(e)=>{
           e.preventDefault()
           if (this.state.mouseDown){
-            this.setState({offsetX:e.x-this.props.parentX-this.boundPx()})
+            this.setState({offsetX:e.x-this.boundPx()})
           }
         }}
         onPointerDown={(e)=>{
@@ -83,14 +74,14 @@ class FilterHandle extends React.Component {
           e.preventDefault()
           if (this.state.mouseDown){
             this.setMouseDown(false)
-            this.updateRange(this.props.xScale.invert(e.x - this.props.parentX),this.bound())
+            this.updateRange(this.props.xScale.invert(e.x),this.bound())
           }
         }}
         onPointerLeave={(e)=>{
           e.preventDefault()
           if (this.state.mouseDown){
             this.setMouseDown(false)
-            this.updateRange(this.props.xScale.invert(e.x - this.props.parentX),this.bound())
+            this.updateRange(this.props.xScale.invert(e.x),this.bound())
           }
         }}
         >
@@ -102,26 +93,6 @@ class FilterHandle extends React.Component {
         </div>
       </Pointable>
     )
-    // return (
-    //   <DraggableCore
-    //     axis='x'
-    //     bounds='parent'
-    //     offsetParent={this.props.parent}
-    //     onStop={(e)=>{
-    //       this.updateRange(this.props.xScale.invert(e.x - this.props.parentX),this.bound())
-    //     }}
-    //     onDrag={(e)=>{
-    //       this.setState({offsetX:e.x-this.props.parentX-this.boundPx()})
-    //     }}
-    //     >
-    //     <div style={{left: (this.boundPx()+this.state.offsetX)+'px'}}
-    //     className={styles.handle+' '+styles[this.props.handlePosition]}>
-    //       <div className={styles.arrows} data-tip data-for='draggable-arrow'>
-    //         &lt;&nbsp;&gt;
-    //       </div>
-    //     </div>
-    //   </DraggableCore>
-    // )
   }
 }
 
