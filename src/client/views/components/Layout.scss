@@ -92,6 +92,7 @@
   position:relative;
   display: flex;
   flex-direction: row;
+  max-width:calc(100vh + 31em)
 }
 
 .plot_area {

@@ -37,7 +37,6 @@ import ToolTips from './ToolTips'
 // }
 //
 class FieldMenu extends React.Component {
-
   mapFields(fields){
     return (
       fields.map((field,i) => {

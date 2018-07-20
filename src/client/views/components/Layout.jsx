@@ -11,8 +11,29 @@ import LayoutPlots from './LayoutPlots'
 import { queryToStore } from '../querySync'
 import qs from 'qs'
 
+window.scrollTop = {}
+
 class LayoutComponent extends React.Component {
+  constructor(props) {
+    super(props);
+    // this.state = {scrollTop:0}
+  }
+  handleScroll(e,tab){
+    // this.setState({scrollTop:e.target.scrollTop})
+    window.scrollTop[tab] = e.target.scrollTop
+  }
+  shouldComponentUumount(){
+    return false
+  }
   componentDidMount() {
+    let menuDiv = this.refs.menuDiv
+    // menuDiv.scrollTop = this.state.scrollTop
+    if(menuDiv){
+      let activeTab = window.location.hash.replace('#','')
+      menuDiv.scrollTop = window.scrollTop[activeTab] || 0
+      menuDiv.addEventListener('scroll', e => this.handleScroll(e,activeTab));
+    }
+
     let newSearch = this.props.location.search.replace('?','')
     if (this.props.active && this.props.history.action == 'POP'){
       if (this.props.queryString != newSearch){
@@ -35,7 +56,7 @@ class LayoutComponent extends React.Component {
 
   render(){
     let activeTab = window.location.hash.replace('#','')
-    let menu = activeTab ? (<div className={styles.menu}><LayoutControls/></div>) : null
+    let menu = activeTab ? (<div className={styles.menu} ref='menuDiv'><LayoutControls/></div>) : null
     return (
       <div className={styles.main}>
         <div className={styles.main_header}>

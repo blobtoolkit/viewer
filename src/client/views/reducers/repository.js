@@ -237,6 +237,7 @@ export function loadDataset(id,clear) {
       Promise.all(addAllFields(dispatch,meta.fields,1,false))
       .then(()=>{
         dispatch(filterToList())
+        window.scrollTop = {}
         dispatch(setDatasetIsActive(true))
       })
       .then(()=>{

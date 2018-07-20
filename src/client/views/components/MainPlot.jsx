@@ -159,7 +159,6 @@ class PlotBox extends React.Component {
   }
 
   render(){
-    console.log(this.props)
     let plotContainer
     let plotGrid
     let plotCanvas
