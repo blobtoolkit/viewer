@@ -315,8 +315,8 @@ export const addAllFields = (dispatch,fields,flag,meta,promises) => {
         }
       })
     }
-    let params = ['Min','Max','Inv','Keys'].map(x=>field.id+'--'+x)
-    if (params.some(p=>queryValue(p))){
+    let params = ['Min','Max','Inv','Keys','Active'].map(x=>field.id+'--'+x)
+    if (field.id != 'selection' && params.some(p=>queryValue(p))){
       field.active = true
       field.preload = true
     }

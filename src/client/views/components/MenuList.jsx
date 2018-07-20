@@ -29,7 +29,7 @@ class MenuList extends React.Component {
     super(props);
     this.mapStateToProps = state => {
       return {
-        identifiers: getIdentifiersForList(state),
+        identifiers: getIdentifiersForList(state,this.props.id),
         active: getSelectedList(state) == this.props.id,
         meta: getSelectedDatasetMeta(state),
         search: urlSearchTerm(state)
@@ -37,8 +37,8 @@ class MenuList extends React.Component {
     }
     this.mapDispatchToProps = dispatch => {
       return {
-        onChooseList: (id) => {
-          dispatch(chooseList(id))
+        onChooseList: (id,select) => {
+          dispatch(chooseList(id,select))
         },
         onClick: (id) => {
           dispatch(updateSelectedList(id))

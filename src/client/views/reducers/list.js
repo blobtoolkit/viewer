@@ -10,11 +10,14 @@ import immutableUpdate from 'immutable-update';
 import deep from 'deep-get-set'
 import shallow from 'shallowequal'
 import store from '../store'
+import qs from 'qs'
 import { history, parseQueryString, clearQuery } from './history'
-import { filterToList, getFilteredList } from './filter'
+import { filterToList, getFilteredList, getUnfilteredList } from './filter'
 import { fetchRawData, getAllActiveFields } from './field'
 import queryToStore from '../querySync'
 import { selectNone, addRecords } from './select'
+import { getQueryString } from './plotParameters'
+import { getSelectedDatasetMeta } from './dataset'
 
 export const addList = createAction('ADD_LIST')
 export const editList = createAction('EDIT_LIST')
@@ -45,11 +48,28 @@ export const lists = handleActions(
 
 const getListOfLists = state => state.lists
 
+const arraysEqual = (a,b) => {
+  if (a === b) return true;
+  if (a == null || b == null) return false;
+  if (a.length != b.length) return false;
+  for (let i = 0; i < a.length; i++) {
+    if (a[i] !== b[i]) return false;
+  }
+  return true;
+}
+
 export const getLists = createSelector(
   getListOfLists,
   getFilteredList,
-  (lol,list) => {
-    let ret = [{id:'current',list,params:{}}]
+  getQueryString,
+  getUnfilteredList,
+  (lol,list,qStr,all) => {
+    let ret = [
+      {id:'current',list,params:list.params = qs.parse(qStr)}
+    ]
+    if (!arraysEqual(list,all)){
+      ret.unshift({id:'all',list:all,params:{}})
+    }
     ret = ret.concat(lol.allIds.map(id => lol.byId[id]))
     return ret
   }
@@ -57,20 +77,21 @@ export const getLists = createSelector(
 
 
 export const updateSelectedList = createAction('UPDATE_SELECTED_LIST')
-export const chooseList = (id) => {
+export const chooseList = (id,select) => {
   return function (dispatch) {
-    let list = getListById(store.getState(),id)
+    let state = store.getState()
+    let list = getListById(state,id)
     dispatch(selectNone())
-    dispatch(addRecords(list.list))
+    if (select){
+      dispatch(addRecords(list.list))
+    }
     let values = Object.assign({},list.params)
     dispatch(queryToStore({values,searchReplace:true})).then((v)=>{
       let fields = getAllActiveFields(store.getState())
       Object.keys(fields).forEach(field=>{
         dispatch(fetchRawData(field))
       })
-      // dispatch(filterToList())
     })
-    //dispatch(selectPalette(palette))
   }
 }
 export const selectedList = handleAction(
@@ -83,10 +104,45 @@ export const selectedList = handleAction(
 const createSelectorForSelectedList = byIdSelectorCreator();
 export const getSelectedList = state => state.selectedList
 
-const getListById = (state,id) => state.lists.byId[getSelectedList(state)] || {id,list:getFilteredList(state),params:{}}
+
+const createSelectorForListId = byIdSelectorCreator();
+const _getListIdAsMemoKey = (state, id) => id;
+const getList = (state, id) => state.lists ? (state.lists.byId[id] || {id}) : {id};
+
+export const getListById = createSelectorForListId(
+  _getListIdAsMemoKey,
+  getList,
+  getFilteredList,
+  getUnfilteredList,
+  getQueryString,
+  (list,filtered,all,qStr) => {
+    if (!list.list){
+      if (list.id == 'all'){
+        list.list = all
+        list.params = {}
+      }
+      else if (list.id == 'current'){
+        list.list = filtered
+        list.params = qs.parse(qStr)
+      }
+    }
+    return list
+  }
+);
+// const getListById = (state,id) => {
+//   let list = state.lists.byId[id]
+//   console.log(id)
+//   list = list || state.lists.byId[getSelectedList(state)]
+//   if (!list){
+//     if (id == 'all')
+//       list = {id,list:getFilteredList(state)}
+//     list.params = qs.parse(getQueryString(state))
+//   }
+//   return list
+// }
 const createSelectorForListIdentifiers = byIdSelectorCreator();
 export const getIdentifiersForList = createSelectorForListIdentifiers(
-  getSelectedList,
+  _getListIdAsMemoKey,
   getListById,
   getIdentifiers,
   (list,ids) => {
@@ -100,7 +156,8 @@ export function createList(val) {
   return function(dispatch){
     val.id = val.id.replace(/\s/g,'_')
     let list = val
-    list.params = parseQueryString()
+    let state = store.getState()
+    list.params = qs.parse(getQueryString(state))
     dispatch(addList(list))
   }
 }

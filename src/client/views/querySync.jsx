@@ -256,6 +256,10 @@ const mapDispatchToQuery = (
       array: (k,v) => ({key:'filter',index:'invert',...v}),
       default: false
     },
+    Active: {
+      array: (k,v) => ({key:'field',index:'active',...v}),
+      default: false
+    },
     Max: {
       array: (k,v) => ({key:'filter',index:'max',...v}),
       default: Number.POSITIVE_INFINITY

@@ -10,6 +10,7 @@ import { queryToStore } from '../querySync'
 import qs from 'qs'
 import { getSelectedRecords } from './select'
 import { getDatasetIsActive } from './repository'
+import { getSelectedDatasetMeta } from './dataset'
 
 export const addFilter = createAction('ADD_FILTER')
 export const editFilter = createAction('EDIT_FILTER')
@@ -246,25 +247,45 @@ export function filterToList(readQueryString) {
   }
 }
 
+export const getActiveSelection = createSelector(
+  (state) => state.fields.byId,
+  getSelectedRecords,
+  (fields,list) => {
+    if (fields['selection'] && fields['selection'].active){
+      return list
+    }
+    return []
+  }
+)
+
+export const getUnfilteredList = createSelector(
+  getSelectedDatasetMeta,
+  (meta) => {
+    let all = []
+    let count = meta.records || 0
+    for (let i = 0; i < count; i++){
+      all.push(i)
+    }
+    return all
+  }
+)
+
 export const getFilteredList = createSelector(
   (state) => state.filters,
   (state) => state.fields.byId,
   (state) => state.rawData.byId,
-  (state) => {
-    let meta = state.availableDatasets.byId || false
-    meta = meta ? meta[state.selectedDataset] : false
-    meta = meta ? meta.records : 0
-    return meta
-  },
-  getSelectedRecords,
+  getSelectedDatasetMeta,
+  getActiveSelection,
   (state) => getDatasetIsActive(state),
-  (filters,fields,data,count,list,active) => {
-    let all = []
-    if (!list || list.length == 0 || filters.byId['selection'].invert){
-      for (let i = 0; i < count; i++){
-        all.push(i)
-      }
-    }
+  getUnfilteredList,
+  (filters,fields,data,meta,list,active,all) => {
+    let count = meta.records | 0
+    // let all = []
+    // if (!list || list.length == 0 || filters.byId['selection'].invert){
+    //   for (let i = 0; i < count; i++){
+    //     all.push(i)
+    //   }
+    // }
     if (!list || list.length == 0){
       list = all
     }
