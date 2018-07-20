@@ -7,12 +7,14 @@ import { getSelectedDatasetId } from '../reducers/selectorCreators'
 
 export const DownloadCSVComponent = ({data,dataset}) => {
   return (
-    <CSVLink
-      className={styles.save_csv}
-      filename={dataset+'.csv'}
-      data={data}>
-      download csv
+    <span className={styles.download}>
+      <CSVLink
+        className={styles.save_svg}
+        filename={dataset+'.csv'}
+        data={data}>
+        &#8681;csv
       </CSVLink>
+    </span>
   )
 }
 

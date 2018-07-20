@@ -140,24 +140,30 @@ input.scale {
   pointer-events: auto;
 }
 
-.save_svg, .save_csv {
+span.download {
+  position:absolute;
   display:block;
-  border-radius:1em;
-  background-color: $highlightColor;
-  color:$lightColor;
-  padding: 0 0.5em;
-  cursor:pointer;
+  right:0;
+  top:0;
+  .save_svg {
+    position:relative;
+    display:inline-block;
+    right:0;
+    background-color: rgba($lightColor,0.8);
+    color:$highlightColor;
+    margin-right: 0.5em;
+    font-size: 0.8em;
+    cursor:pointer;
+  }
 }
+
+
 .save_csv {
   margin-top:0.5em;
   text-align:center;
 }
 
-.save_svg {
-  display:block;
-  position:absolute;
-  right:0;
-}
+
 
 .fill_parent {
   position:absolute;

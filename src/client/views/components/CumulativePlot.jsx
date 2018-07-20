@@ -7,8 +7,8 @@ import PlotLegend from './PlotLegend'
 import PlotAxisTitle from './PlotAxisTitle'
 import CumulativePlotBoundary from './CumulativePlotBoundary'
 import { getSelectedDatasetMeta } from '../reducers/dataset'
-const saveSvgAsPng = require('save-svg-as-png/saveSvgAsPng.js')
 import AxisTitle from './AxisTitle'
+import { ExportButton } from './ExportButton'
 
 class Cumulative extends React.Component {
   render(){
@@ -40,6 +40,12 @@ class Cumulative extends React.Component {
               strokeLinecap='round'/>
       )
     })
+    let exportButtons = (
+      <span className={styles.download}>
+        <ExportButton element='cumulative_plot' prefix={this.props.datasetId+'.cumulative'} format='svg'/>
+        <ExportButton element='cumulative_plot' prefix={this.props.datasetId+'.cumulative'} format='png'/>
+      </span>
+    )
     return (
       <div className={styles.outer}>
         <svg id="cumulative_plot"
@@ -60,7 +66,7 @@ class Cumulative extends React.Component {
             <AxisTitle axis='x' title={xLabel}/>
           </g>
         </svg>
-        <a className={styles.save_svg} onClick={()=>(saveSvgAsPng.saveSvg(document.getElementById("cumulative_plot"),"cumulative_plot.svg"))}>save image</a>
+        {exportButtons}
       </div>
     )
   }

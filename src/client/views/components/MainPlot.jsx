@@ -27,7 +27,8 @@ import { pixel_to_oddr } from '../reducers/hexFunctions'
 import { addRecords, removeRecords } from '../reducers/select'
 import { scaleLinear as d3scaleLinear } from 'd3-scale';
 import { renderToStaticMarkup } from 'react-dom/server';
-const saveSvgAsPng = require('save-svg-as-png/saveSvgAsPng.js')
+import { ExportButton } from './ExportButton'
+import { getSelectedDataset } from '../reducers/dataset'
 
 export default class MainPlot extends React.Component {
   constructor(props) {
@@ -36,8 +37,10 @@ export default class MainPlot extends React.Component {
       return (state, props) => {
         let plotShape = getPlotShape(state)
         let plotGraphics = getPlotGraphics(state)
+        let datasetId = getSelectedDataset(state)
         if (plotShape == 'hex'){
           return {
+            datasetId,
             plotShape,
             plotGraphics,
             bins: getScatterPlotDataByHexBin(state).hexes,
@@ -47,6 +50,7 @@ export default class MainPlot extends React.Component {
         }
         else if (plotShape == 'square') {
           return {
+            datasetId,
             plotShape,
             plotGraphics,
             bins: getScatterPlotDataBySquareBin(state).squares,
@@ -55,6 +59,7 @@ export default class MainPlot extends React.Component {
           }
         }
         return {
+          datasetId,
           plotShape,
           plotGraphics
         }
@@ -154,9 +159,16 @@ class PlotBox extends React.Component {
   }
 
   render(){
+    console.log(this.props)
     let plotContainer
     let plotGrid
     let plotCanvas
+    let exportButtons = (
+      <span className={styles.download}>
+        <ExportButton element='main_plot' prefix={this.props.datasetId+'.blob'} format='svg'/>
+        <ExportButton element='main_plot' prefix={this.props.datasetId+'.blob'} format='png'/>
+      </span>
+    )
     let bins = this.state.bins
     let viewbox = '0 0 1420 1420'
     let xPlot = <PlotSideBinsSVG axis='x'/>
@@ -190,26 +202,28 @@ class PlotBox extends React.Component {
     if (this.props.plotShape == 'circle'){
       return (
         <div className={styles.outer}>
-          <svg id="main_plot"
-            ref={(elem) => { this.svg = elem; }}
-            className={styles.main_plot+' '+styles.fill_parent}
-            viewBox={viewbox}
-            preserveAspectRatio="xMinYMin">
-            <g transform={'translate(100,320)'} >
-              <PlotTransformLines />
-              <g transform="translate(50,50)">
-              {plotContainer}
-              {plotCanvas}
+          <div className={styles.fill_parent}>
+            <svg id="main_plot"
+              ref={(elem) => { this.svg = elem; }}
+              className={styles.main_plot+' '+styles.fill_parent}
+              viewBox={viewbox}
+              preserveAspectRatio="xMinYMin">
+              <g transform={'translate(100,320)'} >
+                <PlotTransformLines />
+                <g transform="translate(50,50)">
+                {plotContainer}
+                {plotCanvas}
+                </g>
+                {xPlot}
+                {yPlot}
+                {legend}
+                <MainPlotBoundary/>
+                <PlotAxisTitle axis='x'/>
+                <PlotAxisTitle axis='y'/>
               </g>
-              {xPlot}
-              {yPlot}
-              {legend}
-              <MainPlotBoundary/>
-              <PlotAxisTitle axis='x'/>
-              <PlotAxisTitle axis='y'/>
-            </g>
-          </svg>
-          <a className={styles.save_svg} onClick={()=>(saveSvgAsPng.saveSvg(document.getElementById("main_plot"),"main_plot.svg"))}>save image</a>
+            </svg>
+            {exportButtons}
+          </div>
         </div>
       )
     }
@@ -298,7 +312,7 @@ class PlotBox extends React.Component {
               <PlotAxisTitle axis='y'/>
             </g>
           </svg>
-          <a className={styles.save_svg} onClick={()=>(saveSvgAsPng.saveSvg(document.getElementById("main_plot"),"main_plot.svg"))}>save image</a>
+          {exportButtons}
         </div>
 
       )

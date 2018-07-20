@@ -12,7 +12,7 @@ import { format as d3format} from 'd3-format'
 import Pointable from 'react-pointable';
 import { scaleLinear as d3scaleLinear } from 'd3-scale';
 import { arc as d3Arc } from 'd3-shape';
-const saveSvgAsPng = require('save-svg-as-png/saveSvgAsPng.js')
+import { ExportButton } from './ExportButton'
 
 const xScale = d3scaleLinear().range([-425,425])
 const yScale = d3scaleLinear().range([425,-425])
@@ -240,6 +240,12 @@ class Snail extends React.Component {
         }
       }
     })
+    let exportButtons = (
+      <span className={styles.download}>
+        <ExportButton element='snail_plot' prefix={this.props.meta.id+'.snail'} format='svg'/>
+        <ExportButton element='snail_plot' prefix={this.props.meta.id+'.snail'} format='png'/>
+      </span>
+    )
     return (
       <div className={styles.outer}>
         <svg id="snail_plot"
@@ -298,7 +304,7 @@ class Snail extends React.Component {
             {topRight}
           </g>
         </svg>
-        <a className={styles.save_svg} onClick={()=>(saveSvgAsPng.saveSvg(document.getElementById("snail_plot"),"snail_plot.svg"))}>save image</a>
+        {exportButtons}
       </div>
     )
   }
