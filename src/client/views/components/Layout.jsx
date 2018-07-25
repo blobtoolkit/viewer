@@ -2,12 +2,13 @@ import React from 'react'
 import { connect } from 'react-redux'
 import { withRouter } from 'react-router-dom'
 import styles from './Layout.scss'
-import { loadDataset, getDatasetIsActive } from '../reducers/repository'
+import { loadDataset, getDatasetIsActive, getReloading, setReloading } from '../reducers/repository'
 import { getSelectedDataset } from '../reducers/dataset'
 import { getQueryString, setQueryString } from '../reducers/plotParameters'
 import LayoutControls from './LayoutControls'
 import LayoutHeader from './LayoutHeader'
 import LayoutPlots from './LayoutPlots'
+import Spinner from './Spinner'
 import { queryToStore } from '../querySync'
 import qs from 'qs'
 
@@ -41,6 +42,7 @@ class LayoutComponent extends React.Component {
     else {
       this.props.updateQueryString(newSearch)
     }
+
     // this.props.router.setRouteLeaveHook(this.props.route, this.routerWillLeave);
   }
 
@@ -65,7 +67,7 @@ class LayoutComponent extends React.Component {
         <div className={styles.content}>
           {menu}
           <div className={styles.plot_area}>
-            <LayoutPlots/>
+            {this.props.reloading ? <Spinner/> : <LayoutPlots/>}
           </div>
         </div>
       </div>
@@ -79,7 +81,8 @@ class Layout extends React.Component {
     this.mapStateToProps = state => {
       return {
         active: getDatasetIsActive(state),
-        queryString: getQueryString(state)
+        queryString: getQueryString(state),
+        reloading: getReloading(state)
       }
     }
     this.mapDispatchToProps = dispatch => {

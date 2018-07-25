@@ -5,7 +5,7 @@ import { getBinsForFieldId } from './field';
 import { getFilteredDataForFieldId } from './preview'
 import { getMainPlot } from './plot';
 import { getSelectedRecordsAsObject } from './select';
-import { getMainPlotData, getScatterPlotData } from './plotData';
+import { getMainPlotData, getScatterPlotData, getAllScatterPlotData } from './plotData';
 import { getZReducer, getZScale, getPlotResolution, getTransformFunction } from './plotParameters';
 import { getColorPalette } from './color';
 import { drawPoints, pixel_to_oddr } from './hexFunctions'
@@ -28,69 +28,6 @@ export const getHexGrid = createSelector(
       }
     }
     return { data,size,res,radius,height,width }
-  }
-)
-
-export const getAllMainPlotData = createSelector(
-  getMainPlot,
-  getMainPlotData,
-  (state) => getRawDataForFieldId(state,getMainPlot(state).axes.x),
-  (state) => getRawDataForFieldId(state,getMainPlot(state).axes.y),
-  (state) => getRawDataForFieldId(state,getMainPlot(state).axes.z),
-  (state) => getRawDataForFieldId(state,getMainPlot(state).axes.cat),
-  (state) => getDetailsForFieldId(state,getMainPlot(state).axes.x),
-  (state) => getDetailsForFieldId(state,getMainPlot(state).axes.y),
-  (state) => getDetailsForFieldId(state,getMainPlot(state).axes.z),
-  (state) => getDetailsForFieldId(state,getMainPlot(state).axes.cat),
-  (mainPlot,visibleData,xData,yData,zData,catData,xMeta,yMeta,zMeta,catMeta) => {
-    let plotData = {id:mainPlot.id,axes:{},meta:{}};
-    plotData.axes.x = xData || {values:[]}
-    xMeta.xScale = visibleData.meta.x.xScale.copy()
-    plotData.meta.x = xMeta
-    plotData.axes.y = yData || {values:[]}
-    yMeta.xScale = visibleData.meta.y.xScale.copy()
-    plotData.meta.y = yMeta
-    plotData.axes.z = zData || {values:[]}
-    plotData.meta.z = zMeta
-    plotData.axes.cat = catData
-    plotData.meta.cat = catMeta
-    return plotData;
-  }
-);
-
-export const getAllScatterPlotData = createSelector(
-  getAllMainPlotData,
-  getTransformFunction,
-  (plotData,transform) => {
-    let data = [];
-    let scales = {};
-    let axes = ['x','y','z']
-    if (plotData.axes.x.values.length == 0 ||
-        plotData.axes.y.values.length == 0 ||
-        plotData.axes.z.values.length == 0){
-      return {data:[]}
-    }
-    axes.forEach(axis=>{
-      scales[axis] = plotData.meta[axis].xScale.copy();
-      // if (axis == 'z'){
-      //   scales[axis] = d3.scaleSqrt().domain(scales[axis].domain())
-      // }
-      scales[axis].range([0,900])
-    })
-    let len = plotData.axes.x.values.length
-    for (let i = 0; i < len; i++){
-      let y = scales.y(plotData.axes.y.values[i])
-      let x = scales.x(plotData.axes.x.values[i])
-      if (transform) [x,y] = transform([x,y])
-      data.push({
-        id:i,
-        x: x,
-        y: 900 - y,
-        z: plotData.axes.z.values[i]
-      })
-    }
-
-    return {data};
   }
 )
 

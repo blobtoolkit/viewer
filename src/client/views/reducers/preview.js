@@ -63,7 +63,6 @@ export const getDetailsForFilterId = createSelectorForFilterId(
 
 const createFilteredDataSelectorForFieldId = byIdSelectorCreator();
 const _getFieldIdAsMemoKey = (state, fieldId) => fieldId;
-//const getFilteredList = (state) => state.filteredList;
 
 export const getFilteredDataForFieldId = createFilteredDataSelectorForFieldId(
   _getFieldIdAsMemoKey,

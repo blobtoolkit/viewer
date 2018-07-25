@@ -1,6 +1,7 @@
 import { history, queryValue, parseQueryString } from './reducers/history'
 import qs from 'qs'
 import convert from 'color-convert'
+import { batchActions } from 'redux-batched-actions';
 
 export const userColors = ['rgb(166,206,227)','rgb(31,120,180)','rgb(178,223,138)','rgb(51,160,44)','rgb(251,154,153)','rgb(227,26,28)','rgb(253,191,111)','rgb(255,127,0)','rgb(202,178,214)','rgb(106,61,154)']
 
@@ -156,12 +157,12 @@ const mapDispatchToQuery = (
         })
         Object.keys(byId).forEach(id =>{
           actions.push({
-            type: 'EDIT_FILTER',
-            payload: () => byId[id]
-          })
-          actions.push({
             type: 'EDIT_FIELD',
             payload: () => ({id,active:true})
+          })
+          actions.push({
+            type: 'EDIT_FILTER',
+            payload: () => byId[id]
           })
         })
         return actions
@@ -293,6 +294,8 @@ export const qsDefault = (param) => {
 
 export const queryToStore = (options = {}) => {
   return function (dispatch) {
+    // dispatch({type:'RELOADING',payload:true})
+    let batch = []
     let values = options.values || {}
     let searchReplace = options.searchReplace || false
     let currentHash = options.hash || history.location.hash || ''
@@ -364,7 +367,8 @@ export const queryToStore = (options = {}) => {
         actions.forEach(action=>{
           let type = action.type
           let payload = action.payload(key,value)
-          dispatch({type,payload})
+          //dispatch({type,payload})
+          batch.push({type,payload})
         })
         if (keyed(obj,'params')){
           let params = obj.params(key,value)
@@ -397,7 +401,8 @@ export const queryToStore = (options = {}) => {
         actions.forEach(action => {
           let type = action.type
           let payload = action.payload(key,value)
-          dispatch({type,payload})
+          //dispatch({type,payload})
+          batch.push({type,payload})
         })
         if (keyed(obj,'params')){
           let params = obj.params(key,value)
@@ -433,7 +438,8 @@ export const queryToStore = (options = {}) => {
         actions.forEach(action=>{
           let type = action.type
           let payload = action.default
-          dispatch({type,payload})
+          //dispatch({type,payload})
+          batch.push({type,payload})
         })
       }
       else if (keyed(mapDispatchToQuery,k)){
@@ -461,7 +467,8 @@ export const queryToStore = (options = {}) => {
         actions.forEach(action => {
           let type = action.type
           let payload = action.payload(key,value)
-          dispatch({type,payload})
+          //dispatch({type,payload})
+          batch.push({type,payload})
         })
         if (keyed(obj,'params')){
           let params = obj.params(key,value)
@@ -478,8 +485,10 @@ export const queryToStore = (options = {}) => {
       // else if (action == 'FILTER'){
       //   history.push({hash:currentHash,search})
       // }
-      dispatch({type:'SET_QUERY_STRING',payload:search})
+      //dispatch({type:'SET_QUERY_STRING',payload:search})
+      batch.push({type:'SET_QUERY_STRING',payload:search})
     }
+    dispatch(batchActions(batch))
     return new Promise (resolve => resolve(parsed))
   }
 }

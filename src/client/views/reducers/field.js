@@ -520,6 +520,20 @@ export const getBarsForFieldId = createBarSelectorForFieldId(
   }
 );
 
+const createPreviewDataSelectorForFieldId = byIdSelectorCreator();
+
+export const getPreviewDataForFieldId = createPreviewDataSelectorForFieldId(
+  _getFieldIdAsMemoKey,
+  getBinsForFieldId,
+  getBarsForFieldId,
+  getDetailsForFieldId,
+  (bins, bars, details) => {
+
+    let max = d3.max(bins, function(d) { return d.length; })
+    return {bins,bars,details,max}
+  }
+);
+
 export const getAllActiveFields = createSelector(
   getFields,
   fields => {

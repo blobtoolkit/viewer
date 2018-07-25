@@ -17,7 +17,7 @@ class FieldRawDataPreview extends React.Component {
     }
     this.mapDispatchToProps = dispatch => {
       return {
-        onMount: (obj) => dispatch(setDimension({id:"preview",height:107,width:400}))
+        onMount: (obj) => {}//dispatch(setDimension({id:"preview",height:300,width:1225}))
       }
     }
   }
@@ -40,18 +40,16 @@ class RangeDataPreview extends React.Component {
   componentDidMount(){
     this.props.onMount({
       id:'preview',
-      width:this.svg.clientWidth,
-      height:this.svg.clientHeight
+      width:1000,
+      height:250
     })
   }
 
   render() {
     return (
-      <div className={styles.data_preview_container}>
-        <svg ref={(elem) => { this.svg = elem; }}>
-          <PreviewBars bars={this.props.bars} barcss={this.props.barcss} />
-        </svg>
-      </div>
+      <g className={styles.data_preview_container}>
+        <PreviewBars bars={this.props.bars} barcss={this.props.barcss} />
+      </g>
     );
   }
 

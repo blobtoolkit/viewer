@@ -32,7 +32,7 @@ class Filter extends React.Component {
             remove.push(id+'--Min')
           }
           dispatch(queryToStore({values,remove,action:'FILTER'}))
-          dispatch(editFilter({id,range}))
+          //dispatch(editFilter({id,range}))
         }
       }
     }

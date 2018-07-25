@@ -1,13 +1,21 @@
 import React from 'react'
 import styles from './Filters.scss';
+import plotStyles from './Plot.scss';
 import FilterPreview from './FilterPreview'
 import FilterBoxHeader from './FilterBoxHeader'
 import FilterDisplayRange from './FilterDisplayRange'
 import FilterDisplayCategory from './FilterDisplayCategory'
+import ExportButton from './ExportButton'
 
 class FilterBox extends React.Component {
   render(){
     let display
+    let exportButtons = (
+      <span className={plotStyles.download}>
+        <ExportButton element={this.props.fieldId+'.preview'} prefix={this.props.fieldId+'.preview'} format='svg'/>
+        <ExportButton element={this.props.fieldId+'.preview'} prefix={this.props.fieldId+'.preview'} scale={3} format='png'/>
+      </span>
+    )
     if (this.props.filterType == 'range'){
       display = <FilterDisplayRange {...this.props}/>
     }
@@ -16,9 +24,10 @@ class FilterBox extends React.Component {
     }
     return (
       <div className={styles.outer}>
-        <FilterPreview {...this.props}/>
+
         {display}
         <FilterBoxHeader {...this.props}/>
+        {exportButtons}
       </div>
     );
   }

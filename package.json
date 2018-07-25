@@ -70,6 +70,7 @@
     "read-yaml": "^1.1.0",
     "redux": "^3.7.2",
     "redux-actions": "^2.4.0",
+    "redux-batched-actions": "^0.3.0",
     "redux-logger": "^3.0.6",
     "redux-query-sync": "^0.1.7",
     "redux-thunk": "^2.3.0",

@@ -8,7 +8,7 @@ import { getColorPalette } from './color';
 import { getFilteredDataForFieldId,
   getCategoryListForFieldId,
   getPlainCategoryListForFieldId } from './preview'
-import { getDetailsForFieldId, getBinsForFieldId } from './field'
+import { getRawDataForFieldId, getDetailsForFieldId, getBinsForFieldId, getMetaDataForField } from './field'
 import store from '../store'
 import * as d3 from 'd3'
 import cloneFunction from 'clone-function'
@@ -25,6 +25,8 @@ export const getAxisTitle = createSelector(
     return plot.axes[axis]
   }
 )
+
+
 
 export const getMainPlotData = createSelector(
   getMainPlot,
@@ -70,6 +72,198 @@ export const getMainPlotData = createSelector(
   }
 );
 
+export const getAllMainPlotData = createSelector(
+  getMainPlot,
+  getMainPlotData,
+  (state) => getRawDataForFieldId(state,getMainPlot(state).axes.x),
+  (state) => getRawDataForFieldId(state,getMainPlot(state).axes.y),
+  (state) => getRawDataForFieldId(state,getMainPlot(state).axes.z),
+  (state) => getRawDataForFieldId(state,getMainPlot(state).axes.cat),
+  (state) => getDetailsForFieldId(state,getMainPlot(state).axes.x),
+  (state) => getDetailsForFieldId(state,getMainPlot(state).axes.y),
+  (state) => getDetailsForFieldId(state,getMainPlot(state).axes.z),
+  (state) => getDetailsForFieldId(state,getMainPlot(state).axes.cat),
+  (mainPlot,visibleData,xData,yData,zData,catData,xMeta,yMeta,zMeta,catMeta) => {
+    let plotData = {id:mainPlot.id,axes:{},meta:{},scale:{}};
+    plotData.axes.x = xData || {values:[]}
+    xMeta.xScale = visibleData.meta.x.xScale.copy()
+    plotData.meta.x = xMeta
+    plotData.scale.x = xMeta.xScale
+    plotData.axes.y = yData || {values:[]}
+    yMeta.xScale = visibleData.meta.y.xScale.copy()
+    plotData.meta.y = yMeta
+    plotData.scale.y = yMeta.xScale
+    plotData.axes.z = zData || {values:[]}
+    plotData.meta.z = zMeta
+    plotData.scale.z = zMeta.xScale
+    plotData.axes.cat = catData
+    plotData.meta.cat = catMeta
+    plotData.scale.cat = catMeta.xScale
+    return plotData;
+  }
+);
+
+// const _getFieldIdAsMemoKey = (state, fieldId) => fieldId;
+//
+// const createScaleSelectorForFieldId = byIdSelectorCreator();
+//
+// export const getScaleForFieldId = createScaleSelectorForFieldId(
+//   _getFieldIdAsMemoKey,
+//   getMetaDataForField,
+//   (meta = {}) => {
+//     let range = meta.range || [1,10];
+//     let xScale = d3[meta.scale || 'scaleLinear']()
+//     let active = meta.hasOwnProperty('active') ? meta.active : meta.hasOwnProperty('preload') ? meta.preload : false
+//     xScale.domain(range)
+//     xScale.range([0,400])
+//     let obj = {
+//       meta,
+//       xScale,
+//       range,
+//       active
+//     }
+//     return xScale
+//   }
+// );
+//
+// const getXScale = createSelector(
+//   (state) => getScaleForFieldId(state,getMainPlot(state).axes.x),
+//   xScale => {
+//     console.log('xScale')
+//     return xScale
+//   }
+// )
+//
+// const getYScale = createSelector(
+//   (state) => getScaleForFieldId(state,getMainPlot(state).axes.x),
+//   yScale => {
+//     console.log('yScale')
+//     return yScale
+//   }
+// )
+//
+// const getPlotZScale = createSelector(
+//   (state) => getScaleForFieldId(state,getMainPlot(state).axes.x),
+//   zScale => {
+//     console.log('zScale')
+//     return zScale
+//   }
+// )
+//
+// const getCatScale = createSelector(
+//   (state) => getScaleForFieldId(state,getMainPlot(state).axes.x),
+//   catScale => {
+//     console.log('catScale')
+//     return catScale
+//   }
+// )
+//
+// export const getAllMainPlotData = createSelector(
+//   getMainPlot,
+//   (state) => getRawDataForFieldId(state,getMainPlot(state).axes.x),
+//   (state) => getRawDataForFieldId(state,getMainPlot(state).axes.y),
+//   (state) => getRawDataForFieldId(state,getMainPlot(state).axes.z),
+//   (state) => getRawDataForFieldId(state,getMainPlot(state).axes.cat),
+//   getXScale,
+//   getYScale,
+//   getPlotZScale,
+//   getCatScale,
+//   (mainPlot,xData,yData,zData,catData,xScale,yScale,zScale,catScale) => {
+//     console.time('getAllMainPlotData')
+//     let plotData = {id:mainPlot.id,axes:{},scale:{}};
+//     plotData.axes.x = xData || {values:[]}
+//     let xDomain = xScale.domain().slice(0)
+//     let xmin = queryValue('xmin')
+//     if (xmin){
+//       xDomain[0] = 1*xmin
+//     }
+//     let xmax = queryValue('xmax')
+//     if (xmax){
+//       xDomain[1] = 1*xmax
+//     }
+//     xScale.domain(xDomain)
+//     plotData.scale.x = xScale
+//     plotData.axes.y = yData || {values:[]}
+//     let yDomain = yScale.domain().slice(0)
+//     let ymin = queryValue('ymin')
+//     if (ymin){
+//       yDomain[0] = 1*ymin
+//     }
+//     let ymax = queryValue('ymax')
+//     if (ymax){
+//       yDomain[1] = 1*ymax
+//     }
+//     yScale.domain(yDomain)
+//     plotData.scale.y = yScale
+//     plotData.axes.z = zData || {values:[]}
+//     plotData.scale.z = zScale
+//     plotData.axes.cat = catData
+//     plotData.scale.cat = catScale
+//     console.timeEnd('getAllMainPlotData')
+//
+//     return plotData;
+//   }
+// );
+
+export const getAllScatterPlotData = createSelector(
+  getAllMainPlotData,
+  getTransformFunction,
+  (plotData,transform) => {
+    let data = [];
+    let scales = {};
+    let axes = ['x','y','z']
+    if (plotData.axes.x.values.length == 0 ||
+        plotData.axes.y.values.length == 0 ||
+        plotData.axes.z.values.length == 0){
+      return {data:[]}
+    }
+    axes.forEach(axis=>{
+      scales[axis] = plotData.scale[axis].copy();
+      // if (axis == 'z'){
+      //   scales[axis] = d3.scaleSqrt().domain(scales[axis].domain())
+      // }
+      scales[axis].range([0,900])
+    })
+    let len = plotData.axes.x.values.length
+    for (let i = 0; i < len; i++){
+      let y = scales.y(plotData.axes.y.values[i])
+      let x = scales.x(plotData.axes.x.values[i])
+      if (transform) [x,y] = transform([x,y])
+      data.push({
+        id:i,
+        x: x,
+        y: 900 - y,
+        z: plotData.axes.z.values[i]
+      })
+    }
+    return {data};
+  }
+)
+
+// export const getScatterPlotData = createSelector(
+//   getAllScatterPlotData,
+//   getFilteredList,
+//   (allData,list) => {
+//     console.time('getScatterPlotData')
+//     let data = [];
+//     let len = list.length
+//     let max = Number.NEGATIVE_INFINITY
+//     let min = Number.POSITIVE_INFINITY
+//     for (let i = 0; i < len; i++){
+//       // let d = allData.data[list[i]]
+//       data.push({
+//         ...allData.data[list[i]]
+//       })
+//
+//       max = Math.max(max,allData.data[list[i]].z)
+//       min = Math.min(min,allData.data[list[i]].z)
+//     }
+//     let range = [min,max]
+//     console.timeEnd('getScatterPlotData')
+//     return {data,range};
+//   }
+// )
+
 export const getScatterPlotData = createSelector(
   getMainPlotData,
   getFilteredList,
@@ -97,7 +291,7 @@ export const getScatterPlotData = createSelector(
       let z = plotData.axes.z.values[i]
       let y = scales.y(plotData.axes.y.values[i])
       let x = scales.x(plotData.axes.x.values[i])
-      if (transform) [x,y] = transform([x,y])
+      // if (transform) [x,y] = transform([x,y])
       data.push({
         id:list[i],
         index:i,
@@ -105,8 +299,11 @@ export const getScatterPlotData = createSelector(
         y: 900 - y,
         z: z
       })
-      max = Math.max(max,z)
-      min = Math.min(min,z)
+      // if (i == 1){
+        max = Math.max(max,z)
+        min = Math.min(min,z)
+      // }
+
     }
     let range = [min,max]
     return {data,range};

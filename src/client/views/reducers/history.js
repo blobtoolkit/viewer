@@ -9,8 +9,6 @@ export const history = createHistory({
 
 export default history;
 
-history.goBack = () => console.log('going')
-
 export const parseQueryString = createSelector(
   (state) => history.location ? history.location.search : '',
   (loc) => {

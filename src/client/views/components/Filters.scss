@@ -28,6 +28,10 @@
   }
 }
 
+.header .cat {
+  height: 4em;
+}
+
 .range {
   position:absolute;
   top:0;
@@ -141,8 +145,10 @@
 }
 
 .inside {
-  height:100%;
-  width:100%;
+  height: 2em;
+  width: 100%;
+  position: absolute;
+  top: 2em;
 }
 
 .category_toggle.toggled {
@@ -157,7 +163,7 @@
 
 .labels_container {
   position:absolute;
-  top:2em;
+  top:4em;
   left:0;
   width:100%;
   height:8em;
@@ -203,21 +209,7 @@
 }
 
 .filter_preview_container {
-  position:absolute;
-  top:2em;
-  left:0;
-  width:100%;
-  height:8em;
-  overflow:hidden;
-  pointer-events:none;
-
-  svg {
-    height:100%;
-    width:100%;
-    /*shape-rendering: crispEdges;*/
-
-    .bar rect {
-      fill: $paleColor;
-    }
+  .bar rect {
+    fill: $paleColor;
   }
 }

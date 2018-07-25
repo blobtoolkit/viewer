@@ -270,22 +270,46 @@ export const getUnfilteredList = createSelector(
   }
 )
 
-export const getFilteredList = createSelector(
+const getAllFilters = createSelector(
   (state) => state.filters,
+  filters => {
+    return filters
+  }
+)
+
+const getAllFields = createSelector(
   (state) => state.fields.byId,
+  fields => {
+    return fields
+  }
+)
+
+const getAllRawData = createSelector(
   (state) => state.rawData.byId,
+  rawData => {
+    return rawData
+  }
+)
+
+const getDatasetActive = createSelector(
+  (state) => getDatasetIsActive(state),
+  active => {
+    return active
+  }
+)
+
+export const getFilteredList = createSelector(
+  getAllFilters,
+  getAllFields,
+  getAllRawData,
   getSelectedDatasetMeta,
   getActiveSelection,
-  (state) => getDatasetIsActive(state),
+  getDatasetActive,
   getUnfilteredList,
   (filters,fields,data,meta,list,active,all) => {
+    let obj = {filters,fields,data,meta}
+
     let count = meta.records | 0
-    // let all = []
-    // if (!list || list.length == 0 || filters.byId['selection'].invert){
-    //   for (let i = 0; i < count; i++){
-    //     all.push(i)
-    //   }
-    // }
     if (!list || list.length == 0){
       list = all
     }
@@ -314,6 +338,5 @@ export const getFilteredList = createSelector(
 )
 
 export const filterReducers = {
-  filters,
-  // filteredList
+  filters
 }

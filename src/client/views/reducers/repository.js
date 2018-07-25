@@ -281,10 +281,21 @@ export function fetchSearchResults(str) {
 
 export const getDatasetIsActive = state => state.datasetIsActive
 
+export const setReloading = createAction('RELOADING')
+export const reloading = handleAction(
+  'RELOADING',
+  (state, action) => (
+    action.payload
+  ),
+  false
+)
+export const getReloading = state => state.reloading
+
 export const repositoryReducers = {
   selectedDataset,
   availableDatasets,
   fetchRepository,
   datasetIsActive,
-  view
+  view,
+  reloading
 }

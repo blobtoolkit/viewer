@@ -121,6 +121,12 @@
   border-bottom: solid rgba($highlightColor,0.5);
 }
 
+.outer.cat_expanded {
+  height:14em;
+  overflow:hidden;
+  border-bottom: solid rgba($highlightColor,0.5);
+}
+
 
 
 .controls {
@@ -167,22 +173,22 @@ left:0.2em;
   box-sizing: border-box;*/
 }
 
+.main.cat {
+  top:6em;
+}
+
+.preview_svg {
+  height:calc(100% + 40px);
+  width:calc(100% + 150px);
+  margin:-5px -75px 0 -75px;
+}
+.preview_svg.cat {
+  top:2em;
+}
+
 .data_preview_container {
-  position:absolute;
-  top:0;
-  left:0;
-  width:100%;
-  height:100%;
-  overflow:hidden;
-
-  svg {
-    height:100%;
-    width:100%;
-    /*shape-rendering: crispEdges;*/
-
-    .bar rect {
-      fill: $deepColor;
-    }
+  .bar rect {
+    fill: $deepColor;
   }
 }
 

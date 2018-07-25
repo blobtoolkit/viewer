@@ -10,7 +10,7 @@ class FilterPreview extends React.Component {
     super(props);
     this.mapStateToProps = state => {
       return {
-        bars: getFilteredBarsForFieldId(state, this.props.filterId),
+        bars: getFilteredBarsForFieldId(state, this.props.fieldId),
         barcss: styles.bar
       }
     }
@@ -33,11 +33,9 @@ class FilteredDataPreview extends React.Component {
 
   render() {
     return (
-      <div className={styles.filter_preview_container}>
-        <svg>
-          <PreviewBars bars={this.props.bars} barcss={this.props.barcss} />
-        </svg>
-      </div>
+      <g className={styles.filter_preview_container}>
+        <PreviewBars bars={this.props.bars} barcss={this.props.barcss} />
+      </g>
     );
   }
 

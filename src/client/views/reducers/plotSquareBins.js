@@ -5,8 +5,7 @@ import { getBinsForFieldId } from './field';
 import { getFilteredDataForFieldId } from './preview'
 import { getMainPlot } from './plot';
 import { getSelectedRecordsAsObject } from './select';
-import { getScatterPlotData } from './plotData';
-import { getAllScatterPlotData } from './plotHexBins';
+import { getScatterPlotData, getAllScatterPlotData } from './plotData';
 import { getZReducer, getZScale, getPlotResolution } from './plotParameters';
 import { getColorPalette } from './color';
 import * as d3 from 'd3'
@@ -37,6 +36,7 @@ export const getAllScatterPlotDataBySquareBin = createSelector(
   getSquareGrid,
   getAllScatterPlotData,
   (grid,scatterData) => {
+    console.time('getAllScatterPlotDataBySquareBin')
     let squares = []
     grid.data.forEach(d=>{
       squares[d.i] = squares[d.i] || []
@@ -58,6 +58,7 @@ export const getAllScatterPlotDataBySquareBin = createSelector(
         }
       }
     }
+    console.timeEnd('getAllScatterPlotDataBySquareBin')
     return {data};
   }
 )
@@ -189,7 +190,6 @@ export const getScatterPlotDataBySquareBinByCategory = createSelector(
     let byCat = []
     scatterData.data.forEach((square)=>{
       let squareData = []
-
       bins.forEach((bin,i)=>{
         squareData[i] = {
           id:square.id+'_'+i,
@@ -205,9 +205,11 @@ export const getScatterPlotDataBySquareBinByCategory = createSelector(
       })
       square.indices.forEach((index,i) => {
         let currentCell = squareData[keys[categories.values[index]]]
-        currentCell.ids.push(square.ids[i])
-        currentCell.indices.push(index)
-        currentCell.zs.push(square.zs[i])
+        // if (currentCell){
+          currentCell.ids.push(square.ids[i])
+          currentCell.indices.push(index)
+          currentCell.zs.push(square.zs[i])
+        // }
       })
       let squareArray = squareData.filter(obj => obj.ids.length > 0);
       squareArray.forEach(s=>{
