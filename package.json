@@ -93,6 +93,8 @@
     "webpack-dev-server": "^2.11.2"
   },
   "devDependencies": {
+    "file-loader": "^1.1.11",
+    "image-webpack-loader": "^4.3.1",
     "mocha": "^5.2.0",
     "mocha-mongoose": "^1.2.0",
     "nodemon": "^1.17.5",

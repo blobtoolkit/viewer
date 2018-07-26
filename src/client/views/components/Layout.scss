@@ -287,8 +287,23 @@
 
 .doi_badge {
   position:absolute;
-  top:0;
-  right:0;
+  top:0.2em;
+  right:0.2em;
+}
+
+span.logo {
+  position:absolute;
+  top:26px;
+  right:0.2em;
+  img {
+    cursor:pointer;
+    height:calc(4em - 26px);
+    background-color: $lightColor;
+    box-sizing: border-box;
+    border: 2px solid $lightColor;
+    margin-left: 0.3em;
+    border-radius: 0.2em;
+  }
 }
 
 .simple {

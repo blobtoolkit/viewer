@@ -124,6 +124,18 @@ const config = {
           'svg-sprite-loader',
           'svgo-loader'
         ]
+      },
+      {
+        test: /\.(gif|png|jpe?g)$/i,
+        use: [
+          'file-loader',
+          {
+            loader: 'image-webpack-loader',
+            options: {
+              //disable: true,
+            },
+          },
+        ],
       }
     ]
   }

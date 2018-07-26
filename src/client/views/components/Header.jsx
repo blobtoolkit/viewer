@@ -1,6 +1,7 @@
 import React from 'react'
 import styles from './Layout.scss'
 import DOIBadge from './DOIBadge'
+import BTKLogos from './BTKLogos'
 
 
 const Header = ( { tabs, onTabClick } ) => {
@@ -21,6 +22,7 @@ const Header = ( { tabs, onTabClick } ) => {
     <div className={styles.main_header}>
       {children}
       <DOIBadge/>
+      <BTKLogos/>
     </div>
   )
 }
