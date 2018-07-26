@@ -74,7 +74,6 @@ export const getMainPlotData = createSelector(
 
 export const getAllMainPlotData = createSelector(
   getMainPlot,
-  getMainPlotData,
   (state) => getRawDataForFieldId(state,getMainPlot(state).axes.x),
   (state) => getRawDataForFieldId(state,getMainPlot(state).axes.y),
   (state) => getRawDataForFieldId(state,getMainPlot(state).axes.z),
@@ -83,14 +82,32 @@ export const getAllMainPlotData = createSelector(
   (state) => getDetailsForFieldId(state,getMainPlot(state).axes.y),
   (state) => getDetailsForFieldId(state,getMainPlot(state).axes.z),
   (state) => getDetailsForFieldId(state,getMainPlot(state).axes.cat),
-  (mainPlot,visibleData,xData,yData,zData,catData,xMeta,yMeta,zMeta,catMeta) => {
+  (mainPlot,xData,yData,zData,catData,xMeta,yMeta,zMeta,catMeta) => {
     let plotData = {id:mainPlot.id,axes:{},meta:{},scale:{}};
     plotData.axes.x = xData || {values:[]}
-    xMeta.xScale = visibleData.meta.x.xScale.copy()
+    let xDomain = xMeta.xScale.domain().slice(0)
+    let xmin = queryValue('xmin')
+    if (xmin){
+      xDomain[0] = 1*xmin
+    }
+    let xmax = queryValue('xmax')
+    if (xmax){
+      xDomain[1] = 1*xmax
+    }
+    xMeta.xScale.domain(xDomain)
     plotData.meta.x = xMeta
     plotData.scale.x = xMeta.xScale
     plotData.axes.y = yData || {values:[]}
-    yMeta.xScale = visibleData.meta.y.xScale.copy()
+    let yDomain = yMeta.xScale.domain().slice(0)
+    let ymin = queryValue('ymin')
+    if (ymin){
+      yDomain[0] = 1*ymin
+    }
+    let ymax = queryValue('ymax')
+    if (ymax){
+      yDomain[1] = 1*ymax
+    }
+    yMeta.xScale.domain(yDomain)
     plotData.meta.y = yMeta
     plotData.scale.y = yMeta.xScale
     plotData.axes.z = zData || {values:[]}

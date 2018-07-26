@@ -17,6 +17,8 @@ class Cumulative extends React.Component {
     let colors = this.props.cumulative.palette.colors
     let all = this.props.cumulative.paths.all
     let yValues = this.props.cumulative.values.all
+    let records = this.props.cumulative.records
+    let span = this.props.cumulative.span
     let byCat = this.props.cumulative.paths.byCat
     let transform = 'translate(0,0)'
     let yLabel = 'Cumulative ' + this.props.cumulative.zAxis
@@ -54,7 +56,7 @@ class Cumulative extends React.Component {
           viewBox={viewbox}
           preserveAspectRatio="xMinYMin">
           <g transform={'translate(100,10)'} >
-            <CumulativePlotBoundary yValues={yValues}/>
+            <CumulativePlotBoundary yValues={yValues} records={records} span={span}/>
             <path className={styles.bold_path}
                   d={all}
                   fill='none'

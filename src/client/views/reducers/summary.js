@@ -3,6 +3,7 @@ import { byIdSelectorCreator } from './selectorCreators'
 import { getSelectedRecordsAsObject } from './select'
 import { getScatterPlotDataByCategory,
   getMainPlotData,
+  getAllMainPlotData,
   getScatterPlotData
 } from './plotData';
 import { getRawDataForFieldId, getDetailsForFieldId, getBinsForFieldId, getAllActiveFields } from './field'
@@ -117,6 +118,35 @@ export const getSummary = createSelector(
   }
 )
 
+const getSpan = createSelector(
+  getSelectedDatasetMeta,
+  meta => {
+    return meta.assembly.span || 0
+  }
+)
+
+const getRecordCount = createSelector(
+  getSelectedDatasetMeta,
+  meta => {
+    return meta.records || 0
+  }
+)
+
+const getRawDataForLength = createSelector(
+  (state) => getRawDataForFieldId(state,'length'),
+  data => data
+)
+const getGreatestX = createSelector(
+  getRawDataForLength,
+  data => {
+    let max = -1
+    data.values.forEach(i=>{
+      max = Math.max(max,i)
+    })
+    return max
+  }
+)
+
 export const getCumulative = createSelector(
   getScatterPlotData,
   getSelectedScatterPlotDataByCategory,
@@ -145,13 +175,16 @@ export const getCumulative = createSelector(
 export const cumulativeCurves = createSelector(
   getCumulative,
   getColorPalette,
-  (cumulative,palette) => {
+  getRecordCount,
+  getSpan,
+  (cumulative,palette,records,span) => {
     let values = cumulative.values
     let all = values.all
     let byCat = values.byCat
     let zAxis = cumulative.zAxis
-    let xScale = d3scaleLinear().range([50,950]).domain([0,all.length])
-    let yScale = d3scaleLinear().range([950,50]).domain([0,all[all.length - 1]])
+    span = span || all[all.length - 1]
+    let xScale = d3scaleLinear().range([50,950]).domain([0,records])
+    let yScale = d3scaleLinear().range([950,50]).domain([0,span])
     let f = d3Format(".3f");
     let line = d3Line().x(d=>f(d.x)).y(d=>f(d.y))
     let xyScale = arr => [0].concat(arr).map((y,x)=>({x:xScale(x),y:yScale(y)}))
@@ -179,7 +212,7 @@ export const cumulativeCurves = createSelector(
     // byCat.forEach((arr,i)=>{
     //   paths.byCat[i] = line(Simplify(xyScale(arr),0.5))
     // })
-    return { values,paths,zAxis,palette }
+    return { values,paths,zAxis,palette,records,span }
   }
 )
 
@@ -239,7 +272,9 @@ export const circularCurves = createSelector(
   getCircumferenceScale,
   getRadiusScale,
   getSnailOrigin,
-  (circular,palette,circumference,radius,origin) => {
+  getSpan,
+  getGreatestX,
+  (circular,palette,circumference,radius,origin,span,longest) => {
     let invert = origin == 'center'
     let values = circular.values
     let composition = circular.composition
@@ -254,11 +289,11 @@ export const circularCurves = createSelector(
       rRange = [0,350]
       lRange = [350,100]
     }
-    circumference = Math.max(circumference,sum[999])
+    circumference = Math.max(span,circumference,sum[999])
     let maxAngle = 2*Math.PI*sum[999]/circumference
     let all = values.all
     let max = all[0].z
-    radius = Math.max(radius,max)
+    radius = Math.max(longest,radius,max)
     let min = 0
     let cScale = d3scaleLinear().range([0,maxAngle]).domain([0,999])
     let rScale = d3scaleSqrt().range(rRange).domain([min,radius])
