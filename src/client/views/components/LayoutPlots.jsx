@@ -7,6 +7,7 @@ import { withRouter } from 'react-router-dom'
 import GetStarted from './GetStarted'
 import MainPlot from './MainPlot'
 import CumulativePlot from './CumulativePlot'
+import DetailPlot from './DetailPlot'
 import SnailPlot from './SnailPlot'
 import TablePlot from './TablePlot'
 import TreeMapPlot from './TreeMapPlot'
@@ -16,11 +17,11 @@ class PlotsLayoutComponent extends React.Component {
   render(){
     let view = <GetStarted {...this.props}/>
     switch (this.props.match.params.view || 'blob') {
-      case 'blob':
-        view = <MainPlot {...this.props}/>
-        break
       case 'cumulative':
         view = <CumulativePlot {...this.props}/>
+        break
+      case 'detail':
+        view = <DetailPlot {...this.props}/>
         break
       case 'snail':
         view = <SnailPlot {...this.props}/>
@@ -31,7 +32,7 @@ class PlotsLayoutComponent extends React.Component {
       case 'treemap':
         view = <TreeMapPlot {...this.props}/>
         break
-      case 'gallery':
+      case 'report':
         view = (
           <div className={styles.fill_parent}>
             <div className={styles.quarter}>
@@ -46,6 +47,10 @@ class PlotsLayoutComponent extends React.Component {
           </div>
         )
         break
+      default:
+        view = <MainPlot {...this.props}/>
+        break
+
     }
     return (
       <div className={styles.fill_parent}>

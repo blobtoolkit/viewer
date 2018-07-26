@@ -17,7 +17,7 @@ export const parseQueryString = createSelector(
   }
 )
 
-const options = ['blob','cumulative','dataset','snail','table','treemap','gallery']
+const options = ['blob','cumulative','detail','dataset','report','snail','table','treemap']
 
 export const urlViews = createSelector(
   (state) => history.location ? history.location.pathname : '',

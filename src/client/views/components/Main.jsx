@@ -7,11 +7,10 @@ import Routes from './Routes';
 import Repository from './Repository';
 import { NotFound } from './Error';
 import history from '../reducers/history';
-import Spinner from './Spinner'
 // import { fetchRepository } from '../reducers/repository'
 
 
-const MainDiv = ({reloading}) => {
+const MainDiv = ({active,reloading}) => {
   return (
     <div>
       <Routes/>

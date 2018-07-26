@@ -58,6 +58,7 @@ class LayoutComponent extends React.Component {
     if (!activeTab && !this.props.match.params.datasetId){
       activeTab = 'Datasets'
     }
+    console.log('layout')
     let menu = activeTab ? (<div className={styles.menu} ref='menuDiv'><LayoutControls/></div>) : null
     return (
       <div className={styles.main}>
@@ -67,7 +68,7 @@ class LayoutComponent extends React.Component {
         <div className={styles.content}>
           {menu}
           <div className={styles.plot_area}>
-            {this.props.reloading ? <Spinner/> : <LayoutPlots/>}
+            {this.props.active ? <LayoutPlots/> : <Spinner/> }
           </div>
         </div>
       </div>
