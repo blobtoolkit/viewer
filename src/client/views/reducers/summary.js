@@ -747,6 +747,12 @@ export const getSelectedDatasetTable = createSelector(
         data.push({group:'Reads',key:row[1]+' (single)',value:row[0],link,meta})
       })
     }
-    return data
+    let meta = {}
+    Object.keys(details).forEach(k=>{
+      if (k != 'fields' && k != 'plot' && k != 'links'){
+        meta[k] = details[k]
+      }
+    })
+    return {data,meta}
   }
 )

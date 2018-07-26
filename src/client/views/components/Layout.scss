@@ -23,6 +23,8 @@
   float:left;
   width:50%;
   height:50%;
+  min-width:600px;
+  min-height:600px;
 }
 
 .modal {
@@ -92,7 +94,6 @@
   position:relative;
   display: flex;
   flex-direction: row;
-  max-width:calc(100vh + 31em)
 }
 
 .plot_area {

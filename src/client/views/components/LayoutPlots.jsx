@@ -36,6 +36,9 @@ class PlotsLayoutComponent extends React.Component {
         view = (
           <div className={styles.fill_parent}>
             <div className={styles.quarter}>
+              <DetailPlot {...this.props}/>
+            </div>
+            <div className={styles.quarter}>
               <MainPlot {...this.props}/>
             </div>
             <div className={styles.quarter}>

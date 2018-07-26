@@ -7,6 +7,7 @@ import { getSelectedDatasetMeta } from '../reducers/dataset'
 import { getSelectedDatasetTable, getLinks } from '../reducers/summary'
 import ReactTable from 'react-table'
 import ExternalLink from './ExternalLink'
+import ExportButton from './ExportButton'
 import DownloadCSV from './TableCSV'
 
 class Detail extends React.Component {
@@ -26,7 +27,8 @@ class Detail extends React.Component {
   }
 
   render(){
-    let data = this.props.data
+    let data = this.props.data.data
+    let meta = this.props.data.meta
     let columns = [{
       Header:'Assembly metadata',
       columns:
@@ -77,7 +79,9 @@ class Detail extends React.Component {
             defaultPageSize={data.length}
             getTheadThProps={this.injectThProps}
           />
-          <DownloadCSV data={data}/>
+          <span className={plotStyles.download}>
+            <ExportButton data={meta} format='json' prefix={meta.id+'.meta'}/>
+          </span>
       </div>
     )
   }
@@ -89,8 +93,7 @@ class DetailPlot extends React.Component {
     this.mapStateToProps = state => {
       return {
         data: getSelectedDatasetTable(state),
-        links: getLinks(state),
-        meta: getSelectedDatasetMeta(state)
+        links: getLinks(state)
       }
     }
   }
