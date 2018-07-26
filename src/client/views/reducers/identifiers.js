@@ -43,7 +43,7 @@ export const identifiers = handleActions(
 
 export const getIdentifiersIsFetching = state => deep(state,'identifiers','byId','isFetching') || false
 
-export const getIdentifiers = state => state.identifiers.list
+export const getIdentifiers = state => state.identifiers ? state.identifiers.list : []
 
 
 export function fetchIdentifiers() {
@@ -60,8 +60,10 @@ export function fetchIdentifiers() {
         response => response.json(),
         error => console.log('An error occured.', error)
       )
-      .then(json =>
-        dispatch(receiveIdentifiers(json))
+      .then(json => {
+        return dispatch(receiveIdentifiers(json))
+      }
+
       )
   }
 }

@@ -247,8 +247,29 @@ export function filterToList(readQueryString) {
   }
 }
 
+const getAllFilters = createSelector(
+  (state) => state.filters,
+  filters => {
+    return filters
+  }
+)
+
+const getAllFields = createSelector(
+  (state) => state.fields ? state.fields.byId : {},
+  fields => {
+    return fields
+  }
+)
+
+const getAllRawData = createSelector(
+  (state) => state.rawData ? state.rawData.byId : {},
+  rawData => {
+    return rawData
+  }
+)
+
 export const getActiveSelection = createSelector(
-  (state) => state.fields.byId,
+  getAllFields,
   getSelectedRecords,
   (fields,list) => {
     if (fields['selection'] && fields['selection'].active){
@@ -270,26 +291,6 @@ export const getUnfilteredList = createSelector(
   }
 )
 
-const getAllFilters = createSelector(
-  (state) => state.filters,
-  filters => {
-    return filters
-  }
-)
-
-const getAllFields = createSelector(
-  (state) => state.fields.byId,
-  fields => {
-    return fields
-  }
-)
-
-const getAllRawData = createSelector(
-  (state) => state.rawData.byId,
-  rawData => {
-    return rawData
-  }
-)
 
 const getDatasetActive = createSelector(
   (state) => getDatasetIsActive(state),
@@ -317,22 +318,24 @@ export const getFilteredList = createSelector(
       list = filterArrayFromList(list,all)
     }
     let values = {}
-    filters.allIds.forEach(id => {
-      if (fields[id] && fields[id].active && filters.byId[id] && data[id]){
-        if (filters.byId[id].type == 'range'){
-          let range = filters.byId[id].range
-          let limit = fields[id].range
-          if (!shallow(range,limit)){
-            list = filterRangeToList(range[0],range[1],data[id].values,list,filters.byId[id].invert)
+    if (filters){
+      filters.allIds.forEach(id => {
+        if (fields[id] && fields[id].active && filters.byId[id] && data[id]){
+          if (filters.byId[id].type == 'range'){
+            let range = filters.byId[id].range
+            let limit = fields[id].range
+            if (!shallow(range,limit)){
+              list = filterRangeToList(range[0],range[1],data[id].values,list,filters.byId[id].invert)
+            }
+          }
+          else if (filters.byId[id].type == 'list' || filters.byId[id].type == 'category'){
+            if (data[id]){
+              list = filterCategoriesToList(filters.byId[id].keys,data[id].values,list,filters.byId[id].invert)
+            }
           }
         }
-        else if (filters.byId[id].type == 'list' || filters.byId[id].type == 'category'){
-          if (data[id]){
-            list = filterCategoriesToList(filters.byId[id].keys,data[id].values,list,filters.byId[id].invert)
-          }
-        }
-      }
-    })
+      })
+    }
     return list
   }
 )

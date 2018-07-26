@@ -58,7 +58,6 @@ class LayoutComponent extends React.Component {
     if (!activeTab && !this.props.match.params.datasetId){
       activeTab = 'Datasets'
     }
-    console.log('layout')
     let menu = activeTab ? (<div className={styles.menu} ref='menuDiv'><LayoutControls/></div>) : null
     return (
       <div className={styles.main}>

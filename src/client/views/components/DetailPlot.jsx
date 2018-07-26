@@ -4,6 +4,7 @@ import plotStyles from './Plot.scss'
 import styles from './Layout.scss'
 import './style/node_modules.css'
 import { getSelectedDatasetMeta } from '../reducers/dataset'
+import { getSelectedDatasetTable, getLinks } from '../reducers/summary'
 import ReactTable from 'react-table'
 import ExternalLink from './ExternalLink'
 import DownloadCSV from './TableCSV'
@@ -18,12 +19,6 @@ class Detail extends React.Component {
       sort:[],
       size:[]
     }
-    // onPageChange={(pageIndex) => {...}} // Called when the page index is changed by the user
-    // onPageSizeChange={(pageSize, pageIndex) => {...}} // Called when the pageSize is changed by the user. The resolve page is also sent to maintain approximate position in the data
-    // onSortedChange={(newSorted, column, shiftKey) => {...}} // Called when a sortable column header is clicked with the column itself and if the shiftkey was held. If the column is a pivoted column, `column` will be an array of columns
-    // onExpandedChange={(newExpanded, index, event) => {...}} // Called when an expander is clicked. Use this to manage `expanded`
-    // onFilteredChange={(column, value) => {...}} // Called when a user enters a value into a filter input field or the value passed to the onFiltersChange handler by the Filter option.
-    // onResizedChange={(newResized, event) => {...}} // Called when a user clicks on a resizing component (the right edge of a column header)
   }
 
   injectThProps(state, rowInfo, column){
@@ -31,11 +26,7 @@ class Detail extends React.Component {
   }
 
   render(){
-    console.log(this.props.meta)
-    // let keys = this.props.data.keys
     let data = this.props.data
-    // let links = this.props.data.links
-    // let ids = data.map(o=>o._id)
     let columns = [{
       Header:'Assembly metadata',
       columns:
@@ -47,8 +38,21 @@ class Detail extends React.Component {
           accessor: 'key'
         },
         {
-          accessor: 'value',
-
+          id: 'value',
+          accessor: d => {
+            let link
+            if (d.link){
+              link = (
+                <small> [<ExternalLink title={d.link.title} target='_blank' url={d.link.func(d.meta)}/>]</small>
+              )
+            }
+            return (
+              <span>
+                {d.value}
+                {link}
+              </span>
+            )
+          }
         },
         // {
         //   Header: 'Links',
@@ -84,12 +88,8 @@ class DetailPlot extends React.Component {
     super(props);
     this.mapStateToProps = state => {
       return {
-        data: [
-          {group:'Taxon',key:'Name',value:'Species name'},
-          {group:'',key:'Taxon ID',value:1234},
-          {group:'Assembly',key:'Accession',value:'GCA_000000.1'},
-          {group:'',key:'INSDC',value:'CCMX01'},
-        ],
+        data: getSelectedDatasetTable(state),
+        links: getLinks(state),
         meta: getSelectedDatasetMeta(state)
       }
     }

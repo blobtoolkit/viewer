@@ -593,21 +593,32 @@ const funcFromPattern = pattern => {
 export const getLinks = createSelector(
   getSelectedDatasetMeta,
   (meta) => {
-    let links = {dataset:[],record:[]}
-    if (meta.dataset_links){
-      Object.keys(meta.dataset_links).forEach(title=>{
-        let pattern = meta.dataset_links[title]
-        links.dataset.push({title,func:funcFromPattern(pattern)})
-      })
-    }
-    if (meta.record_links){
-      Object.keys(meta.record_links).forEach(title=>{
-        let pattern = meta.record_links[title]
-        links.record.push({title,func:funcFromPattern(pattern)})
+    let links = {dataset:{},record:[]}
+    if (meta.links){
+      Object.keys(meta.links).forEach(key=>{
+        links.dataset[key] = links.dataset[key] || {}
+        Object.keys(meta.links[key]).forEach(title=>{
+          if (key == 'record'){
+            let func = funcFromPattern(meta.links[key][title])
+            links.record.push({title,func})
+          }
+          else {
+            links.dataset[key][title] = links.dataset[key][title] || {}
+            Object.keys(meta.links[key][title]).forEach(field=>{
+              let func = funcFromPattern(meta.links[key][title][field])
+              links.dataset[key][title] = {title:field,func}
+            })
+          }
+        })
       })
     }
     return links
   }
+)
+
+export const getIdentifiersForCurrentList = createSelector(
+  state => getIdentifiersForList(state,'current'),
+  ids => ids
 )
 
 export const getTableData = createSelector(
@@ -632,7 +643,7 @@ export const getTableData = createSelector(
     })
     return bins
   },
-  getIdentifiersForList,
+  getIdentifiersForCurrentList,
   getLinks,
   (plotData,fields,selected,list,data,bins,identifiers,links) => {
     let values = []
@@ -693,4 +704,49 @@ export const getBinnedColors = createSelector(
     return colors
   }
 
+)
+
+export const getSelectedDatasetTable = createSelector(
+  getSelectedDatasetMeta,
+  getLinks,
+  (details,links) => {
+    let data = []
+    Object.keys(details.taxon).forEach(key=>{
+      let link,meta
+      if (links.dataset.taxon && links.dataset.taxon[key]){
+        link = links.dataset.taxon[key]
+        meta = {...details.taxon}
+      }
+      data.push({group:'Taxon',key,value:details.taxon[key],link,meta})
+    })
+    Object.keys(details.assembly).forEach(key=>{
+      let link,meta
+      if (links.dataset.assembly && links.dataset.assembly[key]){
+        link = links.dataset.assembly[key]
+        meta = {...details.assembly}
+      }
+      data.push({group:'Assembly',key,value:details.assembly[key],link,meta})
+    })
+    if (details.reads.paired){
+      details.reads.paired.forEach(row=>{
+        let link,meta
+        if (links.dataset.reads && links.dataset.reads.paired){
+          link = links.dataset.reads.paired
+          meta = {accession:row[0],platform:row[1]}
+        }
+        data.push({group:'Reads',key:row[1]+' (paired)',value:row[0],link,meta})
+      })
+    }
+    if (details.reads.single){
+      details.reads.single.forEach(row=>{
+        let link,meta
+        if (links.dataset.reads && links.dataset.reads.single){
+          link = links.dataset.reads.single
+          meta = {accession:row[0],platform:row[1]}
+        }
+        data.push({group:'Reads',key:row[1]+' (single)',value:row[0],link,meta})
+      })
+    }
+    return data
+  }
 )

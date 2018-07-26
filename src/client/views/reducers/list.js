@@ -121,7 +121,7 @@ export const getListById = createSelectorForListId(
         list.list = all
         list.params = {}
       }
-      else if (list.id == 'current'){
+      else {
         list.list = filtered
         list.params = qs.parse(qStr)
       }
