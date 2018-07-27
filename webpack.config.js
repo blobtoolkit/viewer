@@ -127,15 +127,10 @@ const config = {
       },
       {
         test: /\.(gif|png|jpe?g)$/i,
-        use: [
-          'file-loader',
-          {
-            loader: 'image-webpack-loader',
-            options: {
-              name: main.basename+'/[hash].[ext]',
-            },
-          },
-        ],
+        loader: 'file-loader',
+        options: {
+          name: main.basename.replace(/^\//,'')+'/[hash].[ext]'
+        }
       }
     ]
   }
