@@ -10,7 +10,7 @@ import PlotLegend from './PlotLegend'
 import PlotAxisTitle from './PlotAxisTitle'
 import CumulativePlotBoundary from './CumulativePlotBoundary'
 import { getSelectedDatasetMeta } from '../reducers/dataset'
-const saveSvgAsPng = require('save-svg-as-png/saveSvgAsPng.js')
+const saveSvgAsPng = require('save-svg-as-png/lib/saveSvgAsPng.js')
 import AxisTitle from './AxisTitle'
 import ReactTable from 'react-table'
 import ExternalLink from './ExternalLink'

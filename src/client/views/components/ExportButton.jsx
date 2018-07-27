@@ -1,6 +1,6 @@
 import React from 'react'
 import styles from './Plot.scss'
-const saveSvgAsPng = require('save-svg-as-png/saveSvgAsPng.js')
+const saveSvgAsPng = require('save-svg-as-png/lib/saveSvgAsPng.js')
 
 
 const _downloadJSONFile = (name,content) => {
