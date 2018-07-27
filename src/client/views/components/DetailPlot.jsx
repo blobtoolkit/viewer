@@ -71,7 +71,7 @@ class Detail extends React.Component {
       ]
     }]
     return (
-      <div className={plotStyles.outer}>
+      <div className={plotStyles.outer} style={{top:'4em',width:'calc(100% - 8em)',height:'calc(100% - 8em)'}}>
         <ReactTable
             data={data}
             page={this.state.page}
