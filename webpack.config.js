@@ -132,7 +132,7 @@ const config = {
           {
             loader: 'image-webpack-loader',
             options: {
-              //disable: true,
+              name: main.basename+'/[hash].[ext]',
             },
           },
         ],
