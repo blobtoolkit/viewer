@@ -15,7 +15,7 @@ const config = {
   output: {
       publicPath: '/',
       path: BUILD_DIR,
-      filename: 'bundle.js'
+      filename: 'js/bundle.js'
   },
   resolve: {
     extensions: ['.js', '.jsx']
@@ -29,7 +29,7 @@ const config = {
   },
   devtool: 'source-map',
   plugins: [
-    new ExtractTextPlugin('styles.css'),
+    new ExtractTextPlugin('css/styles.css'),
     new webpack.DefinePlugin({
       API_URL: JSON.stringify(main.apiUrl),
     	VERSION: JSON.stringify(main.version),
@@ -129,7 +129,7 @@ const config = {
         test: /\.(gif|png|jpe?g)$/i,
         loader: 'file-loader',
         options: {
-          name: main.basename.replace(/^\//,'')+'/[hash].[ext]'
+          name: main.basename.replace(/^\//,'')+'/img/[hash].[ext]'
         }
       }
     ]
