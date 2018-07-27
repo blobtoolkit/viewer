@@ -3,6 +3,7 @@ const webpack = require('webpack');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const combineLoaders = require('webpack-combine-loaders');
 const main = require('./src/config/main');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 const BUILD_DIR = path.resolve(__dirname, 'dist/public');
 const APP_DIR = path.resolve(__dirname, 'src/client/views');
@@ -34,6 +35,12 @@ const config = {
       API_URL: JSON.stringify(main.apiUrl),
     	VERSION: JSON.stringify(main.version),
     	BASENAME: JSON.stringify(main.basename)
+    }),
+    new HtmlWebpackPlugin({
+      hash: true,
+      title: 'BlobToolKit Viewer '+main.version,
+      template: './src/client/index.html',
+      filename: BUILD_DIR + '/index.html'
     })
   ],
   module: {
@@ -129,7 +136,7 @@ const config = {
         test: /\.(gif|png|jpe?g)$/i,
         loader: 'file-loader',
         options: {
-          name: main.basename.replace(/^\//,'')+'/img/[hash].[ext]'
+          name: 'img/[hash].[ext]'
         }
       }
     ]
