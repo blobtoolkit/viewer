@@ -1,8 +1,8 @@
 ## TODO
 
 - Consistent font scaling across plots
-- Default snail/cumulative plot scales are maxima
 - Category distribution plots
+- Improve selector implementation
 
 ## master
 
@@ -12,3 +12,5 @@
 - Assembly link out to external site
 - Institution/funding logos
 - Report view
+- Default snail/cumulative plot scales are maxima
+- Add site footer

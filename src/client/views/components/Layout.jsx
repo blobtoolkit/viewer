@@ -9,6 +9,7 @@ import LayoutControls from './LayoutControls'
 import LayoutHeader from './LayoutHeader'
 import LayoutPlots from './LayoutPlots'
 import Spinner from './Spinner'
+import DOIBadge from './DOIBadge'
 import { queryToStore } from '../querySync'
 import qs from 'qs'
 
@@ -69,6 +70,9 @@ class LayoutComponent extends React.Component {
           <div className={styles.plot_area}>
             {this.props.active ? <LayoutPlots/> : <Spinner/> }
           </div>
+        </div>
+        <div className={styles.main_footer}>
+          <DOIBadge/>
         </div>
       </div>
     )

@@ -89,6 +89,24 @@
   color: $lightColor;
 }
 
+.main_footer {
+  z-index:10;
+  width:100%;
+  bottom:0;
+  left:0;
+  flex: none;
+  height:calc(20px + 0.8em);
+  background-color: $darkColor;
+  /*box-shadow: 0px 2px 8px $darkColor;*/
+  box-shadow: 0px 0px 4px 1px $shadeColor;
+
+  .doi_badge {
+    position:relative;
+    float:right;
+    margin: 0.4em;
+  }
+}
+
 .content {
   flex: 1;
   position:relative;
@@ -98,6 +116,13 @@
 
 .plot_area {
   flex: 1;
+  overflow:scroll;
+}
+
+.detail_link {
+  display:inline-block;
+  float:right;
+  font-size:0.8em;
 }
 
 .menu {
@@ -286,23 +311,19 @@
 }
 
 
-.doi_badge {
-  position:absolute;
-  top:0.2em;
-  right:0.2em;
-}
+
 
 span.logo {
   position:absolute;
-  top:26px;
-  right:0.2em;
+  top: 0.4em;
+  right: 0.4em;
   img {
     cursor:pointer;
-    height:calc(4em - 26px);
+    height: 3.5em;
     background-color: $lightColor;
     box-sizing: border-box;
     border: 2px solid $lightColor;
-    margin-left: 0.3em;
+    margin-left: 0.35em;
     border-radius: 0.2em;
   }
 }

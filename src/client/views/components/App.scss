@@ -5,7 +5,8 @@
 html,body,main {
   height:100%;
   width:100%;
-  overflow:auto;
+  overflow:hidden;
+  overscroll-behavior: none;
 }
 
 
@@ -18,6 +19,7 @@ html,body,main {
   min-height:600px;
   font-family:'Open Sans';
   font-size:10pt;
+  overscroll-behavior: none;
 
   h1,h2,h3,h4 {
     font-family:'Comfortaa';

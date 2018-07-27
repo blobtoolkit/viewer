@@ -45,7 +45,9 @@ class Detail extends React.Component {
             let link
             if (d.link){
               link = (
-                <small> [<ExternalLink title={d.link.title} target='_blank' url={d.link.func(d.meta)}/>]</small>
+                <span className={styles.detail_link}>
+                  <ExternalLink title={d.link.title} target='_blank' url={d.link.func(d.meta)}/>
+                </span>
               )
             }
             return (
