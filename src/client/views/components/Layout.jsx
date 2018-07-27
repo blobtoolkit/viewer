@@ -18,41 +18,34 @@ window.scrollTop = {}
 class LayoutComponent extends React.Component {
   constructor(props) {
     super(props);
-    // this.state = {scrollTop:0}
   }
   handleScroll(e,tab){
-    // this.setState({scrollTop:e.target.scrollTop})
     window.scrollTop[tab] = e.target.scrollTop
   }
   componentDidMount() {
     let menuDiv = this.refs.menuDiv
-    // menuDiv.scrollTop = this.state.scrollTop
     if(menuDiv){
       let activeTab = window.location.hash.replace('#','')
       menuDiv.scrollTop = window.scrollTop[activeTab] || 0
       menuDiv.addEventListener('scroll', e => this.handleScroll(e,activeTab));
     }
-
-    let newSearch = this.props.location.search.replace('?','')
-    if (this.props.active && this.props.history.action == 'POP'){
-      if (this.props.queryString != newSearch){
-        this.props.updateStore(newSearch,this.props.queryString,'POP')
+    window.onpopstate  = (e) => {
+      let newSearch = window.location.search.replace('?','')
+      console.log(newSearch)
+      console.log(this.props.history.action)
+      if (this.props.active){//} && this.props.history.action == 'POP'){
+        if (this.props.queryString != newSearch){
+          console.log('update')
+          this.props.updateStore(newSearch,this.props.queryString,'POP')
+        }
       }
-      //this.props.updateStore(this.props.location.search)
-    }
-    else {
-      this.props.updateQueryString(newSearch)
+      else {
+        this.props.updateQueryString(newSearch)
+      }
     }
 
-    // this.props.router.setRouteLeaveHook(this.props.route, this.routerWillLeave);
+
   }
-
-  // routerWillLeave(nextState) { // return false to block navigation, true to allow
-  //   if (nextState.action === 'POP') {
-  //     console.log('popping')
-  //     // handle "Back" button clicks here
-  //   }
-  // }
 
   render(){
     let activeTab = window.location.hash.replace('#','')
@@ -68,7 +61,7 @@ class LayoutComponent extends React.Component {
         <div className={styles.content}>
           {menu}
           <div className={styles.plot_area}>
-            {this.props.active ? <LayoutPlots/> : <Spinner/> }
+            {this.props.datasetId ? this.props.active ? <LayoutPlots/> : <Spinner/> : <LayoutPlots/> }
           </div>
         </div>
         <div className={styles.main_footer}>
