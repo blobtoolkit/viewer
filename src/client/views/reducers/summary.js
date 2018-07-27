@@ -121,7 +121,7 @@ export const getSummary = createSelector(
 const getSpan = createSelector(
   getSelectedDatasetMeta,
   meta => {
-    return meta.assembly.span || 0
+    return meta.assembly ? meta.assembly.span || 0 : 0
   }
 )
 
