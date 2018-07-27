@@ -14,7 +14,7 @@ const config = {
     APP_DIR + '/index.jsx'
   ],
   output: {
-      publicPath: '/',
+      publicPath: '',
       path: BUILD_DIR,
       filename: 'js/bundle.js'
   },
@@ -136,7 +136,8 @@ const config = {
         test: /\.(gif|png|jpe?g)$/i,
         loader: 'file-loader',
         options: {
-          name: 'img/[hash].[ext]'
+          name: 'img/[hash].[ext]',
+          publicPath: main.basename
         }
       }
     ]
