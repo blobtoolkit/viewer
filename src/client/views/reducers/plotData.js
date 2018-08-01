@@ -12,7 +12,7 @@ import { getRawDataForFieldId, getDetailsForFieldId, getBinsForFieldId, getMetaD
 import store from '../store'
 import * as d3 from 'd3'
 import cloneFunction from 'clone-function'
-import { queryValue } from './history'
+import { getQueryValue } from './location'
 // import React from 'react'
 // import { server } from 'react-dom'
 
@@ -42,11 +42,11 @@ export const getMainPlotData = createSelector(
     let plotData = {id:mainPlot.id,axes:{},meta:{}};
     plotData.axes.x = xData || {values:[]}
     let xDomain = xMeta.xScale.domain().slice(0)
-    let xmin = queryValue('xmin')
+    let xmin = getQueryValue('xmin')
     if (xmin){
       xDomain[0] = 1*xmin
     }
-    let xmax = queryValue('xmax')
+    let xmax = getQueryValue('xmax')
     if (xmax){
       xDomain[1] = 1*xmax
     }
@@ -54,11 +54,11 @@ export const getMainPlotData = createSelector(
     plotData.meta.x = xMeta
     plotData.axes.y = yData || {values:[]}
     let yDomain = yMeta.xScale.domain().slice(0)
-    let ymin = queryValue('ymin')
+    let ymin = getQueryValue('ymin')
     if (ymin){
       yDomain[0] = 1*ymin
     }
-    let ymax = queryValue('ymax')
+    let ymax = getQueryValue('ymax')
     if (ymax){
       yDomain[1] = 1*ymax
     }
@@ -86,11 +86,11 @@ export const getAllMainPlotData = createSelector(
     let plotData = {id:mainPlot.id,axes:{},meta:{},scale:{}};
     plotData.axes.x = xData || {values:[]}
     let xDomain = xMeta.xScale.domain().slice(0)
-    let xmin = queryValue('xmin')
+    let xmin = getQueryValue('xmin')
     if (xmin){
       xDomain[0] = 1*xmin
     }
-    let xmax = queryValue('xmax')
+    let xmax = getQueryValue('xmax')
     if (xmax){
       xDomain[1] = 1*xmax
     }
@@ -99,11 +99,11 @@ export const getAllMainPlotData = createSelector(
     plotData.scale.x = xMeta.xScale
     plotData.axes.y = yData || {values:[]}
     let yDomain = yMeta.xScale.domain().slice(0)
-    let ymin = queryValue('ymin')
+    let ymin = getQueryValue('ymin')
     if (ymin){
       yDomain[0] = 1*ymin
     }
-    let ymax = queryValue('ymax')
+    let ymax = getQueryValue('ymax')
     if (ymax){
       yDomain[1] = 1*ymax
     }
@@ -190,11 +190,11 @@ export const getAllMainPlotData = createSelector(
 //     let plotData = {id:mainPlot.id,axes:{},scale:{}};
 //     plotData.axes.x = xData || {values:[]}
 //     let xDomain = xScale.domain().slice(0)
-//     let xmin = queryValue('xmin')
+//     let xmin = getQueryValue('xmin')
 //     if (xmin){
 //       xDomain[0] = 1*xmin
 //     }
-//     let xmax = queryValue('xmax')
+//     let xmax = getQueryValue('xmax')
 //     if (xmax){
 //       xDomain[1] = 1*xmax
 //     }
@@ -202,11 +202,11 @@ export const getAllMainPlotData = createSelector(
 //     plotData.scale.x = xScale
 //     plotData.axes.y = yData || {values:[]}
 //     let yDomain = yScale.domain().slice(0)
-//     let ymin = queryValue('ymin')
+//     let ymin = getQueryValue('ymin')
 //     if (ymin){
 //       yDomain[0] = 1*ymin
 //     }
-//     let ymax = queryValue('ymax')
+//     let ymax = getQueryValue('ymax')
 //     if (ymax){
 //       yDomain[1] = 1*ymax
 //     }
@@ -329,7 +329,7 @@ export const getScatterPlotData = createSelector(
 
 // export const getPlotGraphics = createSelector(
 //   getFilteredList,
-//   () => queryValue('plotGraphics'),
+//   () => getQueryValue('plotGraphics'),
 //   (list,graphics) => {
 //     console.log(graphics)
 //     if (graphics == 'svg' || graphics == 'canvas'){

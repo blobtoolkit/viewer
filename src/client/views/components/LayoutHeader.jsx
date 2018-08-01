@@ -1,6 +1,5 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import { Router, Switch, Route, withRouter } from 'react-router-dom'
 import Header from './Header'
 import styles from './Layout.scss'
 import MenuDatasetMain from './MenuDatasetMain'
@@ -10,7 +9,7 @@ import MenuDisplayMain from './MenuDisplayMain'
 import MenuSummaryMain from './MenuSummaryMain'
 import MenuHelpMain from './MenuHelpMain'
 import { getTopLevelFields } from '../reducers/field'
-import { toggleHash, hashValue } from '../reducers/history'
+import { toggleHash, getHashString } from '../reducers/location'
 
 
 class HeaderLayoutComponent extends React.Component {
@@ -21,12 +20,12 @@ class HeaderLayoutComponent extends React.Component {
   render(){
     let labels = ['Datasets','Filters','Lists','Settings','Summary','Help']
     let tabs = []
-    let activeTab = window.location.hash.replace('#','')
+    let activeTab = this.props.activeTab
     labels.forEach(tab=>{
       tabs.push({id:tab,active:activeTab == tab})
     })
     return (
-      <Header tabs={tabs} onTabClick={(tab)=>{toggleHash(tab)}}/>
+      <Header tabs={tabs} onTabClick={(tab)=>{this.props.toggleHash(tab)}}/>
     )
   }
 }
@@ -36,17 +35,23 @@ class LayoutHeader extends React.Component {
     super(props);
     this.mapStateToProps = state => {
       return {
-        hashValue: hashValue(state)
+        activeTab: getHashString(state)
+      }
+    },
+    this.mapDispatchToProps = dispatch => {
+      return {
+        toggleHash: value => dispatch(toggleHash(value))
       }
     }
   }
 
   render(){
     const ConnectedLayoutHeader = connect(
-      this.mapStateToProps
+      this.mapStateToProps,
+      this.mapDispatchToProps
     )(HeaderLayoutComponent)
     return <ConnectedLayoutHeader {...this.props}/>
   }
 }
 
-export default withRouter(LayoutHeader)
+export default LayoutHeader

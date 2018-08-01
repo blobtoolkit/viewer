@@ -5,7 +5,7 @@ import immutableUpdate from 'immutable-update';
 import deep from 'deep-get-set'
 import shallow from 'shallowequal'
 import store from '../store'
-import { queryValue, addQueryValues, removeQueryValues, updateQueryValues } from './history'
+import { getQueryValue } from './location'
 import { queryToStore } from '../querySync'
 import qs from 'qs'
 import { getSelectedRecords } from './select'
@@ -29,9 +29,6 @@ export const filters = handleActions(
       })
     ),
     EDIT_FILTER: (state, action) => {
-      // immutableUpdate(state, {
-      //   byId: { [action.payload.id]: action.payload }
-      // })
       let id = action.payload.id
       let fields = Object.keys(action.payload).filter((key)=>{return key != 'id'})
       if (action.payload.range){
@@ -54,17 +51,6 @@ export const filters = handleActions(
     allIds: []
   }
 )
-
-
-// export const updateFilterList = createAction('UPDATE_FILTER_LIST')
-// export const filteredList = handleAction(
-//   'UPDATE_FILTER_LIST',
-//   (state, action) => (
-//     action.payload
-//   ),
-//   []
-// )
-// export const getFilteredList = state => state.filteredList
 
 const filterRangeToList = (low,high,arr,list,invert) => {
   let ret = []
@@ -150,7 +136,7 @@ export function filterToList(readQueryString) {
     let fields = state.fields.byId;
     let data = state.rawData.byId;
     let parsed = qs.parse(state.queryString)
-    let count = state.availableDatasets.byId[state.selectedDataset].records
+    let count = getSelectedDatasetMeta(state).records
     let list = fields['selection'].active ? state.selectedRecords : undefined
     let all = []
     if (!list || list.length == 0 || filters['selection'].invert){
@@ -174,8 +160,8 @@ export function filterToList(readQueryString) {
           let invstr = id+'--Inv'
           let range = filters[id].range
           let limit = fields[id].range
-          let qmin = 1 * queryValue(minstr)
-          let qmax = 1 * queryValue(maxstr)
+          let qmin = 1 * getQueryValue(minstr)
+          let qmax = 1 * getQueryValue(maxstr)
           if (!shallow(range,limit)){
             list = filterRangeToList(range[0],range[1],data[id].values,list,filters[id].invert)
             if (range[0] > limit[0]){
@@ -193,10 +179,9 @@ export function filterToList(readQueryString) {
             if (filters[id].invert){
               values[invstr] = true
             }
-            else if (queryValue(invstr)){
+            else if (getQueryValue(invstr)){
               values[invstr] = false
             }
-            // addQueryValues(values)
           }
           else {
             if (keyed(parsed,minstr)){
@@ -208,7 +193,6 @@ export function filterToList(readQueryString) {
           }
         }
         else if (filters[id].type == 'list' || filters[id].type == 'category'){
-          //let data_id = filters[id].clonedFrom || id
           if (data[id]){
             list = filterCategoriesToList(filters[id].keys,data[id].values,list,filters[id].invert)
             let keystr = id+'--Keys'
@@ -222,8 +206,6 @@ export function filterToList(readQueryString) {
               else {
                 values[invstr] = false
               }
-              // console.log(11)
-              // addQueryValues(values)
             }
             else {
               if (keyed(parsed,keystr)){
@@ -234,16 +216,10 @@ export function filterToList(readQueryString) {
               }
             }
           }
-          //console.log(data_id)
         }
-        // else if (filters[id].type == 'selection'){
-        //   list = filterArrayToList(filters[id].list,list)
-        // }
       }
     })
-    // updateQueryValues(values,remove)
     dispatch(queryToStore({values,remove}))
-    //dispatch(updateFilterList(list))
   }
 }
 

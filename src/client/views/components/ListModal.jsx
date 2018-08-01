@@ -1,6 +1,5 @@
 import React from 'react';
-import {ModalContainer, ModalDialog} from 'react-modal-dialog';
-import { addQueryValues } from '../reducers/history'
+import {ModalContainer, ModalDialog} from 'react-modal-dialog'
 import styles from './Layout.scss'
 import JSONPretty from 'react-json-pretty';
 import { queryToStore } from '../querySync'
@@ -24,11 +23,6 @@ class ListModal extends React.Component {
     element.href = URL.createObjectURL(file);
     element.download = (name || 'file') + '.json';
     element.click();
-  }
-
-  loadFromList(list){
-    addQueryValues(list.params,'?')
-    // TODO: move function to dispatch queryToStore(dispatch,{values})
   }
 
   render() {

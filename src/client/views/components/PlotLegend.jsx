@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux'
 import { getSummary }  from '../reducers/summary'
-import { getSelectedDataset } from '../reducers/dataset'
+import { getDatasetID } from '../reducers/location'
 import { getDatasetMeta } from '../reducers/repository'
 import styles from './Plot.scss'
 import { format as d3format} from 'd3-format'
@@ -12,7 +12,7 @@ export default class PlotLegend extends React.Component {
     this.mapStateToProps = () => {
       return (state, props) => {
         let summary = getSummary(state)
-        let id = getSelectedDataset(state)
+        let id = getDatasetID(state)
         let meta = getDatasetMeta(state,id)
         return {meta,...summary}
       }

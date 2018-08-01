@@ -4,15 +4,6 @@ import shallow from 'shallowequal'
 import immutableUpdate from 'immutable-update';
 import store from '../store'
 
-export const getSelectedDatasetId = (state) => state.selectedDataset || false;
-
-export const linkIdToDataset = (id) => {
-  let ds = getSelectedDatasetId()
-  let re = new RegExp('^'+ds)
-  if (!(id || 'new').match(re)) id = ds+'_'+id
-  return id
-}
-
 export const byIdSelectorCreator = () => {
   return createSelectorCreator((resultFunc) => {
     const memoAll = {};
@@ -29,16 +20,3 @@ export const byIdSelectorCreator = () => {
     };
   })
 }
-
-export const handleSimpleByDatasetAction = (string) => handleAction(
-  string,
-  (state, action) => {
-    return immutableUpdate(state, {
-      byDataset: { [getSelectedDatasetId()]: action.payload }
-    })
-  },
-  {byDataset:{}}
-)
-
-export const getSimpleByDatasetProperty = (property) =>
-  (state, datasetId) => state[property] ? state[property].byDataset[getSelectedDatasetId()] : undefined

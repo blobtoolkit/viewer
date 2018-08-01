@@ -1,4 +1,5 @@
-import { history, queryValue, parseQueryString } from './reducers/history'
+import { history } from './reducers/history'
+import { getQueryValue } from './reducers/location'
 import qs from 'qs'
 import convert from 'color-convert'
 import { batchActions } from 'redux-batched-actions';
@@ -130,11 +131,12 @@ const mapDispatchToQuery = (
         })
         return actions
       },
-      default: keyed(window,'plot') ? (
-        {x:queryValue('xField') || window.plot.x || null, y:queryValue('yField') || window.plot.y || null, z:queryValue('zField') || window.plot.z || null, cat:queryValue('catField') || window.plot.cat || null}
-      ) : (
-        {x:queryValue('xField') || null, y:queryValue('yField') || null, z:queryValue('zField') || null ,cat:queryValue('catField') || null}
-      )
+      default: {}
+      // keyed(window,'plot') ? (
+      //   {x:getQueryValue('xField') || window.plot.x || null, y:getQueryValue('yField') || window.plot.y || null, z:getQueryValue('zField') || window.plot.z || null, cat:getQueryValue('catField') || window.plot.cat || null}
+      // ) : (
+      //   {x:getQueryValue('xField') || null, y:getQueryValue('yField') || null, z:getQueryValue('zField') || null ,cat:getQueryValue('catField') || null}
+      // )
 
     },
     filter: {
@@ -289,7 +291,7 @@ const mapDispatchToQuery = (
 export const defaultValue = param => mapDispatchToQuery[param].default || false
 
 export const qsDefault = (param) => {
-  return queryValue(param) || defaultValue(param)
+  return getQueryValue(param) || defaultValue(param)
 }
 
 export const queryToStore = (options = {}) => {

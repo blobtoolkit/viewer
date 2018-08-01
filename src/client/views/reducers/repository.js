@@ -8,17 +8,16 @@ import { addAllFields } from './field'
 import { filterToList } from './filter'
 import { editPlot } from './plot'
 import { qsDefault } from '../querySync'
-import { history,
-  queryValue,
-  clearQuery,
-  addQueryValues,
-  urlSearchTerm,
-  urlDataset,
-  urlViews,
-  viewsToPathname } from './history'
-import { getSelectedDataset } from '../reducers/dataset'
-import { getSearchTerm, setSearchTerm } from './search'
+import { history } from './history'
+// import { getSearchTerm, setSearchTerm } from './search'
 import { fetchIdentifiers } from './identifiers'
+import { getDatasetID,
+  getViews,
+  getSearchTerm,
+  updatePathname,
+  viewsToPathname,
+  getQueryValue,
+  getHashString } from './location'
 
 const apiUrl = window.apiURL || '/api/v1'
 
@@ -40,6 +39,7 @@ const useStoredMeta = createAction('USE_STORED_META')
 
 const defaultState = () => (
     {
+      isInitialised: false,
       isFetching: false,
       allIds: [],
       byId: {}
@@ -50,14 +50,18 @@ export const availableDatasets = handleActions(
   {
     REQUEST_REPOSITORY: (state, action) => ({
       isFetching: true,
-      didInvalidate: false
+      isInitialised: true,
+      didInvalidate: false,
     }),
-    RECEIVE_REPOSITORY: (state, action) => ({
-      isFetching: false,
-      byId: (action.payload).reduce((obj, item) => (obj[item.id] = item, obj) ,{}),
-      allIds: (action.payload).map(item => item.id),
-      lastUpdated: action.meta.receivedAt
-    }),
+    RECEIVE_REPOSITORY: (state, action) => (
+      {
+        isFetching: false,
+        isInitialised: true,
+        byId: (action.payload).reduce((obj, item) => (obj[item.id] = item, obj) ,{}),
+        allIds: (action.payload).map(item => item.id),
+        lastUpdated: action.meta.receivedAt
+      }
+    ),
     INVALIDATE_DATASET: (state, action) => (
       state
     ),
@@ -73,22 +77,27 @@ export const availableDatasets = handleActions(
   defaultState()
 )
 
-export const getRepositoryIsFetching = state => deep(state,'availableDatasets.isFetching') || false
+export const getRepositoryIsFetching = state => state.availableDatasets.isFetching
+
+export const getRepositoryIsInitialised = state => deep(state,'availableDatasets.isInitialised') || false
 
 export const getAvailableDatasetIds = state => deep(state,'availableDatasets.allIds') || []
 
 export function fetchRepository(searchTerm) {
   return function (dispatch) {
+    dispatch(setDatasetIsActive(false))
     dispatch(requestRepository())
+    console.log("requesting");
     let state = store.getState()
-    let views = urlViews(state)
+    let views = getViews(state)
+    let datasetId = getDatasetID(state)
+    let currentTerm = getSearchTerm(state)
     let setSearch = false
     if (!searchTerm){
-      searchTerm = views['search']
+      searchTerm = currentTerm
       if (!searchTerm){
-        searchTerm = views['dataset']
+        searchTerm = datasetId
         if (searchTerm){
-          views['search'] = searchTerm
           setSearch = true
         }
       }
@@ -96,16 +105,11 @@ export function fetchRepository(searchTerm) {
         setSearch = true
       }
     }
-    else if (searchTerm != views['search']){
-      views['search'] = searchTerm
+    else if (searchTerm != currentTerm){
       setSearch = true
     }
-    let pathname = viewsToPathname(views)
-    let search = history.location.search || ''
-    let hash = history.location.hash || ''
-    history.replace({pathname,search,hash})
     if (setSearch){
-      dispatch(setSearchTerm(searchTerm))
+      dispatch(updatePathname({search:searchTerm}))
     }
     return fetch(apiUrl + '/search/' + searchTerm)
       .then(
@@ -113,64 +117,38 @@ export function fetchRepository(searchTerm) {
         error => console.log('An error occured.', error)
       )
       .then(json =>{
-          if (views['dataset']){
-            if (json.find(o=>o.id==views['dataset'])){
-              pathname = viewsToPathname(views)
-              let dataset = getSelectedDataset(state)
-              if (dataset != views['dataset']){
-                if (dataset){
-                  history.replace({pathname,search:'',hash})
-                }
-                dispatch(loadDataset(views['dataset']))
-              }
+          if (datasetId){
+            if (json.find(o=>o.id==datasetId)){
+              // pathname = viewsToPathname(views)
+              // let dataset = getDatasetID(state)
+              // if (dataset != datasetId){
+              //   if (dataset){
+              //     dispatch(updatePathname({dataset}))
+              //   }
+              //   console.log(dataset)
+              //  dispatch(loadDataset(datasetId))
+              // }
             }
             else {
-              delete views['dataset']
-              pathname = viewsToPathname(views)
-              history.replace({pathname,search:'',hash})
               dispatch(refreshStore())
+              dispatch(updatePathname({},{dataset:true}))
             }
+
           }
           else if (json.length == 1){
-            views['dataset'] = json[0].id
-            pathname = viewsToPathname(views)
-            history.replace({pathname,search:'',hash})
-            dispatch(loadDataset(views['dataset']))
+            dispatch(updatePathname({dataset:json[0].id}))
+// TODO: add fetch repository or load dataset to component did mount
+// to trigger reload when datasetId changes
+
           }
+          console.log('recieved')
           dispatch(receiveRepository(json))
+          console.log(state)
         }
       )
   }
 }
 
-export const setView = createAction('SET_VIEW')
-
-export const view = handleAction(
-  'SET_VIEW',
-  (state, action) => (
-    action.payload
-  ),
-  urlViews().primary || 'blob'
-)
-export const getView = state => state.view
-
-
-export function chooseView(view) {
-  return function (dispatch) {
-    let state = store.getState()
-    let views = urlViews(state)
-    let newViews = {
-      search:views.search,
-      dataset:views.dataset,
-      [view]:true
-    }
-    let pathname = viewsToPathname(newViews)
-    let search = history.location.search || ''
-    let hash = history.location.hash || ''
-    history.push({pathname,search,hash})
-    dispatch(setView(view))
-  }
-}
 
 
 function clearUnderscores(obj) {
@@ -204,31 +182,26 @@ export const refreshStore = createAction('REFRESH')
 
 export function loadDataset(id,clear) {
   return function (dispatch) {
+    dispatch(setDatasetIsActive('loading'))
     let search = history.location.search || ''
     if (clear){
       search = ''
     }
     let state = store.getState()
-    let views = urlViews(state)
-    if (id){
-      views['dataset'] = id
-    }
-    let hash = history.location.hash || ''
-    let pathname = viewsToPathname(views)
-    history.replace({pathname,search,hash})
+    let views = getViews(state)
+    // if (id){
+    //   updatePathname({dataset:id})
+    // }
 
-    // let pathname = history.location.pathname
-    // let searchTerm = views['search'] || ''
-    dispatch(refreshStore())
-    dispatch(setDatasetIsActive(false))
-    dispatch(selectDataset(id))
+    // dispatch(refreshStore())
+    // dispatch(selectDataset(id))
     dispatch(fetchMeta(id)).then(() => {
       let meta = deep(store.getState(),['availableDatasets','byId',id])
       let plot = meta.plot
       window.plot = plot
       plot.id = 'default'
       Object.keys(plot).forEach(key=>{
-        let qv = queryValue(key+'Field')
+        let qv = getQueryValue(key+'Field')
         if (qv){
           plot[key] = qv
         }
@@ -238,9 +211,9 @@ export function loadDataset(id,clear) {
       .then(()=>{
         dispatch(filterToList())
         window.scrollTop = {}
-        dispatch(setDatasetIsActive(true))
       })
       .then(()=>{
+        dispatch(setDatasetIsActive(true))
         dispatch(fetchIdentifiers())
       })
 
@@ -248,17 +221,8 @@ export function loadDataset(id,clear) {
   }
 }
 
-export const selectDataset = createAction('SELECT_DATASET')
-export const selectedDataset = handleAction(
-  'SELECT_DATASET',
-  (state, action) => (
-    action.payload
-  ),
-  null
-)
-
 export const getDatasetMeta = (state,id) => deep(state,['availableDatasets','byId',id]) || {}
-export const getDatasetIsFetching = (state) => (deep(state,['selectedDataset']) == null) || false
+export const getDatasetIsFetching = (state) => false //(deep(state,['selectedDataset']) == null) || false
 
 export const setDatasetIsActive = createAction('SET_DATASET_IS_ACTIVE')
 export const datasetIsActive = handleAction(
@@ -279,7 +243,9 @@ export function fetchSearchResults(str) {
   }
 }
 
-export const getDatasetIsActive = state => state.datasetIsActive
+export const getDatasetIsActive = state => {
+  return state.datasetIsActive
+}
 
 export const setReloading = createAction('RELOADING')
 export const reloading = handleAction(
@@ -292,10 +258,8 @@ export const reloading = handleAction(
 export const getReloading = state => state.reloading
 
 export const repositoryReducers = {
-  selectedDataset,
   availableDatasets,
   fetchRepository,
   datasetIsActive,
-  view,
   reloading
 }

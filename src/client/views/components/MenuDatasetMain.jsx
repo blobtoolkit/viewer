@@ -1,7 +1,7 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import { getRepositoryIsFetching, getAvailableDatasetIds, fetchMeta, loadDataset } from '../reducers/repository'
-import { getSelectedDataset } from '../reducers/dataset'
+import { getDatasetID, updatePathname } from '../reducers/location'
 import styles from './Layout.scss'
 import MenuDataset from './MenuDataset'
 import Spinner from './Spinner'
@@ -35,13 +35,14 @@ const mapStateToProps = state => {
   return {
     isFetching: getRepositoryIsFetching(state),
     datasetIds: getAvailableDatasetIds(state),
-    selectedDataset: getSelectedDataset(state)
+    selectedDataset: getDatasetID(state)
   }
 }
 
 const mapDispatchToProps = dispatch => {
   return {
-    onDatasetClick: id => dispatch(loadDataset(id,true)),
+    // onDatasetClick: id => dispatch(loadDataset(id,true)),
+    onDatasetClick: id => dispatch(updatePathname({dataset:id})),
     onDatasetMount: id => dispatch(fetchMeta(id))
   }
 }

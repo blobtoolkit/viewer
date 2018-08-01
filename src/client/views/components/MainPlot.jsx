@@ -28,7 +28,7 @@ import { addRecords, removeRecords } from '../reducers/select'
 import { scaleLinear as d3scaleLinear } from 'd3-scale';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { ExportButton } from './ExportButton'
-import { getSelectedDataset } from '../reducers/dataset'
+import { getDatasetID } from '../reducers/location'
 
 export default class MainPlot extends React.Component {
   constructor(props) {
@@ -37,7 +37,7 @@ export default class MainPlot extends React.Component {
       return (state, props) => {
         let plotShape = getPlotShape(state)
         let plotGraphics = getPlotGraphics(state)
-        let datasetId = getSelectedDataset(state)
+        let datasetId = getDatasetID(state)
         if (plotShape == 'hex'){
           return {
             datasetId,

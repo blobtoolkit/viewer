@@ -1,6 +1,5 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import { Router, Switch, Route, withRouter } from 'react-router-dom'
 import styles from './Layout.scss'
 import MenuDatasetMain from './MenuDatasetMain'
 import MenuFilterMain from './MenuFilterMain'
@@ -9,19 +8,32 @@ import MenuDisplayMain from './MenuDisplayMain'
 import MenuSummaryMain from './MenuSummaryMain'
 import MenuHelpMain from './MenuHelpMain'
 import { getTopLevelFields } from '../reducers/field'
-import { toggleHash, hashValue } from '../reducers/history'
+import { getDatasetID, getHashString } from '../reducers/location'
 
 
 class ControlsLayoutComponent extends React.Component {
   constructor(props) {
     super(props);
   }
+  handleScroll(e,tab){
+    window.scrollTop[tab] = e.target.scrollTop
+  }
+
+  componentDidMount() {
+    let menuDiv = this.refs.menuDiv
+    if(menuDiv){
+      let activeTab = this.props.activeTab
+      menuDiv.scrollTop = window.scrollTop[activeTab] || 0
+      menuDiv.addEventListener('scroll', e => this.handleScroll(e,activeTab));
+    }
+
+  }
 
   render(){
     let labels = ['Datasets','Filters','Lists','Settings','Summary','Help']
     let tabs = []
-    let activeTab = window.location.hash.replace('#','')
-    if (!activeTab && !this.props.match.params.datasetId){
+    let activeTab = this.props.activeTab
+    if (!activeTab && !this.props.datasetId){
       activeTab = 'Datasets'
     }
     labels.forEach(tab=>{
@@ -34,11 +46,12 @@ class ControlsLayoutComponent extends React.Component {
     if (activeTab == 'Settings') menu = <MenuDisplayMain/>
     if (activeTab == 'Summary') menu = <MenuSummaryMain/>
     if (activeTab == 'Help') menu = <MenuHelpMain/>
-    return (
-      <div className={styles.fill_parent}>
-        {menu}
-      </div>
-    )
+    if (menu){
+      return <div className={styles.menu} ref='menuDiv'>{menu}</div>
+    }
+    else {
+      return null
+    }
   }
 }
 
@@ -48,7 +61,8 @@ class LayoutControls extends React.Component {
     this.mapStateToProps = state => {
       return {
         topLevelFields: getTopLevelFields(state),
-        hashValue: hashValue(state)
+        activeTab: getHashString(state),
+        datasetId: getDatasetID(state)
       }
     }
   }
@@ -61,4 +75,4 @@ class LayoutControls extends React.Component {
   }
 }
 
-export default withRouter(LayoutControls)
+export default LayoutControls

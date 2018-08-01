@@ -1,10 +1,10 @@
 import React from 'react';
 import { connect } from 'react-redux'
-import { Router, Switch, Route, withRouter } from 'react-router-dom'
 import styles from './Layout.scss'
+import { getView } from '../reducers/location'
 
-const MenuHelpMain = ({match,datasetId,view}) => {
-  switch (match.params.view || 'blob') {
+const MenuHelp = ({match,datasetId,view}) => {
+  switch (view || 'blob') {
     case 'blob':
       view = 'Blob text'
       break
@@ -35,4 +35,22 @@ const MenuHelpMain = ({match,datasetId,view}) => {
   )
 };
 
-export default withRouter(MenuHelpMain)
+class MenuHelpMain extends React.Component {
+  constructor(props) {
+    super(props);
+    this.mapStateToProps = state => {
+      return {
+        view: getView(state)
+      }
+    }
+  }
+
+  render(){
+    const ConnectedHelp = connect(
+      this.mapStateToProps
+    )(MenuHelp)
+    return <ConnectedHelp {...this.props}/>
+  }
+}
+
+export default MenuHelpMain

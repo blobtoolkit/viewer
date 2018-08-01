@@ -1,7 +1,6 @@
 import React from 'react'
-import styles from './Palette.scss';
+import styles from './Palette.scss'
 import { SketchPicker } from 'react-color'
-import { addQueryValues } from '../reducers/history'
 import { queryToStore } from '../querySync'
 
 class PaletteSwatch extends React.Component {
@@ -25,12 +24,8 @@ class PaletteSwatch extends React.Component {
 
   handleClose() {
     let rgb = 'rgb('+this.state.color.r+','+this.state.color.g+','+this.state.color.b+')'
-    addQueryValues({['color'+this.props.index]:rgb})
-    // TODO: move function to dispatch queryToStore(
     this.setState({ displayColorPicker: false })
   };
-
-
 
   render(){
     const handleChange = (color) => {

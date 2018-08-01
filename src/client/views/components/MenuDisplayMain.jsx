@@ -1,6 +1,5 @@
 import React from 'react';
 import { connect } from 'react-redux'
-import { withRouter } from 'react-router-dom'
 //import styles from './Plot.scss'
 import { getAxisTitle } from '../reducers/plotData'
 import { getPlotShape,
@@ -22,7 +21,7 @@ import { getPlotShape,
   chooseCurveOrigin,
   getSnailOrigin,
   chooseSnailOrigin } from '../reducers/plotParameters'
-import { chooseView } from '../reducers/repository'
+import { chooseView, getView } from '../reducers/location'
 import styles from './Layout.scss'
 import MenuDisplaySimple from './MenuDisplaySimple'
 import SVGIcon from './SVGIcon'
@@ -49,7 +48,7 @@ import ToolTips from './ToolTips'
 import Timeout from './Timeout'
 
 const DisplayMenu = ({
-  title, match,
+  title, view,
   shape, onSelectShape,
   resolution, onChangeResolution,
   graphics, onChangeGraphics,
@@ -61,7 +60,8 @@ const DisplayMenu = ({
   transform, onChangeTransform,
   onSelectView }) => {
   let context
-  let view = match.params.view || 'blob'
+  console.log(view)
+  view = view || 'blob'
   switch (view) {
     case 'blob':
       context = (
@@ -225,7 +225,8 @@ class MenuDisplayMain extends React.Component {
         scale:getZScale(state),
         curveOrigin:getCurveOrigin(state),
         snailOrigin:getSnailOrigin(state),
-        transform:getTransformFunctionParams(state)
+        transform:getTransformFunctionParams(state),
+        view: getView(state)
       }
     }
   }
@@ -234,7 +235,7 @@ class MenuDisplayMain extends React.Component {
     const DisplayMain = connect(
       this.mapStateToProps,
       this.mapDispatchToProps
-    )(withRouter(DisplayMenu))
+    )(DisplayMenu)
     return <DisplayMain {...this.props}/>
   }
 }

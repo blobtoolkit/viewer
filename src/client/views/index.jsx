@@ -6,8 +6,7 @@ import store from './store'
 import App from './components/App';
 import 'babel-polyfill'
 
-import { fetchRepository } from './reducers/repository'
-store.dispatch(fetchRepository())
+
 
 render(
   <BrowserRouter>

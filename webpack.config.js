@@ -14,8 +14,8 @@ const config = {
     APP_DIR + '/index.jsx'
   ],
   output: {
-      publicPath: main.basename,
-      path: BUILD_DIR,
+      publicPath: '/',
+      path: BUILD_DIR + '/',
       filename: 'js/bundle.js'
   },
   resolve: {
@@ -23,7 +23,8 @@ const config = {
   },
   devServer: {
     historyApiFallback: true,
-    host:main.hostname,
+    host: main.hostname,
+    contentBase: BUILD_DIR,
     proxy: {
       '/api/**': { target: 'http://localhost:8000' }
     }
@@ -137,7 +138,7 @@ const config = {
         loader: 'file-loader',
         options: {
           name: 'img/[hash].[ext]',
-          publicPath: main.basename
+          publicPath: '/'
         }
       }
     ]

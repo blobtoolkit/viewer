@@ -1,14 +1,15 @@
 import { createAction, handleAction, handleActions } from 'redux-actions'
 import { createSelector } from 'reselect'
-import { byIdSelectorCreator,
-  handleSimpleByDatasetAction,
-  getSimpleByDatasetProperty } from './selectorCreators'
+import { byIdSelectorCreator } from './selectorCreators'
 import { getFilteredList } from './filter'
 import { getMainPlot } from './plot';
 import immutableUpdate from 'immutable-update';
 import store from '../store'
-import { queryValue } from './history'
+import qs from 'qs'
 import { queryToStore, qsDefault } from '../querySync'
+import history from './history'
+import { urlViews, pathname, setPathname, loadDataset, viewsToPathname } from './repository'
+import { getDatasetID } from './location'
 
 export const setPlotShape = createAction('SET_PLOT_SHAPE')
 export const choosePlotShape = (plotShape) => {
@@ -282,17 +283,6 @@ export const getPlotGraphics = createSelector(
   }
 )
 
-export const setQueryString = createAction('SET_QUERY_STRING')
-export const queryString = handleAction(
-  'SET_QUERY_STRING',
-  (state, action) => (
-    action.payload
-  ),
-  ''
-)
-export const getQueryString = state => state.queryString
-
-
 export const plotParameterReducers = {
   plotShape,
   plotResolution,
@@ -305,6 +295,5 @@ export const plotParameterReducers = {
   curveOrigin,
   circumferenceScale,
   radiusScale,
-  snailOrigin,
-  queryString
+  snailOrigin
 }

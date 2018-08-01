@@ -8,7 +8,6 @@ import {
 } from '../reducers/preview'
 import Spinner from './Spinner'
 import styles from './Datasets.scss'
-// import { withRouter } from "react-router-dom";
 
 
 const mapStateToProps = state => getFilteredSummary(state)
@@ -48,5 +47,4 @@ const DatasetApplyFilters = connect(
   mapDispatchToProps
 )(ApplyFilters)
 
-// export default withRouter(DatasetApplyFilters)
 export default DatasetApplyFilters

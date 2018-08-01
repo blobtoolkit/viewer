@@ -9,7 +9,6 @@ import { addRecords, removeRecords } from '../reducers/select'
 import PlotLegend from './PlotLegend'
 import PlotAxisTitle from './PlotAxisTitle'
 import CumulativePlotBoundary from './CumulativePlotBoundary'
-import { getSelectedDatasetMeta } from '../reducers/dataset'
 const saveSvgAsPng = require('save-svg-as-png/lib/saveSvgAsPng.js')
 import AxisTitle from './AxisTitle'
 import ReactTable from 'react-table'
@@ -177,68 +176,5 @@ class TablePlot extends React.Component {
     return <ConnectedTable {...this.props}/>
   }
 }
-
-// class Table extends React.Component {
-//   render(){
-//     let viewbox = '0 0 1110 1110'
-//     let legend = <g transform='translate(700,720)'><PlotLegend/></g>
-//     let colors = this.props.cumulative.palette.colors
-//     let all = this.props.cumulative.paths.all
-//     let yValues = this.props.cumulative.values.all
-//     let byCat = this.props.cumulative.paths.byCat
-//     let yLabel = 'Cumulative ' + this.props.cumulative.zAxis
-//     let xLabel = (this.props.meta.record_type || '') + ' number'
-//     let paths = byCat.map((d,i)=>(
-//       <path className={styles.bold_path}
-//             d={d}
-//             key={i}
-//             fill='none'
-//             stroke={colors[i]}
-//             strokeLinecap='round'/>
-//     ))
-//     return (
-//       <div className={styles.outer}>
-//         <svg id="cumulative_plot"
-//           ref={(elem) => { this.svg = elem; }}
-//           className={styles.main_plot+' '+styles.fill_parent}
-//           viewBox={viewbox}
-//           preserveAspectRatio="xMidYMid meet">
-//           <g transform={'translate(100,10)'} >
-//             <CumulativePlotBoundary yValues={yValues}/>
-//             <path className={styles.bold_path}
-//                   d={all}
-//                   fill='none'
-//                   stroke='#999'
-//                   strokeLinecap='round'/>
-//             {paths}
-//             {legend}
-//             <AxisTitle axis='y' title={yLabel}/>
-//             <AxisTitle axis='x' title={xLabel}/>
-//           </g>
-//         </svg>
-//         <a className={styles.save_svg} onClick={()=>(saveSvgAsPng.saveSvg(document.getElementById("cumulative_plot"),"cumulative_plot.svg"))}>save image</a>
-//       </div>
-//     )
-//   }
-// }
-//
-// class TablePlot extends React.Component {
-//   constructor(props) {
-//     super(props);
-//     this.mapStateToProps = state => {
-//       return {
-//         cumulative: cumulativeCurves(state),
-//         meta: getSelectedDatasetMeta(state,this.props.datasetId)
-//       }
-//     }
-//   }
-//
-//   render(){
-//     const ConnectedTable = connect(
-//       this.mapStateToProps
-//     )(Table)
-//     return <ConnectedTable {...this.props}/>
-//   }
-// }
 
 export default TablePlot

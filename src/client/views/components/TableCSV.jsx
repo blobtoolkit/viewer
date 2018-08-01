@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 import styles from './Plot.scss'
 import { CSVLink, CSVDownload } from 'react-csv'
 import { getCSVdata } from '../reducers/summary'
-import { getSelectedDatasetId } from '../reducers/selectorCreators'
+import { getDatasetID } from '../reducers/location'
 
 export const DownloadCSVComponent = ({data,dataset}) => {
   return (
@@ -25,7 +25,7 @@ class DownloadCSV extends React.Component {
     this.mapStateToProps = state => {
       return {
         data: getCSVdata(state),
-        dataset: getSelectedDatasetId(state)
+        dataset: getDatasetID(state)
       }
     }
   }

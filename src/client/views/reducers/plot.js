@@ -1,27 +1,16 @@
 import { createAction, handleAction, handleActions } from 'redux-actions'
 import { createSelector } from 'reselect'
-import { byIdSelectorCreator,
-  handleSimpleByDatasetAction,
-  getSimpleByDatasetProperty } from './selectorCreators'
+import { byIdSelectorCreator } from './selectorCreators'
 import immutableUpdate from 'immutable-update';
 import deep from 'deep-get-set'
 import store from '../store'
-import { getQueryValue } from './history'
+import { getQueryValue } from './location'
 import { editField } from './field'
 import { qsDefault } from '../querySync'
 import { getDatasetMeta } from '../reducers/repository'
 
 export const editPlot = createAction('EDIT_PLOT')
 const defaultPlot = () => {
-  // let x = getQueryValue('xField') || 'gc'
-  // let y = getQueryValue('yField') || 'cov0_cov'
-  // let z = getQueryValue('zField') || 'length'
-  // return {
-  //   x,
-  //   y,
-  //   z,
-  //   cat:'bestsumorder_phylum'
-  // }
   return {}
 }
 export const plot = handleAction(

@@ -1,22 +1,17 @@
 import { createAction, handleAction, handleActions } from 'redux-actions'
 import { createSelector } from 'reselect'
-import { byIdSelectorCreator,
-  handleSimpleByDatasetAction,
-  getSimpleByDatasetProperty,
-  getSelectedDatasetId,
-  linkIdToDataset } from './selectorCreators'
+import { byIdSelectorCreator } from './selectorCreators'
 import { getIdentifiers, fetchIdentifiers } from './identifiers'
 import immutableUpdate from 'immutable-update';
 import deep from 'deep-get-set'
 import shallow from 'shallowequal'
 import store from '../store'
 import qs from 'qs'
-import { history, parseQueryString, clearQuery } from './history'
 import { filterToList, getFilteredList, getUnfilteredList } from './filter'
 import { fetchRawData, getAllActiveFields } from './field'
 import queryToStore from '../querySync'
 import { selectNone, addRecords } from './select'
-import { getQueryString } from './plotParameters'
+import { getQueryString } from './location'
 import { getSelectedDatasetMeta } from './dataset'
 
 export const addList = createAction('ADD_LIST')

@@ -1,8 +1,6 @@
 import { createAction, handleAction, handleActions } from 'redux-actions'
 import { createSelector } from 'reselect'
-import { byIdSelectorCreator,
-  handleSimpleByDatasetAction,
-  getSimpleByDatasetProperty } from './selectorCreators'
+import { byIdSelectorCreator } from './selectorCreators'
 import immutableUpdate from 'immutable-update';
 import deep from 'deep-get-set'
 import store from '../store'
@@ -10,7 +8,7 @@ import { getSelectedDatasetMeta } from './dataset'
 import { addFilter, editFilter } from './filter'
 import { getDimensionsbyDimensionId, setDimension } from './dimension'
 import * as d3 from 'd3'
-import { history, queryValue } from './history'
+import { getQueryValue, getDatasetID } from './location'
 
 const apiUrl = window.apiURL || '/api/v1'
 
@@ -128,35 +126,6 @@ export function cloneField(obj) {
     filt.keys = converted_data.keys.slice(0)
     filt.toggled = Array.from(Array(10).keys()).map(i=>false)
     dispatch(addFilter(filt))
-
-    // dispatch(requestRawData(id))
-    // let json = deep(state,['rawData','byId',linkIdToDataset(id)]);
-    // if (json && json.values){
-    //   dispatch(useStoredRawData(json))
-    //   return Promise.resolve(useStoredRawData(json));
-    // }
-    // let datasetId = deep(state,['selectedDataset']);
-    // return fetch(`http://localhost:8000/api/v1/field/${datasetId}/${id}`)
-    //   .then(
-    //     response => response.json(),
-    //     error => console.log('An error occured.', error)
-    //   )
-    //   .then(json => {
-    //     if (!json.keys || json.keys.length == 0){
-    //       let meta = getDetailsForFieldId(state,id)
-    //       let max = Number.MIN_VALUE, min = Number.MAX_VALUE;
-    //       let len = json.values.length;
-    //       for (let i = 0; i < len; i++) {
-    //         if (json.values[i] > max) max = json.values[i];
-    //         if (json.values[i] < min) min = json.values[i];
-    //       }
-    //       if (min == 0) min = 0.01
-    //       let scale = meta.xScale.copy().domain([min,max]).nice(25)
-    //       dispatch(editField({id,range:scale.domain()}))
-    //       dispatch(editFilter({id,range:scale.domain(),limit:scale.domain()}))
-    //     }
-    //     dispatch(receiveRawData({id,json}))
-    //   })
    }
 }
 
@@ -233,7 +202,7 @@ export function fetchRawData(id) {
       dispatch(useStoredRawData(json))
       return Promise.resolve(useStoredRawData(json));
     }
-    let datasetId = deep(state,['selectedDataset']);
+    let datasetId = getDatasetID(state)
     return fetch(`${apiUrl}/field/${datasetId}/${id}`)
       .then(
         response => response.json(),
@@ -251,21 +220,21 @@ export function fetchRawData(id) {
           // if (min == 0) min = 0.001
           let scale = meta.xScale.copy().domain([min,max]).nice(25)
           let limit = scale.domain().slice(0)
-          let qLimit = [queryValue(id+'--LimitMin'),queryValue(id+'--LimitMax')]
+          let qLimit = [getQueryValue(id+'--LimitMin'),getQueryValue(id+'--LimitMax')]
           limit[0] = qLimit[0].length > 0 ? 1*qLimit[0] : limit[0]
           limit[1] = qLimit[1].length > 0 ? 1*qLimit[1] : limit[1]
           dispatch(editField({id,range:limit}))
           let range = scale.domain().slice(0)
-          let qRange = [queryValue(id+'--Min'),queryValue(id+'--Max')]
+          let qRange = [getQueryValue(id+'--Min'),getQueryValue(id+'--Max')]
           range[0] = qRange[0].length > 0 ? 1*qRange[0] : range[0]
           range[1] = qRange[1].length > 0 ? 1*qRange[1] : range[1]
-          let invert = queryValue(id+'--Inv') || false
+          let invert = getQueryValue(id+'--Inv') || false
           dispatch(editFilter({id,range,invert,limit:scale.domain()}))
         }
         else {
-          let keystr = queryValue(id+'--Keys') || ''
+          let keystr = getQueryValue(id+'--Keys') || ''
           let keys = keystr.split(',').filter(Boolean).map(Number)
-          let invert = queryValue(id+'--Inv') || false
+          let invert = getQueryValue(id+'--Inv') || false
           dispatch(editFilter({id,keys,invert}))
         }
         dispatch(receiveRawData({id,json}))
@@ -277,7 +246,7 @@ export const addAllFields = (dispatch,fields,flag,meta,promises) => {
   promises = promises || []
   let axes = ['x','y','z','cat']
   axes.forEach(axis=>{
-    let f = queryValue(axis+'Field')
+    let f = getQueryValue(axis+'Field')
     if (f){
       let index = fields.findIndex(field=>field.id==f)
       if (index != -1){
@@ -316,7 +285,7 @@ export const addAllFields = (dispatch,fields,flag,meta,promises) => {
       })
     }
     let params = ['Min','Max','Inv','Keys','Active'].map(x=>field.id+'--'+x)
-    if (field.id != 'selection' && params.some(p=>queryValue(p))){
+    if (field.id != 'selection' && params.some(p=>getQueryValue(p))){
       field.active = true
       field.preload = true
     }
@@ -327,11 +296,11 @@ export const addAllFields = (dispatch,fields,flag,meta,promises) => {
     else {
       if (field.type == 'variable'){
         let range = field.range.slice(0)
-        let minstr = queryValue(field.id+'--Min')
+        let minstr = getQueryValue(field.id+'--Min')
         minstr = minstr ? Number(minstr) : null
-        let maxstr = queryValue(field.id+'--Max')
+        let maxstr = getQueryValue(field.id+'--Max')
         maxstr = maxstr ? Number(maxstr) : null
-        let invert = queryValue(field.id+'--Inv') == 'true'
+        let invert = getQueryValue(field.id+'--Inv') == 'true'
         range = [minstr || range[0],maxstr || range[1]]
         dispatch(addFilter({id:field.id,type:'range',range,invert}))
       }
@@ -446,7 +415,7 @@ export const getBinsForFieldId = createBinSelectorForFieldId(
           .entries(data)
         let sorted = []
         if (!rawData.fixedOrder){
-          let order = queryValue(details.meta.id+'--Order') || ''
+          let order = getQueryValue(details.meta.id+'--Order') || ''
           order = order.split(',')
           let sortFunction = (a,b) => {
             let ia = order.indexOf(keys[a.key])

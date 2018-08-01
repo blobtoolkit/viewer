@@ -1,9 +1,8 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import { Router, Switch, Route } from 'react-router-dom'
 import styles from './Layout.scss'
 import { loadDataset, getDatasetIsActive } from '../reducers/repository'
-import { withRouter } from 'react-router-dom'
+import { getView, getDatasetID } from '../reducers/location'
 import GetStarted from './GetStarted'
 import MainPlot from './MainPlot'
 import CumulativePlot from './CumulativePlot'
@@ -11,12 +10,34 @@ import DetailPlot from './DetailPlot'
 import SnailPlot from './SnailPlot'
 import TablePlot from './TablePlot'
 import TreeMapPlot from './TreeMapPlot'
-
+import Spinner from './Spinner'
 
 class PlotsLayoutComponent extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { spinnerOpacity: 0.5 }
+      console.log('construct')
+      if (this.props.datasetId && !this.props.active){
+        window.loading = true;
+        this.props.onLoad(this.props.datasetId)
+      }
+  }
+
+  componentDidMount(){
+
+  }
+
+  componentWillUpdate() {
+    console.log('update')
+    if (this.props.active && this.state.spinnerOpacity > 0){
+      this.setState({spinnerOpacity: 0})
+    }
+
+  }
+
   render(){
-    let view = <GetStarted {...this.props}/>
-    switch (this.props.match.params.view || 'blob') {
+    let view
+    switch (this.props.view || 'blob') {
       case 'cumulative':
         view = <CumulativePlot {...this.props}/>
         break
@@ -55,9 +76,11 @@ class PlotsLayoutComponent extends React.Component {
         break
 
     }
+    console.log(this.props)
     return (
       <div className={styles.fill_parent}>
-        {this.props.active ? view : <GetStarted/>}
+        <Spinner opacity={this.state.spinnerOpacity}/>
+        {view}
       </div>
     )
   }
@@ -68,17 +91,25 @@ class LayoutPlots extends React.Component {
     super(props);
     this.mapStateToProps = state => {
       return {
-        active: getDatasetIsActive(state)
+        active: getDatasetIsActive(state),
+        datasetId: getDatasetID(state),
+        view: getView(state)
+      }
+    }
+    this.mapDispatchToProps = dispatch => {
+      return {
+        onLoad: (id) => dispatch(loadDataset(id))
       }
     }
   }
 
   render(){
     const ConnectedLayout = connect(
-      this.mapStateToProps
+      this.mapStateToProps,
+      this.mapDispatchToProps
     )(PlotsLayoutComponent)
     return <ConnectedLayout {...this.props}/>
   }
 }
 
-export default withRouter(LayoutPlots)
+export default LayoutPlots

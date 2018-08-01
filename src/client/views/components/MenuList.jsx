@@ -7,7 +7,7 @@ import Spinner from './Spinner'
 import { createSelector } from 'reselect'
 import { fetchIdentifiers } from '../reducers/identifiers'
 import { getSelectedDatasetMeta } from '../reducers/dataset'
-import { urlSearchTerm } from '../reducers/history'
+import { getSearchTerm } from '../reducers/location'
 import { getSelectedList, updateSelectedList, getIdentifiersForList, chooseList } from '../reducers/list'
 import ListModal from './ListModal';
 
@@ -32,7 +32,7 @@ class MenuList extends React.Component {
         identifiers: getIdentifiersForList(state,this.props.id),
         active: getSelectedList(state) == this.props.id,
         meta: getSelectedDatasetMeta(state),
-        search: urlSearchTerm(state)
+        search: getSearchTerm(state)
       }
     }
     this.mapDispatchToProps = dispatch => {

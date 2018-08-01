@@ -10,14 +10,17 @@ import history from '../reducers/history';
 
 export const Routes = (active) => {
   return (
-    <Router history={history}>
-      <Switch>
-        <Route path="/dataset/:datasetId/:view?" render={(props)=>(<Layout {...props}/>)}/>
-        <Route path="/:searchTerm/dataset/:datasetId/:view?" render={(props)=>(<Layout {...props}/>)}/>
-        <Route path="/:searchTerm?" render={(props)=>(<Layout {...props}/>)}/>
-      </Switch>
-    </Router>
+    <Layout {...active}/>
   )
+  // return (
+  //   <Router history={history}>
+  //     <Switch>
+  //       <Route path="/dataset/:datasetId/:view?" render={(props)=>(<Layout {...props}/>)}/>
+  //       <Route path="/:searchTerm/dataset/:datasetId/:view?" render={(props)=>(<Layout {...props}/>)}/>
+  //       <Route path="/:searchTerm?" render={(props)=>(<Layout {...props}/>)}/>
+  //     </Switch>
+  //   </Router>
+  // )
 }
 
 export default Routes

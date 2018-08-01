@@ -4,12 +4,8 @@ import immutableUpdate from 'immutable-update';
 import deep from 'deep-get-set'
 import shallow from 'shallowequal'
 import store from '../store'
-import { byIdSelectorCreator,
-  handleSimpleByDatasetAction,
-  getSimpleByDatasetProperty,
-  getSelectedDatasetId,
-  linkIdToDataset } from './selectorCreators'
-import { getSelectedDataset } from './dataset'
+import { byIdSelectorCreator } from './selectorCreators'
+import { getDatasetID } from './location'
 
 const apiUrl = window.apiURL || '/api/v1'
 
@@ -49,11 +45,12 @@ export const getIdentifiers = state => state.identifiers ? state.identifiers.lis
 export function fetchIdentifiers() {
   return function (dispatch) {
     let state = store.getState();
+    console.log(state)
     let existing = getIdentifiers(state)
     if (existing.length > 0){
       return new Promise (resolve => resolve(existing))
     }
-    let id = getSelectedDataset(state)
+    let id = getDatasetID(state)
     dispatch(requestIdentifiers(id))
     return fetch(apiUrl + '/identifiers/' + id)
       .then(

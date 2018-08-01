@@ -15,27 +15,7 @@ import FieldSet from './FieldSet'
 import MainPlot from './MainPlot'
 import ToolTips from './ToolTips'
 
-// const DatasetMenu = ({ selectedDataset, isFetching, datasetIds, onDatasetMount, onDatasetClick, offset }) => {
-//   return (
-//     <div className={styles.menu} style={{left:offset}}>
-//       {isFetching ? <Spinner /> : null}
-//       {datasetIds.map(id => {
-//         let active = false
-//         if (id == selectedDataset) active = true
-//         return (
-//           <MenuDataset
-//             key={id}
-//             id={id}
-//             active={active}
-//             onDatasetMount={(id) => onDatasetMount(id)}
-//             onDatasetClick={(id) => onDatasetClick(id)}
-//           />
-//         )}
-//       )}
-//     </div>
-//   )
-// }
-//
+
 class FieldMenu extends React.Component {
   mapFields(fields){
     return (

@@ -1,15 +1,12 @@
 import { createAction, handleAction, handleActions } from 'redux-actions'
 import { createSelector, createSelectorCreator } from 'reselect'
-import { byIdSelectorCreator,
-  handleSimpleByDatasetAction,
-  getSimpleByDatasetProperty } from './selectorCreators'
+import { byIdSelectorCreator } from './selectorCreators'
 import immutableUpdate from 'immutable-update';
 import deep from 'deep-get-set'
 import shallow from 'shallowequal'
 import store from '../store'
 import { queryToStore, colorToRGB, qsDefault, userColors } from '../querySync'
-import { queryValue } from '../reducers/history'
-import { addQueryValues } from '../reducers/history'
+import { getQueryValue } from '../reducers/location'
 
 export const addPalette = createAction('ADD_PALETTE')
 export const editPalette = createAction('EDIT_PALETTE')
@@ -17,7 +14,7 @@ export const editPalette = createAction('EDIT_PALETTE')
 const qsPalette = () => {
   let colors = userColors.slice(0)
   for (let i = 0; i < colors.length; i++){
-    let qsColor = queryValue('color'+i)
+    let qsColor = getQueryValue('color'+i)
     if (qsColor){
       colors[i] = colorToRGB(qsColor) || colors[i]
     }

@@ -6,7 +6,6 @@ import { Link } from 'react-router-dom'
 import Spinner from './Spinner'
 import { createSelector } from 'reselect'
 import { getDatasetMeta, loadDataset } from '../reducers/repository'
-// import { withRouter } from 'react-router-dom';
 import { DatasetModal } from './DatasetModal'
 
 const basename = BASENAME || ''
@@ -74,5 +73,4 @@ class Dataset extends React.Component {
   }
 }
 
-// export default withRouter(MenuDataset)
 export default MenuDataset

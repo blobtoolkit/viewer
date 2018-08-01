@@ -1,8 +1,6 @@
 import { createAction, handleAction, handleActions } from 'redux-actions'
 import { createSelector } from 'reselect'
-import { byIdSelectorCreator,
-  getSimpleByDatasetProperty,
-  getSelectedDatasetId } from './selectorCreators'
+import { byIdSelectorCreator } from './selectorCreators'
 import { getFilteredList } from './filter'
 import { getDatasetMeta } from './repository'
 import immutableUpdate from 'immutable-update';
