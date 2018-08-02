@@ -4,6 +4,10 @@
 - Category distribution plots
 - Improve selector implementation
 
+## replace-router
+
+- remove react-router 
+
 ## master
 
 - Export preview histograms as svg/png

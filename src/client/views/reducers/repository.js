@@ -48,19 +48,21 @@ const defaultState = () => (
 
 export const availableDatasets = handleActions(
   {
-    REQUEST_REPOSITORY: (state, action) => ({
-      isFetching: true,
-      isInitialised: true,
-      didInvalidate: false,
-    }),
+    REQUEST_REPOSITORY: (state, action) => (
+      immutableUpdate(state, {
+        isFetching: true,
+        isInitialised: true,
+        didInvalidate: false
+      })
+    ),
     RECEIVE_REPOSITORY: (state, action) => (
-      {
+      immutableUpdate(state, {
         isFetching: false,
         isInitialised: true,
         byId: (action.payload).reduce((obj, item) => (obj[item.id] = item, obj) ,{}),
         allIds: (action.payload).map(item => item.id),
         lastUpdated: action.meta.receivedAt
-      }
+      })
     ),
     INVALIDATE_DATASET: (state, action) => (
       state
@@ -193,10 +195,15 @@ export function loadDataset(id,clear) {
     //   updatePathname({dataset:id})
     // }
 
-    // dispatch(refreshStore())
+    console.log(getDatasetIsActive(state))
+    dispatch(refreshStore())
+
+    console.log(state)
+
     // dispatch(selectDataset(id))
     dispatch(fetchMeta(id)).then(() => {
       let meta = deep(store.getState(),['availableDatasets','byId',id])
+      console.log(meta)
       let plot = meta.plot
       window.plot = plot
       plot.id = 'default'

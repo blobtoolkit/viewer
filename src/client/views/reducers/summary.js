@@ -4,10 +4,11 @@ import { getSelectedRecordsAsObject } from './select'
 import { getScatterPlotDataByCategory,
   getMainPlotData,
   getAllMainPlotData,
-  getScatterPlotData
+  getScatterPlotData,
+  getRawDataForCat
 } from './plotData';
-import { getRawDataForFieldId, getDetailsForFieldId, getBinsForFieldId, getAllActiveFields } from './field'
-import { getMainPlot } from './plot';
+import { getRawDataForFieldId, getDetailsForFieldId, getBinsForFieldId, getAllActiveFields, getBinsForCat } from './field'
+import { getMainPlot, getZAxis } from './plot';
 import { getSelectedDatasetMeta } from './dataset';
 import { getFilteredList } from './filter';
 import { getFilteredDataForFieldId } from './preview';
@@ -29,8 +30,8 @@ export const getSelectedScatterPlotDataByCategory = createSelector(
   getMainPlotData,
   getScatterPlotData,
   getSelectedRecordsAsObject,
-  (state) => getMainPlot(state).axes.z,
-  (state) => getBinsForFieldId(state,getMainPlot(state).axes.cat),
+  getZAxis,
+  getBinsForCat,
   (plotData,scatterData,selected,zAxis,bins) => {
     let byCat = [];
     let selByCat = [];
@@ -42,6 +43,7 @@ export const getSelectedScatterPlotDataByCategory = createSelector(
         plotData.axes.cat.values.length == 0){
       return {data:[]}
     }
+    console.log(plotData)
     bins.forEach((bin,i)=>{
       byCat[i] = []
       selByCat[i] = []
@@ -72,7 +74,7 @@ export const getSummary = createSelector(
   getSelectedScatterPlotDataByCategory,
   getZReducer,
   getColorPalette,
-  (state) => getRawDataForFieldId(state,getMainPlot(state).axes.cat),
+  getRawDataForCat,
   (all,selected,reducer,palette,raw) => {
     let bins = selected.bins
     let zAxis = selected.zAxis
@@ -728,7 +730,7 @@ export const getCSVdata = createSelector(
 
 export const getBinnedColors = createSelector(
   getColorPalette,
-  (state) => getBinsForFieldId(state,getMainPlot(state).axes.cat),
+  getBinsForCat,
   (palette,bins) => {
     let colors = []
     bins.forEach((bin,i) => {

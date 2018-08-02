@@ -34,9 +34,10 @@ const appReducer = combineReducers(allReducers);
 const rootReducer = (state, action) => {
   if (action.type === 'REFRESH') {
     let availableDatasets = state.availableDatasets
-    state = {availableDatasets}
+    let datasetIsActive = state.datasetIsActive
+    let pathname = state.pathname
+    state = {availableDatasets,datasetIsActive,pathname}
   }
-
   return appReducer(state, action)
 }
 

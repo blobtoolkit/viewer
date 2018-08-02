@@ -158,10 +158,11 @@ const mapDispatchToQuery = (
           }
         })
         Object.keys(byId).forEach(id =>{
-          actions.push({
-            type: 'EDIT_FIELD',
-            payload: () => ({id,active:true})
-          })
+          // TODO: this needs to only update if active is currently false
+          // actions.push({
+          //   type: 'EDIT_FIELD',
+          //   payload: () => ({id,active:true})
+          // })
           actions.push({
             type: 'EDIT_FILTER',
             payload: () => byId[id]

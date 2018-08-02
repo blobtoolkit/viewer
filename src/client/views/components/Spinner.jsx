@@ -3,10 +3,32 @@ import PropTypes from 'prop-types'
 import styles from './Spinner.scss';
 
 class Spinner extends React.Component {
+  constructor(props) {
+    super(props);
+    if (this.props.id && (!this.props.active || this.props.active == 'loading')){
+      this.state = { spinner: true }
+      this.props.onLoad(this.props.id)
+    }
+    else {
+      this.state = { spinner: false }
+    }
+  }
+
+  componentDidMount(){
+  }
+
+  componentWillUpdate() {
+    if (this.props.active && this.props.active != 'loading' && this.state.spinner == true){
+      this.setState({spinner: false})
+    }
+  }
+
   render(){
-    console.log(this.props)
+    if (!this.state.spinner){
+      return null
+    }
     return (
-      <div className={styles.outer} style={{opacity:this.props.opacity || 0}}>
+      <div className={styles.outer}>
         <div className={styles['lds-ripple']}>
           <div></div>
           <div></div>

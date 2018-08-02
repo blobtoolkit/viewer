@@ -43,6 +43,11 @@ export const getDimensionsbyDimensionId = createSelectorForDimensionId(
   (dimensions) => dimensions
 );
 
+export const getPreviewDimensions = createSelector(
+  (state) => getDimensionsbyDimensionId(state,'preview'),
+  (dimensions) => dimensions
+)
+
 export const dimensionReducers = {
   dimensions
 }

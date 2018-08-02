@@ -5,7 +5,6 @@ import immutableUpdate from 'immutable-update';
 import deep from 'deep-get-set'
 import store from '../store'
 import { getQueryValue } from './location'
-import { editField } from './field'
 import { qsDefault } from '../querySync'
 import { getDatasetMeta } from '../reducers/repository'
 
@@ -28,6 +27,26 @@ export const getPlot = state => state.plot
 export const getMainPlot = createSelector(
   getPlot,
   axes => ({id:'default',axes})
+)
+
+export const getXAxis = createSelector(
+  (state) => getMainPlot(state).axes.x,
+  axis => axis
+)
+
+export const getYAxis = createSelector(
+  (state) => getMainPlot(state).axes.y,
+  axis => axis
+)
+
+export const getZAxis = createSelector(
+  (state) => getMainPlot(state).axes.z,
+  axis => axis
+)
+
+export const getCatAxis = createSelector(
+  (state) => getMainPlot(state).axes.cat,
+  axis => axis
 )
 
 export const plotReducers = {

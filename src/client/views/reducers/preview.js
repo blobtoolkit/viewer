@@ -7,7 +7,7 @@ import store from '../store'
 import { getDetailsForFieldId,
   getRawDataForFieldId,
   getBinsForFieldId } from './field'
-import { getDimensionsbyDimensionId } from './dimension'
+import { getDimensionsbyDimensionId, getPreviewDimensions } from './dimension'
 import { getFilteredList, updateFilterList } from './filter'
 import { getSelectedDatasetMeta } from './dataset'
 import { getColorPalette } from './color'
@@ -88,7 +88,7 @@ export const getFilteredBarsForFieldId = createFilteredBarSelectorForFieldId(
   getFilteredDataForFieldId,
   getBinsForFieldId,
   getDetailsForFieldId,
-  (state) => getDimensionsbyDimensionId(state,'preview'),
+  getPreviewDimensions,
   (data, fieldBins = [], details = {}, dimensions) => {
     let bars = []
     if (data){

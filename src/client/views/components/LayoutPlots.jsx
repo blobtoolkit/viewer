@@ -10,30 +10,32 @@ import DetailPlot from './DetailPlot'
 import SnailPlot from './SnailPlot'
 import TablePlot from './TablePlot'
 import TreeMapPlot from './TreeMapPlot'
-import Spinner from './Spinner'
+import DatasetSpinner from './DatasetSpinner'
 
 class PlotsLayoutComponent extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = { spinnerOpacity: 0.5 }
-      console.log('construct')
-      if (this.props.datasetId && !this.props.active){
-        window.loading = true;
-        this.props.onLoad(this.props.datasetId)
-      }
-  }
-
-  componentDidMount(){
-
-  }
-
-  componentWillUpdate() {
-    console.log('update')
-    if (this.props.active && this.state.spinnerOpacity > 0){
-      this.setState({spinnerOpacity: 0})
-    }
-
-  }
+  // constructor(props) {
+  //   super(props);
+  //   console.log('construct')
+  //   if (this.props.datasetId && !this.props.active){
+  //     this.state = { spinner: true }
+  //     this.props.onLoad(this.props.datasetId)
+  //   }
+  //   else {
+  //     this.state = { spinner: false }
+  //   }
+  // }
+  //
+  // componentDidMount(){
+  //   console.log('mount')
+  //
+  // }
+  //
+  // componentWillUpdate() {
+  //   console.log('update')
+  //   if (this.props.active && this.state.spinner == true){
+  //     this.setState({spinner: false})
+  //   }
+  // }
 
   render(){
     let view
@@ -76,11 +78,10 @@ class PlotsLayoutComponent extends React.Component {
         break
 
     }
-    console.log(this.props)
     return (
       <div className={styles.fill_parent}>
-        <Spinner opacity={this.state.spinnerOpacity}/>
         {view}
+        <DatasetSpinner/>
       </div>
     )
   }

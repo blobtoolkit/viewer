@@ -1,11 +1,11 @@
 import { createSelector } from 'reselect'
 import { byIdSelectorCreator } from './selectorCreators'
 import { getRawDataForFieldId, getDetailsForFieldId } from './field';
-import { getBinsForFieldId } from './field';
+import { getBinsForFieldId, getBinsForCat } from './field';
 import { getFilteredDataForFieldId } from './preview'
 import { getMainPlot } from './plot';
 import { getSelectedRecordsAsObject } from './select';
-import { getMainPlotData, getScatterPlotData, getAllScatterPlotData } from './plotData';
+import { getMainPlotData, getScatterPlotData, getAllScatterPlotData, getFilteredDataForCat } from './plotData';
 import { getZReducer, getZScale, getPlotResolution, getTransformFunction } from './plotParameters';
 import { getColorPalette } from './color';
 import { drawPoints, pixel_to_oddr } from './hexFunctions'
@@ -122,18 +122,6 @@ export const getScatterPlotDataByHexBin = createSelector(
   }
 )
 
-// export const getOccupiedHexes = createSelector(
-//   getScatterPlotDataByHexBin,
-//   (grid) => {
-//     let hexes = {}
-//     grid.data.forEach(d=>{
-//       hexes[d.x] = hexes[d.x] || {}
-//       hexes[d.x][d.y] = {id:d.id,x:d.x,y:d.y,ids:[],zs:[],indices:[]}
-//     })
-//     return {hexes,radius:grid.radius};
-//   }
-// )
-
 export const getSelectedHexGrid = createSelector(
   getOccupiedHexGrid,
   getSelectedRecordsAsObject,
@@ -166,8 +154,8 @@ export const getSelectedHexGrid = createSelector(
 export const getScatterPlotDataByHexBinByCategory = createSelector(
   getOccupiedHexGrid,
   getScatterPlotDataByHexBin,
-  (state) => getBinsForFieldId(state,getMainPlot(state).axes.cat),
-  (state) => getFilteredDataForFieldId(state,getMainPlot(state).axes.cat),
+  getBinsForCat,
+  getFilteredDataForCat,
   getColorPalette,
   getZReducer,
   getZScale,

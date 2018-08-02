@@ -6,7 +6,8 @@ import deep from 'deep-get-set'
 import store from '../store'
 import { getSelectedDatasetMeta } from './dataset'
 import { addFilter, editFilter } from './filter'
-import { getDimensionsbyDimensionId, setDimension } from './dimension'
+import { getCatAxis } from './plot'
+import { getDimensionsbyDimensionId, setDimension, getPreviewDimensions } from './dimension'
 import * as d3 from 'd3'
 import { getQueryValue, getDatasetID } from './location'
 
@@ -203,6 +204,7 @@ export function fetchRawData(id) {
       return Promise.resolve(useStoredRawData(json));
     }
     let datasetId = getDatasetID(state)
+    console.log(datasetId)
     return fetch(`${apiUrl}/field/${datasetId}/${id}`)
       .then(
         response => response.json(),
@@ -455,13 +457,18 @@ export const getBinsForFieldId = createBinSelectorForFieldId(
   }
 );
 
+export const getBinsForCat = createSelector(
+  state => getBinsForFieldId(state,getCatAxis(state)),
+  bins => bins
+)
+
 const createBarSelectorForFieldId = byIdSelectorCreator();
 
 export const getBarsForFieldId = createBarSelectorForFieldId(
   _getFieldIdAsMemoKey,
   getBinsForFieldId,
   getDetailsForFieldId,
-  (state) => getDimensionsbyDimensionId(state,'preview'),
+  getPreviewDimensions,
   (bins, details, dimensions) => {
     let bars = []
     let x = details.xScale

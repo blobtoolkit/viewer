@@ -20,7 +20,7 @@ class MenuDataset extends React.Component {
     )
     this.mapDispatchToProps = dispatch => (
       {
-        onDatasetClick: id => dispatch(loadDataset(id))
+        onDatasetClick: id => {}//dispatch(loadDataset(id))
       }
     )
   }

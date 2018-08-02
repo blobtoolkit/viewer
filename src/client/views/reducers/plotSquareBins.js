@@ -1,11 +1,11 @@
 import { createSelector } from 'reselect'
 import { byIdSelectorCreator } from './selectorCreators'
 import { getRawDataForFieldId, getDetailsForFieldId } from './field';
-import { getBinsForFieldId } from './field';
+import { getBinsForFieldId, getBinsForCat } from './field';
 import { getFilteredDataForFieldId } from './preview'
 import { getMainPlot } from './plot';
 import { getSelectedRecordsAsObject } from './select';
-import { getScatterPlotData, getAllScatterPlotData } from './plotData';
+import { getScatterPlotData, getAllScatterPlotData, getFilteredDataForCat } from './plotData';
 import { getZReducer, getZScale, getPlotResolution } from './plotParameters';
 import { getColorPalette } from './color';
 import * as d3 from 'd3'
@@ -172,8 +172,8 @@ export const getSelectedSquareGrid = createSelector(
 export const getScatterPlotDataBySquareBinByCategory = createSelector(
   getOccupiedSquareGrid,
   getScatterPlotDataBySquareBin,
-  (state) => getBinsForFieldId(state,getMainPlot(state).axes.cat),
-  (state) => getFilteredDataForFieldId(state,getMainPlot(state).axes.cat),
+  getBinsForCat,
+  getFilteredDataForCat,
   getColorPalette,
   getZReducer,
   getZScale,
@@ -230,7 +230,7 @@ export const getScatterPlotDataBySquareBinByCategory = createSelector(
 
 export const getBinnedDataByCategoryByAxis = createSelector(
   getScatterPlotDataBySquareBinByCategory,
-  (state) => getBinsForFieldId(state,getMainPlot(state).axes.cat),
+  getBinsForCat,
   (binnedData,bins) => {
     let iBinned = [{}]
     let jBinned = [{}]
@@ -274,7 +274,7 @@ const getAxis = (state,axis) => axis
 export const getBinnedLinesByCategoryForAxis = createSelector(
   getAxis,
   getBinnedDataByCategoryByAxis,
-  (state) => getFilteredDataForFieldId(state,getMainPlot(state).axes.cat),
+  getFilteredDataForCat,
   getColorPalette,
   getZReducer,
   getZScale,

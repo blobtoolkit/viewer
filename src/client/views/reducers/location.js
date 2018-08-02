@@ -12,7 +12,8 @@ export const pathname = handleAction(
   (state, action) => (
     action.payload
   ),
-  document.location.pathname || ''
+  // TODO: use variable basename
+  document.location.pathname.replace(/^\/view/,'') || ''
 )
 export const getPathname = state => {
   return state.pathname
@@ -81,6 +82,7 @@ export const viewsToPathname = views => {
 
 export const updatePathname = (update = {},remove = {}) => {
   return function (dispatch) {
+    console.log('updatePathname')
     let state = store.getState()
     let views = getViews(state)
     let newViews = {}
@@ -100,6 +102,7 @@ export const updatePathname = (update = {},remove = {}) => {
       history.push({pathname,hash,search})
       dispatch(setPathname(pathname))
     }
+    console.log(pathname)
   }
 }
 
