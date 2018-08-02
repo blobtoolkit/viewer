@@ -89,7 +89,6 @@ export function fetchRepository(searchTerm) {
   return function (dispatch) {
     dispatch(setDatasetIsActive(false))
     dispatch(requestRepository())
-    console.log("requesting");
     let state = store.getState()
     let views = getViews(state)
     let datasetId = getDatasetID(state)
@@ -143,9 +142,7 @@ export function fetchRepository(searchTerm) {
 // to trigger reload when datasetId changes
 
           }
-          console.log('recieved')
           dispatch(receiveRepository(json))
-          console.log(state)
         }
       )
   }
@@ -195,15 +192,11 @@ export function loadDataset(id,clear) {
     //   updatePathname({dataset:id})
     // }
 
-    console.log(getDatasetIsActive(state))
     dispatch(refreshStore())
-
-    console.log(state)
 
     // dispatch(selectDataset(id))
     dispatch(fetchMeta(id)).then(() => {
       let meta = deep(store.getState(),['availableDatasets','byId',id])
-      console.log(meta)
       let plot = meta.plot
       window.plot = plot
       plot.id = 'default'

@@ -36,7 +36,6 @@ export const getAllScatterPlotDataBySquareBin = createSelector(
   getSquareGrid,
   getAllScatterPlotData,
   (grid,scatterData) => {
-    console.time('getAllScatterPlotDataBySquareBin')
     let squares = []
     grid.data.forEach(d=>{
       squares[d.i] = squares[d.i] || []
@@ -58,7 +57,6 @@ export const getAllScatterPlotDataBySquareBin = createSelector(
         }
       }
     }
-    console.timeEnd('getAllScatterPlotDataBySquareBin')
     return {data};
   }
 )

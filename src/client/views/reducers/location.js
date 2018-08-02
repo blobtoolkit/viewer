@@ -82,18 +82,23 @@ export const viewsToPathname = views => {
 
 export const updatePathname = (update = {},remove = {}) => {
   return function (dispatch) {
-    console.log('updatePathname')
     let state = store.getState()
     let views = getViews(state)
     let newViews = {}
     if (views.search) newViews.search = views.search
     if (views.dataset) newViews.dataset = views.dataset
+    let primary = views.primary
     Object.keys(update).forEach(key=>{
       newViews[key] = update[key]
+      if (key != 'dataset' && options.indexOf(key) != -1){
+        primary = key
+      }
     })
     Object.keys(remove).forEach(key=>{
       delete newViews[key]
+      if (key == primary) primary = false
     })
+    if (primary) newViews[primary] = true
     let pathname = viewsToPathname(newViews)
     let currentPathname = getPathname(state)
     let hash = getHashString(state)
@@ -102,7 +107,6 @@ export const updatePathname = (update = {},remove = {}) => {
       history.push({pathname,hash,search})
       dispatch(setPathname(pathname))
     }
-    console.log(pathname)
   }
 }
 

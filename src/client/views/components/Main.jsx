@@ -14,27 +14,22 @@ import { fetchRepository, getRepositoryIsInitialised, getRepositoryIsFetching } 
 class MainDiv extends React.Component {
   componentDidMount(){
     if (!this.props.initialised){
-      console.log('loading repository')
       this.props.onLoad()
     }
     else if (!this.props.fetching){
-      console.log(this.props.active)
     }
   }
 
   componentWillUpdate(){
-    console.log('updating')
   }
 
   render(){
     if (!this.props.initialised){
        return null
     }
-    console.log(this.props.fetching)
     if (this.props.fetching){
-      return <Spinner opacity={1}/>
+      return <Spinner/>
     }
-    console.log(this.props.fetching)
 
     return (
       <div>

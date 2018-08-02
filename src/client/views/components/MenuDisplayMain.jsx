@@ -60,7 +60,6 @@ const DisplayMenu = ({
   transform, onChangeTransform,
   onSelectView }) => {
   let context
-  console.log(view)
   view = view || 'blob'
   switch (view) {
     case 'blob':

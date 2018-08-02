@@ -22,7 +22,6 @@ class LayoutComponent extends React.Component {
   }
 
   render(){
-    console.log(this.props.activeTab)
     // {this.props.datasetId ? this.props.active ? <LayoutPlots/> : <Spinner/> : <LayoutPlots/> }
     return (
       <div className={styles.main}>

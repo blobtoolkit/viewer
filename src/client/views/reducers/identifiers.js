@@ -45,7 +45,6 @@ export const getIdentifiers = state => state.identifiers ? state.identifiers.lis
 export function fetchIdentifiers() {
   return function (dispatch) {
     let state = store.getState();
-    console.log(state)
     let existing = getIdentifiers(state)
     if (existing.length > 0){
       return new Promise (resolve => resolve(existing))

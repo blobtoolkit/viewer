@@ -43,7 +43,6 @@ export const getSelectedScatterPlotDataByCategory = createSelector(
         plotData.axes.cat.values.length == 0){
       return {data:[]}
     }
-    console.log(plotData)
     bins.forEach((bin,i)=>{
       byCat[i] = []
       selByCat[i] = []
@@ -748,6 +747,9 @@ export const getSelectedDatasetTable = createSelector(
   getLinks,
   (details,links) => {
     let data = []
+    if (!details.assembly){
+      return {data,meta:{}}
+    }
     Object.keys(details.taxon).forEach(key=>{
       let link,meta
       if (links.dataset.taxon && links.dataset.taxon[key]){

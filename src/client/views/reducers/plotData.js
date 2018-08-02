@@ -170,7 +170,6 @@ export const getAllMainPlotData = createSelector(
     plotData.axes.cat = catData
     plotData.meta.cat = catMeta
     plotData.scale.cat = catMeta.xScale
-    console.log(plotData)
     return plotData;
   }
 );

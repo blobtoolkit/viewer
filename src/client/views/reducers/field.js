@@ -204,7 +204,6 @@ export function fetchRawData(id) {
       return Promise.resolve(useStoredRawData(json));
     }
     let datasetId = getDatasetID(state)
-    console.log(datasetId)
     return fetch(`${apiUrl}/field/${datasetId}/${id}`)
       .then(
         response => response.json(),
