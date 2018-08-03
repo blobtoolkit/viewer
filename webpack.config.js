@@ -14,7 +14,7 @@ const config = {
     APP_DIR + '/index.jsx'
   ],
   output: {
-      publicPath: '/',
+      publicPath: main.mode == 'production' ? main.basename + '/' :'/',
       path: BUILD_DIR + '/',
       filename: 'js/bundle.js'
   },
@@ -138,7 +138,7 @@ const config = {
         loader: 'file-loader',
         options: {
           name: 'img/[hash].[ext]',
-          publicPath: '/'
+          publicPath: main.mode == 'production' ? main.basename + '/' :'/'
         }
       }
     ]

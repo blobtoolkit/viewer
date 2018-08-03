@@ -31,5 +31,6 @@ module.exports = {
   // hostname
   'hostname': BTK_HOST,
   // API URL
-  'apiUrl': process.env.BTK_API_URL || (BTK_HTTPS ? 'https' : 'http') + '://'+BTK_HOST+':'+BTK_PORT
+  'apiUrl': process.env.BTK_API_URL || (BTK_HTTPS ? 'https' : 'http') + '://'+BTK_HOST+':'+BTK_PORT,
+  'mode': process.env.NODE_ENV || 'test'
 }
