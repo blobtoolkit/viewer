@@ -46,7 +46,7 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
   return {
     onDatasetClick: id => {
-      dispatch(refreshStore())
+      // dispatch(refreshStore())
       dispatch(setDatasetIsActive(false))
       dispatch(updatePathname({dataset:id}))
     },

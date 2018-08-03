@@ -190,11 +190,8 @@ export function loadDataset(id,clear) {
     dispatch(setDatasetIsActive('loading'))
 
     // dispatch(refreshStore())
-    if (window.firstLoad){
-      dispatch(queryToStore({values:qs.parse(getQueryString(state))}))
-      window.firstLoad = false
-    }
-    else {
+    if (!window.firstLoad){
+      dispatch(refreshStore())
       dispatch(queryToStore({values:{},searchReplace:true}))
     }
 
@@ -213,7 +210,14 @@ export function loadDataset(id,clear) {
       dispatch(editPlot(plot))
       Promise.all(addAllFields(dispatch,meta.fields,1,false))
       .then(()=>{
-        dispatch(filterToList())
+        if (window.firstLoad){
+          dispatch(queryToStore({values:qs.parse(getQueryString(state))}))
+          window.firstLoad = false
+          dispatch(filterToList())
+        }
+        else {
+          dispatch(filterToList())
+        }
         window.scrollTop = {}
       })
       .then(()=>{

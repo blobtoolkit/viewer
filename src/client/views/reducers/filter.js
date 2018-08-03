@@ -31,13 +31,24 @@ export const filters = handleActions(
     EDIT_FILTER: (state, action) => {
       let id = action.payload.id
       let fields = Object.keys(action.payload).filter((key)=>{return key != 'id'})
-      if (action.payload.range){
+      if (state.byId[id] && action.payload.range){
         let range = []
-        range[0] = isNumeric(action.payload.range[0]) ? action.payload.range[0] : Number.NEGATIVE_INFINITY
-        range[1] = isNumeric(action.payload.range[1]) ? action.payload.range[1] : Number.POSITIVE_INFINITY
-        let limit = action.payload.limit || (state.byId[id].limit || state.byId[id].range).slice()
-        action.payload.range[0] = Math.max(range[0],limit[0])
-        action.payload.range[1] = Math.min(range[1],limit[1])
+        if (action.payload.range.length == 1){
+          range[0] = isNumeric(action.payload.range[0]) ? action.payload.range[0] : Number.NEGATIVE_INFINITY
+          range[1] = state.byId[id] ? state.byId[id].range[1] : Number.POSITIVE_INFINITY
+        }
+        else if (typeof action.payload.range[0] == 'undefined'){
+          range[0] = state.byId[id] ? state.byId[id].range[0] : Number.NEGATIVE_INFINITY
+          range[1] = isNumeric(action.payload.range[1]) ? action.payload.range[1] : Number.POSITIVE_INFINITY
+        }
+        else {
+          range = action.payload.range.slice()
+        }
+        if (range.length > 0){
+          let limit = action.payload.limit || (state.byId[id] ? (state.byId[id].limit || state.byId[id].range) : range).slice()
+          action.payload.range[0] = Math.max(range[0],limit[0])
+          action.payload.range[1] = Math.min(range[1],limit[1])
+        }
       }
       return immutableUpdate(state, {
         byId: {

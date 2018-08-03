@@ -156,6 +156,7 @@ const mapDispatchToQuery = (
           else {
             byId[val.field][val.index] = val.value
           }
+
         })
         Object.keys(byId).forEach(id =>{
           // TODO: this needs to only update if active is currently false

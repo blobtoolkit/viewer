@@ -225,12 +225,12 @@ export function fetchRawData(id) {
           limit[0] = qLimit[0].length > 0 ? 1*qLimit[0] : limit[0]
           limit[1] = qLimit[1].length > 0 ? 1*qLimit[1] : limit[1]
           dispatch(editField({id,range:limit}))
-          let range = scale.domain().slice(0)
+          let range = limit.slice(0)
           let qRange = [getQueryValue(id+'--Min'),getQueryValue(id+'--Max')]
           range[0] = qRange[0].length > 0 ? 1*qRange[0] : range[0]
           range[1] = qRange[1].length > 0 ? 1*qRange[1] : range[1]
           let invert = getQueryValue(id+'--Inv') || false
-          dispatch(editFilter({id,range,invert,limit:scale.domain()}))
+          dispatch(editFilter({id,range:limit,invert,limit}))
         }
         else {
           let keystr = getQueryValue(id+'--Keys') || ''
