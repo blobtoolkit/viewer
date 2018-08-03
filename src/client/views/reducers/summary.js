@@ -5,7 +5,10 @@ import { getScatterPlotDataByCategory,
   getMainPlotData,
   getAllMainPlotData,
   getScatterPlotData,
-  getRawDataForCat
+  getRawDataForCat,
+  getFilteredDataForGC,
+  getFilteredDataForLength,
+  getFilteredDataForNCount
 } from './plotData';
 import { getDatasetIsActive } from './repository'
 import { getRawDataForFieldId, getDetailsForFieldId, getBinsForFieldId, getAllActiveFields, getBinsForCat } from './field'
@@ -227,17 +230,18 @@ export const cumulativeCurves = createSelector(
 const mean = arr => arr.reduce((a,b) => a + b, 0) / arr.length
 
 export const getCircular = createSelector(
-  (state) => getFilteredDataForFieldId(state,'gc'),
-  (state) => getFilteredDataForFieldId(state,'length'),
-  (state) => getFilteredDataForFieldId(state,'ncount'),
+  getFilteredDataForGC,
+  getFilteredDataForLength,
+  getFilteredDataForNCount,
   (gc,length,ncount) => {
+    if (!gc || !length) return undefined
     let values = {nXlen:[],nXnum:[],gc:[],sum:[],n:[]}
     let xAxis = 'gc'
     let zAxis = 'length'
     if (gc.values.length == 0 || length.values.length == 0) return false
     let arr = []
     gc.values.forEach((x,i)=>{
-      arr[i] = {x,z:length.values[i],n:ncount.values[i] ? ncount.values[i]/length.values[i] : 0}
+      arr[i] = {x,z:length.values[i],n:ncount ? ncount.values[i]/length.values[i] : 0}
     })
     arr.sort((a,b)=>b.z-a.z)
     // console.time('getCircularReduce');

@@ -67,6 +67,22 @@ export const getFilteredDataForCat = createSelector(
   data => data
 )
 
+export const getFilteredDataForGC = createSelector(
+  (state) => getFilteredDataForFieldId(state,'gc'),
+  data => data
+)
+
+export const getFilteredDataForLength = createSelector(
+  (state) => getFilteredDataForFieldId(state,'length'),
+  data => data
+)
+
+export const getFilteredDataForNCount = createSelector(
+  (state) => getFilteredDataForFieldId(state,'ncount'),
+  data => data
+)
+
+
 const getDetailsForX = createSelector(
   (state) => getDetailsForFieldId(state,getXAxis(state)),
   data => data
