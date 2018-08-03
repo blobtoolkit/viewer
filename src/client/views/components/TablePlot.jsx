@@ -126,6 +126,10 @@ class Table extends React.Component {
       ]
     }]
     columns = columns.concat(this.generateColumns(this.props.data.fields,this.props.data.keys,this.props.data.plot.cat.meta.id,this.props.binnedColors))
+    let warning
+    if (this.props.warning){
+      warning = <span>Only showing first 100,000 rows, download <code>csv</code> for full dataset</span>
+    }
     return (
       <div className={plotStyles.outer}>
         <ReactTable
@@ -135,7 +139,8 @@ class Table extends React.Component {
             columns={columns}
             defaultPageSize={Math.min(this.state.pageSize,data.length)}
           />
-          <DownloadCSV data={data}/>
+        <DownloadCSV data={data}/>
+        {warning}
       </div>
     )
   }
@@ -147,12 +152,24 @@ class TablePlot extends React.Component {
     this.mapStateToProps = state => {
       let data = getTableData(state)
       if (!data) return {}
+      let warning
+      if (data.values.length > 100000){
+        let subset = {}
+        subset.values = data.values.slice(0,100000)
+        subset.keys = data.keys
+        subset.plot = data.plot
+        subset.fields = data.fields
+        subset.links = data.links
+        warning = true
+        data = subset
+      }
       let selCount = data.values.filter(o=>o.sel==true).length
       return {
         data,
         palette: getColorPalette(state),
         binnedColors: getBinnedColors(state),
         selectAll:(selCount == data.values.length),
+        warning
       }
     }
     this.mapDispatchToProps = dispatch => {
