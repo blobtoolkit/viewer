@@ -395,7 +395,8 @@ export const getBinsForFieldId = createBinSelectorForFieldId(
   _getFieldIdAsMemoKey,
   getRawDataForFieldId,
   getDetailsForFieldId,
-  (rawData = {}, details = {}) => {
+  (rawData, details) => {
+    if (!rawData || !details) return undefined
     let data = rawData.values || []
     let keys = rawData.keys || {}
     let bins = []

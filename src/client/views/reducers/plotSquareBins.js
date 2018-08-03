@@ -36,6 +36,7 @@ export const getAllScatterPlotDataBySquareBin = createSelector(
   getSquareGrid,
   getAllScatterPlotData,
   (grid,scatterData) => {
+    if (!scatterData) return undefined
     let squares = []
     grid.data.forEach(d=>{
       squares[d.i] = squares[d.i] || []
@@ -66,6 +67,7 @@ export const getOccupiedSquareGrid = createSelector(
   getAllScatterPlotDataBySquareBin,
   getZReducer,
   (grid,binned,reducer) => {
+    if (!binned) return undefined
     let data = []
     let min = Number.POSITIVE_INFINITY
     let max = Number.NEGATIVE_INFINITY
@@ -101,6 +103,7 @@ export const getScatterPlotDataBySquareBin = createSelector(
   getZReducer,
   getZScale,
   (grid,scatterData,reducer,scale) => {
+    if (!grid) return undefined
     let zScale = d3[scale]().domain(grid.range).range([0,grid.width])
     let squares = []
     grid.data.forEach(d=>{
@@ -143,6 +146,7 @@ export const getSelectedSquareGrid = createSelector(
   getSelectedRecordsAsObject,
   getScatterPlotDataBySquareBin,
   (grid,records,scatterData) => {
+    if (!scatterData) return undefined
     let data = []
     grid.data.forEach(cell => {
       let newCell = Object.assign({},cell)
@@ -176,6 +180,7 @@ export const getScatterPlotDataBySquareBinByCategory = createSelector(
   getZReducer,
   getZScale,
   (grid = {},scatterData,bins,categories,palette,reducer,scale) => {
+    if (!scatterData) return undefined
     let zScale = d3[scale]().domain(grid.range).range([0,grid.width])
     let keys = {}
     let data = []
@@ -230,6 +235,7 @@ export const getBinnedDataByCategoryByAxis = createSelector(
   getScatterPlotDataBySquareBinByCategory,
   getBinsForCat,
   (binnedData,bins) => {
+    if (!binnedData) return undefined
     let iBinned = [{}]
     let jBinned = [{}]
     for (let index = 0; index < bins.length; index++){
@@ -277,6 +283,7 @@ export const getBinnedLinesByCategoryForAxis = createSelector(
   getZReducer,
   getZScale,
   (axis,binnedData,categories,palette,reducer,scale) => {
+    if (!binnedData) return undefined
     let min = Number.POSITIVE_INFINITY
     let max = Number.NEGATIVE_INFINITY
     binnedData.data.forEach(d=>{

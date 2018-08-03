@@ -12,6 +12,7 @@ import { ExportButton } from './ExportButton'
 
 class Cumulative extends React.Component {
   render(){
+    if (!this.props.cumulative) return null
     let viewbox = '0 0 1110 1110'
     let legend = <g transform='translate(700,720)'><PlotLegend/></g>
     let colors = this.props.cumulative.palette.colors

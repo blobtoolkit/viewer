@@ -7,7 +7,8 @@ import store from '../store'
 import { addAllFields } from './field'
 import { filterToList } from './filter'
 import { editPlot } from './plot'
-import { qsDefault } from '../querySync'
+import qs from 'qs'
+import { qsDefault, queryToStore } from '../querySync'
 import { history } from './history'
 // import { getSearchTerm, setSearchTerm } from './search'
 import { fetchIdentifiers } from './identifiers'
@@ -17,6 +18,7 @@ import { getDatasetID,
   updatePathname,
   viewsToPathname,
   getQueryValue,
+  getQueryString,
   getHashString } from './location'
 
 const apiUrl = window.apiURL || '/api/v1'
@@ -119,25 +121,25 @@ export function fetchRepository(searchTerm) {
       )
       .then(json =>{
           if (datasetId){
-            if (json.find(o=>o.id==datasetId)){
-              // pathname = viewsToPathname(views)
-              // let dataset = getDatasetID(state)
-              // if (dataset != datasetId){
-              //   if (dataset){
-              //     dispatch(updatePathname({dataset}))
-              //   }
-              //   console.log(dataset)
-              //  dispatch(loadDataset(datasetId))
-              // }
-            }
-            else {
-              dispatch(refreshStore())
-              dispatch(updatePathname({},{dataset:true}))
-            }
-
+          //   // if (json.find(o=>o.id==datasetId)){
+          //   //   // pathname = viewsToPathname(views)
+          //   //   // let dataset = getDatasetID(state)
+          //   //   // if (dataset != datasetId){
+          //   //   //   if (dataset){
+          //   //   //     dispatch(updatePathname({dataset}))
+          //   //   //   }
+          //   //   //   console.log(dataset)
+          //   //   //  dispatch(loadDataset(datasetId))
+          //   //   // }
+          //   // }
+          //   // else {
+          //     dispatch(refreshStore())
+          //     dispatch(updatePathname({},{dataset:true}))
+          //   }
+          //
           }
-          else if (json.length == 1){
-            dispatch(updatePathname({dataset:json[0].id}))
+          else {
+            dispatch(updatePathname({},{dataset:true,[views.primary]:true}))
 // TODO: add fetch repository or load dataset to component did mount
 // to trigger reload when datasetId changes
 
@@ -179,20 +181,22 @@ export function fetchMeta(id) {
 
 export const refreshStore = createAction('REFRESH')
 
+window.firstLoad = true
+
 export function loadDataset(id,clear) {
   return function (dispatch) {
-    dispatch(setDatasetIsActive('loading'))
-    let search = history.location.search || ''
-    if (clear){
-      search = ''
-    }
     let state = store.getState()
-    let views = getViews(state)
-    // if (id){
-    //   updatePathname({dataset:id})
-    // }
+    clear = false
+    dispatch(setDatasetIsActive('loading'))
 
-    dispatch(refreshStore())
+    // dispatch(refreshStore())
+    if (window.firstLoad){
+      dispatch(queryToStore({values:qs.parse(getQueryString(state))}))
+      window.firstLoad = false
+    }
+    else {
+      dispatch(queryToStore({values:{},searchReplace:true}))
+    }
 
     // dispatch(selectDataset(id))
     dispatch(fetchMeta(id)).then(() => {

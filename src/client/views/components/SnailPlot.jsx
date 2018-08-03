@@ -77,12 +77,14 @@ const SnailSegment = ({path}) => (
 class Snail extends React.Component {
   constructor(props) {
     super(props);
-    let ratio = this.props.data.values.sum[999] / this.props.circular.scale.circumference
-    this.state = {
-      theta:3.14,
-      h:320,
-      ratio,
-      overlay:false
+    if (this.props.data){
+      let ratio = this.props.data.values.sum[999] / this.props.circular.scale.circumference
+      this.state = {
+        theta:3.14,
+        h:320,
+        ratio,
+        overlay:false
+      }
     }
   }
 
@@ -95,6 +97,7 @@ class Snail extends React.Component {
   }
 
   render(){
+    if (!this.props.circular) return null
     let format = d3format(".2s")
     let pctFormat = d3format(".1%")
     let commaFormat = d3format(",")

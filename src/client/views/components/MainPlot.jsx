@@ -39,25 +39,30 @@ export default class MainPlot extends React.Component {
         let plotGraphics = getPlotGraphics(state)
         let datasetId = getDatasetID(state)
         if (plotShape == 'hex'){
+          let binned = getScatterPlotDataByHexBin(state)
+          if (!binned) return {}
           return {
             datasetId,
             plotShape,
             plotGraphics,
-            bins: getScatterPlotDataByHexBin(state).hexes,
-            radius: getScatterPlotDataByHexBin(state).radius,
+            bins: binned.hexes,
+            radius: binned.radius,
             data: getSelectedHexGrid(state).data
           }
         }
         else if (plotShape == 'square') {
+          let binned = getScatterPlotDataBySquareBin(state)
+          if (!binned) return {}
           return {
             datasetId,
             plotShape,
             plotGraphics,
-            bins: getScatterPlotDataBySquareBin(state).squares,
+            bins: binned.squares,
             data: getSelectedSquareGrid(state).data,
-            grid: getScatterPlotDataBySquareBin(state).grid
+            grid: binned.grid
           }
         }
+        if (!getScatterPlotDataBySquareBin(state)) return {}
         return {
           datasetId,
           plotShape,
@@ -159,6 +164,7 @@ class PlotBox extends React.Component {
   }
 
   render(){
+    if (!this.props.datasetId) return null
     let plotContainer
     let plotGrid
     let plotCanvas

@@ -35,6 +35,7 @@ export const getAllScatterPlotDataByHexBin = createSelector(
   getHexGrid,
   getAllScatterPlotData,
   (grid,scatterData) => {
+    if (!scatterData) return undefined
     let hexes = []
     grid.data.forEach(d=>{
       hexes[d.x] = hexes[d.x] || []
@@ -65,6 +66,7 @@ export const getOccupiedHexGrid = createSelector(
   getAllScatterPlotDataByHexBin,
   getZReducer,
   (grid,binned,reducer = (a,b)=>{a+b}) => {
+    if (!binned) return undefined
     let data = []
     let min = Number.POSITIVE_INFINITY
     let max = Number.NEGATIVE_INFINITY
@@ -90,6 +92,7 @@ export const getScatterPlotDataByHexBin = createSelector(
   getZReducer,
   getZScale,
   (grid,scatterData,reducer,scale) => {
+    if (!grid || !scatterData) return undefined
     let zScale = d3[scale]().domain(grid.range).range([0,grid.radius])
     let hexes = []
     grid.data.forEach(d=>{

@@ -116,7 +116,6 @@ export const chooseView = (view) => {
   }
 }
 
-
 export const setQueryString = createAction('SET_QUERY_STRING')
 export const queryString = handleAction(
   'SET_QUERY_STRING',

@@ -8,7 +8,7 @@ import store from '../store'
 import qs from 'qs'
 import { queryToStore, qsDefault } from '../querySync'
 import history from './history'
-import { urlViews, pathname, setPathname, loadDataset, viewsToPathname } from './repository'
+import { urlViews, pathname, setPathname, viewsToPathname } from './repository'
 import { getDatasetID } from './location'
 
 export const setPlotShape = createAction('SET_PLOT_SHAPE')

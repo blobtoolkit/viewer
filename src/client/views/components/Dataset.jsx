@@ -1,8 +1,7 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import {
-  getDatasetIsFetching,
-  loadDataset
+  getDatasetIsFetching
 } from '../reducers/repository'
 import {
   getTopLevelFields,

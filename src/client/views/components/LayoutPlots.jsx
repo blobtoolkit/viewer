@@ -1,8 +1,9 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import styles from './Layout.scss'
-import { loadDataset, getDatasetIsActive } from '../reducers/repository'
+import { getDatasetIsActive } from '../reducers/repository'
 import { getView, getDatasetID } from '../reducers/location'
+import { getScatterPlotData } from '../reducers/plotData'
 import GetStarted from './GetStarted'
 import MainPlot from './MainPlot'
 import CumulativePlot from './CumulativePlot'
@@ -13,31 +14,9 @@ import TreeMapPlot from './TreeMapPlot'
 import DatasetSpinner from './DatasetSpinner'
 
 class PlotsLayoutComponent extends React.Component {
-  // constructor(props) {
-  //   super(props);
-  //   console.log('construct')
-  //   if (this.props.datasetId && !this.props.active){
-  //     this.state = { spinner: true }
-  //     this.props.onLoad(this.props.datasetId)
-  //   }
-  //   else {
-  //     this.state = { spinner: false }
-  //   }
-  // }
-  //
-  // componentDidMount(){
-  //   console.log('mount')
-  //
-  // }
-  //
-  // componentWillUpdate() {
-  //   console.log('update')
-  //   if (this.props.active && this.state.spinner == true){
-  //     this.setState({spinner: false})
-  //   }
-  // }
 
   render(){
+    if (!this.props.datasetId) return null
     let view
     switch (this.props.view || 'blob') {
       case 'cumulative':
@@ -91,23 +70,22 @@ class LayoutPlots extends React.Component {
   constructor(props) {
     super(props);
     this.mapStateToProps = state => {
+      if (!getScatterPlotData(state)) {
+        return {
+          datasetId: getDatasetID(state)
+        }
+      }
       return {
         active: getDatasetIsActive(state),
         datasetId: getDatasetID(state),
         view: getView(state)
       }
     }
-    this.mapDispatchToProps = dispatch => {
-      return {
-        onLoad: (id) => dispatch(loadDataset(id))
-      }
-    }
   }
 
   render(){
     const ConnectedLayout = connect(
-      this.mapStateToProps,
-      this.mapDispatchToProps
+      this.mapStateToProps
     )(PlotsLayoutComponent)
     return <ConnectedLayout {...this.props}/>
   }

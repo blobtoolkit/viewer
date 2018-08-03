@@ -3,12 +3,13 @@ import { createSelector } from 'reselect'
 import { byIdSelectorCreator } from './selectorCreators'
 import { getMainPlot, getXAxis, getYAxis, getZAxis, getCatAxis } from './plot';
 import { getFilteredList } from './filter';
+import { getDatasetID } from './location';
 import { getZScale, getPlotResolution, getTransformFunction } from './plotParameters';
 import { getColorPalette } from './color';
 import { getFilteredDataForFieldId,
   getCategoryListForFieldId,
   getPlainCategoryListForFieldId } from './preview'
-import { getRawDataForFieldId, getDetailsForFieldId, getBinsForFieldId, getMetaDataForField } from './field'
+import { getRawDataForFieldId, getDetailsForFieldId, getBinsForFieldId, getMetaDataForField, getBinsForCat } from './field'
 import store from '../store'
 import * as d3 from 'd3'
 import cloneFunction from 'clone-function'
@@ -46,7 +47,9 @@ export const getRawDataForCat = createSelector(
 
 const getFilteredDataForX = createSelector(
   (state) => getFilteredDataForFieldId(state,getXAxis(state)),
-  data => data
+  data => {
+    return data
+  }
 )
 
 const getFilteredDataForY = createSelector(
@@ -85,6 +88,7 @@ const getDetailsForCat = createSelector(
 )
 
 export const getMainPlotData = createSelector(
+  getDatasetID,
   getFilteredDataForX,
   getFilteredDataForY,
   getFilteredDataForZ,
@@ -93,7 +97,8 @@ export const getMainPlotData = createSelector(
   getDetailsForY,
   getDetailsForZ,
   getDetailsForCat,
-  (xData,yData,zData,catData,xMeta,yMeta,zMeta,catMeta) => {
+  (dsId,xData,yData,zData,catData,xMeta,yMeta,zMeta,catMeta) => {
+    if (!dsId || !xData || !yData || !zData || !catData) return undefined
     let plotData = {id:'default',axes:{},meta:{}};
     plotData.axes.x = xData || {values:[]}
     let xDomain = xMeta.xScale.domain().slice(0)
@@ -128,6 +133,7 @@ export const getMainPlotData = createSelector(
 );
 
 export const getAllMainPlotData = createSelector(
+  getDatasetID,
   getRawDataForX,
   getRawDataForY,
   getRawDataForZ,
@@ -136,7 +142,8 @@ export const getAllMainPlotData = createSelector(
   getDetailsForY,
   getDetailsForZ,
   getDetailsForCat,
-  (xData,yData,zData,catData,xMeta,yMeta,zMeta,catMeta) => {
+  (dsId,xData,yData,zData,catData,xMeta,yMeta,zMeta,catMeta) => {
+    if (!dsId || !xData || !yData || !zData || !catData) return undefined
     let plotData = {id:'default',axes:{},meta:{},scale:{}};
     plotData.axes.x = xData || {values:[]}
     let xDomain = xMeta.xScale.domain().slice(0)
@@ -178,6 +185,7 @@ export const getAllScatterPlotData = createSelector(
   getAllMainPlotData,
   getTransformFunction,
   (plotData,transform) => {
+    if (!plotData) return undefined
     let data = [];
     let scales = {};
     let axes = ['x','y','z']
@@ -214,6 +222,7 @@ export const getScatterPlotData = createSelector(
   getFilteredList,
   getTransformFunction,
   (plotData,list,transform) => {
+    if (!plotData) return undefined
     let data = [];
     let scales = {};
     let axes = ['x','y','z']
@@ -258,9 +267,10 @@ export const getScatterPlotData = createSelector(
 export const getScatterPlotDataByCategory = createSelector(
   getMainPlotData,
   getScatterPlotData,
-  (state) => getBinsForFieldId(state,getMainPlot(state).axes.cat),
+  getBinsForCat,
   getColorPalette,
   (plotData,scatterData,bins,palette) => {
+    if (!plotData || !scatterData || !bins) return undefined
     let data = [];
     let keys = {}
     if (plotData.axes.x.values.length == 0 ||

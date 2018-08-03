@@ -23,7 +23,7 @@ class DatasetSpinner extends React.Component {
     }
     this.mapDispatchToProps = dispatch => {
       return {
-        onLoad: (id) => dispatch(loadDataset(id))
+        onLoad: (id) => dispatch(loadDataset(id,true))
       }
     }
   }

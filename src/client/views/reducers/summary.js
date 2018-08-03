@@ -7,6 +7,7 @@ import { getScatterPlotDataByCategory,
   getScatterPlotData,
   getRawDataForCat
 } from './plotData';
+import { getDatasetIsActive } from './repository'
 import { getRawDataForFieldId, getDetailsForFieldId, getBinsForFieldId, getAllActiveFields, getBinsForCat } from './field'
 import { getMainPlot, getZAxis } from './plot';
 import { getSelectedDatasetMeta } from './dataset';
@@ -28,11 +29,13 @@ import { format as d3format} from 'd3-format'
 
 export const getSelectedScatterPlotDataByCategory = createSelector(
   getMainPlotData,
+  getDatasetIsActive,
   getScatterPlotData,
   getSelectedRecordsAsObject,
   getZAxis,
   getBinsForCat,
-  (plotData,scatterData,selected,zAxis,bins) => {
+  (plotData,active,scatterData,selected,zAxis,bins) => {
+    if (!active || active == 'loading') return false
     let byCat = [];
     let selByCat = [];
     let selAll = [];
@@ -75,6 +78,7 @@ export const getSummary = createSelector(
   getColorPalette,
   getRawDataForCat,
   (all,selected,reducer,palette,raw) => {
+    if (!all) return undefined
     let bins = selected.bins
     let zAxis = selected.zAxis
     let values = {counts:{},reduced:{},n50:{}}
@@ -141,6 +145,7 @@ const getGreatestX = createSelector(
   getRawDataForLength,
   data => {
     let max = -1
+    if (!data) return max
     data.values.forEach(i=>{
       max = Math.max(max,i)
     })
@@ -152,6 +157,7 @@ export const getCumulative = createSelector(
   getScatterPlotData,
   getSelectedScatterPlotDataByCategory,
   (all,selected) => {
+    if (all.data.length == 0) return false
     let zAxis = selected.zAxis
     let bins = selected.bins
     let values = {all:[],byCat:[]}
@@ -179,6 +185,7 @@ export const cumulativeCurves = createSelector(
   getRecordCount,
   getSpan,
   (cumulative,palette,records,span) => {
+    if (!cumulative) return false
     let values = cumulative.values
     let all = values.all
     let byCat = values.byCat
@@ -227,6 +234,7 @@ export const getCircular = createSelector(
     let values = {nXlen:[],nXnum:[],gc:[],sum:[],n:[]}
     let xAxis = 'gc'
     let zAxis = 'length'
+    if (gc.values.length == 0 || length.values.length == 0) return false
     let arr = []
     gc.values.forEach((x,i)=>{
       arr[i] = {x,z:length.values[i],n:ncount.values[i] ? ncount.values[i]/length.values[i] : 0}
@@ -276,6 +284,7 @@ export const circularCurves = createSelector(
   getSpan,
   getGreatestX,
   (circular,palette,circumference,radius,origin,span,longest) => {
+    if (!circular) return false
     let invert = origin == 'center'
     let values = circular.values
     let composition = circular.composition
@@ -659,6 +668,7 @@ export const getIdentifiersForCurrentList = createSelector(
 
 export const getTableData = createSelector(
   getMainPlotData,
+  getDatasetIsActive,
   getAllActiveFields,
   getSelectedRecordsAsObject,
   getFilteredList,
@@ -681,7 +691,8 @@ export const getTableData = createSelector(
   },
   getIdentifiersForCurrentList,
   getLinks,
-  (plotData,fields,selected,list,data,bins,identifiers,links) => {
+  (plotData,active,fields,selected,list,data,bins,identifiers,links) => {
+    if (!active || active == 'loading') return false
     let values = []
     let keys = {}
     let plot = plotData.meta
@@ -748,7 +759,7 @@ export const getSelectedDatasetTable = createSelector(
   (details,links) => {
     let data = []
     if (!details.assembly){
-      return {data,meta:{}}
+      return false
     }
     Object.keys(details.taxon).forEach(key=>{
       let link,meta

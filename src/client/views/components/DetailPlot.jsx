@@ -27,6 +27,7 @@ class Detail extends React.Component {
   }
 
   render(){
+    if (!this.props.data) return null
     let data = this.props.data.data
     let meta = this.props.data.meta
     let columns = [{

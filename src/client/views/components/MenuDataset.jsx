@@ -5,7 +5,7 @@ import styles from './Layout.scss';
 import { Link } from 'react-router-dom'
 import Spinner from './Spinner'
 import { createSelector } from 'reselect'
-import { getDatasetMeta, loadDataset } from '../reducers/repository'
+import { getDatasetMeta } from '../reducers/repository'
 import { DatasetModal } from './DatasetModal'
 
 const basename = BASENAME || ''
@@ -18,11 +18,6 @@ class MenuDataset extends React.Component {
         meta: getDatasetMeta(state,this.props.id)
       }
     )
-    this.mapDispatchToProps = dispatch => (
-      {
-        onDatasetClick: id => {}//dispatch(loadDataset(id))
-      }
-    )
   }
 
   componentDidMount(){
@@ -31,8 +26,7 @@ class MenuDataset extends React.Component {
 
   render(){
     const ConnectedDataset = connect(
-      this.mapStateToProps,
-      false
+      this.mapStateToProps
     )(Dataset)
     return (
       <ConnectedDataset {...this.props}/>

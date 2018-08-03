@@ -3,8 +3,7 @@ import { connect } from 'react-redux'
 import { getRepositoryIsFetching,
   getAvailableDatasetIds,
   fetchMeta,
-  loadDataset,
-  setDatasetIsActive } from '../reducers/repository'
+  setDatasetIsActive,refreshStore } from '../reducers/repository'
 import { getDatasetID,
   updatePathname } from '../reducers/location'
 import styles from './Layout.scss'
@@ -46,8 +45,8 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    // onDatasetClick: id => dispatch(loadDataset(id,true)),
     onDatasetClick: id => {
+      dispatch(refreshStore())
       dispatch(setDatasetIsActive(false))
       dispatch(updatePathname({dataset:id}))
     },

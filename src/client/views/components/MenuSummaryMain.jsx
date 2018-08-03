@@ -18,7 +18,7 @@ const SummaryMenu = ({values,zAxis,bins,palette,other}) => {
 };
 
 const mapStateToProps = state => {
-  return getSummary(state)
+  return getSummary(state) || {}
 }
 
 const MenuSummaryMain = connect(

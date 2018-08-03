@@ -8,7 +8,7 @@ import { NotFound } from './Error';
 import history from '../reducers/history';
 import Spinner from './Spinner'
 import { getDatasetID } from '../reducers/location'
-import { getDatasetIsActive, loadDataset } from '../reducers/repository'
+import { getDatasetIsActive } from '../reducers/repository'
 import { fetchRepository, getRepositoryIsInitialised, getRepositoryIsFetching } from '../reducers/repository'
 
 class MainDiv extends React.Component {

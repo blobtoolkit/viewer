@@ -86,6 +86,7 @@ class Table extends React.Component {
     return [variables,categories]
   }
   render(){
+    if (!this.props.data) return null
     let keys = this.props.data.keys
     let data = this.props.data.values
     let links = this.props.data.links
@@ -145,6 +146,7 @@ class TablePlot extends React.Component {
     super(props);
     this.mapStateToProps = state => {
       let data = getTableData(state)
+      if (!data) return {}
       let selCount = data.values.filter(o=>o.sel==true).length
       return {
         data,

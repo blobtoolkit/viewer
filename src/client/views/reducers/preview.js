@@ -68,7 +68,8 @@ export const getFilteredDataForFieldId = createFilteredDataSelectorForFieldId(
   _getFieldIdAsMemoKey,
   getFilteredList,
   getRawDataForFieldId,
-  (list = [], rawData = {}) => {
+  (list = [], rawData) => {
+    if (!rawData) return undefined
     let values = []
     if (rawData.values){
       let raw = rawData.values;

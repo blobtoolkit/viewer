@@ -7,7 +7,7 @@ class Spinner extends React.Component {
     super(props);
     if (this.props.id && (!this.props.active || this.props.active == 'loading')){
       this.state = { spinner: true }
-      this.props.onLoad(this.props.id)
+      if (!this.props.active) this.props.onLoad(this.props.id)
     }
     else {
       this.state = { spinner: false }

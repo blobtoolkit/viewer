@@ -57,6 +57,13 @@ class FieldMenu extends React.Component {
         </div>
       )
     }
+    if (this.props.isActive == 'loading'){
+      return (
+        <div className={styles.fill_parent}>
+          Loading dataset.
+        </div>
+      )
+    }
     let fields = this.mapFields(this.props.fields)
     return (
       <div className={styles.fill_parent}>
@@ -75,13 +82,6 @@ const mapStateToProps = state => {
     isActive: getDatasetIsActive(state),
     topLevelFields: getTopLevelFields(state),
     fields: getFieldHierarchy(state)
-  }
-}
-
-const mapDispatchToProps = dispatch => {
-  return {
-    onDatasetClick: id => dispatch(selectDataset(id)),
-    onDatasetMount: id => dispatch(fetchMeta(id))
   }
 }
 

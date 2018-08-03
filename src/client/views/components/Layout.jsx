@@ -1,7 +1,7 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import styles from './Layout.scss'
-import { loadDataset, getDatasetIsActive, getReloading, setReloading } from '../reducers/repository'
+import { getDatasetIsActive, getReloading, setReloading } from '../reducers/repository'
 import { getQueryString, setQueryString, getDatasetID, getHashString } from '../reducers/location'
 import LayoutControls from './LayoutControls'
 import LayoutHeader from './LayoutHeader'
@@ -48,10 +48,10 @@ class Layout extends React.Component {
     this.mapStateToProps = state => {
       return {
         // active: getDatasetIsActive(state),
-        queryString: getQueryString(state),
+        //queryString: getQueryString(state),
         reloading: getReloading(state),
         // datasetId: getDatasetID(state),
-        activeTab: getHashString(state)
+        //activeTab: getHashString(state)
       }
     }
     this.mapDispatchToProps = dispatch => {
