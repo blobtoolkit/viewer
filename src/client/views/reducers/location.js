@@ -126,6 +126,11 @@ export const queryString = handleAction(
 )
 export const getQueryString = state => state.queryString || ''
 
+export const getParsedQueryString = createSelector(
+  getQueryString,
+  str => qs.parse(str)
+)
+
 export const setHashString = createAction('SET_HASH_VALUE')
 export const hashString = handleAction(
   'SET_HASH_VALUE',

@@ -9,7 +9,7 @@ import { addFilter, editFilter } from './filter'
 import { getCatAxis } from './plot'
 import { getDimensionsbyDimensionId, setDimension, getPreviewDimensions } from './dimension'
 import * as d3 from 'd3'
-import { getQueryValue, getDatasetID } from './location'
+import { getParsedQueryString, getQueryValue, getDatasetID } from './location'
 
 const apiUrl = window.apiURL || '/api/v1'
 
@@ -246,8 +246,22 @@ export function fetchRawData(id) {
 export const addAllFields = (dispatch,fields,flag,meta,promises) => {
   promises = promises || []
   let axes = ['x','y','z','cat']
+  let state = store.getState()
+  let params = getParsedQueryString(state)
+  Object.keys(params).forEach(p=>{
+    let parts = p.split('--')
+    if (parts.length == 2){
+      if (parts[1] == 'Active' && params[p] == 'true'){
+        let index = fields.findIndex(field=>field.id==parts[0])
+        if (index != -1){
+          fields[index].active = true
+          fields[index].preload = true
+        }
+      }
+    }
+  })
   axes.forEach(axis=>{
-    let f = getQueryValue(axis+'Field')
+    let f = params[axis+'Field']
     if (f){
       let index = fields.findIndex(field=>field.id==f)
       if (index != -1){
@@ -470,6 +484,7 @@ export const getBarsForFieldId = createBarSelectorForFieldId(
   getDetailsForFieldId,
   getPreviewDimensions,
   (bins, details, dimensions) => {
+    if (!bins || !details) return undefined
     let bars = []
     let x = details.xScale
     let y = d3.scaleLinear()
@@ -504,7 +519,7 @@ export const getPreviewDataForFieldId = createPreviewDataSelectorForFieldId(
   getBarsForFieldId,
   getDetailsForFieldId,
   (bins, bars, details) => {
-
+    if (!bins || !details) return undefined
     let max = d3.max(bins, function(d) { return d.length; })
     return {bins,bars,details,max}
   }

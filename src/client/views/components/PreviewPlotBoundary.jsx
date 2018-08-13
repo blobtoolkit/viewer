@@ -11,7 +11,7 @@ export default class PreviewPlotBoundary extends React.Component {
     super(props);
     this.mapStateToProps = () => {
       return (state, props) => (
-        getPreviewDataForFieldId(state,props.xLabel)
+        getPreviewDataForFieldId(state,props.xLabel) || {}
       )
     }
   }
@@ -28,6 +28,7 @@ export default class PreviewPlotBoundary extends React.Component {
 
 class PlotOutline extends React.Component {
   render(){
+    if (!this.props.bars) return (<g></g>)
     let yScale = this.props.yScale.copy()
     let height = this.props.dimensions.height
     let width = this.props.dimensions.width

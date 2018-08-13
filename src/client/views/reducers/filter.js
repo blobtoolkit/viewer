@@ -164,7 +164,7 @@ export function filterToList(readQueryString) {
     let remove = []
     let values = {}
     state.filters.allIds.forEach(id => {
-      if (fields[id] && fields[id].active && filters[id]){
+      if (data[id] && fields[id] && fields[id].active && filters[id]){
         if (filters[id].type == 'range'){
           let minstr = id+'--Min'
           let maxstr = id+'--Max'
