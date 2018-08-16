@@ -46,7 +46,6 @@ class Field extends React.Component {
         setAxes: (axis,id) => {
           let values = {[axis+'Field']:id}
           dispatch(queryToStore({values}))
-          dispatch(editPlot({id:'default',[axis]:id}))
         },
         cloneField: (id) => {dispatch(cloneField({id}))},
         showData: (id) => dispatch(fetchRawData(id)),
