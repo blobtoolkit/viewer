@@ -119,6 +119,21 @@
   }
 }
 
+.right_align {
+  text-align:right;
+}
+
+.left_align {
+  text-align:left;
+}
+
+table {
+  .highlight {
+    background-color:$highlightColor;
+    color:$lightColor !important;
+  }
+}
+
 .content {
   flex: 1;
   position:relative;

@@ -4,35 +4,53 @@ import Spinner from './Spinner'
 import { format as d3Format } from 'd3-format'
 
 const SelectedFraction = ({value,total}) => {
+  return (
+    <span>
+
+    </span>
+  )
+}
+
+const TabbedFraction = ({value,total,color='rgba(0,0,0,0)',title='total',sel=false}) => {
+  let css = styles.colored_tab;
   value = Math.max(value,0)
   let portion = value / total
   let percent = d3Format(".1%")(portion)
   total = d3Format(",.0f")(total)
   value = d3Format(",.0f")(value)
   return (
-    <span>
-      <span className={styles.highlight}>
-        {value}
-      </span>
-      &nbsp;/&nbsp;
-      {total} (<span className={styles.highlight}>{percent}</span>)
-    </span>
-  )
-}
-
-const TabbedFraction = ({value,total,color='rgba(0,0,0,0)',title='total'}) => {
-  let css = styles.colored_tab;
-  return (
-    <div>
-      <span
-        className={css}
-        style={{backgroundColor:color}}>
-        &nbsp;
-      </span>
-      &nbsp;
-      <SelectedFraction {...{value,total}}/>
-      &nbsp;&ndash;&nbsp;{title}
-    </div>
+    <tr>
+      <td>
+        <span
+          className={css}
+          style={{backgroundColor:color}}>
+          &nbsp;
+        </span>
+      </td>
+      <td className={styles.left_align}>
+        {title}
+      </td>
+      <td>
+        {sel ? (
+          <span>
+            <span className={styles.highlight}>
+              {value}
+            </span> /
+          </span>
+        ) : ' '}
+      </td>
+      <td>
+        {total}
+      </td>
+      <td>
+        {sel ? (
+          <span className={styles.highlight}>
+            {percent}
+          </span>
+        ) : ' '}
+      </td>
+      
+    </tr>
   )
 }
 
@@ -49,10 +67,10 @@ const MenuSummary = ({values,zAxis,bins,palette,other}) => {
       let value = values.counts.selBinned[i]
       let total = values.counts.binned[i]
       if (total){
-        counts[i] = <TabbedFraction key={i} {...{value,total,color,title}}/>
+        counts[i] = <TabbedFraction key={i} {...{value,total,color,title,sel:values.reduced.sel}}/>
         value = values.reduced.selBinned[i]
         total = values.reduced.binned[i]
-        reduced[i] = <TabbedFraction key={i} {...{value,total,color,title}}/>
+        reduced[i] = <TabbedFraction key={i} {...{value,total,color,title,sel:values.counts.sel}}/>
       }
     })
     if (other){
@@ -70,13 +88,21 @@ const MenuSummary = ({values,zAxis,bins,palette,other}) => {
     <div>
       <div className={css}>
         <h3>{zAxis}</h3>
-        <TabbedFraction value={values.reduced.sel} total={values.reduced.all}/>
-        {reduced}
+        <table className={styles.right_align}>
+          <tbody>
+            <TabbedFraction value={values.reduced.sel} total={values.reduced.all} sel={values.reduced.sel}/>
+            {reduced}
+          </tbody>
+        </table>
       </div>
       <div className={css}>
         <h3>counts</h3>
-        <TabbedFraction value={values.counts.sel} total={values.counts.all}/>
-        {counts}
+        <table className={styles.right_align}>
+          <tbody>
+            <TabbedFraction value={values.counts.sel} total={values.counts.all} sel={values.counts.sel}/>
+            {counts}
+          </tbody>
+        </table>
       </div>
       {listDiv}
     </div>

@@ -110,7 +110,6 @@ const mapDispatchToQuery = (
             plot[o.index] = o.value
           }
         })
-        console.log(plot)
         let actions = [
           {
             type: 'EDIT_PLOT',
@@ -297,7 +296,6 @@ export const queryToStore = (options = {}) => {
     // dispatch({type:'RELOADING',payload:true})
     let batch = []
     let values = options.values || {}
-    console.log(values)
     let searchReplace = options.searchReplace || false
     let currentHash = options.hash || history.location.hash || ''
     let currentSearch = options.currentSearch || history.location.search || ''
