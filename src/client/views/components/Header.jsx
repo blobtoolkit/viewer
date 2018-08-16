@@ -2,6 +2,7 @@ import React from 'react'
 import styles from './Layout.scss'
 import BTKLogos from './BTKLogos'
 
+const home = HOME || '/'
 
 const Header = ( { tabs, onTabClick } ) => {
   let children = tabs.map((tab,i) => {
@@ -20,6 +21,12 @@ const Header = ( { tabs, onTabClick } ) => {
   return (
     <div className={styles.main_header}>
       {children}
+      <a href={home}>
+        <span className={styles.main_header_tab}
+          key='home'>
+          <h2>About</h2>
+        </span>
+      </a>
       <BTKLogos/>
     </div>
   )

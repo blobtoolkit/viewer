@@ -11,6 +11,8 @@ const APP_DIR = path.resolve(__dirname, 'src/client/views');
 
 const gitRevisionPlugin = new GitRevisionPlugin();
 
+const protocol = main.https ? 'https' : 'http'
+
 const config = {
   entry: [
     'babel-polyfill',
@@ -39,6 +41,7 @@ const config = {
       API_URL: JSON.stringify(main.apiUrl),
     	VERSION: JSON.stringify(main.version),
     	BASENAME: JSON.stringify(main.basename),
+    	HOME: JSON.stringify(protocol+'://'+main.hostname),
       GIT_VERSION: JSON.stringify(gitRevisionPlugin.version()),
       COMMIT_HASH: JSON.stringify(gitRevisionPlugin.commithash()),
       BRANCH: JSON.stringify(gitRevisionPlugin.branch())
