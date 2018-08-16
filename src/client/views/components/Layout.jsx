@@ -6,10 +6,15 @@ import { getQueryString, setQueryString, getDatasetID, getHashString } from '../
 import LayoutControls from './LayoutControls'
 import LayoutHeader from './LayoutHeader'
 import LayoutPlots from './LayoutPlots'
+import ExternalLink from './ExternalLink'
 import Spinner from './Spinner'
 import DOIBadge from './DOIBadge'
 import { queryToStore } from '../querySync'
 import qs from 'qs'
+
+const branch = BRANCH || ''
+const version = GIT_VERSION || ''
+const hash = COMMIT_HASH || ''
 
 window.scrollTop = {}
 
@@ -22,6 +27,8 @@ class LayoutComponent extends React.Component {
   }
 
   render(){
+    let text = version
+    let url = 'https://github.com/blobtoolkit/viewer/tree/'+hash
     // {this.props.datasetId ? this.props.active ? <LayoutPlots/> : <Spinner/> : <LayoutPlots/> }
     return (
       <div className={styles.main}>
@@ -35,6 +42,9 @@ class LayoutComponent extends React.Component {
           </div>
         </div>
         <div className={styles.main_footer}>
+          <span>
+            BlobToolKit Viewer, version <a href={url} target={text}>{text}</a>
+          </span>
           <DOIBadge/>
         </div>
       </div>

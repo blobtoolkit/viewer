@@ -106,6 +106,17 @@
     float:right;
     margin: 0.4em;
   }
+
+  span {
+    color: white;
+    display: inline-block;
+    margin: 0.5em;
+
+    a {
+      color: $highlightColor;
+      text-decoration: underline;
+    }
+  }
 }
 
 .content {

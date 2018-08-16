@@ -1,12 +1,15 @@
 const path = require('path');
 const webpack = require('webpack');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const GitRevisionPlugin = require('git-revision-webpack-plugin');
 const combineLoaders = require('webpack-combine-loaders');
 const main = require('./src/config/main');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 const BUILD_DIR = path.resolve(__dirname, 'dist/public');
 const APP_DIR = path.resolve(__dirname, 'src/client/views');
+
+const gitRevisionPlugin = new GitRevisionPlugin();
 
 const config = {
   entry: [
@@ -35,11 +38,14 @@ const config = {
     new webpack.DefinePlugin({
       API_URL: JSON.stringify(main.apiUrl),
     	VERSION: JSON.stringify(main.version),
-    	BASENAME: JSON.stringify(main.basename)
+    	BASENAME: JSON.stringify(main.basename),
+      GIT_VERSION: JSON.stringify(gitRevisionPlugin.version()),
+      COMMIT_HASH: JSON.stringify(gitRevisionPlugin.commithash()),
+      BRANCH: JSON.stringify(gitRevisionPlugin.branch())
     }),
     new HtmlWebpackPlugin({
       hash: true,
-      title: 'BlobToolKit Viewer '+main.version,
+      title: 'BlobToolKit Viewer',
       template: './src/client/index.html',
       filename: BUILD_DIR + '/index.html'
     })
