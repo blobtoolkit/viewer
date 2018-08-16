@@ -6,6 +6,11 @@ class FilterControlRange extends React.Component {
     super(props);
     this.state = {low:props.filterRange[0],high:props.filterRange[1]}
   }
+  componentWillUpdate(nextProps) {
+    if (nextProps.filterRange[0] != this.state.low || nextProps.filterRange[1] != this.state.high){
+      this.setState({low:nextProps.filterRange[0],high:nextProps.filterRange[1]})
+    }
+  }
   isNumeric(n) {
     if ((typeof n === 'undefined') || n == 'NaN') return false
     return !isNaN(parseFloat(n)) && isFinite(n)
