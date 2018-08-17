@@ -2,6 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux'
 import styles from './Layout.scss'
 import { getView } from '../reducers/location'
+import FAQs from './FAQs'
 
 const MenuHelp = ({match,datasetId,view}) => {
   switch (view || 'blob') {
@@ -21,6 +22,9 @@ const MenuHelp = ({match,datasetId,view}) => {
       view = 'TreeMap text'
       break
   }
+  return (
+    <FAQs/>
+  )
   return (
     <span>
       <p>
