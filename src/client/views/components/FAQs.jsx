@@ -184,8 +184,13 @@ export default class FAQs extends React.Component {
     let byCat = {Top:[]}
     let cat
     questions.forEach(q=>{
+      let action = 'push'
       if (this.state.query && q.q.match(new RegExp(this.state.query,'i'))){
         cat = 'Top'
+      }
+      else if (this.state.query && q.a.match(new RegExp(this.state.query,'i'))){
+        cat = 'Top'
+        action = 'unshift'
       }
       else {
         cat = q.s
@@ -193,7 +198,12 @@ export default class FAQs extends React.Component {
       if (!byCat[cat]){
         byCat[cat] = []
       }
-      byCat[cat].push(q)
+      if (action == 'push'){
+        byCat[cat].push(q)
+      }
+      else {
+        byCat[cat].unshift(q)
+      }
     })
     let lists = []
     Object.keys(byCat).forEach(key=>{
