@@ -3,12 +3,22 @@ import { connect } from 'react-redux'
 import styles from './Layout.scss'
 import { getSummary } from '../reducers/summary'
 import MenuSummary from './MenuSummary'
+import MenuDataset from './MenuDataset'
+import { getDatasetID } from '../reducers/location'
 
 
-const SummaryMenu = ({values,zAxis,bins,palette,other}) => {
+const SummaryMenu = ({values,zAxis,bins,palette,other,datasetId}) => {
   let props = {values,zAxis,bins,palette,other}
   return (
     <div className={styles.fill_parent}>
+      <MenuDataset
+        key={datasetId}
+        id={datasetId}
+        active={false}
+        onDatasetClick={()=>{}}
+        onDatasetMount={()=>{}}
+      />
+
       { bins ?
         <MenuSummary {...props}/> :
         'Select a dataset to view summary statistics'
@@ -18,7 +28,9 @@ const SummaryMenu = ({values,zAxis,bins,palette,other}) => {
 };
 
 const mapStateToProps = state => {
-  return getSummary(state) || {}
+  let summary = getSummary(state) || {}
+  let datasetId = getDatasetID(state)
+  return {datasetId,...summary}
 }
 
 const MenuSummaryMain = connect(

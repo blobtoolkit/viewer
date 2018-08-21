@@ -227,7 +227,7 @@ export default class FAQs extends React.Component {
     })
     let placeholder = "Search FAQs..."
     return (
-      <form>
+      <form onSubmit={e=>e.preventDefault()}>
         <input
           placeholder={placeholder}
           ref={input => this.search = input}

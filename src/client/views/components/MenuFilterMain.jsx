@@ -14,6 +14,8 @@ import Field from './Field'
 import FieldSet from './FieldSet'
 import MainPlot from './MainPlot'
 import ToolTips from './ToolTips'
+import MenuDataset from './MenuDataset'
+import { getDatasetID } from '../reducers/location'
 
 
 class FieldMenu extends React.Component {
@@ -67,9 +69,14 @@ class FieldMenu extends React.Component {
     let fields = this.mapFields(this.props.fields)
     return (
       <div className={styles.fill_parent}>
-        <div className={styles.sticky}>
-          <DatasetApplyFilters />
-        </div>
+        <MenuDataset
+          key={this.props.datasetId}
+          id={this.props.datasetId}
+          active={false}
+          onDatasetClick={()=>{}}
+          onDatasetMount={()=>{}}
+        />
+        <DatasetApplyFilters />
         {fields}
         <ToolTips set='filterMenu'/>
       </div>
@@ -81,7 +88,8 @@ const mapStateToProps = state => {
   return {
     isActive: getDatasetIsActive(state),
     topLevelFields: getTopLevelFields(state),
-    fields: getFieldHierarchy(state)
+    fields: getFieldHierarchy(state),
+    datasetId: getDatasetID(state)
   }
 }
 

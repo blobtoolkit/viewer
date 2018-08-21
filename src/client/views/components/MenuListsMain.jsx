@@ -7,10 +7,19 @@ import { getLists,
 import MenuList from './MenuList'
 import ListUpload from './MenuListUpload'
 import DatasetCreateList from './DatasetCreateList'
+import MenuDataset from './MenuDataset'
+import { getDatasetID } from '../reducers/location'
 
-const ListsMenu = ({lists,selectedList,onListClick,onDrop}) => {
+const ListsMenu = ({lists,selectedList,onListClick,onDrop,datasetId}) => {
   return (
     <div className={styles.fill_parent}>
+      <MenuDataset
+        key={datasetId}
+        id={datasetId}
+        active={false}
+        onDatasetClick={()=>{}}
+        onDatasetMount={()=>{}}
+      />
       <DatasetCreateList />
       { lists.map((list,i) => (<MenuList key={i} {...list} onListClick={onListClick}/>))}
       {<ListUpload active={false} onDrop={onDrop}/>}
@@ -22,6 +31,7 @@ const mapStateToProps = state => {
   return {
     lists: getLists(state),
     selectedList: getSelectedList(state),
+    datasetId: getDatasetID(state)
   }
 }
 

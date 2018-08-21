@@ -21,7 +21,7 @@ import { getPlotShape,
   chooseCurveOrigin,
   getSnailOrigin,
   chooseSnailOrigin } from '../reducers/plotParameters'
-import { chooseView, getView } from '../reducers/location'
+import { chooseView, getView, getDatasetID } from '../reducers/location'
 import styles from './Layout.scss'
 import MenuDisplaySimple from './MenuDisplaySimple'
 import SVGIcon from './SVGIcon'
@@ -46,9 +46,10 @@ import Palettes from './Palettes'
 import MenuItem from './MenuItem'
 import ToolTips from './ToolTips'
 import Timeout from './Timeout'
+import MenuDataset from './MenuDataset'
 
 const DisplayMenu = ({
-  title, view,
+  datasetId, title, view,
   shape, onSelectShape,
   resolution, onChangeResolution,
   graphics, onChangeGraphics,
@@ -130,6 +131,13 @@ const DisplayMenu = ({
   }
   return (
     <div className={styles.fill_parent}>
+      <MenuDataset
+        key={datasetId}
+        id={datasetId}
+        active={false}
+        onDatasetClick={()=>{}}
+        onDatasetMount={()=>{}}
+      />
       <MenuDisplaySimple name='view'>
         <TextIcon title='blobplot' active={view == 'blob'} onIconClick={()=>onSelectView('blob')}/>
         <TextIcon title='cumulative' active={view == 'cumulative'} onIconClick={()=>onSelectView('cumulative')}/>
@@ -225,7 +233,8 @@ class MenuDisplayMain extends React.Component {
         curveOrigin:getCurveOrigin(state),
         snailOrigin:getSnailOrigin(state),
         transform:getTransformFunctionParams(state),
-        view: getView(state)
+        view: getView(state),
+        datasetId: getDatasetID(state)
       }
     }
   }
