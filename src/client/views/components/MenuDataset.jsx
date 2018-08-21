@@ -47,8 +47,8 @@ class Dataset extends React.Component {
     if (this.props.active) css += ' '+styles.active
     let records = this.props.meta.records || ''
     let record_type = this.props.meta.record_type || ''
-    let taxon = this.props.meta.taxon || {}
-    taxon = taxon.name || ''
+    let taxon_meta = this.props.meta.taxon || {}
+    let taxon = taxon_meta.name || ''
     let accession = this.props.meta.accession || ''
     return (
       <div className={css}>

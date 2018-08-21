@@ -769,7 +769,7 @@ export const getSelectedDatasetTable = createSelector(
       let link,meta
       if (links.dataset.taxon && links.dataset.taxon[key]){
         link = links.dataset.taxon[key]
-        meta = {...details.taxon}
+        meta = Object.assign({},details.taxon)
       }
       data.push({group:'Taxon',key,value:details.taxon[key],link,meta})
     })
@@ -804,7 +804,6 @@ export const getSelectedDatasetTable = createSelector(
     if (details.settings && details.settings.commit && links.dataset.blobtoolkit){
       let link = links.dataset.blobtoolkit.commit
       let meta = details.settings
-      console.log(details.settings)
       data.push({group:'BlobToolKit',key:'pipeline version',value:details.settings.commit,link,meta})
     }
     let meta = {}

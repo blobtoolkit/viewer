@@ -55,14 +55,24 @@ class SearchBox extends Component {
     })
   }
 
+  handleKeyStroke(key,value){
+    if (key == 'Enter'){
+      if (this.state.results.length > 0){
+        this.props.onChooseTerm(this.state.results[0].term)
+      }
+    }
+
+  }
+
   render(){
     let placeholder = this.props.datasetIds.length == 0 ? "Search datasets to begin... (e.g. Nematoda)" : "Search for datasets..."
     return (
-      <form>
+      <form onSubmit={e=>e.preventDefault()}>
         <input
           placeholder={placeholder}
           ref={input => this.search = input}
           onChange={()=>this.handleInputChange()}
+          onKeyDown={e=>this.handleKeyStroke(e.key,e.target.value)}
           className={styles.search_box}
         />
         <Suggestions results={this.state.results} onChooseTerm={this.props.onChooseTerm} />

@@ -20,7 +20,6 @@ const parseMeta = (obj) => {
     })
   }
   if (meta.hasOwnProperty('name')){
-    meta.taxon = meta.name
     delete meta.name
   }
   if (meta.hasOwnProperty('prefix')){

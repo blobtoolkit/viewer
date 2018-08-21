@@ -114,6 +114,8 @@ export function fetchRepository(searchTerm) {
     if (setSearch){
       dispatch(updatePathname({search:searchTerm}))
     }
+    dispatch(refreshStore())
+    
     return fetch(apiUrl + '/search/' + searchTerm)
       .then(
         response => response.json(),
