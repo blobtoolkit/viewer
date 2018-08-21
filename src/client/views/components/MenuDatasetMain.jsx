@@ -5,18 +5,22 @@ import { getRepositoryIsFetching,
   fetchMeta,
   setDatasetIsActive,refreshStore } from '../reducers/repository'
 import { getDatasetID,
-  updatePathname } from '../reducers/location'
+  updatePathname,
+  getSearchTerm } from '../reducers/location'
 import styles from './Layout.scss'
 import MenuDataset from './MenuDataset'
 import Spinner from './Spinner'
 import ToolTips from './ToolTips'
 import Search from './Search'
 
-const DatasetMenu = ({ selectedDataset, isFetching, datasetIds, onDatasetMount, onDatasetClick }) => {
+const DatasetMenu = ({ searchTerm, selectedDataset, isFetching, datasetIds, onDatasetMount, onDatasetClick }) => {
   return (
     <div className={styles.fill_parent}>
       <Search/>
       {isFetching ? <Spinner /> : null}
+      { datasetIds.length > 0 ? (
+        <span className={styles.result_count} style={{marginLeft:'1em'}} key='span'>{datasetIds.length+' datasets match "'+searchTerm+'"'}</span>
+      ) : null }
       {datasetIds.map(id => {
         let active = false
         if (id == selectedDataset) active = true
@@ -39,7 +43,8 @@ const mapStateToProps = state => {
   return {
     isFetching: getRepositoryIsFetching(state),
     datasetIds: getAvailableDatasetIds(state),
-    selectedDataset: getDatasetID(state)
+    selectedDataset: getDatasetID(state),
+    searchTerm: getSearchTerm(state)
   }
 }
 
