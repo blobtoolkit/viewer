@@ -101,6 +101,13 @@ const loadMeta = async function() {
         if (!this.meta.hasOwnProperty(key)){
           this.meta[key] = defaultMeta[key]
         }
+        else {
+          Object.keys(defaultMeta[key]).forEach(k=>{
+            if (!this.meta[key].hasOwnProperty(k)){
+              this.meta[key][k] = defaultMeta[key][k]
+            }
+          })
+        }
       })
     }
   }

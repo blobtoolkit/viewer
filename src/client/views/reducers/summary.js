@@ -801,6 +801,12 @@ export const getSelectedDatasetTable = createSelector(
         data.push({group:'Reads',key:row[1]+' (single)',value:row[0],link,meta})
       })
     }
+    if (details.settings && details.settings.commit && links.dataset.blobtoolkit){
+      let link = links.dataset.blobtoolkit.commit
+      let meta = details.settings
+      console.log(details.settings)
+      data.push({group:'BlobToolKit',key:'pipeline version',value:details.settings.commit,link,meta})
+    }
     let meta = {}
     Object.keys(details).forEach(k=>{
       if (k != 'fields' && k != 'plot' && k != 'links'){
