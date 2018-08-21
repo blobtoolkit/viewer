@@ -94,11 +94,20 @@ const storeMeta = async function() {
 const loadMeta = async function() {
   if (!this.meta){
     let filePath = this.filePath || config.filePath;
+    let defaultMeta = await io.readJSON(filePath+'/default.json');
     this.meta = await io.readJSON(filePath+'/'+this.id+'/meta.json');
+    if (defaultMeta){
+      Object.keys(defaultMeta).forEach(key=>{
+        if (!this.meta.hasOwnProperty(key)){
+          this.meta[key] = defaultMeta[key]
+        }
+      })
+    }
   }
   if (this.meta.hasOwnProperty('id')){
     this.addFields(this.meta.fields);
   }
+
   return Promise.resolve(this.meta);
 }
 
