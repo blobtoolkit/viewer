@@ -15,8 +15,10 @@ class ControlsLayoutComponent extends React.Component {
   constructor(props) {
     super(props);
   }
-  handleScroll(e,tab){
-    window.scrollTop[tab] = e.target.scrollTop
+  handleScroll(){
+    let menuDiv = this.refs.menuDiv
+    let activeTab = this.props.activeTab
+    window.scrollTop[activeTab] = menuDiv.scrollTop
   }
 
   componentDidMount() {
@@ -24,7 +26,18 @@ class ControlsLayoutComponent extends React.Component {
     if(menuDiv){
       let activeTab = this.props.activeTab
       menuDiv.scrollTop = window.scrollTop[activeTab] || 0
-      menuDiv.addEventListener('scroll', e => this.handleScroll(e,activeTab));
+      menuDiv.addEventListener('scroll', ()=>this.handleScroll());
+    }
+
+  }
+
+  componentDidUpdate() {
+    let menuDiv = this.refs.menuDiv
+    if(menuDiv){
+      let activeTab = this.props.activeTab
+      menuDiv.removeEventListener('scroll', ()=>this.handleScroll());
+      menuDiv.scrollTop = window.scrollTop[activeTab] || 0
+      menuDiv.addEventListener('scroll', ()=>this.handleScroll());
     }
 
   }
