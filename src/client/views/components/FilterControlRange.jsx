@@ -7,7 +7,7 @@ class FilterControlRange extends React.Component {
     this.state = {low:props.filterRange[0],high:props.filterRange[1]}
   }
   componentWillUpdate(nextProps) {
-    if (nextProps.filterRange[0] != this.state.low || nextProps.filterRange[1] != this.state.high){
+    if (nextProps.filterRange[0] != this.props.filterRange[0] || nextProps.filterRange[1] != this.props.filterRange[1]){
       this.setState({low:nextProps.filterRange[0],high:nextProps.filterRange[1]})
     }
   }
@@ -36,13 +36,13 @@ class FilterControlRange extends React.Component {
             (e)=>{
               let range = this.props.filterRange;
               let value = e.target.value;
-              console.log(value)
               let index = 1
               if (this.props.filterLimit[0] <= value){
                 range[0] = value
               }
               else {
                 range[0] = this.props.filterLimit[0]
+                this.setState({low:range[0]})
                 index = -1
               }
               this.props.onUpdateRange(this.props.filterId,range,index)
@@ -75,6 +75,7 @@ class FilterControlRange extends React.Component {
               }
               else {
                 range[1] = this.props.filterLimit[1]
+                this.setState({high:range[1]})
                 index = -2
               }
               this.props.onUpdateRange(this.props.filterId,range,index)
