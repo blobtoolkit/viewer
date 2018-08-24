@@ -42,7 +42,6 @@ import xIcon from './svg/xLetter.svg';
 import yIcon from './svg/yLetter.svg';
 import zeroIcon from './svg/zero.svg';
 import invertIcon from './svg/invert.svg';
-import Palettes from './Palettes'
 import MenuItem from './MenuItem'
 import ToolTips from './ToolTips'
 import Timeout from './Timeout'

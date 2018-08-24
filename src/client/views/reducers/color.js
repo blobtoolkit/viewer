@@ -14,7 +14,7 @@ export const editPalette = createAction('EDIT_PALETTE')
 const qsPalette = () => {
   let colors = userColors.slice(0)
   for (let i = 0; i < colors.length; i++){
-    let qsColor = getQueryValue('color'+i)
+    let qsColor = qsDefault('color'+i)
     if (qsColor){
       colors[i] = colorToRGB(qsColor) || colors[i]
     }
@@ -33,7 +33,7 @@ export const palettes = handleActions(
     EDIT_PALETTE: (state, action) => {
       let id = action.payload.id
       let arr = action.payload[id].slice(0)
-      qsPalette().forEach((col,i)=>{
+      state.byId[id].forEach((col,i)=>{
         if (!arr[i]) arr[i] = col
       })
       return immutableUpdate(state, {
@@ -91,6 +91,16 @@ export const getColorPalette = createSelector(
     return {id,colors}
   }
 )
+
+export const getUserPalette = createSelector(
+  getAllPalettes,
+  (palettes) => {
+    let id = 'user'
+    let colors = palettes ? palettes.byId[id] : []
+    return {id,colors}
+  }
+)
+
 export const colorReducers = {
   palettes,
   selectedPalette

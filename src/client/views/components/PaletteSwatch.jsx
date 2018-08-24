@@ -18,6 +18,22 @@ class PaletteSwatch extends React.Component {
     };
   }
 
+  componentDidUpdate(nextProps) {
+    if (this.props.color != nextProps.color && !this.state.displayColorPicker){
+      let color = this.props.color.replace(/[rgba\(\)]/g,'').split(',');
+      this.setState({
+        displayColorPicker: false,
+        color: {
+          r: color[0],
+          g: color[1],
+          b: color[2],
+          a: color[3] || 1
+        },
+      })
+    }
+
+  }
+
   handleClick() {
     this.setState({ displayColorPicker: !this.state.displayColorPicker })
   };
