@@ -160,7 +160,7 @@ export default class FAQs extends React.Component {
       },{
         s: 'Export',
         q: 'How do I export a filtered list of records?',
-        a: 'Two lists are created by default in the "Lists" menu, one base on the current set of parameters (current) and a second unfiltered list (all) is available if the current list does not contain all records. The current list can be stored under a different name using the Create list button. To export a list of record names along with the parameter settings, click on the list then click Download JSON in the pop-up dialog box.',
+        a: 'Two lists are created by default in the "Lists" menu, one based on the current set of parameters (current) and a second unfiltered list (all) is available if the current list does not contain all records. The current list can be stored under a different name using the Create list button. To export a list of record names along with the parameter settings, click on the list then click Download JSON in the pop-up dialog box.',
       },{
         s: 'Export',
         q: 'Can I export raw data?',
