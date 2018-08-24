@@ -185,12 +185,12 @@ export default class FAQs extends React.Component {
     let cat
     questions.forEach(q=>{
       let action = 'push'
-      if (this.state.query && q.q.match(new RegExp(this.state.query,'i'))){
-        cat = 'Top'
-      }
-      else if (this.state.query && q.a.match(new RegExp(this.state.query,'i'))){
+      if (this.state.query && q.q.match(new RegExp('(^| )'+this.state.query,'i'))){
         cat = 'Top'
         action = 'unshift'
+      }
+      else if (this.state.query && q.a.match(new RegExp('(^| )'+this.state.query,'i'))){
+        cat = 'Top'
       }
       else {
         cat = q.s
