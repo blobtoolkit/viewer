@@ -21,11 +21,11 @@ export default class HomePage extends React.Component {
         <p>
           BlobToolKit Viewer allows browser-based interactive visualisation and
           filtering of preliminary or published genomic datasets even for highly
-          fragmented assemblies with over 1 million contigs.
+          fragmented assemblies.
         </p>
         <hr/>
         <p>
-          To get started, search by assembly name, id species or phylum in the <a href='#Datasets'>Datasets</a> menu.
+          To get started, search by assembly name, id, species or phylum in the <a href='#Datasets'>Datasets</a> menu.
         </p>
         <hr/>
         <p>
