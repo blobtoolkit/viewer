@@ -6,16 +6,12 @@ import { getCSVdata } from '../reducers/summary'
 import { getDatasetID } from '../reducers/location'
 
 export const DownloadCSVComponent = ({data,dataset}) => {
+  if (!data || data.length == 0) return null
   return (
-    <span className={styles.download}>
-      <CSVLink
-        className={styles.save_svg}
+    <CSVDownload
         filename={dataset+'.csv'}
         data={data}
-        target='_self'>
-        &#8681;csv
-      </CSVLink>
-    </span>
+        target='_blank'/>
   )
 }
 

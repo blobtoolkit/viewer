@@ -42,6 +42,40 @@ const RecordSelector = ({selected,id,toggleSelect}) => {
   )
 }
 
+class CSVWrapper extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      clicked:false
+    }
+  }
+
+  toggleClicked(clicked){
+    if (typeof clicked == 'undefined') clicked = !this.state.clicked
+    this.setState({clicked})
+  }
+
+  render(){
+    let download
+    if (this.state.clicked){
+      download = <DownloadCSV/>
+    }
+    return (
+      <span className={plotStyles.download}
+        onMouseDown={()=>this.toggleClicked(true)}
+        onMouseUp={()=>this.toggleClicked(false)}>
+        <span className={plotStyles.save_svg}>
+          &#8681;csv
+          {download}
+        </span>
+      </span>
+    )
+  }
+
+
+
+}
+
 
 class Table extends React.Component {
   constructor(props) {
@@ -132,10 +166,6 @@ class Table extends React.Component {
       ]
     }]
     columns = columns.concat(this.generateColumns(this.props.data.fields,this.props.data.keys,this.props.data.plot.cat.meta.id,this.props.binnedColors))
-    let warning
-    if (this.props.warning){
-      warning = <span>Only showing first 100,000 rows, download <code>csv</code> for full dataset</span>
-    }
     let page = this.props.page
     let pages = this.props.data.pages
     let pageSize = this.props.pageSize
@@ -158,8 +188,7 @@ class Table extends React.Component {
             onPageChange={(newPage)=>{this.props.changePage(newPage)}}
             onPageSizeChange={(newPageSize, pageIndex)=>{this.props.changePageSize(newPageSize,page,pageSize); return (newPageSize,pageIndex)}}
           />
-        <DownloadCSV data={data}/>
-        {warning}
+        <CSVWrapper />
       </div>
     )
   }
@@ -171,17 +200,17 @@ class TablePlot extends React.Component {
     this.mapStateToProps = state => {
       let data = getTableDataForPage(state)
       if (!data) return {}
-      let warning
-      if (data.values.length > 100000){
-        let subset = {}
-        subset.values = data.values.slice(0,100000)
-        subset.keys = data.keys
-        subset.plot = data.plot
-        subset.fields = data.fields
-        subset.links = data.links
-        warning = true
-        data = subset
-      }
+      // let warning
+      // if (data.values.length > 100000){
+      //   let subset = {}
+      //   subset.values = data.values.slice(0,100000)
+      //   subset.keys = data.keys
+      //   subset.plot = data.plot
+      //   subset.fields = data.fields
+      //   subset.links = data.links
+      //   warning = true
+      //   data = subset
+      // }
       let selCount = data.values.filter(o=>o.sel==true).length
       return {
         data,
@@ -189,8 +218,7 @@ class TablePlot extends React.Component {
         page: getTablePage(state),
         pageSize: getTablePageSize(state),
         binnedColors: getBinnedColors(state),
-        selectAll:(selCount == data.values.length),
-        warning
+        selectAll:(selCount == data.values.length)
       }
     }
     this.mapDispatchToProps = dispatch => {
