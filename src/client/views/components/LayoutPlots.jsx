@@ -12,12 +12,12 @@ import SnailPlot from './SnailPlot'
 import TablePlot from './TablePlot'
 import TreeMapPlot from './TreeMapPlot'
 import DatasetSpinner from './DatasetSpinner'
-import FAQs from './FAQs'
+import HomePage from './HomePage'
 
 class PlotsLayoutComponent extends React.Component {
 
   render(){
-    if (!this.props.datasetId) return <FAQs/>
+    if (!this.props.datasetId) return <HomePage/>
     let view
     switch (this.props.view || 'blob') {
       case 'cumulative':

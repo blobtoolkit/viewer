@@ -46,9 +46,9 @@ class ControlsLayoutComponent extends React.Component {
     let labels = ['Datasets','Filters','Lists','Settings','Summary','Help']
     let tabs = []
     let activeTab = this.props.activeTab
-    if (!activeTab && !this.props.datasetId){
-      activeTab = 'Datasets'
-    }
+    // if (!activeTab && !this.props.datasetId){
+    //   activeTab = 'Datasets'
+    // }
     labels.forEach(tab=>{
       tabs.push({id:tab,active:activeTab == tab})
     })

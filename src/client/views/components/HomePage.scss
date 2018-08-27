@@ -1,0 +1,21 @@
+@import 'colors';
+
+div.outer {
+  height:100%;
+  width:800px;
+  padding:1em 2em 4em 2em;
+  font-size:1.2em;
+
+  a {
+    color:$highlightColor;
+    text-decoration:underline;
+  }
+
+  a:visited {
+    color:$highlightColor;
+  }
+
+  img {
+    width:100%;
+  }
+}
