@@ -1,16 +1,16 @@
-# BlobToolKit Viewer (v0.3)
+# BlobToolKit Viewer (v0.5)
 
  [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1134794.svg)](https://doi.org/10.5281/zenodo.1134794)
 
-This is an alpha release of a visualistion tool developed as part of
-the [blobtoolkit](http://blobtoolkit.genomehubs.org) project to allow browser-based
-identification and filtering of target/non-target data in genome-scale datasets.
+BlobToolKit Viewer is a genome-scale dataset visualistion tool developed as part of the [blobtoolkit](http://blobtoolkit.genomehubs.org) project to allow browser-based identification and filtering of target and non-target data in genome assemblies.
 
-View a live demo at [blobtoolkit.genomehubs.org](http://blobtoolkit.genomehubs.org/demo).
+We are running the BlobToolKit [insdc-pipeline](https://github.com/blobtoolkit/insdc-pipeline) on all public (INSDC registered) eukaryote genome assemblies and making the results available in an instance of this viewer at [blobtoolkit.genomehubs.org](http://blobtoolkit.genomehubs.org/view/).
+
 
 
 ## Query string/list parameters:
 
+#### Plot parameters
 - xField=gc
 - yField=SRR000000_cov
 - zField=length

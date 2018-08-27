@@ -841,10 +841,29 @@ export const getTableDataForPage = createSelector(
 
 export const getCSVdata = createSelector(
   getTableData,
-  data => {
-    let values = data.values
-    let keys = data.keys
+  getSortOrder,
+  getAllActiveFields,
+  getSelectedRecordsAsObject,
+  getIdentifiersForCurrentList,
+  (tableData,order,fields,selected,identifiers) => {
+    if (!tableData) return false
+    let data = tableData.data
+    let list = tableData.list
+    let keys = tableData.keys
     let arr = []
+    let fieldList = Object.keys(fields)
+    order.forEach(index => {
+      let row = {sel:Boolean(selected[list[index]]),_id:list[index]}
+      fieldList.forEach(field =>{
+        row[field] = data[field] ? (data[field].values[index] || 0) : 0
+        if (keys[field]) row[field] = keys[field][row[field]]
+      })
+      if(identifiers[index]){
+         row['id'] = identifiers[index]
+      }
+      arr.push(row)
+    })
+
     // values.map(o=>{
     //   let entry = {}
     //   Object.keys(o).forEach(k=>{

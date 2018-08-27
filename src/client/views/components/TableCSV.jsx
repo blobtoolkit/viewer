@@ -11,7 +11,8 @@ export const DownloadCSVComponent = ({data,dataset}) => {
       <CSVLink
         className={styles.save_svg}
         filename={dataset+'.csv'}
-        data={data}>
+        data={data}
+        target='_self'>
         &#8681;csv
       </CSVLink>
     </span>
