@@ -3,7 +3,13 @@ import { connect } from 'react-redux'
 import plotStyles from './Plot.scss'
 import styles from './Layout.scss'
 import './style/node_modules.css'
-import { getTableData,getBinnedColors } from '../reducers/summary'
+import {
+  getTablePage, setTablePage,
+  getTablePageSize, setTablePageSize,
+  getTableSortField, setTableSortField,
+  getTableSortOrder, setTableSortOrder
+} from '../reducers/plotParameters'
+import { getTableData,getBinnedColors,getTableDataForPage } from '../reducers/summary'
 import { getColorPalette } from '../reducers/color'
 import { addRecords, removeRecords } from '../reducers/select'
 import PlotLegend from './PlotLegend'
@@ -41,8 +47,8 @@ class Table extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      page:0,
-      pageSize:10,
+      page:props.page,
+      pageSize:props.pageSize,
       filter:[],
       sort:[],
       size:[]
@@ -62,7 +68,7 @@ class Table extends React.Component {
       let field = fields[id]
       if (field.type == 'category'){
         let cat = {
-          id: field.name,
+          id: field.id,
           Header: () => field.name.replace('_',' '),
           accessor: d => d[id]
         }
@@ -76,7 +82,7 @@ class Table extends React.Component {
       }
       if (field.type == 'variable'){
         variables.columns.push({
-          id: field.name,
+          id: field.id,
           Header: () => field.name.replace('_',' '),
           accessor: d => d[id],
           minWidth: 50
@@ -130,14 +136,27 @@ class Table extends React.Component {
     if (this.props.warning){
       warning = <span>Only showing first 100,000 rows, download <code>csv</code> for full dataset</span>
     }
+    let page = this.props.page
+    let pages = this.props.data.pages
+    let pageSize = this.props.pageSize
     return (
       <div className={plotStyles.outer}>
         <ReactTable
             data={data}
-            page={this.state.page}
-            onPageChange={(page)=>{this.setState({page})}}
+            page={0}
+            pageSize={pageSize}
             columns={columns}
-            defaultPageSize={Math.min(this.state.pageSize,data.length)}
+            getPaginationProps={(props)=>{
+              let updated = {...props}
+              updated.pages = pages
+              updated.page = page
+              updated.canNext = updated.page < updated.pages - 1
+              updated.canPrevious = updated.page > 0
+              return updated
+            }}
+            onSortedChange={(arr)=>{this.props.updateSort(arr);}}
+            onPageChange={(newPage)=>{this.props.changePage(newPage)}}
+            onPageSizeChange={(newPageSize, pageIndex)=>{this.props.changePageSize(newPageSize,page,pageSize); return (newPageSize,pageIndex)}}
           />
         <DownloadCSV data={data}/>
         {warning}
@@ -150,7 +169,7 @@ class TablePlot extends React.Component {
   constructor(props) {
     super(props);
     this.mapStateToProps = state => {
-      let data = getTableData(state)
+      let data = getTableDataForPage(state)
       if (!data) return {}
       let warning
       if (data.values.length > 100000){
@@ -167,6 +186,8 @@ class TablePlot extends React.Component {
       return {
         data,
         palette: getColorPalette(state),
+        page: getTablePage(state),
+        pageSize: getTablePageSize(state),
         binnedColors: getBinnedColors(state),
         selectAll:(selCount == data.values.length),
         warning
@@ -182,6 +203,21 @@ class TablePlot extends React.Component {
           else {
             dispatch(removeRecords(id))
           }
+        },
+        changePage: (page) => {
+          dispatch(setTablePage(page))
+        },
+        changePageSize: (newSize,oldSize,oldPage) => {
+          dispatch(setTablePageSize(newSize))
+          let newPage = Math.floor(oldSize / newSize * oldPage)
+          dispatch(setTablePage(newPage))
+        },
+        updateSort: (arr) => {
+          if (arr.length == 1){
+            dispatch(setTableSortField(arr[0].id))
+            dispatch(setTableSortOrder(arr[0].desc ? 'desc' : 'asc'))
+          }
+          dispatch(setTablePage(0))
         }
       }
     }

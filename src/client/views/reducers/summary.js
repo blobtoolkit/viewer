@@ -16,7 +16,7 @@ import { getMainPlot, getZAxis } from './plot';
 import { getSelectedDatasetMeta } from './dataset';
 import { getFilteredList } from './filter';
 import { getFilteredDataForFieldId } from './preview';
-import { getZReducer, getZScale, zReducers, getCircumferenceScale, getRadiusScale, getSnailOrigin } from './plotParameters';
+import { getZReducer, getZScale, zReducers, getCircumferenceScale, getRadiusScale, getSnailOrigin, getTablePage, getTablePageSize, getTableSortField, getTableSortOrder } from './plotParameters';
 import { getColorPalette } from './color';
 import immutableUpdate from 'immutable-update';
 import { scaleLinear as d3scaleLinear } from 'd3-scale';
@@ -670,12 +670,7 @@ export const getIdentifiersForCurrentList = createSelector(
   ids => ids
 )
 
-export const getTableData = createSelector(
-  getMainPlotData,
-  getDatasetIsActive,
-  getAllActiveFields,
-  getSelectedRecordsAsObject,
-  getFilteredList,
+export const getAllActiveData = createSelector(
   (state) => {
     let data = {}
     Object.keys(getAllActiveFields(state)).forEach(field=>{
@@ -683,6 +678,10 @@ export const getTableData = createSelector(
     })
     return data
   },
+  data => data
+)
+
+export const _getAllActiveBins = createSelector(
   (state) => {
     let bins = {}
     let fields = getAllActiveFields(state)
@@ -693,29 +692,150 @@ export const getTableData = createSelector(
     })
     return bins
   },
-  getIdentifiersForCurrentList,
-  getLinks,
-  (plotData,active,fields,selected,list,data,bins,identifiers,links) => {
-    if (!active || active == 'loading') return false
-    let values = []
+  bins => {
+    return bins
+  }
+)
+
+const hashCode = function(arr){
+  return JSON.stringify(arr).split("").reduce(function(a,b){a=((a<<5)-a)+b.charCodeAt(0);return a&a},0);
+}
+
+export const getAllActiveBins = createSelector(
+  _getAllActiveBins,
+  bins => {
+    return bins
+  }
+)
+
+export const getAllKeys = createSelector(
+  getAllActiveFields,
+  getAllActiveData,
+  (fields,data) => {
     let keys = {}
-    let plot = plotData.meta
-    list.forEach((_id,index) => {
-      let row = {sel:Boolean(selected[_id]),_id}
-      Object.keys(fields).forEach(field=>{
-        row[field] = data[field].values[index] || 0
-      })
-      if(identifiers[index]){
-        row['id'] = identifiers[index]
-      }
-      values.push(row)
-    })
     Object.keys(fields).forEach(field=>{
       if (data[field].keys){
         keys[field] = data[field].keys
       }
     })
-    return {values,keys,plot,fields,links}
+    return keys
+  }
+)
+
+export const getTableData = createSelector(
+  getDatasetIsActive,
+  getAllActiveFields,
+  getAllActiveData,
+  getAllActiveBins,
+  getAllKeys,
+  getFilteredList,
+  (active,fields,data,bins,keys,list) => {
+    if (!active || active == 'loading') return false
+    return {data,bins,keys,list}
+  }
+)
+
+function asc(a,b){
+  return a[1] - b[1];
+}
+function desc(a,b){
+  return b[1] - a[1]
+}
+function ascAlpha(a,b){
+  return a[1] == b[1] ? 0 : a[1] > b[1] ? 1 : -1
+}
+function descAlpha(a,b){
+  return b[1] == a[1] ? 0 : b[1] > a[1] ? 1 : -1
+}
+function ascBool(a,b){
+  return a[1] == b[1] ? 0 : b[1] ? 1 : -1
+}
+function descBool(a,b){
+  return b[1] == a[1] ? 0 : a[1] ? 1 : -1
+}
+
+
+export const getSortOrder = createSelector(
+  getTableData,
+  getTableSortField,
+  getTableSortOrder,
+  getIdentifiersForCurrentList,
+  getSelectedRecordsAsObject,
+  (tableData,sortField,sortOrder,identifiers,selected) => {
+    if (!tableData) return false
+    let data = tableData.data
+    let list = tableData.list
+    let order
+    let sorts = {asc,desc}
+    let alphaSorts = {asc:ascAlpha,desc:descAlpha}
+    let boolSorts = {asc:ascBool,desc:descBool}
+    if (sortField && data[sortField]){
+      let arr
+      if (tableData.keys[sortField]){
+        let keys = tableData.keys[sortField]
+        let arr = data[sortField].values.map((v,i)=>[i,keys[v]])
+        order = arr.sort(alphaSorts[sortOrder]).map(a=>a[0])
+      }
+      else {
+        let arr = data[sortField].values.map((v,i)=>[i,v])
+        order = arr.sort(sorts[sortOrder]).map(a=>a[0])
+      }
+    }
+    else if (sortField){
+      if (sortField == 'id' && identifiers){
+        let arr = identifiers.map((v,i)=>[i,v])
+        order = arr.sort(alphaSorts[sortOrder]).map(a=>a[0])
+      }
+      else if (sortField == '_id'){
+        order = list.map((v,i)=>i)
+        if (sortOrder == 'desc') order = order.reverse()
+      }
+      else if (sortField == 'selected'){
+        let arr = list.map((v,i)=>[i,Boolean(selected[v])])
+        order = arr.sort(boolSorts[sortOrder]).map(a=>a[0])
+      }
+      else {
+        order = tableData.list.map((v,i)=>i)
+      }
+    }
+    else {
+      order = tableData.list.map((v,i)=>i)
+    }
+    return order
+  }
+)
+
+export const getTableDataForPage = createSelector(
+  getMainPlotData,
+  getTableData,
+  getSortOrder,
+  getAllActiveFields,
+  getFilteredList,
+  getSelectedRecordsAsObject,
+  getAllKeys,
+  getLinks,
+  getIdentifiersForCurrentList,
+  getTablePage,
+  getTablePageSize,
+  (plotData,tableData,order,fields,list,selected,keys,links,identifiers,page,perPage) => {
+    if (!tableData) return undefined
+    let data = tableData.data
+    let plot = plotData.meta
+    let values = []
+    let pages = Math.ceil(order.length / perPage)
+    let fieldList = Object.keys(fields)
+    let start = page*perPage
+    order.slice(start,start+perPage).forEach(index => {
+      let row = {sel:Boolean(selected[list[index]]),_id:list[index]}
+      fieldList.forEach(field =>{
+        row[field] = data[field].values[index] || 0
+      })
+      if(identifiers[index]){
+         row['id'] = identifiers[index]
+      }
+      values.push(row)
+    })
+    return {values,keys,plot,fields,links,pages}
   }
 )
 
@@ -724,20 +844,21 @@ export const getCSVdata = createSelector(
   data => {
     let values = data.values
     let keys = data.keys
-    let arr = values.map(o=>{
-      let entry = {}
-      Object.keys(o).forEach(k=>{
-        if (k != '_id' && k != 'sel'){
-          if (keys[k]){
-            entry[k] = keys[k][o[k]]
-          }
-          else {
-            entry[k] = o[k]
-          }
-        }
-      })
-      return entry
-    })
+    let arr = []
+    // values.map(o=>{
+    //   let entry = {}
+    //   Object.keys(o).forEach(k=>{
+    //     if (k != '_id' && k != 'sel'){
+    //       if (keys[k]){
+    //         entry[k] = keys[k][o[k]]
+    //       }
+    //       else {
+    //         entry[k] = o[k]
+    //       }
+    //     }
+    //   })
+    //   return entry
+    // })
     return arr
   }
 )

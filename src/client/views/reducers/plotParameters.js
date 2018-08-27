@@ -283,6 +283,46 @@ export const getPlotGraphics = createSelector(
   }
 )
 
+export const setTablePage = createAction('SET_TABLE_PAGE')
+export const tablePage = handleAction(
+  'SET_TABLE_PAGE',
+  (state, action) => (
+    action.payload
+  ),
+  0
+)
+export const getTablePage = state => state.tablePage
+
+export const setTablePageSize = createAction('SET_TABLE_PAGE_SIZE')
+export const tablePageSize = handleAction(
+  'SET_TABLE_PAGE_SIZE',
+  (state, action) => (
+    action.payload
+  ),
+  10
+)
+export const getTablePageSize = state => state.tablePageSize
+
+export const setTableSortField = createAction('SET_TABLE_SORT_FIELD')
+export const tableSortField = handleAction(
+  'SET_TABLE_SORT_FIELD',
+  (state, action) => (
+    action.payload
+  ),
+  null
+)
+export const getTableSortField = state => state.tableSortField
+
+export const setTableSortOrder = createAction('SET_TABLE_SORT_ORDER')
+export const tableSortOrder = handleAction(
+  'SET_TABLE_SORT_ORDER',
+  (state, action) => (
+    action.payload
+  ),
+  'desc'
+)
+export const getTableSortOrder = state => state.tableSortOrder
+
 export const plotParameterReducers = {
   plotShape,
   plotResolution,
@@ -295,5 +335,9 @@ export const plotParameterReducers = {
   curveOrigin,
   circumferenceScale,
   radiusScale,
-  snailOrigin
+  snailOrigin,
+  tablePage,
+  tablePageSize,
+  tableSortField,
+  tableSortOrder
 }
