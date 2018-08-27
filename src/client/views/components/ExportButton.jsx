@@ -11,16 +11,18 @@ const _downloadJSONFile = (name,content) => {
   element.click();
 }
 
-export const ExportButton = ({element,data,format,prefix,scale=1}) => {
-  let func = () => {}
-  if (format == 'svg'){
-    func = ()=>(saveSvgAsPng.saveSvg(document.getElementById(element),prefix+'.svg'))
-  }
-  else if (format == 'png'){
-    func = ()=>(saveSvgAsPng.saveSvgAsPng(document.getElementById(element),prefix+'.png',{backgroundColor:'white',scale:scale}))
-  }
-  else if (format == 'json'){
-    func = ()=>_downloadJSONFile(prefix,data)
+export const ExportButton = ({element,data,format,prefix,scale=1,func}) => {
+  if (!func){
+    func = () => {}
+    if (format == 'svg'){
+      func = ()=>(saveSvgAsPng.saveSvg(document.getElementById(element),prefix+'.svg'))
+    }
+    else if (format == 'png'){
+      func = ()=>(saveSvgAsPng.saveSvgAsPng(document.getElementById(element),prefix+'.png',{backgroundColor:'white',scale:scale}))
+    }
+    else if (format == 'json'){
+      func = ()=>_downloadJSONFile(prefix,data)
+    }
   }
   return (
     <a className={styles.save_svg} onClick={func}>&#8681;{format}</a>

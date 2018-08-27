@@ -168,10 +168,16 @@ class PlotBox extends React.Component {
     let plotContainer
     let plotGrid
     let plotCanvas
+    let func = undefined
+    if (this.props.plotShape == 'circle'){
+      if (this.props.plotGraphics != 'svg'){
+        func = ()=>alert('Circles are rendered as canvas to improve performance. Set plot graphics to svg in order to export this plot as svg or png.')
+      }
+    }
     let exportButtons = (
       <span className={styles.download}>
-        <ExportButton element='main_plot' prefix={this.props.datasetId+'.blob'} format='svg'/>
-        <ExportButton element='main_plot' prefix={this.props.datasetId+'.blob'} format='png'/>
+        <ExportButton element='main_plot' prefix={this.props.datasetId+'.blob'} format='svg' func={func}/>
+        <ExportButton element='main_plot' prefix={this.props.datasetId+'.blob'} format='png' func={func}/>
       </span>
     )
     let bins = this.state.bins
