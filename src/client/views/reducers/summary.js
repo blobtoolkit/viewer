@@ -714,7 +714,7 @@ export const getAllKeys = createSelector(
   (fields,data) => {
     let keys = {}
     Object.keys(fields).forEach(field=>{
-      if (data[field].keys){
+      if (data[field] && data[field].keys){
         keys[field] = data[field].keys
       }
     })
@@ -828,7 +828,7 @@ export const getTableDataForPage = createSelector(
     order.slice(start,start+perPage).forEach(index => {
       let row = {sel:Boolean(selected[list[index]]),_id:list[index]}
       fieldList.forEach(field =>{
-        row[field] = data[field].values[index] || 0
+        row[field] = data[field] ? (data[field].values[index] || 0) : 0
       })
       if(identifiers[index]){
          row['id'] = identifiers[index]
