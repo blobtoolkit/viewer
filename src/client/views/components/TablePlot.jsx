@@ -21,6 +21,8 @@ import ReactTable from 'react-table'
 import ExternalLink from './ExternalLink'
 import { fetchIdentifiers } from '../reducers/identifiers'
 import DownloadCSV from './TableCSV'
+// import { getFilteredList } from '../reducers/filter';
+// import { getSelectedRecords } from '../reducers/select'
 
 const CategoryLabel = ({index,keys,colors}) => {
   return (
@@ -141,7 +143,8 @@ class Table extends React.Component {
           Cell: props => <RecordSelector selected={props.original.sel} id={[props.original._id]} toggleSelect={toggleSelect}/>,
           width: 30,
           Header: props => <RecordSelector selected={this.props.selectAll} id={ids} toggleSelect={toggleSelect}/>,
-          resizable: false
+          resizable: false,
+          sortable: false
         },
         {
           Header: '#',
@@ -211,14 +214,18 @@ class TablePlot extends React.Component {
       //   warning = true
       //   data = subset
       // }
+      // let selected = getSelectedRecords(state)
+      // let list = getFilteredList(state)
+      // let selectAll = (selected.length == list.length)
       let selCount = data.values.filter(o=>o.sel==true).length
+      let selectAll = (selCount == data.values.length)
       return {
         data,
         palette: getColorPalette(state),
         page: getTablePage(state),
         pageSize: getTablePageSize(state),
         binnedColors: getBinnedColors(state),
-        selectAll:(selCount == data.values.length)
+        selectAll
       }
     }
     this.mapDispatchToProps = dispatch => {
