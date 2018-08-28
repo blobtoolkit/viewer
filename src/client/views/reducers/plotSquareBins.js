@@ -243,29 +243,29 @@ export const getBinnedDataByCategoryByAxis = createSelector(
       jBinned[index] = {}
     }
     binnedData.data.forEach(d=>{
-      if (!iBinned[d.index][d.i]) iBinned[d.index][d.i] = {zs:[],ids:[],indices:[]}
-      if (!jBinned[d.index][d.j]) jBinned[d.index][d.j] = {zs:[],ids:[],indices:[]}
+      if (!iBinned[d.index][d.i]) iBinned[d.index][d.i] = {zs:[],ids:[]}
+      if (!jBinned[d.index][d.j]) jBinned[d.index][d.j] = {zs:[],ids:[]}
       iBinned[d.index][d.i].zs = iBinned[d.index][d.i].zs.concat(d.zs)
-      iBinned[d.index][d.i].ids = iBinned[d.index][d.i].ids.concat(d.ids)
-      iBinned[d.index][d.i].indices = iBinned[d.index][d.i].indices.concat(d.indices)
+      //iBinned[d.index][d.i].ids = iBinned[d.index][d.i].ids.concat(d.ids)
+      //iBinned[d.index][d.i].indices = iBinned[d.index][d.i].indices.concat(d.indices)
       jBinned[d.index][d.j].zs = jBinned[d.index][d.j].zs.concat(d.zs)
-      jBinned[d.index][d.j].ids = jBinned[d.index][d.j].ids.concat(d.ids)
-      jBinned[d.index][d.j].indices = jBinned[d.index][d.j].indices.concat(d.indices)
+      //jBinned[d.index][d.j].ids = jBinned[d.index][d.j].ids.concat(d.ids)
+      //jBinned[d.index][d.j].indices = jBinned[d.index][d.j].indices.concat(d.indices)
     })
     let data = []
     for (let index = 0; index < Math.max(bins.length,1); index++){
       Object.keys(iBinned[index]).forEach(i => {
         let obj = {axis:'x',bin:i,index:index}
         obj.zs = iBinned[index][i].zs
-        obj.ids = iBinned[index][i].ids
-        obj.indices = iBinned[index][i].indices
+        //obj.ids = iBinned[index][i].ids
+        //obj.indices = iBinned[index][i].indices
         data.push(obj)
       })
       Object.keys(jBinned[index]).forEach(j => {
         let obj = {axis:'y',bin:j,index:index}
         obj.zs = jBinned[index][j].zs
-        obj.ids = jBinned[index][j].ids
-        obj.indices = jBinned[index][j].indices
+        //obj.ids = jBinned[index][j].ids
+        //obj.indices = jBinned[index][j].indices
         data.push(obj)
       })
     }

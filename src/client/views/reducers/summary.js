@@ -3,7 +3,6 @@ import { byIdSelectorCreator } from './selectorCreators'
 import { getSelectedRecordsAsObject } from './select'
 import { getScatterPlotDataByCategory,
   getMainPlotData,
-  getAllMainPlotData,
   getScatterPlotData,
   getRawDataForCat,
   getFilteredDataForGC,
