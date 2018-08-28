@@ -166,7 +166,7 @@ window.onpopstate  = (e) => {
   if (newDataset != dataset){
     store.dispatch(loadDataset(newDataset))
   }
-  store.dispatch(setHashString(document.location.hash.replace(/^#/,'')))
+  //store.dispatch(setHashString(document.location.hash.replace(/^#/,'')))
   let currentQuery = getQueryString(state)
   let str = document.location.search.replace(/^\?/,'')
   let values = qs.parse(str)

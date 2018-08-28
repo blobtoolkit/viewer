@@ -36,7 +36,8 @@ const rootReducer = (state, action) => {
     let availableDatasets = state.availableDatasets
     let datasetIsActive = state.datasetIsActive
     let pathname = state.pathname
-    state = {availableDatasets,datasetIsActive,pathname}
+    let hashString = state.hashString
+    state = {availableDatasets,datasetIsActive,pathname,hashString}
   }
   return appReducer(state, action)
 }

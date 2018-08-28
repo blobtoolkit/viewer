@@ -9,7 +9,7 @@ import MenuDisplayMain from './MenuDisplayMain'
 import MenuSummaryMain from './MenuSummaryMain'
 import MenuHelpMain from './MenuHelpMain'
 import { getTopLevelFields } from '../reducers/field'
-import { toggleHash, getHashString } from '../reducers/location'
+import { toggleHash, getHashString, getDatasetID } from '../reducers/location'
 
 
 class HeaderLayoutComponent extends React.Component {
@@ -20,6 +20,9 @@ class HeaderLayoutComponent extends React.Component {
   render(){
     let labels = ['Datasets','Filters','Lists','Settings','Summary','Help']
     let tabs = []
+    if (!this.props.datasetId){
+      labels = ['Datasets','Help']
+    }
     let activeTab = this.props.activeTab
     labels.forEach(tab=>{
       tabs.push({id:tab,active:activeTab == tab})
@@ -35,7 +38,8 @@ class LayoutHeader extends React.Component {
     super(props);
     this.mapStateToProps = state => {
       return {
-        activeTab: getHashString(state)
+        activeTab: getHashString(state),
+        datasetId: getDatasetID(state)
       }
     },
     this.mapDispatchToProps = dispatch => {
