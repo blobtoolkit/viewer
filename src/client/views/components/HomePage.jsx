@@ -40,7 +40,7 @@ export default class HomePage extends React.Component {
 
         <img src={figure2} alt='Figure 2' />
         <p>
-          To find out more about BlobToolKit, visit the project homepage at <a href='http://blobtoolkit.genomehubs.org'>blobtoolkit.genomehubs.org</a>.
+          To find out more about BlobToolKit, visit the project homepage at <a href='http://blobtoolkit.genomehubs.org'>blobtoolkit.genomehubs.org</a> or browse the FAQs in the <a href='#Help'>Help</a> menu.
         </p>
         <p>
           &nbsp;
