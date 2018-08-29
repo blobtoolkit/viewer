@@ -14,7 +14,7 @@ conda create -n btk_viewer_env
 conda activate btk_viewer_env
 conda install -y nodejs
 ```
-For alternative instructions, search your preferred package manager or visit [nodejs.org](https://nodejs.org)
+For other ways to install node, search your preferred package manager or visit [nodejs.org](https://nodejs.org).
 
 2. Install BlobToolKit Viewer
 ```
@@ -29,6 +29,14 @@ screen -dmS btk_client npm run client
 3. Visit site
 ```
 http://localhost:8080/view/
+```
+
+4. When you are finished, you can stop BlobToolKit by attaching to the screen sessions and using `ctrl-c` to quit:
+```
+screen -r btk_api
+# (press ctrl-c)
+screen -r btk_client
+# (press ctrl-c)
 ```
 
 ## Customisation

@@ -6,13 +6,15 @@ div.outer {
   padding:1em 2em 4em 2em;
   font-size:1.2em;
 
-  a {
+  a, span.toggle_menu {
     color:$highlightColor;
     text-decoration:underline;
+    cursor:pointer;
   }
 
   a:visited {
     color:$highlightColor;
+    text-decoration:underline;
   }
 
   img {

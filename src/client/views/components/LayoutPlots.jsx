@@ -2,7 +2,7 @@ import React from 'react'
 import { connect } from 'react-redux'
 import styles from './Layout.scss'
 import { getDatasetIsActive } from '../reducers/repository'
-import { getView, getDatasetID } from '../reducers/location'
+import { toggleHash, getView, getDatasetID } from '../reducers/location'
 import { getScatterPlotData } from '../reducers/plotData'
 import GetStarted from './GetStarted'
 import MainPlot from './MainPlot'
@@ -17,7 +17,7 @@ import HomePage from './HomePage'
 class PlotsLayoutComponent extends React.Component {
 
   render(){
-    if (!this.props.datasetId) return <HomePage/>
+    if (!this.props.datasetId) return <HomePage toggleHash={this.props.toggleHash}/>
     let view
     switch (this.props.view || 'blob') {
       case 'cumulative':
@@ -81,12 +81,18 @@ class LayoutPlots extends React.Component {
         datasetId: getDatasetID(state),
         view: getView(state)
       }
+    },
+    this.mapDispatchToProps = dispatch => {
+      return {
+        toggleHash: value => dispatch(toggleHash(value))
+      }
     }
   }
 
   render(){
     const ConnectedLayout = connect(
-      this.mapStateToProps
+      this.mapStateToProps,
+      this.mapDispatchToProps,
     )(PlotsLayoutComponent)
     return <ConnectedLayout {...this.props}/>
   }
