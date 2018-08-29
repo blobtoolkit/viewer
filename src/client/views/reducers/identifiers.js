@@ -7,7 +7,7 @@ import store from '../store'
 import { byIdSelectorCreator } from './selectorCreators'
 import { getDatasetID } from './location'
 
-const apiUrl = window.apiURL || '/api/v1'
+const apiUrl = API_URL || '/api/v1'
 
 const requestIdentifiers = createAction('REQUEST_IDENTIFIERS')
 const receiveIdentifiers = createAction(

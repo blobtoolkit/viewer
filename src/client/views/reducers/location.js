@@ -6,14 +6,15 @@ import { queryToStore, qsDefault } from '../querySync'
 import { byIdSelectorCreator } from './selectorCreators'
 import history from './history'
 
+const basename = BASENAME || ''
+
 export const setPathname = createAction('SET_PATHNAME')
 export const pathname = handleAction(
   'SET_PATHNAME',
   (state, action) => (
     action.payload
   ),
-  // TODO: use variable basename
-  document.location.pathname.replace(/^\/view/,'') || ''
+  document.location.pathname.replace((new RegExp('^'+basename)),'') || ''
 )
 export const getPathname = state => {
   return state.pathname

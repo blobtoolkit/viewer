@@ -9,7 +9,6 @@ app.use(compression())
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.locals.directory = config.filePath;
-
 if (config.cors){
   const cors = require('express-cors');
   app.use(cors(config.cors));
@@ -28,17 +27,17 @@ if (config.https){
     cert: fs.readFileSync(config.certFile)
   };
   var secureServer = https.createServer(options, app).listen(
-    config.port,
+    config.api_port,
     function(){
-      console.log('BlobToolKit RESTful API server started on https port: ' + config.port);
+      console.log('BlobToolKit RESTful API server started on https port: ' + config.api_port);
     }
   );
 }
 else {
   app.listen(
-    config.port,
+    config.api_port,
     function(){
-      console.log('BlobToolKit RESTful API server started on http port: ' + config.port);
+      console.log('BlobToolKit RESTful API server started on http port: ' + config.api_port);
     }
   );
 }

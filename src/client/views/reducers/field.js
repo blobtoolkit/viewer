@@ -11,7 +11,7 @@ import { getDimensionsbyDimensionId, setDimension, getPreviewDimensions } from '
 import * as d3 from 'd3'
 import { getParsedQueryString, getQueryValue, getDatasetID } from './location'
 
-const apiUrl = window.apiURL || '/api/v1'
+const apiUrl = API_URL || '/api/v1'
 
 export const addTopLevelFields = createAction('ADD_TOP_LEVEL_FIELDS')
 export const topLevelFields = handleAction(

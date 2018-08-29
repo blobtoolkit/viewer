@@ -12,6 +12,7 @@ const APP_DIR = path.resolve(__dirname, 'src/client/views');
 const gitRevisionPlugin = new GitRevisionPlugin();
 
 const protocol = main.https ? 'https' : 'http'
+const API_PORT = main.https ? 'https' : 'http'
 
 const config = {
   entry: [
@@ -30,8 +31,9 @@ const config = {
     historyApiFallback: true,
     host: main.hostname,
     contentBase: BUILD_DIR,
+    port: main.client_port,
     proxy: {
-      '/api/**': { target: 'http://localhost:8000' }
+      '/api/**': { target: main.apiUrl }
     }
   },
   devtool: 'source-map',

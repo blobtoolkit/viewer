@@ -6,11 +6,123 @@ BlobToolKit Viewer is a genome-scale dataset visualistion tool developed as part
 
 We are running the BlobToolKit [insdc-pipeline](https://github.com/blobtoolkit/insdc-pipeline) on all public (INSDC registered) eukaryote genome assemblies and making the results available in an instance of this viewer at [blobtoolkit.genomehubs.org](http://blobtoolkit.genomehubs.org/view/).
 
+## Quick start guide:
 
+1. Install node/npm
+```
+conda create -n btk_viewer_env
+conda activate btk_viewer_env
+conda install -y nodejs
+```
+For alternative instructions, search your preferred package manager or visit [nodejs.org](https://nodejs.org)
+
+2. Install BlobToolKit Viewer
+```
+git clone https://github.com/blobtoolkit/viewer
+cd viewer
+npm install
+cp .env.dist .env
+screen -dmS btk_api npm run api
+screen -dmS btk_client npm run client
+```
+
+3. Visit site
+```
+http://localhost:8080/view/
+```
+
+## Customisation
+To run blobtoolkit on alternate ports, change the hostname or use a different data directory, change settings in the `.env` file:
+
+```
+NODE_ENV=local
+BTK_CLIENT_PORT=8080
+BTK_API_PORT=8000
+BTK_API_URL=http://localhost:8000/api/v1
+BTK_BASENAME=/view
+BTK_HTTPS=false
+BTK_ORIGINS='http://localhost:8080 http://localhost null'
+BTK_HOST=localhost
+BTK_FILE_PATH=
+BTK_OUT_FILE_PATH=/dev/null
+```
+
+### Use Local data
+
+If you have already analysed a dataset using [BlobTools](https://github.com/DRL/blobtools), data can be exported from the BlobDB using the experimental view (currently requires the [BlobToolKit fork](https://github.com/BlobToolKit/blobtools) of BlobTools):
+```
+blobtools view \
+    -i assembly.BlobDB.json \
+    -x "bestsumorder" \
+    --experimental assembly.yaml
+```
+assembly.yaml:
+```
+assembly:
+  level: scaffold
+  accession: draft
+  prefix: Assembly_name
+taxon:
+  name: Genus species
+  phylum: Phylum
+  taxid: 0
+```
+
+To analyse a new assembly, the [BlobToolKit pipeline](https://github.com/blobtoolkit/insdc-pipeline) can take an assembly and reads as input and automate all steps through to generating a dataset ready to load in the Viewer.
+
+## Production build
+
+The exact settings will depend on your system, use the following as a guide for what may need changing:
+
+1. Modify your `.env` file for a production setting
+```
+NODE_ENV=production
+BTK_CLIENT_PORT=8081
+BTK_API_PORT=8002
+BTK_API_URL=http://example.com/api/v1
+BTK_BASENAME=/viewer
+BTK_HTTPS=false
+BTK_ORIGINS='http://example.com null'
+BTK_HOST=example.com
+BTK_FILE_PATH=/path/to/data
+BTK_OUT_FILE_PATH=/dev/null
+```
+
+2. Build and minify the client code
+```
+npm run build
+```
+
+3. Move the contents of dist/public to a subdirectory of your webroot
+
+4. Configure your web server to redirect non-file requests to index.html to allow BlobToolKit Viewer to run as a single page app
+ - e.g. for apache
+ - activate mod_rewrite
+ - set allowoverride to all
+ - restart apache
+ - add a `.htaccess` file to the subdirectoy containing the minified code
+ ```
+ <ifModule mod_rewrite.c>
+   RewriteEngine on
+   RewriteCond %{REQUEST_FILENAME} -s [OR]
+   RewriteCond %{REQUEST_FILENAME} -l [OR]
+   RewriteCond %{REQUEST_FILENAME} -d
+   RewriteRule ^.*$ - [NC,L]
+   RewriteRule ^(.*) index.html [NC,L]
+ </ifModule>
+ ```
+
+5. Start the api as in the quick start guide
+
+6. Visit site
+```
+http://example.com/viewer/
+```
 
 ## Query string/list parameters:
 
-#### Plot parameters
+Most settings can be altered directly using the url, the list below provides an overview of most available settings:
+
 - xField=gc
 - yField=SRR000000_cov
 - zField=length
@@ -26,6 +138,7 @@ We are running the BlobToolKit [insdc-pipeline](https://github.com/blobtoolkit/i
 - gc--Inv=true|false
 - bestsumorder_phylum--Keys=3,7,12
 - bestsumorder_phylum--Order=Arthropoda,Echinodermata,no-hit
+- bestsumorder_superkingdom--Active=true
 - plotShape=square|hex|circle
 - plotResolution=30 (range: 5-50)
 - zReducer=sum|min|max|count|mean

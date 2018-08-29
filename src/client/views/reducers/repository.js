@@ -21,7 +21,7 @@ import { getDatasetID,
   getQueryString,
   getHashString } from './location'
 
-const apiUrl = window.apiURL || '/api/v1'
+const apiUrl = API_URL || '/api/v1'
 
 const requestRepository = createAction('REQUEST_REPOSITORY')
 const receiveRepository = createAction(
@@ -115,7 +115,7 @@ export function fetchRepository(searchTerm) {
       dispatch(updatePathname({search:searchTerm}))
     }
     dispatch(refreshStore())
-    
+
     return fetch(apiUrl + '/search/' + searchTerm)
       .then(
         response => response.json(),

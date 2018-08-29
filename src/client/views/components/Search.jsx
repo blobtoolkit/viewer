@@ -5,7 +5,7 @@ import styles from './Search.scss';
 import { fetchRepository, getAvailableDatasetIds } from '../reducers/repository'
 // import { getSearhTerm,setSearchTerm } from '../reducers/search'
 
-
+const apiUrl = API_URL || '/api/v1'
 
 class SearchBox extends Component {
   constructor(props) {
@@ -17,7 +17,7 @@ class SearchBox extends Component {
   }
 
   getInfo(){
-    fetch('/api/v1/search/autocomplete/'+this.state.query)
+    fetch(apiUrl + '/search/autocomplete/'+this.state.query)
       .then(
         response => response.json(),
         error => console.log('An error occured.', error)
@@ -65,7 +65,7 @@ class SearchBox extends Component {
   }
 
   render(){
-    let placeholder = this.props.datasetIds.length == 0 ? "Search datasets to begin... (e.g. Nematoda)" : "Search for datasets..."
+    let placeholder = this.props.datasetIds.length == 0 ? "Search datasets to begin... (e.g. Arthropoda)" : "Search for datasets..."
     return (
       <form onSubmit={e=>e.preventDefault()}>
         <input
