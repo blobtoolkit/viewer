@@ -7,8 +7,7 @@
   "scripts": {
     "api": "node src/server/app.js",
     "start": "nodemon src/server/app.js",
-    "client": "export NODE_ENV=\"test\" && webpack-dev-server --content-base src/client src/client/main.js",
-    "viewer": "export NODE_ENV=\"test\" && webpack-dev-server --content-base src/client src/client/main.js",
+    "client": "webpack-dev-server --content-base src/client src/client/main.js",
     "build": "NODE_ENV=production webpack -p --config ./webpack.config.js"
   },
   "author": "Richard Challis",

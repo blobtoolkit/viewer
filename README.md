@@ -10,28 +10,43 @@ We are running the BlobToolKit [insdc-pipeline](https://github.com/blobtoolkit/i
 
 1. Install node/npm
 ```
-conda create -n btk_viewer_env
+conda create -n btk_viewer_env git nodejs
 conda activate btk_viewer_env
-conda install -y nodejs
 ```
-For other ways to install node, search your preferred package manager or visit [nodejs.org](https://nodejs.org).
+Visit [conda.io](https://conda.io/docs/user-guide/install/index.html) for instructions on how to install/run conda on your system. For other ways to install node, search your preferred package manager or visit [nodejs.org](https://nodejs.org).
 
 2. Install BlobToolKit Viewer
 ```
 git clone https://github.com/blobtoolkit/viewer
 cd viewer
 npm install
+```
+
+3. Start BlobToolKit Viewer
+- on Linux/OS X (start in a detached screen session)
+```
 cp .env.dist .env
 screen -dmS btk_api npm run api
 screen -dmS btk_client npm run client
 ```
+- on Windows (start in separate anaconda prompts)
+```
+xcopy .env.dist .env
+# select option to copy as file
+npm start
+```
+In a new Anaconda prompt:
+```
+conda activate btk_viewer_env
+npm run client
+```
 
-3. Visit site
+4. Visit site
 ```
 http://localhost:8080/view/
 ```
 
-4. When you are finished, you can stop BlobToolKit by attaching to the screen sessions and using `ctrl-c` to quit:
+5. If you have started BlobToolKit in a detached screen session, attach to the screen session and use `ctrl-c` to quit:
 ```
 screen -r btk_api
 # (press ctrl-c)
@@ -64,7 +79,7 @@ blobtools view \
     -x "bestsumorder" \
     --experimental assembly.yaml
 ```
-assembly.yaml:
+Any fields added to the assembly or taxon sections of an `assembly.yaml` file will be indexed for search. Fields that will be displayed (and should be filled in in a minimal `assembly.yaml` file) are shown below:
 ```
 assembly:
   level: scaffold
@@ -72,8 +87,6 @@ assembly:
   prefix: Assembly_name
 taxon:
   name: Genus species
-  phylum: Phylum
-  taxid: 0
 ```
 
 To analyse a new assembly, the [BlobToolKit pipeline](https://github.com/blobtoolkit/insdc-pipeline) can take an assembly and reads as input and automate all steps through to generating a dataset ready to load in the Viewer.
