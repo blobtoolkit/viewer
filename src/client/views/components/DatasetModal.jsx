@@ -21,7 +21,7 @@ export class DatasetModal extends React.Component {
     var file = new Blob([JSON.stringify(content)], {type: 'text/plain'});
     element.href = URL.createObjectURL(file);
     element.download = (name || 'file') + '.json';
-    element.click();
+    element.dispatchEvent(new MouseEvent(`click`, {bubbles: true, cancelable: true, view: window}))
   }
 
   render() {
@@ -43,7 +43,7 @@ export class DatasetModal extends React.Component {
           <ModalContainer onClose={()=>this.handleClose()}>
             <ModalDialog onClose={()=>this.handleClose()}>
               <div className={styles.modal}>
-                <a className={styles.button} onClick={()=>this._downloadJSONFile(this.props.dataset+'.meta',full)}>Download full metadata</a>
+                <a className={styles.button} onClick={()=>this._downloadJSONFile(this.props.meta.id+'.meta',full)}>Download full metadata</a>
                 <h2>{meta.name}</h2>
                 <div className={styles.code_block}>
                   <JSONPretty id="json-pretty" json={meta}/>

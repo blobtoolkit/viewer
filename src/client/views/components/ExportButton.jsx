@@ -8,7 +8,7 @@ const _downloadJSONFile = (name,content) => {
   var file = new Blob([JSON.stringify(content)], {type: 'text/plain'});
   element.href = URL.createObjectURL(file);
   element.download = (name || 'file') + '.json';
-  element.click();
+  element.dispatchEvent(new MouseEvent(`click`, {bubbles: true, cancelable: true, view: window}))
 }
 
 export const ExportButton = ({element,data,format,prefix,scale=1,func}) => {
@@ -25,7 +25,7 @@ export const ExportButton = ({element,data,format,prefix,scale=1,func}) => {
     }
   }
   return (
-    <a className={styles.save_svg} onClick={func}>&#8681;{format}</a>
+    <a id={'blob_save_'+format} className={styles.save_svg} onClick={func}>&#8681;{format}</a>
   )
 }
 
