@@ -12,7 +12,7 @@ import { addRecords, selectNone, getSelectedRecordsAsObject } from './select'
 export function selectAll() {
   return dispatch => {
     let state = store.getState()
-    let meta = getDatasetMeta(state)
+    let meta = getCurrentDatasetMeta(state)
     let all = getFilteredList(state)
     dispatch(addRecords(all))
   }
