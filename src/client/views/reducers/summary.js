@@ -139,7 +139,7 @@ const getRecordCount = createSelector(
   }
 )
 
-const getRawDataForLength = createSelector(
+export const getRawDataForLength = createSelector(
   (state) => getRawDataForFieldId(state,'length'),
   data => data
 )
@@ -243,10 +243,6 @@ export const getCircular = createSelector(
       arr[i] = {x,z:length.values[i],n:ncount ? ncount.values[i]/length.values[i] : 0}
     })
     arr.sort((a,b)=>b.z-a.z)
-    // console.time('getCircularReduce');
-    // // ~1000 times slower than replacement below!
-    // let sum = arr.reduce((a, x, i) => [...a, x.z + (a[i-1] || 0)], [])
-    // console.timeEnd('getCircularReduce');
     let sum = []
     arr.forEach((o, i) => {
       sum[i] = o.z + (sum[i-1] || 0)
@@ -296,6 +292,7 @@ export const circularCurves = createSelector(
     let nXlen = values.nXlen
     let nXnum = values.nXnum
     let sum = values.sum
+    let tenth = span / 10
     let rRange = [350,0]
     let lRange = [0,250]
     if (invert){
@@ -462,7 +459,7 @@ export const circularCurves = createSelector(
                 [cScale(b+i-34),oScale(1.05)]
               ))
             ),
-            text: si(sum[b-1]),
+            text: si(tenth * b / 100),
             fontSize: '1em',
             align:'right'
           }
