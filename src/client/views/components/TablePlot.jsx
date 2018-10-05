@@ -22,7 +22,7 @@ import ReactTable from 'react-table'
 import ExternalLink from './ExternalLink'
 import { fetchIdentifiers } from '../reducers/identifiers'
 import DownloadCSV from './TableCSV'
-import RecordModal from './RecordModal'
+// import RecordModal from './RecordModal'
 // import { getFilteredList } from '../reducers/filter';
 // import { getSelectedRecords } from '../reducers/select'
 
@@ -35,9 +35,7 @@ const CategoryLabel = ({index,keys,id,colors,chooseRecord}) => {
           style={{backgroundColor:colors[index]}}>
       </span>
       {keys[index]}
-      {keys[index] != 'no-hit' &&
-        <RecordModal id={id} selected={false} dismiss={()=>{}}/>
-      }
+
     </span>
   )
 }
