@@ -20,7 +20,7 @@ export const getDatasetMetaById = createSelectorForDatasetMeta(
   }
 )
 
-const getCurrentDatasetMeta = createSelector(
+export const getCurrentDatasetMeta = createSelector(
   state => getDatasetMetaById(state,getDatasetID(state)),
   (meta) => meta
 )

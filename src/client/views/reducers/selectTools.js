@@ -2,7 +2,7 @@ import { createAction, handleAction, handleActions } from 'redux-actions'
 import { createSelector } from 'reselect'
 import { byIdSelectorCreator } from './selectorCreators'
 import { getFilteredList } from './filter'
-import { getDatasetMeta } from './repository'
+import { getCurrentDatasetMeta } from './dataset'
 import immutableUpdate from 'immutable-update';
 import deep from 'deep-get-set'
 import store from '../store'
@@ -21,13 +21,17 @@ export function selectAll() {
 export function invertSelection() {
   return dispatch => {
     let state = store.getState()
-    let meta = getDatasetMeta(state)
-    let all = getFilteredList(state)
+    let meta = getCurrentDatasetMeta(state)
+    // let all = getFilteredList(state)
     let current = getSelectedRecordsAsObject(state)
+    let all = []
     let rev = []
-    for (let i = 0; i < all.length; i++){
-      if (!current[all[i]]){
-        rev.push(all[i])
+    for (let i = 0; i < meta.records; i++){
+      if (!current[i]){
+        rev.push(i)
+      }
+      else {
+        all.push(i)
       }
     }
     dispatch(selectNone())
@@ -38,7 +42,7 @@ export function invertSelection() {
 export function selectInverse() {
   return dispatch => {
     let state = store.getState()
-    let meta = getDatasetMeta(state)
+    let meta = getCurrentDatasetMeta(state)
     let all = []
     for (let i = 0; i < meta.records; i++){
       all.push(i)
