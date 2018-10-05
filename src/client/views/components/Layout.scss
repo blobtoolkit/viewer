@@ -26,8 +26,8 @@
   float:left;
   width:50%;
   height:50%;
-  min-width:calc(600px);
-  min-height:calc(600px);
+  min-width:calc(600px - 0%);
+  min-height:calc(600px - 0%);
 }
 
 .modal {
@@ -147,7 +147,6 @@ table {
 
 .plot_area {
   flex: 1;
-  overflow:scroll;
 }
 
 .detail_link {
