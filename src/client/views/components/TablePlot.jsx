@@ -11,6 +11,7 @@ import {
 } from '../reducers/plotParameters'
 import { getTableData,getBinnedColors,getTableDataForPage } from '../reducers/summary'
 import { getColorPalette } from '../reducers/color'
+import { chooseCurrentRecord } from '../reducers/record'
 import { addRecords, removeRecords } from '../reducers/select'
 import PlotLegend from './PlotLegend'
 import PlotAxisTitle from './PlotAxisTitle'
@@ -21,17 +22,22 @@ import ReactTable from 'react-table'
 import ExternalLink from './ExternalLink'
 import { fetchIdentifiers } from '../reducers/identifiers'
 import DownloadCSV from './TableCSV'
+import RecordModal from './RecordModal'
 // import { getFilteredList } from '../reducers/filter';
 // import { getSelectedRecords } from '../reducers/select'
 
-const CategoryLabel = ({index,keys,colors}) => {
+const CategoryLabel = ({index,keys,id,colors,chooseRecord}) => {
   return (
-    <span>
+    <span className={styles.fill_parent}
+      onClick={()=>{chooseRecord(id)}}>
       <span
           className={styles.colored_tab}
           style={{backgroundColor:colors[index]}}>
       </span>
       {keys[index]}
+      {keys[index] != 'no-hit' &&
+        <RecordModal id={id} selected={false} dismiss={()=>{}}/>
+      }
     </span>
   )
 }
@@ -87,7 +93,8 @@ class Table extends React.Component {
       pageSize:props.pageSize,
       filter:[],
       sort:[],
-      size:[]
+      size:[],
+      show:false
     }
     // onPageChange={(pageIndex) => {...}} // Called when the page index is changed by the user
     // onPageSizeChange={(pageSize, pageIndex) => {...}} // Called when the pageSize is changed by the user. The resolve page is also sent to maintain approximate position in the data
@@ -109,7 +116,9 @@ class Table extends React.Component {
           accessor: d => d[id]
         }
         if (id == plotCategory){
-          cat.Cell = props => <CategoryLabel index={props.value} keys={keys[id]} colors={binnedColors}/>
+          cat.Cell = props => (
+            <CategoryLabel index={props.value} id={props.row._id} keys={keys[id]} colors={binnedColors} chooseRecord={this.props.chooseRecord}/>
+          )
         }
         else {
           cat.Cell = props => keys[id] ? keys[id][props.value] : 0
@@ -142,9 +151,8 @@ class Table extends React.Component {
           accessor: 'selected',
           Cell: props => <RecordSelector selected={props.original.sel} id={[props.original._id]} toggleSelect={toggleSelect}/>,
           width: 30,
-          Header: props => <RecordSelector selected={this.props.selectAll} id={ids} toggleSelect={toggleSelect}/>,
           resizable: false,
-          sortable: false
+          sortable: true
         },
         {
           Header: '#',
@@ -253,7 +261,8 @@ class TablePlot extends React.Component {
             dispatch(setTableSortOrder(arr[0].desc ? 'desc' : 'asc'))
           }
           dispatch(setTablePage(0))
-        }
+        },
+        chooseRecord: recordId => dispatch(chooseCurrentRecord(recordId))
       }
     }
   }
