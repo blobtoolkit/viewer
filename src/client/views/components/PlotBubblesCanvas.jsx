@@ -32,46 +32,69 @@ export default class PlotBubblesCanvas extends React.Component {
 }
 
 class BubblesCanvas extends React.Component {
-    componentDidMount() {
-      let parent = this.canvas.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode
+  constructor(props) {
+    super(props)
+    let isChrome = /Chrome/.test(navigator.userAgent) && /Google Inc/.test(navigator.vendor)
+    let isSafari = /Safari/.test(navigator.userAgent) && /Apple Computer/.test(navigator.vendor)
+    if (isChrome || isSafari){
+      this.state = { webkit:true }
+    }
+    else {
+      this.state = { webkit:false }
+    }
+    this.updateDimensions = this.updateDimensions.bind(this);
+  }
+
+  componentDidMount() {
+    if (this.state.webkit){
+      window.addEventListener("resize", this.updateDimensions);
+    }
+    this.updateDimensions()
+  }
+  componentDidUpdate() {
+    this.updateDimensions()
+  }
+
+  updateDimensions(){
+    if (this.state.webkit){
+      let parent = this.canvas.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode
       let width = parent.clientWidth * 900 / 1420
       let height = parent.clientHeight * 900 / 1420
       this.canvas.width = Math.min(width,height)
       this.canvas.height = this.canvas.width
-      this.updateCanvas()
     }
-    componentDidUpdate() {
-      let parent = this.canvas.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode
-      let width = parent.clientWidth * 900 / 1420
-      let height = parent.clientHeight * 900 / 1420
-      this.canvas.width = Math.min(width,height)
-      this.canvas.height = this.canvas.width
-      this.updateCanvas();
-    }
-    updateCanvas() {
-      let width = this.canvas.width*window.devicePixelRatio
-      let height = this.canvas.height*window.devicePixelRatio
-      // width = Math.min(width,height)
-      // height = width
-      const ctx = this.canvas.getContext('2d');
-      ctx.scale(1/window.devicePixelRatio,1/window.devicePixelRatio)
-      ctx.clearRect(0, 0, width, height);
-      ctx.globalAlpha=0.4
-      ctx.fillStyle = this.props.color;
-      ctx.lineWidth = 1;
-      ctx.strokeStyle = 'rgb(89, 101, 111)';
-      this.props.data.map(bubble => {
-        ctx.beginPath();
-        ctx.arc(bubble.x*width/900, bubble.y*width/900, bubble.r*width/900, 0, 2 * Math.PI, false);
-        ctx.fill();
-        ctx.stroke();
-      })
-    }
+    this.updateCanvas()
+  }
 
 
-    render() {
-      return (
-        <canvas className={styles.main_canvas} ref={(elem) => { this.canvas = elem; }} width={this.canvas ? this.canvas.width : 1000 } height={this.canvas ? this.canvas.height : 1000}/>
-      );
+  componentWillUnmount() {
+    if (this.state.webkit){
+      window.removeEventListener("resize", this.updateDimensions);
     }
+  }
+
+  updateCanvas() {
+    let width = this.canvas.width*window.devicePixelRatio
+    let height = this.canvas.height*window.devicePixelRatio
+    const ctx = this.canvas.getContext('2d');
+    ctx.scale(1/window.devicePixelRatio,1/window.devicePixelRatio)
+    ctx.clearRect(0, 0, width, height);
+    ctx.globalAlpha=0.4
+    ctx.fillStyle = this.props.color;
+    ctx.lineWidth = 1;
+    ctx.strokeStyle = 'rgb(89, 101, 111)';
+    this.props.data.map(bubble => {
+      ctx.beginPath();
+      ctx.arc(bubble.x*width/900, bubble.y*width/900, bubble.r*width/900, 0, 2 * Math.PI, false);
+      ctx.fill();
+      ctx.stroke();
+    })
+  }
+
+
+  render() {
+    return (
+      <canvas className={styles.main_canvas} ref={(elem) => { this.canvas = elem; }} width={this.canvas ? this.canvas.width : 900 } height={this.canvas ? this.canvas.height : 900}/>
+    );
+  }
 }
