@@ -20,6 +20,7 @@ const parseMeta = (obj) => {
     })
   }
   if (meta.hasOwnProperty('name')){
+    meta.taxon_name = meta.name
     delete meta.name
   }
   if (meta.hasOwnProperty('prefix')){
@@ -87,7 +88,7 @@ const keys = Object.keys(index.values)
 const autocomplete = term => {
   query = term.toUpperCase()
   let results = []
-  if (term == 'all'){
+  if (term.match(/^all$/i)){
     results.push({
       term:'all',
       field:'all records',
@@ -111,7 +112,7 @@ const autocomplete = term => {
 }
 
 const search = term => {
-  if (term == 'all') return meta
+  if (term.match(/^all$/i)) return meta
   if (!index.values[term]) return []
   let arr = []
   index.values[term].forEach(entry=>{
