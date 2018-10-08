@@ -53,8 +53,8 @@ class Detail extends React.Component {
             }
             return (
               <span>
-                {d.value}
                 {link}
+                {d.value}
               </span>
             )
           }
