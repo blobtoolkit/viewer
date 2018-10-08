@@ -96,7 +96,9 @@ export function fetchRepository(searchTerm) {
     let datasetId = getDatasetID(state)
     let currentTerm = getSearchTerm(state)
     let setSearch = false
+    let reload = false
     if (!searchTerm){
+      reload = true
       searchTerm = currentTerm
       if (!searchTerm){
         searchTerm = datasetId
@@ -122,33 +124,25 @@ export function fetchRepository(searchTerm) {
         error => console.log('An error occured.', error)
       )
       .then(json =>{
-          if (datasetId){
-          //   // if (json.find(o=>o.id==datasetId)){
-          //   //   // pathname = viewsToPathname(views)
-          //   //   // let dataset = getDatasetID(state)
-          //   //   // if (dataset != datasetId){
-          //   //   //   if (dataset){
-          //   //   //     dispatch(updatePathname({dataset}))
-          //   //   //   }
-          //   //   //   console.log(dataset)
-          //   //   //  dispatch(loadDataset(datasetId))
-          //   //   // }
-          //   // }
-          //   // else {
-          //     dispatch(refreshStore())
-          //     dispatch(updatePathname({},{dataset:true}))
-          //   }
-          //
+        if (datasetId){
+          if (!reload){
+            if (json.length != 1){
+              dispatch(updatePathname({},{dataset:true,[views.primary]:true}))
+            }
+            else if (json[0].id != datasetId){
+              dispatch(updatePathname({dataset:json[0].id},{[views.primary]:true}))
+            }
           }
-          else {
-            dispatch(updatePathname({},{dataset:true,[views.primary]:true}))
-// TODO: add fetch repository or load dataset to component did mount
-// to trigger reload when datasetId changes
-
-          }
-          dispatch(receiveRepository(json))
         }
-      )
+        else if (json.length == 1){
+          dispatch(updatePathname({dataset:json[0].id},{[views.primary]:true}))
+        }
+        else {
+          dispatch(updatePathname({},{dataset:true,[views.primary]:true}))
+        }
+        dispatch(receiveRepository(json))
+      }
+    )
   }
 }
 
