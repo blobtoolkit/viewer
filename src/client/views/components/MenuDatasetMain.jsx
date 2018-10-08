@@ -15,7 +15,7 @@ import Search from './Search'
 
 const DatasetMenu = ({ searchTerm, selectedDataset, isFetching, datasetIds, onDatasetMount, onDatasetClick }) => {
   return (
-    <div className={styles.fill_parent}>
+    <div className={styles.menu_outer}>
       <Search/>
       {isFetching ? <Spinner /> : null}
       { datasetIds.length > 0 ? (

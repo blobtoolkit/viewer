@@ -10,7 +10,7 @@ import { getDatasetID } from '../reducers/location'
 const SummaryMenu = ({values,zAxis,bins,palette,other,datasetId}) => {
   let props = {values,zAxis,bins,palette,other}
   return (
-    <div className={styles.fill_parent}>
+    <div className={styles.menu_outer}>
       <MenuDataset
         key={datasetId}
         id={datasetId}

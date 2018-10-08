@@ -129,7 +129,7 @@ const DisplayMenu = ({
       break
   }
   return (
-    <div className={styles.fill_parent}>
+    <div className={styles.menu_outer}>
       <MenuDataset
         key={datasetId}
         id={datasetId}

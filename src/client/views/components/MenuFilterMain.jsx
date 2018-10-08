@@ -68,7 +68,7 @@ class FieldMenu extends React.Component {
     }
     let fields = this.mapFields(this.props.fields)
     return (
-      <div className={styles.fill_parent}>
+      <div className={styles.menu_outer}>
         <MenuDataset
           key={this.props.datasetId}
           id={this.props.datasetId}
