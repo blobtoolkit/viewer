@@ -100,12 +100,12 @@
   position:absolute;
   opacity: 1;
   height:100%;
-  margin:0 -2em;
-  width:4em!important;
+  margin:0 -1em;
+  width:2em!important;
   cursor:ew-resize;
   text-align:center;
   .arrows {
-    width: 50%;
+    width: 2em;
     height: 2em;
     margin: 0 auto;
     position: relative;
@@ -134,6 +134,12 @@
 
 .handle.right {
   @include fadeFromPercent(right,$deepColor,50%);
+}
+
+.wide_handle {
+  margin:0 -6em;
+  width:12em!important;
+  z-index:5;
 }
 
 .category_toggle {

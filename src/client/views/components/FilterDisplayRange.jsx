@@ -28,10 +28,10 @@ class FilterHandles extends React.Component {
 class FilterHandle extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {offsetX:0,mouseDown:false}
+    this.state = {offsetX:0,mouseDown:false,css:''}
   }
   setMouseDown(bool){
-    this.setState({mouseDown:bool})
+    this.setState({mouseDown:bool,css:bool?styles.wide_handle:''})
   }
   bound(){
     return this.props.handlePosition == 'right' ? 1 : 0
@@ -86,7 +86,7 @@ class FilterHandle extends React.Component {
         }}
         >
         <div style={{left: (this.boundPx()+this.state.offsetX)+'px'}}
-        className={styles.handle+' '+styles[this.props.handlePosition]}>
+        className={styles.handle+' '+styles[this.props.handlePosition]+' '+this.state.css}>
           <div className={styles.arrows} data-tip data-for='draggable-arrow'>
             &lt;&nbsp;&gt;
           </div>
