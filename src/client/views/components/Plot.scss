@@ -8,6 +8,16 @@
   margin:0 auto;
 }
 
+.modal_plot_outer {
+  position:relative;
+  top: 0;
+  height: 325px;
+  width: 1000px;
+  max-height: 70vh;
+  max-width: 70vw;
+  margin:0 auto;
+}
+
 svg text {
   font-family:sans-serif;
 }
@@ -110,12 +120,29 @@ svg text {
     font-size:3em;
   }
 
+  .small_axis_title {
+    font-family:sans-serif;
+    text-anchor:middle;
+    font-size:1.5em;
+  }
+
+  .plot_title {
+    font-family:sans-serif;
+    font-size:1.5em;
+    dominant-baseline: hanging;
+  }
+
   .padded_main {
     transform:translate(50px,50px)
   }
 
   .legend {
     font-family:sans-serif;
+  }
+
+  .horiz_legend {
+    font-family:sans-serif;
+    font-size:0.8em;
   }
 
   .legend_title {

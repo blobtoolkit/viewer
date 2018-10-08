@@ -42,7 +42,8 @@ const sets = (set) => {
   tips.log = {name:'log scale',settingsMenu:1}
   tips.linear = {name:'linear scale',settingsMenu:1}
   tips.sqrt = {name:'squre-root scale',settingsMenu:1}
-  tips['size-slider'] = {name:'scale factor for point/bin size',filterMenu:1}
+  tips['size-slider'] = {name:'scale factor for bin size',filterMenu:1}
+  tips['scale-slider'] = {name:'scale factor for size within bin',filterMenu:1}
   tips['select-palette'] = {name:'select palette',filterMenu:1}
   tips['edit-swatch'] = {name:'adjust colour',filterMenu:1}
   tips['load-dataset'] = {name:'load dataset',datasetMenu:1}

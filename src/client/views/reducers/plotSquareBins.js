@@ -6,7 +6,7 @@ import { getFilteredDataForFieldId } from './preview'
 import { getMainPlot } from './plot';
 import { getSelectedRecordsAsObject } from './select';
 import { getScatterPlotData, getAllScatterPlotData, getFilteredDataForCat } from './plotData';
-import { getZReducer, getZScale, getPlotResolution } from './plotParameters';
+import { getZReducer, getZScale, getPlotResolution, getPlotScale } from './plotParameters';
 import { getColorPalette } from './color';
 import * as d3 from 'd3'
 import immutableUpdate from 'immutable-update';
@@ -179,7 +179,8 @@ export const getScatterPlotDataBySquareBinByCategory = createSelector(
   getColorPalette,
   getZReducer,
   getZScale,
-  (grid = {},scatterData,bins,categories,palette,reducer,scale) => {
+  getPlotScale,
+  (grid = {},scatterData,bins,categories,palette,reducer,scale,plotScale) => {
     if (!scatterData) return undefined
     let zScale = d3[scale]().domain(grid.range).range([0,grid.width])
     let keys = {}
@@ -216,8 +217,8 @@ export const getScatterPlotDataBySquareBinByCategory = createSelector(
       })
       let squareArray = squareData.filter(obj => obj.ids.length > 0);
       squareArray.forEach(s=>{
-        s.z = zScale(reducer.func(s.zs))
-        s.z = s.z > 1 ? s.z : 1;
+        s.z = zScale(reducer.func(s.zs)) * plotScale
+        s.z = s.z > plotScale ? s.z : plotScale;
         let offset = (grid.width - s.z) / 2
         let index = grid.data.findIndex(o => o.id === s.cellId)
         s.x = grid.data[index].x + offset

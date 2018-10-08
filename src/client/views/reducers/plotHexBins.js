@@ -6,7 +6,7 @@ import { getFilteredDataForFieldId } from './preview'
 import { getMainPlot } from './plot';
 import { getSelectedRecordsAsObject } from './select';
 import { getMainPlotData, getScatterPlotData, getAllScatterPlotData, getFilteredDataForCat } from './plotData';
-import { getZReducer, getZScale, getPlotResolution, getTransformFunction } from './plotParameters';
+import { getZReducer, getZScale, getPlotResolution, getTransformFunction, getPlotScale } from './plotParameters';
 import { getColorPalette } from './color';
 import { drawPoints, pixel_to_oddr } from './hexFunctions'
 import * as d3 from 'd3'
@@ -162,7 +162,8 @@ export const getScatterPlotDataByHexBinByCategory = createSelector(
   getColorPalette,
   getZReducer,
   getZScale,
-  (grid,scatterData,bins,categories,palette,reducer,scale) => {
+  getPlotScale,
+  (grid,scatterData,bins,categories,palette,reducer,scale,plotScale) => {
     let zScale = d3[scale]().domain(grid.range).range([0,grid.radius])
     let keys = {}
     let data = []
@@ -195,8 +196,8 @@ export const getScatterPlotDataByHexBinByCategory = createSelector(
       })
       let hexArray = hexData.filter(obj => obj.ids.length > 0);
       hexArray.forEach(h=>{
-        h.z = zScale(reducer.func(h.zs))
-        h.z = h.z > 1 ? h.z : 1;
+        h.z = zScale(reducer.func(h.zs)) * plotScale
+        h.z = h.z > plotScale ? h.z : plotScale;
         h.points = drawPoints(h.x,h.y,grid.radius,grid.res,h.z/grid.radius)
       })
       data = data.concat(hexArray.sort((a,b)=>b.z - a.z))

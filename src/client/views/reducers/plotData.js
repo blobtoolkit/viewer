@@ -4,7 +4,7 @@ import { byIdSelectorCreator } from './selectorCreators'
 import { getMainPlot, getXAxis, getYAxis, getZAxis, getCatAxis } from './plot';
 import { getFilteredList } from './filter';
 import { getDatasetID } from './location';
-import { getZScale, getPlotResolution, getTransformFunction } from './plotParameters';
+import { getZScale, getPlotResolution, getTransformFunction, getPlotScale } from './plotParameters';
 import { getColorPalette } from './color';
 import { getFilteredDataForFieldId,
   getCategoryListForFieldId,
@@ -98,7 +98,7 @@ const getDetailsForZ = createSelector(
   data => data
 )
 
-const getDetailsForCat = createSelector(
+export const getDetailsForCat = createSelector(
   (state) => getDetailsForFieldId(state,getCatAxis(state)),
   data => data
 )
@@ -361,11 +361,12 @@ export const getCirclePlotDataForCategoryIndex = createSelectorForCircleCategory
   getDetailsForZ,
   getZScale,
   getPlotResolution,
-  (catData,details,scale, res) => {
+  getPlotScale,
+  (catData,details,scale,res,plotScale) => {
     let zScale = d3[scale]().domain(details.range).range([0,2*900/res])
     if (catData.data){
       catData.data.forEach(datum => {
-        datum.r = zScale(datum.z)
+        datum.r = zScale(datum.z)* plotScale
       })
     }
     else {

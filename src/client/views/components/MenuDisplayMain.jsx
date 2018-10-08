@@ -15,6 +15,8 @@ import { getPlotShape,
   chooseZReducer,
   getZScale,
   chooseZScale,
+  getPlotScale,
+  choosePlotScale,
   getTransformFunctionParams,
   setTransformFunction,
   getCurveOrigin,
@@ -58,6 +60,7 @@ const DisplayMenu = ({
   curveOrigin, onSelectCurveOrigin,
   snailOrigin, onSelectSnailOrigin,
   transform, onChangeTransform,
+  plotScale, onChangePlotScale,
   onSelectView }) => {
   let context
   view = view || 'blob'
@@ -92,6 +95,17 @@ const DisplayMenu = ({
             <SVGIcon sprite={logIcon} active={scale == 'scaleLog'} onIconClick={()=>onSelectScale('scaleLog')}/>
             <SVGIcon sprite={linearIcon} active={scale == 'scaleLinear'} onIconClick={()=>onSelectScale('scaleLinear')}/>
             <SVGIcon sprite={sqrtIcon} active={scale == 'scaleSqrt'} onIconClick={()=>onSelectScale('scaleSqrt')}/>
+          </MenuDisplaySimple>
+          <MenuDisplaySimple name='scale factor'>
+            <input onChange={(e)=>onChangePlotScale(e.target.value)}
+              type="range"
+              value={plotScale}
+              min="0.1"
+              max="2"
+              step="0.1"
+              className={styles.full_height}
+              data-tip data-for='scale-slider'
+              />
           </MenuDisplaySimple>
           <MenuDisplaySimple name='plot graphics'>
             <label htmlFor="#svgThreshold">Threshold&nbsp;</label>
@@ -213,6 +227,7 @@ class MenuDisplayMain extends React.Component {
         onChangeThreshold: threshold => dispatch(chooseSVGThreshold(threshold)),
         onSelectReducer: reducer => dispatch(chooseZReducer(reducer)),
         onSelectScale: scale => dispatch(chooseZScale(scale)),
+        onChangePlotScale: plotScale => dispatch(choosePlotScale(plotScale)),
         onSelectView: view => dispatch(chooseView(view)),
         onSelectCurveOrigin: origin => dispatch(chooseCurveOrigin(origin)),
         onSelectSnailOrigin: origin => dispatch(chooseSnailOrigin(origin)),
@@ -229,6 +244,7 @@ class MenuDisplayMain extends React.Component {
         threshold:getSVGThreshold(state),
         reducer:getZReducer(state),
         scale:getZScale(state),
+        plotScale:getPlotScale(state),
         curveOrigin:getCurveOrigin(state),
         snailOrigin:getSnailOrigin(state),
         transform:getTransformFunctionParams(state),
