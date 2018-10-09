@@ -25,6 +25,7 @@ import { getPlotShape,
   chooseSnailOrigin } from '../reducers/plotParameters'
 import { chooseView, getView, getDatasetID } from '../reducers/location'
 import styles from './Layout.scss'
+import MenuDisplaySet from './MenuDisplaySet'
 import MenuDisplaySimple from './MenuDisplaySimple'
 import SVGIcon from './SVGIcon'
 import TextIcon from './TextIcon'
@@ -64,82 +65,92 @@ const DisplayMenu = ({
   onSelectView }) => {
   let context
   view = view || 'blob'
+  let blob = (
+    <span>
+      <MenuDisplaySimple name='shape'>
+        <SVGIcon sprite={squareIcon} active={shape == 'square'} onIconClick={()=>onSelectShape('square')}/>
+        <SVGIcon sprite={hexIcon} active={shape == 'hex'} onIconClick={()=>onSelectShape('hex')}/>
+        <SVGIcon sprite={circleIcon} active={shape == 'circle'} onIconClick={()=>onSelectShape('circle')}/>
+      </MenuDisplaySimple>
+      <MenuDisplaySimple name='size'>
+        <input onChange={(e)=>onChangeResolution(e.target.value)}
+          type="range"
+          value={resolution}
+          min="5"
+          max="50"
+          step="1"
+          className={styles.flip_horiz+' '+styles.full_height}
+          data-tip data-for='size-slider'
+          />
+      </MenuDisplaySimple>
+      <MenuDisplaySimple name='reducer function'>
+        <SVGIcon sprite={sumIcon} active={reducer.id == 'sum'} onIconClick={()=>onSelectReducer('sum')}/>
+        <SVGIcon sprite={maxIcon} active={reducer.id == 'max'} onIconClick={()=>onSelectReducer('max')}/>
+        <SVGIcon sprite={minIcon} active={reducer.id == 'min'} onIconClick={()=>onSelectReducer('min')}/>
+        <SVGIcon sprite={countIcon} active={reducer.id == 'count'} onIconClick={()=>onSelectReducer('count')}/>
+        <SVGIcon sprite={meanIcon} active={reducer.id == 'mean'} onIconClick={()=>onSelectReducer('mean')}/>
+      </MenuDisplaySimple>
+      <MenuDisplaySimple name='scale function'>
+        <SVGIcon sprite={logIcon} active={scale == 'scaleLog'} onIconClick={()=>onSelectScale('scaleLog')}/>
+        <SVGIcon sprite={linearIcon} active={scale == 'scaleLinear'} onIconClick={()=>onSelectScale('scaleLinear')}/>
+        <SVGIcon sprite={sqrtIcon} active={scale == 'scaleSqrt'} onIconClick={()=>onSelectScale('scaleSqrt')}/>
+      </MenuDisplaySimple>
+      <MenuDisplaySimple name='scale factor'>
+        <input onChange={(e)=>onChangePlotScale(e.target.value)}
+          type="range"
+          value={plotScale}
+          min="0.1"
+          max="2"
+          step="0.1"
+          className={styles.full_height}
+          data-tip data-for='scale-slider'
+          />
+      </MenuDisplaySimple>
+      <MenuDisplaySimple name='plot graphics'>
+        <label htmlFor="#svgThreshold">Threshold&nbsp;</label>
+        <NumericInput initialValue={threshold} onChange={onChangeThreshold}/>
+        &nbsp;or&nbsp;<SVGIcon sprite={svgIcon} active={graphics == 'svg'} onIconClick={()=>onChangeGraphics(graphics == 'svg' ? 'canvas' : 'svg')}/>
+      </MenuDisplaySimple>
+    </span>
+  )
+  let cumulative = (
+    <span>
+      <MenuDisplaySimple name='curve origin'>
+        <SVGIcon sprite={zeroIcon} active={curveOrigin == '0'} onIconClick={()=>onSelectCurveOrigin('0')}/>
+        <SVGIcon sprite={xIcon} active={curveOrigin == 'x'} onIconClick={()=>onSelectCurveOrigin('x')}/>
+        <SVGIcon sprite={yIcon} active={curveOrigin == 'y'} onIconClick={()=>onSelectCurveOrigin('y')}/>
+      </MenuDisplaySimple>
+    </span>
+  )
+  let snail = (
+    <span>
+      <MenuDisplaySimple name='snail origin'>
+        <SVGIcon sprite={invertIcon} active={snailOrigin == 'center'} onIconClick={()=>onSelectSnailOrigin(snailOrigin == 'center' ? 'outer' : 'center')}/>
+      </MenuDisplaySimple>
+    </span>
+  )
   switch (view) {
     case 'blob':
-      context = (
-        <span>
-          <MenuDisplaySimple name='shape'>
-            <SVGIcon sprite={squareIcon} active={shape == 'square'} onIconClick={()=>onSelectShape('square')}/>
-            <SVGIcon sprite={hexIcon} active={shape == 'hex'} onIconClick={()=>onSelectShape('hex')}/>
-            <SVGIcon sprite={circleIcon} active={shape == 'circle'} onIconClick={()=>onSelectShape('circle')}/>
-          </MenuDisplaySimple>
-          <MenuDisplaySimple name='size'>
-            <input onChange={(e)=>onChangeResolution(e.target.value)}
-              type="range"
-              value={resolution}
-              min="5"
-              max="50"
-              step="1"
-              className={styles.flip_horiz+' '+styles.full_height}
-              data-tip data-for='size-slider'
-              />
-          </MenuDisplaySimple>
-          <MenuDisplaySimple name='reducer function'>
-            <SVGIcon sprite={sumIcon} active={reducer.id == 'sum'} onIconClick={()=>onSelectReducer('sum')}/>
-            <SVGIcon sprite={maxIcon} active={reducer.id == 'max'} onIconClick={()=>onSelectReducer('max')}/>
-            <SVGIcon sprite={minIcon} active={reducer.id == 'min'} onIconClick={()=>onSelectReducer('min')}/>
-            <SVGIcon sprite={countIcon} active={reducer.id == 'count'} onIconClick={()=>onSelectReducer('count')}/>
-            <SVGIcon sprite={meanIcon} active={reducer.id == 'mean'} onIconClick={()=>onSelectReducer('mean')}/>
-          </MenuDisplaySimple>
-          <MenuDisplaySimple name='scale function'>
-            <SVGIcon sprite={logIcon} active={scale == 'scaleLog'} onIconClick={()=>onSelectScale('scaleLog')}/>
-            <SVGIcon sprite={linearIcon} active={scale == 'scaleLinear'} onIconClick={()=>onSelectScale('scaleLinear')}/>
-            <SVGIcon sprite={sqrtIcon} active={scale == 'scaleSqrt'} onIconClick={()=>onSelectScale('scaleSqrt')}/>
-          </MenuDisplaySimple>
-          <MenuDisplaySimple name='scale factor'>
-            <input onChange={(e)=>onChangePlotScale(e.target.value)}
-              type="range"
-              value={plotScale}
-              min="0.1"
-              max="2"
-              step="0.1"
-              className={styles.full_height}
-              data-tip data-for='scale-slider'
-              />
-          </MenuDisplaySimple>
-          <MenuDisplaySimple name='plot graphics'>
-            <label htmlFor="#svgThreshold">Threshold&nbsp;</label>
-            <NumericInput initialValue={threshold} onChange={onChangeThreshold}/>
-            &nbsp;or&nbsp;<SVGIcon sprite={svgIcon} active={graphics == 'svg'} onIconClick={()=>onChangeGraphics(graphics == 'svg' ? 'canvas' : 'svg')}/>
-          </MenuDisplaySimple>
-        </span>
-      )
+      context = blob
       break
     case 'cumulative':
+      context = cumulative
+      break
+    case 'report':
       context = (
         <span>
-          <MenuDisplaySimple name='curve origin'>
-            <SVGIcon sprite={zeroIcon} active={curveOrigin == '0'} onIconClick={()=>onSelectCurveOrigin('0')}/>
-            <SVGIcon sprite={xIcon} active={curveOrigin == 'x'} onIconClick={()=>onSelectCurveOrigin('x')}/>
-            <SVGIcon sprite={yIcon} active={curveOrigin == 'y'} onIconClick={()=>onSelectCurveOrigin('y')}/>
-          </MenuDisplaySimple>
+          {blob}
+          {cumulative}
+          {snail}
         </span>
       )
       break
     case 'snail':
-      context = (
-        <span>
-          <MenuDisplaySimple name='snail origin'>
-            <SVGIcon sprite={invertIcon} active={snailOrigin == 'center'} onIconClick={()=>onSelectSnailOrigin(snailOrigin == 'center' ? 'outer' : 'center')}/>
-          </MenuDisplaySimple>
-        </span>
-      )
+      context = snail
       break
     case 'table':
-      view = 'Table text'
       break
     case 'treemap':
-      view = 'TreeMap text'
       break
   }
   return (
@@ -151,7 +162,7 @@ const DisplayMenu = ({
         onDatasetClick={()=>{}}
         onDatasetMount={()=>{}}
       />
-      <MenuDisplaySimple name='view'>
+    <MenuDisplaySimple invert={true}>
         <TextIcon title='blobplot' active={view == 'blob'} onIconClick={()=>onSelectView('blob')}/>
         <TextIcon title='cumulative' active={view == 'cumulative'} onIconClick={()=>onSelectView('cumulative')}/>
         <TextIcon title='detail' active={view == 'detail'} onIconClick={()=>onSelectView('detail')}/>
@@ -159,7 +170,9 @@ const DisplayMenu = ({
         <TextIcon title='snail' active={view == 'snail'} onIconClick={()=>onSelectView('snail')}/>
         <TextIcon title='table' active={view == 'table'} onIconClick={()=>onSelectView('table')}/>
       </MenuDisplaySimple>
-      {context}
+      <MenuDisplaySet name={view}>
+        {context}
+      </MenuDisplaySet>
       <MenuItem name='palette' type='palette'/>
 
       <ToolTips set='settingsMenu'/>

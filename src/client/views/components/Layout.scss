@@ -391,6 +391,18 @@ span.logo {
   }
 }
 
+.simple.inv {
+  background-color: $darkColor;
+  color: $lightColor;
+
+  .simple_buttons {
+    color:$lightColor;
+  }
+
+  .simple_button {
+  }
+}
+
 .flip_horiz {
   transform: scaleX(-1);
 }
