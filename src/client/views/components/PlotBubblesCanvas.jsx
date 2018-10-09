@@ -37,10 +37,10 @@ class BubblesCanvas extends React.Component {
     let isChrome = /Chrome/.test(navigator.userAgent) && /Google Inc/.test(navigator.vendor)
     let isSafari = /Safari/.test(navigator.userAgent) && /Apple Computer/.test(navigator.vendor)
     if (isChrome || isSafari){
-      this.state = { webkit:true }
+      this.state = { webkit:true,height:900,width:900 }
     }
     else {
-      this.state = { webkit:false }
+      this.state = { webkit:false,height:900,width:900 }
     }
     this.updateDimensions = this.updateDimensions.bind(this);
   }
@@ -52,7 +52,7 @@ class BubblesCanvas extends React.Component {
     this.updateDimensions()
   }
   componentDidUpdate() {
-    this.updateDimensions()
+    this.updateCanvas()
   }
 
   updateDimensions(){
@@ -60,8 +60,9 @@ class BubblesCanvas extends React.Component {
       let parent = this.canvas.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode
       let width = parent.clientWidth * 900 / 1420
       let height = parent.clientHeight * 900 / 1420
-      this.canvas.width = Math.min(width,height)
-      this.canvas.height = this.canvas.width
+      width = Math.min(width,height)
+      height = width
+      this.setState({height,width})
     }
     this.updateCanvas()
   }
@@ -74,18 +75,19 @@ class BubblesCanvas extends React.Component {
   }
 
   updateCanvas() {
-    let width = this.canvas.width*window.devicePixelRatio
-    let height = this.canvas.height*window.devicePixelRatio
-    const ctx = this.canvas.getContext('2d');
+    let width = this.canvas.width
+    let height = this.canvas.height
+    const ctx = this.canvas.getContext('2d')
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
     ctx.scale(1/window.devicePixelRatio,1/window.devicePixelRatio)
-    ctx.clearRect(0, 0, width, height);
+    ctx.clearRect(0, 0, width+100, height+100);
     ctx.globalAlpha=0.4
     ctx.fillStyle = this.props.color;
-    ctx.lineWidth = 1;
+    ctx.lineWidth = 2;
     ctx.strokeStyle = 'rgb(89, 101, 111)';
     this.props.data.map(bubble => {
       ctx.beginPath();
-      ctx.arc(bubble.x*width/900, bubble.y*width/900, bubble.r*width/900, 0, 2 * Math.PI, false);
+      ctx.arc(bubble.x*width/900, bubble.y*width/900, bubble.r*width/900+1, 0, 2 * Math.PI, false);
       ctx.fill();
       ctx.stroke();
     })
@@ -93,8 +95,20 @@ class BubblesCanvas extends React.Component {
 
 
   render() {
+    let scale = this.state.webkit ? this.state.width/(900) : this.state.width/900
     return (
-      <canvas className={styles.main_canvas} ref={(elem) => { this.canvas = elem; }} width={this.canvas ? this.canvas.width : 900 } height={this.canvas ? this.canvas.height : 900}/>
+      <canvas
+        className={styles.main_canvas}
+        ref={(elem) => { this.canvas = elem; }}
+        width={this.canvas ? this.canvas.width : 900*window.devicePixelRatio }
+        height={this.canvas ? this.canvas.height : 900*window.devicePixelRatio}
+        style={
+          {
+            transform:'scale('+scale+')',
+            transformOrigin: 'left top'
+          }
+        }
+      />
     );
   }
 }
