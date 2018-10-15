@@ -49,6 +49,7 @@ import MenuItem from './MenuItem'
 import ToolTips from './ToolTips'
 import Timeout from './Timeout'
 import MenuDataset from './MenuDataset'
+import { format as d3Format } from 'd3-format'
 
 const DisplayMenu = ({
   datasetId, title, view,
@@ -72,16 +73,20 @@ const DisplayMenu = ({
         <SVGIcon sprite={hexIcon} active={shape == 'hex'} onIconClick={()=>onSelectShape('hex')}/>
         <SVGIcon sprite={circleIcon} active={shape == 'circle'} onIconClick={()=>onSelectShape('circle')}/>
       </MenuDisplaySimple>
-      <MenuDisplaySimple name='size'>
-        <input onChange={(e)=>onChangeResolution(e.target.value)}
-          type="range"
-          value={resolution}
-          min="5"
-          max="50"
-          step="1"
-          className={styles.flip_horiz+' '+styles.full_height}
-          data-tip data-for='size-slider'
-          />
+      <MenuDisplaySimple name={'resolution [ '+resolution+' ]'}>
+        <div className={styles.full_height}>
+          <span className={styles.middle}>50</span>
+          <input onChange={(e)=>onChangeResolution(e.target.value)}
+            type="range"
+            value={resolution}
+            min="5"
+            max="50"
+            step="1"
+            className={styles.flip_horiz+' '+styles.middle}
+            data-tip data-for='size-slider'
+            />
+          <span className={styles.middle}>5</span>
+        </div>
       </MenuDisplaySimple>
       <MenuDisplaySimple name='reducer function'>
         <SVGIcon sprite={sumIcon} active={reducer.id == 'sum'} onIconClick={()=>onSelectReducer('sum')}/>
@@ -95,16 +100,21 @@ const DisplayMenu = ({
         <SVGIcon sprite={linearIcon} active={scale == 'scaleLinear'} onIconClick={()=>onSelectScale('scaleLinear')}/>
         <SVGIcon sprite={sqrtIcon} active={scale == 'scaleSqrt'} onIconClick={()=>onSelectScale('scaleSqrt')}/>
       </MenuDisplaySimple>
-      <MenuDisplaySimple name='scale factor'>
-        <input onChange={(e)=>onChangePlotScale(e.target.value)}
-          type="range"
-          value={plotScale}
-          min="0.1"
-          max="2"
-          step="0.1"
-          className={styles.full_height}
-          data-tip data-for='scale-slider'
-          />
+      <MenuDisplaySimple name={'scale factor [ '+d3Format(",.1f")(plotScale)+' ]'}>
+        <div className={styles.full_height}>
+          <span className={styles.middle}>0.1</span>
+          <input onChange={(e)=>onChangePlotScale(e.target.value)}
+            type="range"
+            value={plotScale}
+            min="0.1"
+            max="2"
+            step="0.1"
+            className={styles.middle}
+            data-tip data-for='scale-slider'
+            />
+          <span className={styles.middle}>2.0</span>
+        </div>
+
       </MenuDisplaySimple>
       <MenuDisplaySimple name='plot graphics'>
         <label htmlFor="#svgThreshold">Threshold&nbsp;</label>

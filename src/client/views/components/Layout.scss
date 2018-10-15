@@ -409,6 +409,13 @@ span.logo {
 
 .full_height {
   height:100%;
+  display:table-cell;
+  vertical-align:middle;
+}
+
+.middle {
+  vertical-align:middle;
+  margin-right:0.5em;
 }
 
 .inline {
