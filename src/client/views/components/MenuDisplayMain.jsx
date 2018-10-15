@@ -116,11 +116,14 @@ const DisplayMenu = ({
         </div>
 
       </MenuDisplaySimple>
-      <MenuDisplaySimple name='plot graphics'>
-        <label htmlFor="#svgThreshold">Threshold&nbsp;</label>
-        <NumericInput initialValue={threshold} onChange={onChangeThreshold}/>
-        &nbsp;or&nbsp;<SVGIcon sprite={svgIcon} active={graphics == 'svg'} onIconClick={()=>onChangeGraphics(graphics == 'svg' ? 'canvas' : 'svg')}/>
-      </MenuDisplaySimple>
+      {shape == 'circle' && <MenuDisplaySimple name='plot graphics'>
+        <div className={styles.full_height}>
+          <label className={styles.middle} htmlFor="#svgThreshold">Threshold</label>
+          <NumericInput initialValue={threshold} onChange={onChangeThreshold}/>
+          <span className={styles.middle}>or</span>
+        </div>
+        <SVGIcon sprite={svgIcon} active={graphics == 'svg'} onIconClick={()=>onChangeGraphics(graphics == 'svg' ? 'canvas' : 'svg')}/>
+      </MenuDisplaySimple>}
     </span>
   )
   let cumulative = (
