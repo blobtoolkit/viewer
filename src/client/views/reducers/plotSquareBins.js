@@ -90,6 +90,7 @@ export const getOccupiedSquareGrid = createSelector(
       }
       let z = reducer.func(d.zs)
       max = Math.max(max,z)
+      min = Math.min(min,z)
     })
     let range = [min,max]
     let newGrid = immutableUpdate(grid,{data,range})
