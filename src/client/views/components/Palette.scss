@@ -12,6 +12,7 @@
   background-color: $deepColor;
   text-align: center;
   cursor:pointer;
+  display: none;
 }
 
 .active {
@@ -20,7 +21,7 @@
 }
 
 .palette {
-  margin-top:0.5em;
+  // margin-top:0.5em;
 }
 
 .color {
@@ -41,7 +42,9 @@
 
 .popover {
   position: fixed;
-  z-index:1;
+  z-index: 50;
+  top: 5em;
+  left: 7em;
 }
 
 .cover {

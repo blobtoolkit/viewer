@@ -35,8 +35,10 @@ div.icon {
   color: $lightColor;
   padding: 0 0.3em 0.1em 0.3em;
   cursor:pointer;
+  height:1.9em;
 }
 
 .text_icon.active {
-  background-color: $highlightColor;
+  background-color: $deepColor;
+  color: $lightColor;
 }

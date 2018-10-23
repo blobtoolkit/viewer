@@ -1,27 +1,39 @@
 import React from 'react'
-import styles from './Filters.scss';
+import styles from './Menu.scss'
 import Palette from './Palette'
+import TextIcon from './TextIcon'
 
 class Palettes extends React.Component {
   render(){
     let palettes = []
     this.props.allIds.forEach(id => {
-      palettes.push(
-        <Palette
-          id={id}
-          key={id}
-          active={this.props.selected==id}
-          location={this.props.location}
-          colors={this.props.byId[id]}
-          selectPalette={this.props.selectPalette}
-          editPalette={(obj)=>this.props.editPalette(obj)}
-          />
-        )
+      if (this.props.selected==id){
+        palettes.push(
+          <Palette
+            id={id}
+            key={id}
+            active={this.props.selected==id}
+            location={this.props.location}
+            colors={this.props.byId[id]}
+            selectPalette={this.props.selectPalette}
+            editPalette={(obj)=>this.props.editPalette(obj)}
+            />
+          )
+      }
     })
     return (
-      <span>
-        {palettes}
-      </span>
+      <div className={styles.outer}>
+        <div className={styles.header}>
+          <h1 className={styles.inline}>{this.props.name}</h1>
+          <div style={{float:'right'}}>
+            <TextIcon title='default' active={this.props.selected == 'default'} onIconClick={()=>this.props.selectPalette('default')}/>
+            <TextIcon title='user' active={this.props.selected == 'user'} onIconClick={()=>this.props.selectPalette('user')}/>
+          </div>
+        </div>
+        <div className={styles.content}>
+          {palettes}
+        </div>
+      </div>
     )
   }
 }

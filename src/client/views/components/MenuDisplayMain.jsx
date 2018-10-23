@@ -50,6 +50,7 @@ import ToolTips from './ToolTips'
 import Timeout from './Timeout'
 import MenuDataset from './MenuDataset'
 import { format as d3Format } from 'd3-format'
+import Palettes from '../containers/Palettes'
 
 const DisplayMenu = ({
   datasetId, title, view,
@@ -175,7 +176,7 @@ const DisplayMenu = ({
         onDatasetClick={()=>{}}
         onDatasetMount={()=>{}}
       />
-    <MenuDisplaySimple invert={true}>
+    <MenuDisplaySimple invert={false}>
         <TextIcon title='blobplot' active={view == 'blob'} onIconClick={()=>onSelectView('blob')}/>
         <TextIcon title='cumulative' active={view == 'cumulative'} onIconClick={()=>onSelectView('cumulative')}/>
         <TextIcon title='detail' active={view == 'detail'} onIconClick={()=>onSelectView('detail')}/>
@@ -186,7 +187,7 @@ const DisplayMenu = ({
       <MenuDisplaySet name={view}>
         {context}
       </MenuDisplaySet>
-      <MenuItem name='palette' type='palette'/>
+      <Palettes />
 
       <ToolTips set='settingsMenu'/>
     </div>
