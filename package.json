@@ -1,13 +1,13 @@
 {
   "name": "blobtoolkit-viewer",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "repository": "https://github.com/blobtoolkit/viewer",
   "description": "",
   "main": "index.js",
   "scripts": {
     "api": "node src/server/app.js",
     "start": "nodemon src/server/app.js",
-    "client": "webpack-dev-server --content-base src/client src/client/main.js",
+    "client": "webpack-dev-server --content-base src/client --config ./webpack.config.js src/client/main.js",
     "build": "NODE_ENV=production webpack -p --config ./webpack.config.js"
   },
   "author": "Richard Challis",
