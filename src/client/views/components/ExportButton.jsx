@@ -11,6 +11,15 @@ const _downloadJSONFile = (name,content) => {
   element.dispatchEvent(new MouseEvent(`click`, {bubbles: true, cancelable: true, view: window}))
 }
 
+const _downloadTextFile = (name,content,format) => {
+  var element = document.createElement('a');
+  var file = new Blob([content], {type: 'text/plain'});
+  element.href = URL.createObjectURL(file);
+  element.download = (name || 'file') + '.'+format;
+  element.dispatchEvent(new MouseEvent(`click`, {bubbles: true, cancelable: true, view: window}))
+}
+
+
 export const ExportButton = ({element,data,format,prefix,scale=1,func}) => {
   if (!func){
     func = () => {}
@@ -22,6 +31,9 @@ export const ExportButton = ({element,data,format,prefix,scale=1,func}) => {
     }
     else if (format == 'json'){
       func = ()=>_downloadJSONFile(prefix,data)
+    }
+    else {
+      func = ()=>_downloadTextFile(prefix,data,format)
     }
   }
   return (

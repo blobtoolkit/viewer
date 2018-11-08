@@ -255,7 +255,7 @@ table {
   margin-right:0.4em;
 }
 
-.colored_tab.highlight, .colored_tab.clear {
+.colored_tab.highlight, .colored_tab.clear, .colored_tab.partial  {
   border: 2px solid $shadeColor;
   border-radius: 2px;
   cursor: pointer;
@@ -270,6 +270,11 @@ table {
 
 .colored_tab.highlight {
   background-color: $highlightColor;
+}
+
+.colored_tab.partial {
+  border-color: $highlightColor;
+  background-color: rgba($highlightColor,0.25);
 }
 
 .colored_tab.clear {

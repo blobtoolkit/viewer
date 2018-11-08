@@ -20,7 +20,7 @@ export const getPathname = state => {
   return state.pathname
 }
 
-const options = ['blob','cumulative','detail','dataset','report','snail','table','treemap']
+const options = ['blob','busco','cumulative','detail','dataset','report','snail','table','treemap']
 
 export const getViews = createSelector(
   getPathname,

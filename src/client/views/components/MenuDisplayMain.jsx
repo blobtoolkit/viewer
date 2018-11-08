@@ -147,6 +147,8 @@ const DisplayMenu = ({
     case 'blob':
       context = blob
       break
+    case 'busco':
+      break
     case 'cumulative':
       context = cumulative
       break
@@ -178,6 +180,7 @@ const DisplayMenu = ({
       />
     <MenuDisplaySimple invert={false}>
         <TextIcon title='blobplot' active={view == 'blob'} onIconClick={()=>onSelectView('blob')}/>
+        <TextIcon title='busco' active={view == 'busco'} onIconClick={()=>onSelectView('busco')}/>
         <TextIcon title='cumulative' active={view == 'cumulative'} onIconClick={()=>onSelectView('cumulative')}/>
         <TextIcon title='detail' active={view == 'detail'} onIconClick={()=>onSelectView('detail')}/>
         <TextIcon title='report' active={view == 'report'} onIconClick={()=>onSelectView('report')}/>

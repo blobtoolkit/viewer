@@ -6,6 +6,7 @@ import { toggleHash, getView, getDatasetID } from '../reducers/location'
 import { getScatterPlotData } from '../reducers/plotData'
 import GetStarted from './GetStarted'
 import MainPlot from './MainPlot'
+import BuscoPlot from './BuscoPlot'
 import CumulativePlot from './CumulativePlot'
 import DetailPlot from './DetailPlot'
 import SnailPlot from './SnailPlot'
@@ -20,6 +21,9 @@ class PlotsLayoutComponent extends React.Component {
     if (!this.props.datasetId) return <HomePage toggleHash={this.props.toggleHash}/>
     let view
     switch (this.props.view || 'blob') {
+      case 'busco':
+        view = <BuscoPlot {...this.props}/>
+        break
       case 'cumulative':
         view = <CumulativePlot {...this.props}/>
         break

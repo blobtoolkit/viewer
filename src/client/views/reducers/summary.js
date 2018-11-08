@@ -27,7 +27,7 @@ import { arc as d3Arc } from 'd3-shape';
 import { format as d3Format } from 'd3-format'
 import { default as Simplify } from 'simplify-js'
 import { getIdentifiersForList } from './list'
-import { format as d3format} from 'd3-format'
+import { format as d3format } from 'd3-format'
 
 export const getSelectedScatterPlotDataByCategory = createSelector(
   getMainPlotData,
@@ -949,5 +949,131 @@ export const getSelectedDatasetTable = createSelector(
       }
     })
     return {data,meta}
+  }
+)
+
+export const getBuscoSets = createSelector(
+  getSelectedDatasetMeta,
+  meta => {
+    let index = meta.fields.findIndex((el,i,arr) => {
+      if (el.id === 'busco' && el.children && el.children.length > 0){
+        return true
+      }
+      return false;
+    });
+    if (index == -1){
+      return false
+    }
+    return meta.fields[index].children.map(arr=>arr.id)
+  }
+)
+
+
+const _getBuscoIdAsMemoKey = (state, buscoId) => buscoId;
+
+const createSelectorForBuscoId = byIdSelectorCreator();
+
+export const getBuscoData = createSelectorForBuscoId(
+  _getBuscoIdAsMemoKey,
+  getFilteredDataForFieldId,
+  getDetailsForFieldId,
+  getFilteredList,
+  getSelectedRecordsAsObject,
+  (data,details,list,selected) => {
+    if (!data){
+      return false
+    }
+    let comp = data.keys.indexOf('Complete')
+    let dupl = data.keys.indexOf('Duplicated')
+    let frag = data.keys.indexOf('Fragmented')
+    let total = details.meta.count
+    let scores = {c:0,d:0,m:total,f:0,t:total}
+    let selections = {c:{},d:{},f:{},t:{}}
+    let records = {c:{},d:{},f:{},t:{}}
+    let ids = {}
+    data.values.forEach((record,index)=>{
+      let i = list[index]
+      record.forEach(busco=>{
+        records.t[i] = 1
+        if (selected[i]) selections.t[i] = 1
+        if (busco[1] == comp || busco[1] == dupl){
+          records.c[i] = 1
+          if (selected[i]) selections.c[i] = 1
+          if (ids[busco[0]]){
+            records.d[i] = 1
+            if (selected[i]) selections.d[i] = 1
+            records.d[ids[busco[0]]] = 1
+            if (selected[ids[busco[0]]]) selections.d[ids[busco[0]]] = 1
+            scores.d++
+          }
+          else {
+            scores.c++
+            scores.m--
+          }
+        }
+        else if (busco[1] == frag) {
+          records.f[i] = 1
+          if (selected[i]) selections.f[i] = 1
+          scores.f++
+          scores.m--
+        }
+        if (!ids[busco[0]]) ids[busco[0]] = []
+        ids[busco[0]].push(i)
+      })
+    })
+    Object.keys(selections).forEach(k=>{
+      selections[k] = Object.keys(selections[k]).map(x=>x*1)
+    })
+    Object.keys(records).forEach(k=>{
+      records[k] = Object.keys(records[k]).map(x=>x*1)
+    })
+    scores.s = scores.c - scores.d
+    let pct = d3Format(".1%");
+    let fractions = {
+      c:scores.c / total,
+      s:scores.s / total,
+      d:scores.d / total,
+      f:scores.f / total,
+      m:scores.m / total
+    }
+    let string  = 'C:' + pct(fractions.c)
+                + '[S:' + pct(fractions.s)
+                + ',D:' + pct(fractions.d)
+                + '],F:' + pct(fractions.f)
+                + ',M:' + pct(fractions.m)
+                + ',n:' + total
+    return {total,scores,selections,records,fractions}
+  }
+);
+
+export const getBuscoPaths = createSelectorForBuscoId(
+  _getBuscoIdAsMemoKey,
+  getBuscoData,
+  (data) => {
+    if (!data){
+      return false
+    }
+    let cScale = d3scaleLinear().range([0,2*Math.PI]).domain([0,data.total])
+    let rScale = d3scaleLinear().range([75,200]).domain([0,1])
+    let paths = {}
+    paths.c = d3Arc()({
+      startAngle: cScale(0),
+      endAngle: cScale(data.scores.c),
+      innerRadius: rScale(0),
+      outerRadius: rScale(1)
+    })
+    paths.d = d3Arc()({
+      startAngle: cScale(0),
+      endAngle: cScale(data.scores.d),
+      innerRadius: rScale(0),
+      outerRadius: rScale(1)
+    })
+    paths.f = d3Arc()({
+      startAngle: cScale(data.scores.c),
+      endAngle: cScale(data.scores.c + data.scores.f),
+      innerRadius: rScale(0),
+      outerRadius: rScale(1)
+    })
+    return paths
   }
 )

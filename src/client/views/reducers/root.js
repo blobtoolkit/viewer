@@ -12,6 +12,7 @@ import { colorReducers } from './color'
 import { plotReducers } from './plot'
 import { selectReducers } from './select'
 import { plotParameterReducers } from './plotParameters'
+import { recordReducers } from './record'
 
 const allReducers = Object.assign(
   {},
@@ -26,7 +27,8 @@ const allReducers = Object.assign(
   colorReducers,
   plotReducers,
   selectReducers,
-  plotParameterReducers
+  plotParameterReducers,
+  recordReducers
 );
 
 const appReducer = combineReducers(allReducers);

@@ -34,7 +34,12 @@ const loadDataAtIndex = async function(index) {
     else {
       for (var i = indices[0]; i <= indices[1]; i++){
         if (keys){
-          values.push(data.keys[data.values[i]]);
+          if (typeof(data.values[i]) == 'object'){
+            values.push(data.values[i]);
+          }
+          else {
+            values.push(data.keys[data.values[i]]);
+          }
         }
         else {
           values.push(data.values[i])
