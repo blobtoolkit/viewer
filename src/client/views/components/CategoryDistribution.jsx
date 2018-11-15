@@ -22,6 +22,11 @@ class CatDistribution extends React.Component {
 
   render() {
     let points = this.props.data.lines
+    if (!points || points.length < 1){
+      return (<div className={styles.modal_plot_outer}>
+                No category distribution data available for the current record.
+              </div>)
+    }
     let yLimit = this.props.data.yLimit || 10000
     let xLimit = this.props.data.xLimit || 1000000
     let xScale = d3scaleLinear().domain([0,xLimit]).range([0,900])

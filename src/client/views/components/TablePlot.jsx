@@ -11,7 +11,7 @@ import {
 } from '../reducers/plotParameters'
 import { getTableData,getBinnedColors,getTableDataForPage } from '../reducers/summary'
 import { getColorPalette } from '../reducers/color'
-import { chooseCurrentRecord } from '../reducers/record'
+import { chooseCurrentRecord, getCurrentRecord } from '../reducers/record'
 import { addRecords, removeRecords } from '../reducers/select'
 import PlotLegend from './PlotLegend'
 import PlotAxisTitle from './PlotAxisTitle'
@@ -22,7 +22,7 @@ import ReactTable from 'react-table'
 import ExternalLink from './ExternalLink'
 import { fetchIdentifiers } from '../reducers/identifiers'
 import DownloadCSV from './TableCSV'
-// import RecordModal from './RecordModal'
+import RecordModal from './RecordModal'
 // import { getFilteredList } from '../reducers/filter';
 // import { getSelectedRecords } from '../reducers/select'
 
@@ -35,7 +35,6 @@ const CategoryLabel = ({index,keys,id,colors,chooseRecord}) => {
           style={{backgroundColor:colors[index]}}>
       </span>
       {keys[index]}
-
     </span>
   )
 }
@@ -198,6 +197,7 @@ class Table extends React.Component {
             onPageSizeChange={(newPageSize, pageIndex)=>{this.props.changePageSize(newPageSize,page,pageSize); return (newPageSize,pageIndex)}}
           />
         <CSVWrapper />
+        <RecordModal dismiss={this.props.chooseRecord} currentRecord={this.props.currentRecord.id}/>
       </div>
     )
   }
@@ -231,6 +231,8 @@ class TablePlot extends React.Component {
         page: getTablePage(state),
         pageSize: getTablePageSize(state),
         binnedColors: getBinnedColors(state),
+        currentRecord: getCurrentRecord(state),
+        positions: true,
         selectAll
       }
     }
