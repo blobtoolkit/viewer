@@ -164,8 +164,6 @@ class PlotBox extends React.Component {
   }
 
   render(){
-
-    console.log(this.props)
     if (!this.props.datasetId) return null
     let plotContainer
     let plotGrid

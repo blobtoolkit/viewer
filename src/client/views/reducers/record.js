@@ -16,12 +16,19 @@ export const setCurrentRecord = createAction('SET_CURRENT_RECORD')
 export const chooseCurrentRecord = (id) => {
   return async function (dispatch) {
     let state = store.getState()
-    let datasetId = getDatasetID(state)
-    let cat = getCatAxis(state)
-    let url = apiUrl + '/field/' + datasetId + '/' + cat + '_positions/' + id
-    let response = await fetch(url);
-    let json = await response.json();
-    dispatch(setCurrentRecord({id,...json}))
+    let currentRecord = getCurrentRecord(state)
+    // if (id == currentRecord) return
+    if (id){
+      let datasetId = getDatasetID(state)
+      let cat = getCatAxis(state)
+      let url = apiUrl + '/field/' + datasetId + '/' + cat + '_positions/' + id
+      let response = await fetch(url);
+      let json = await response.json();
+      dispatch(setCurrentRecord({id,...json}))
+    }
+    else {
+      dispatch(setCurrentRecord({id}))
+    }
   }
 }
 
@@ -54,6 +61,7 @@ export const getCategoryDistributionForRecord = createSelector(
   getCatBinIndices,
   getIdentifiers,
   (data,lengths,bins,identifiers) => {
+    if (!data || !data.values || !data.id) return false
     let yLimit = 0
     let binSize = 100000
     let labels = {}

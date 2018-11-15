@@ -210,6 +210,7 @@ table {
 
   .right {
     float:right;
+    position:relative;
     border-radius:1em;
     border: 0.2em solid $deepColor;
     color:$lightColor;
@@ -217,7 +218,7 @@ table {
     cursor:pointer;
   }
 
-  .most {
+  .cover {
     display:block;
     position: absolute;
     top:0;
@@ -225,7 +226,7 @@ table {
     bottom:0;
     padding:1em;
     cursor:pointer;
-    right:30%;
+    right:0;
   }
 
   h3 {
