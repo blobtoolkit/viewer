@@ -30,6 +30,11 @@ export const getSelectedDatasetMeta = createSelector(
   (meta) => meta
 )
 
+export const getStaticFields = createSelector(
+  getCurrentDatasetMeta,
+  meta => meta.static_fields || false
+)
+
 export const getDatasetsById = (state, datasetId) => state.datasets.byId[datasetId] || {};
 
 const createSelectorForDatasetId = byIdSelectorCreator();

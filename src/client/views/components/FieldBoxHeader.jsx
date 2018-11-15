@@ -25,7 +25,8 @@ class FieldBoxHeader extends React.Component {
   }
   render(){
     let buttons
-    if (this.props.active){
+    let active = this.props.active && !this.props.isStatic
+    if (active){
       let icons
       if (this.props.type == 'variable'){
         icons = (
@@ -72,7 +73,7 @@ class FieldBoxHeader extends React.Component {
         )
     }
     return (
-      <div className={styles.header + ' ' + (this.props.active ? styles.active : '')}>
+      <div className={styles.header + ' ' + (active ? styles.active : '')}>
         <span className={styles.left_half}
           data-tip data-for={(this.props.active ? 'active-' : '') + 'field-header'}
           onClick={()=>{this.props.onHeaderClick()}}>

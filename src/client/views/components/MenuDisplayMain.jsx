@@ -2,6 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux'
 //import styles from './Plot.scss'
 import { getAxisTitle } from '../reducers/plotData'
+import { getStaticFields } from '../reducers/dataset'
 import { getPlotShape,
   choosePlotShape,
   getPlotResolution,
@@ -23,7 +24,7 @@ import { getPlotShape,
   chooseCurveOrigin,
   getSnailOrigin,
   chooseSnailOrigin } from '../reducers/plotParameters'
-import { chooseView, getView, getDatasetID } from '../reducers/location'
+import { chooseView, toggleStatic, getView, getStatic, getDatasetID } from '../reducers/location'
 import styles from './Layout.scss'
 import MenuDisplaySet from './MenuDisplaySet'
 import MenuDisplaySimple from './MenuDisplaySimple'
@@ -53,7 +54,7 @@ import { format as d3Format } from 'd3-format'
 import Palettes from '../containers/Palettes'
 
 const DisplayMenu = ({
-  datasetId, title, view,
+  datasetId, title, view, isStatic, hasStatic,
   shape, onSelectShape,
   resolution, onChangeResolution,
   graphics, onChangeGraphics,
@@ -64,7 +65,7 @@ const DisplayMenu = ({
   snailOrigin, onSelectSnailOrigin,
   transform, onChangeTransform,
   plotScale, onChangePlotScale,
-  onSelectView }) => {
+  onSelectView, onToggleStatic }) => {
   let context
   view = view || 'blob'
   let blob = (
@@ -178,19 +179,23 @@ const DisplayMenu = ({
         onDatasetClick={()=>{}}
         onDatasetMount={()=>{}}
       />
-    <MenuDisplaySimple invert={false}>
-        <TextIcon title='blobplot' active={view == 'blob'} onIconClick={()=>onSelectView('blob')}/>
-        <TextIcon title='busco' active={view == 'busco'} onIconClick={()=>onSelectView('busco')}/>
+      <MenuDisplaySimple invert={false}>
+        <TextIcon title='interactive' active={!isStatic} onIconClick={()=>onToggleStatic(false,datasetId)}/>
+        {hasStatic && <TextIcon title='static' active={isStatic} onIconClick={()=>onToggleStatic(view,datasetId)}/>}
+      </MenuDisplaySimple>
+      <MenuDisplaySimple invert={false}>
+        <TextIcon title='blob' active={view == 'blob'} onIconClick={()=>onSelectView('blob')}/>
+        {isStatic || <TextIcon title='busco' active={view == 'busco'} onIconClick={()=>onSelectView('busco')}/>}
         <TextIcon title='cumulative' active={view == 'cumulative'} onIconClick={()=>onSelectView('cumulative')}/>
         <TextIcon title='detail' active={view == 'detail'} onIconClick={()=>onSelectView('detail')}/>
-        <TextIcon title='report' active={view == 'report'} onIconClick={()=>onSelectView('report')}/>
+        {isStatic || <TextIcon title='report' active={view == 'report'} onIconClick={()=>onSelectView('report')}/>}
         <TextIcon title='snail' active={view == 'snail'} onIconClick={()=>onSelectView('snail')}/>
-        <TextIcon title='table' active={view == 'table'} onIconClick={()=>onSelectView('table')}/>
+        {isStatic || <TextIcon title='table' active={view == 'table'} onIconClick={()=>onSelectView('table')}/>}
       </MenuDisplaySimple>
       <MenuDisplaySet name={view}>
-        {context}
+        {isStatic || context}
       </MenuDisplaySet>
-      <Palettes />
+      { isStatic || <Palettes />}
 
       <ToolTips set='settingsMenu'/>
     </div>
@@ -259,6 +264,7 @@ class MenuDisplayMain extends React.Component {
         onSelectScale: scale => dispatch(chooseZScale(scale)),
         onChangePlotScale: plotScale => dispatch(choosePlotScale(plotScale)),
         onSelectView: view => dispatch(chooseView(view)),
+        onToggleStatic: (view,datasetId) => dispatch(toggleStatic(view,datasetId)),
         onSelectCurveOrigin: origin => dispatch(chooseCurveOrigin(origin)),
         onSelectSnailOrigin: origin => dispatch(chooseSnailOrigin(origin)),
         onChangeTransform: object => dispatch(setTransformFunction(object))
@@ -279,7 +285,9 @@ class MenuDisplayMain extends React.Component {
         snailOrigin:getSnailOrigin(state),
         transform:getTransformFunctionParams(state),
         view: getView(state),
-        datasetId: getDatasetID(state)
+        isStatic: getStatic(state),
+        datasetId: getDatasetID(state),
+        hasStatic: getStaticFields(state)
       }
     }
   }

@@ -4,7 +4,9 @@ import store from '../store'
 import qs from 'qs'
 import { queryToStore, qsDefault } from '../querySync'
 import { byIdSelectorCreator } from './selectorCreators'
+import { loadDataset } from './repository'
 import history from './history'
+import { getStaticFields } from './dataset'
 
 const basename = BASENAME || ''
 
@@ -20,7 +22,7 @@ export const getPathname = state => {
   return state.pathname
 }
 
-const options = ['blob','busco','cumulative','detail','dataset','report','snail','table','treemap']
+const options = ['blob','busco','cumulative','detail','dataset','report','snail','table','treemap','static']
 
 export const getViews = createSelector(
   getPathname,
@@ -32,7 +34,7 @@ export const getViews = createSelector(
     for (let i = 0; i < path.length; i++){
       if (options.includes(path[i])){
         views[path[i]] = true
-        if (!primary && path[i] != 'search' && path[i] != 'dataset'){
+        if (!primary && path[i] != 'search' && path[i] != 'dataset' && path[i] != 'static'){
           primary = path[i]
         }
         nextView = path[i]
@@ -45,7 +47,7 @@ export const getViews = createSelector(
         views['search'] = path[i]
       }
     }
-    views.primary = primary
+    views.primary = primary || 'blob'
     return views
   }
 )
@@ -53,6 +55,11 @@ export const getViews = createSelector(
 export const getView = createSelector(
   getViews,
   views => views.primary
+)
+
+export const getStatic = createSelector(
+  getViews,
+  views => views.static
 )
 
 export const getDatasetID = createSelector(
@@ -85,13 +92,14 @@ export const updatePathname = (update = {},remove = {}) => {
   return function (dispatch) {
     let state = store.getState()
     let views = getViews(state)
+    let static_url = state.staticURL
     let newViews = {}
     if (views.search) newViews.search = views.search
     if (views.dataset) newViews.dataset = views.dataset
     let primary = views.primary
     Object.keys(update).forEach(key=>{
       newViews[key] = update[key]
-      if (key != 'dataset' && options.indexOf(key) != -1){
+      if (key != 'dataset' && key != 'static' && options.indexOf(key) != -1){
         primary = key
       }
     })
@@ -99,11 +107,15 @@ export const updatePathname = (update = {},remove = {}) => {
       delete newViews[key]
       if (key == primary) primary = false
     })
-    if (primary) newViews[primary] = true
+    if (primary){
+      newViews[primary] = true
+      if (views.static && !remove.static) newViews.static = true
+    }
     let pathname = viewsToPathname(newViews)
     let currentPathname = getPathname(state)
     let hash = getHashString(state)
     let search = getQueryString(state)
+    let id = getDatasetID(state)
     if (pathname != currentPathname){
       history.push({pathname,hash,search})
       dispatch(setPathname(pathname))
@@ -114,6 +126,18 @@ export const updatePathname = (update = {},remove = {}) => {
 export const chooseView = (view) => {
   return function (dispatch) {
     dispatch(updatePathname({[view]:true}))
+  }
+}
+
+export const toggleStatic = (view, datasetId) => {
+  return async function (dispatch) {
+    if (view){
+      dispatch(updatePathname({[view]:true,static:true}))
+    }
+    else {
+      dispatch(updatePathname({},{static:true}))
+      dispatch(loadDataset(datasetId))
+    }
   }
 }
 

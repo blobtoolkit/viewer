@@ -34,7 +34,7 @@ class FieldBox extends React.Component {
       css += ' '+styles.cat
       svgCss += ' '+styles.cat
     }
-    if (this.props.active && !this.props.fieldId.match('selection')){
+    if (this.props.active && ! this.props.isStatic && !this.props.fieldId.match('selection')){
       outer_css += ' '+(this.props.type == 'category' ? styles.cat_expanded : styles.expanded);
       filterContent = <Filter {...this.props} />
       filterPreview = <FilterPreview {...this.props} dimensions={dimensions}/>

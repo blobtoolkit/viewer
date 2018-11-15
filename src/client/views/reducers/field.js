@@ -9,7 +9,7 @@ import { addFilter, editFilter } from './filter'
 import { getCatAxis } from './plot'
 import { getDimensionsbyDimensionId, setDimension, getPreviewDimensions } from './dimension'
 import * as d3 from 'd3'
-import { getParsedQueryString, getQueryValue, getDatasetID } from './location'
+import { getParsedQueryString, getQueryValue, getDatasetID, getView, getStatic } from './location'
 
 const apiUrl = API_URL || '/api/v1'
 
@@ -48,7 +48,7 @@ export const fields = handleActions(
       let id = action.payload.id
       let fields = Object.keys(action.payload).filter((key)=>{return key != 'id'})
       if (action.payload.range){
-        let current = state.byId[id].range.slice()
+        let current = (state.byId[id].range||[]).slice()
         action.payload.range[0] = isNumeric(action.payload.range[0]) ? action.payload.range[0] : current[0]
         action.payload.range[1] = isNumeric(action.payload.range[1]) ? action.payload.range[1] : current[1]
       }
@@ -248,6 +248,7 @@ export const addAllFields = (dispatch,fields,flag,meta,promises) => {
   let axes = ['x','y','z','cat']
   let state = store.getState()
   let params = getParsedQueryString(state)
+  let isStatic = getStatic(state)
   Object.keys(params).forEach(p=>{
     let parts = p.split('--')
     if (parts.length == 2){
@@ -327,8 +328,10 @@ export const addAllFields = (dispatch,fields,flag,meta,promises) => {
           keys:[]
         }))
       }
-      if (field.preload == true){
-        status = dispatch(fetchRawData(field.id))
+      if (!isStatic){
+        if (field.preload == true){
+          status = dispatch(fetchRawData(field.id))
+        }
       }
     }
     if (field.data){

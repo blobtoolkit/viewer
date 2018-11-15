@@ -13,13 +13,15 @@ import { history } from './history'
 // import { getSearchTerm, setSearchTerm } from './search'
 import { fetchIdentifiers } from './identifiers'
 import { getDatasetID,
+  getView,
   getViews,
   getSearchTerm,
   updatePathname,
   viewsToPathname,
   getQueryValue,
   getQueryString,
-  getHashString } from './location'
+  getHashString,
+  getStatic } from './location'
 
 const apiUrl = API_URL || '/api/v1'
 
@@ -179,19 +181,18 @@ export const refreshStore = createAction('REFRESH')
 
 window.firstLoad = true
 
-export function loadDataset(id,clear) {
-  return function (dispatch) {
+export const loadDataset = (id,clear) => {
+  return function(dispatch){
     let state = store.getState()
+    let isStatic = getStatic(state)
+    let threshold = 20000
     clear = false
     dispatch(setDatasetIsActive('loading'))
-
     // dispatch(refreshStore())
     if (!window.firstLoad){
       dispatch(refreshStore())
       dispatch(queryToStore({values:{},searchReplace:true}))
     }
-
-    // dispatch(selectDataset(id))
     dispatch(fetchMeta(id)).then(() => {
       let meta = deep(store.getState(),['availableDatasets','byId',id])
       let plot = meta.plot
@@ -203,6 +204,21 @@ export function loadDataset(id,clear) {
           plot[key] = qv
         }
       })
+      if ((window.firstLoad || window.records < meta.records) && meta.records > threshold){
+        if (meta.static_fields && !isStatic) {
+          let view = getView(state)
+          dispatch(updatePathname({[view]:true,static:true}))
+        }
+        else if (!meta.static_fields) {
+          dispatch(updatePathname({},{static:true}))
+        }
+      }
+      else if (window.records > meta.records && meta.records < threshold && isStatic){
+        dispatch(updatePathname({},{static:true}))
+      }
+      else if (isStatic) {
+        dispatch(updatePathname({},{static:true}))
+      }
       dispatch(editPlot(plot))
       Promise.all(addAllFields(dispatch,meta.fields,1,false))
       .then(()=>{
@@ -215,6 +231,7 @@ export function loadDataset(id,clear) {
           dispatch(filterToList())
         }
         window.scrollTop = {}
+        window.records = meta.records
       })
       .then(()=>{
         dispatch(setDatasetIsActive(true))
