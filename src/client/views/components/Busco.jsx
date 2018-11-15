@@ -20,9 +20,14 @@ const RecordSelector = ({sel,val,records,id,toggleSelect}) => {
     css += ' '+layoutStyles['highlight']
   }
   else if (selected > 0){
-    css += ' '+layoutStyles['partial']
+    css += ' '+layoutStyles['clear']
+    let part_css = layoutStyles['partial_tab']
     add = true
     sel = records
+    return (
+      <span className={part_css} onClick={()=>toggleSelect(sel,add)}>
+      </span>
+    )
   }
   else {
     css += ' '+layoutStyles['clear']
@@ -74,7 +79,7 @@ class BuscoData extends React.Component {
         {
           accessor: 'sel',
           Cell: props => <RecordSelector sel={props.original.sel} val={props.original.val} records={props.original.records} id={[props.original._id]} toggleSelect={toggleSelect}/>,
-          width: 30,
+        width: 40,
           resizable: false
         },
         {

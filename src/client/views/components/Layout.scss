@@ -249,6 +249,7 @@ table {
 }
 .colored_tab {
   display:inline-block;
+  position:relative;
   width:1.4em;
   height:1.4em;
   box-sizing:border-box;
@@ -272,9 +273,41 @@ table {
   background-color: $highlightColor;
 }
 
-.colored_tab.partial {
-  border-color: $highlightColor;
-  background-color: rgba($highlightColor,0.25);
+.partial_tab {
+  display:inline-block;
+  position:relative;
+  width:1.4em;
+  height:1.4em;
+  box-sizing:border-box;
+  margin-right:0.4em;
+  border: 2px solid $lightColor;
+}
+
+.partial_tab::before {
+  content: "";
+  display: block;
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 0 0 1.4em 1.4em;
+  border-color: transparent transparent rgba($highlightColor,0.75) transparent;
+}
+
+.partial_tab::after {
+  content: "";
+  display: block;
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  height: 100%;
+  width: 100%;
+  border: 2px solid $shadeColor;
+  border-radius: 2px;
+  cursor: pointer;
+  background-color: $clearColor;
 }
 
 .colored_tab.clear {
