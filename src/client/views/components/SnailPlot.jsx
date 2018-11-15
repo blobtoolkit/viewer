@@ -139,7 +139,7 @@ class Snail extends React.Component {
         list[1].value = pctFormat(1-gcs[2])+'–'+pctFormat(1-gcs[1])
         if (list[2]){
           list[2].label = pctFormat(ns[0])
-          list[2].value = pctFormat(ns[2])+'–'+pctFormat(ns[1])
+          list[2].value = pctFormat(ns[1])+'–'+pctFormat(ns[2])
         }
       }
       bottomRight = <SnailPlotLegend title={'Composition'} list={list}/>
