@@ -351,3 +351,15 @@ div.download {
   stroke-width: 0.5px;
   fill:none;
 }
+
+.centered_content {
+  display:flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+}
+
+.static_image {
+  max-height:100%;
+  max-width:100%;
+}

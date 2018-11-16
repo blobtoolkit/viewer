@@ -132,7 +132,7 @@ const getSpan = createSelector(
   }
 )
 
-const getRecordCount = createSelector(
+export const getRecordCount = createSelector(
   getSelectedDatasetMeta,
   meta => {
     return meta.records || 0
@@ -230,7 +230,7 @@ export const cumulativeCurves = createSelector(
 export const getBuscoSets = createSelector(
   getSelectedDatasetMeta,
   meta => {
-    let index = meta.fields.findIndex((el,i,arr) => {
+    let index = (meta.fields||[]).findIndex((el,i,arr) => {
       if (el.id === 'busco' && el.children && el.children.length > 0){
         return true
       }

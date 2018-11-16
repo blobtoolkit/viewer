@@ -22,13 +22,13 @@ class StaticWarning extends React.Component {
         message = 'The number of records in this dataset ('+(this.props.records*1).toLocaleString()+') is greater than the current static threshold ('+(this.props.threshold*1).toLocaleString()+').'
       }
       else {
-        message = 'The view has been set to static.'
+        message = 'The view mode has been set to static.'
       }
       return (
         <div className={styles.warning}>
           <h2>This is a static view of dataset {this.props.name}</h2>
           <p>{message}</p>
-          Use the Settings menu to switch to an interactive view.
+          Use the Settings menu to switch to interactive mode.
           <span className={styles.dismiss} onClick={()=>this.toggleDismissed(true)}/>
         </div>
       )

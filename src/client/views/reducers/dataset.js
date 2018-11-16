@@ -30,6 +30,11 @@ export const getSelectedDatasetMeta = createSelector(
   (meta) => meta
 )
 
+export const getDatasetName = createSelector(
+  getCurrentDatasetMeta,
+  (meta) => meta ? meta.name : ''
+)
+
 export const getStaticFields = createSelector(
   getCurrentDatasetMeta,
   meta => meta.static_fields || false

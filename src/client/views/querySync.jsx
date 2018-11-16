@@ -66,7 +66,7 @@ const mapDispatchToQuery = (
     pngResolution: {
       type: 'SET_PNG_RESOLUTION',
       payload: (k,v) => v,
-      default: 2001
+      default: 2000
     },
     zScale: {
       type: 'SET_Z_SCALE',

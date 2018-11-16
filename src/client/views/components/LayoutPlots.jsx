@@ -3,6 +3,7 @@ import { connect } from 'react-redux'
 import styles from './Layout.scss'
 import { getDatasetIsActive } from '../reducers/repository'
 import { toggleHash, getView, getStatic, getDatasetID } from '../reducers/location'
+import { getDatasetName } from '../reducers/dataset'
 import { getScatterPlotData } from '../reducers/plotData'
 import GetStarted from './GetStarted'
 import MainPlot from './MainPlot'
@@ -15,6 +16,7 @@ import TablePlot from './TablePlot'
 import TreeMapPlot from './TreeMapPlot'
 import DatasetSpinner from './DatasetSpinner'
 import HomePage from './HomePage'
+import SelectWarning from './SelectWarning'
 
 class PlotsLayoutComponent extends React.Component {
 
@@ -79,6 +81,7 @@ class PlotsLayoutComponent extends React.Component {
       <div className={styles.fill_parent}>
         {view}
         <DatasetSpinner/>
+        <SelectWarning/>
       </div>
     )
   }
@@ -105,6 +108,7 @@ class LayoutPlots extends React.Component {
       return {
         active: getDatasetIsActive(state),
         datasetId: getDatasetID(state),
+        datasetName: getDatasetName(state),
         view: getView(state)
       }
     },

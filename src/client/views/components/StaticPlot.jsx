@@ -3,6 +3,7 @@ import { connect } from 'react-redux'
 import styles from './Plot.scss'
 import { getStaticFields } from '../reducers/dataset'
 import StaticWarning from './StaticWarning'
+import StaticMissing from './StaticMissing'
 import { getSelectedDatasetMeta } from '../reducers/dataset'
 import { getStaticThreshold } from '../reducers/repository'
 
@@ -18,7 +19,7 @@ const arrayBufferToBase64 = buffer => {
 class Static extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { source: null };
+    this.state = { source: null, available: true }
   }
 
   componentDidMount(){
@@ -32,11 +33,16 @@ class Static extends React.Component {
     fetch(apiUrl + '/image/'+this.props.datasetId+'/'+view)
       .then(
         response => {
+          if (!response.ok){
+            this.setState({ available: false})
+            return
+          }
           response.arrayBuffer().then((buffer) => {
             let base64Flag = 'data:image/png;base64,';
             let imageStr = arrayBufferToBase64(buffer);
             if (this.refs.static_image){
               this.refs.static_image.src = base64Flag + imageStr;
+              this.setState({ available: true})
             }
           }
         )},
@@ -45,10 +51,17 @@ class Static extends React.Component {
   }
 
   render(){
+    let warning
+    if (this.state.available){
+      warning = <StaticWarning name={this.props.meta.name} threshold={this.props.threshold} records={this.props.meta.records} />
+    }
+    else {
+      warning = <StaticMissing name={this.props.meta.name} view={this.props.view} />
+    }
     return (
-      <div className={styles.fill_parent}>
-        <img  ref="static_image" style={{height:'100%'}} />
-        <StaticWarning name={this.props.meta.name} threshold={this.props.threshold} records={this.props.meta.records} />
+      <div className={styles.fill_parent+' '+styles.centered_content}>
+        <img className={styles.static_image} ref="static_image" />
+        {warning}
       </div>
     )
   }

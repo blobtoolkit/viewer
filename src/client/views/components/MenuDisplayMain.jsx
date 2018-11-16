@@ -2,7 +2,9 @@ import React from 'react';
 import { connect } from 'react-redux'
 //import styles from './Plot.scss'
 import { getAxisTitle } from '../reducers/plotData'
-import { getStaticFields, getSelectedDatasetMeta } from '../reducers/dataset'
+import { getRecordCount, getBuscoSets } from '../reducers/summary'
+import { getStaticFields } from '../reducers/dataset'
+import { getFields } from '../reducers/field'
 import { getPlotShape,
   choosePlotShape,
   getPlotResolution,
@@ -59,7 +61,7 @@ import { format as d3Format } from 'd3-format'
 import Palettes from '../containers/Palettes'
 
 const DisplayMenu = ({
-  datasetId, title, view, records, isStatic, hasStatic,
+  datasetId, title, view, busco, records, isStatic, hasStatic,
   shape, onSelectShape,
   resolution, onChangeResolution,
   graphics, onChangeGraphics,
@@ -192,7 +194,7 @@ const DisplayMenu = ({
       </MenuDisplaySimple>
       <MenuDisplaySimple invert={false}>
         <TextIcon title='blob' active={view == 'blob'} onIconClick={()=>onSelectView('blob')}/>
-        {isStatic || <TextIcon title='busco' active={view == 'busco'} onIconClick={()=>onSelectView('busco')}/>}
+        {isStatic || busco && <TextIcon title='busco' active={view == 'busco'} onIconClick={()=>onSelectView('busco')}/>}
         <TextIcon title='cumulative' active={view == 'cumulative'} onIconClick={()=>onSelectView('cumulative')}/>
         <TextIcon title='detail' active={view == 'detail'} onIconClick={()=>onSelectView('detail')}/>
         {isStatic || <TextIcon title='report' active={view == 'report'} onIconClick={()=>onSelectView('report')}/>}
@@ -309,7 +311,7 @@ class MenuDisplayMain extends React.Component {
     this.mapStateToProps = (state, props) => {
       return {
         title:getAxisTitle(state,'z'),
-        records:getSelectedDatasetMeta(state).records,
+        records:getRecordCount(state),
         shape:getPlotShape(state),
         resolution:getPlotResolution(state),
         graphics:getPlotGraphics(state),
@@ -325,7 +327,8 @@ class MenuDisplayMain extends React.Component {
         view: getView(state),
         isStatic: getStatic(state),
         datasetId: getDatasetID(state),
-        hasStatic: getStaticFields(state)
+        hasStatic: getStaticFields(state),
+        busco: getBuscoSets(state)
       }
     }
   }
