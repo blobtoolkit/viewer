@@ -2,12 +2,14 @@ import React from 'react';
 import { connect } from 'react-redux'
 //import styles from './Plot.scss'
 import { getAxisTitle } from '../reducers/plotData'
-import { getStaticFields } from '../reducers/dataset'
+import { getStaticFields, getSelectedDatasetMeta } from '../reducers/dataset'
 import { getPlotShape,
   choosePlotShape,
   getPlotResolution,
   setPlotResolution,
   choosePlotResolution,
+  getPngResolution,
+  choosePngResolution,
   getPlotGraphics,
   choosePlotGraphics,
   getSVGThreshold,
@@ -24,6 +26,9 @@ import { getPlotShape,
   chooseCurveOrigin,
   getSnailOrigin,
   chooseSnailOrigin } from '../reducers/plotParameters'
+import {
+  getStaticThreshold,
+  chooseStaticThreshold } from '../reducers/repository'
 import { chooseView, toggleStatic, getView, getStatic, getDatasetID } from '../reducers/location'
 import styles from './Layout.scss'
 import MenuDisplaySet from './MenuDisplaySet'
@@ -54,7 +59,7 @@ import { format as d3Format } from 'd3-format'
 import Palettes from '../containers/Palettes'
 
 const DisplayMenu = ({
-  datasetId, title, view, isStatic, hasStatic,
+  datasetId, title, view, records, isStatic, hasStatic,
   shape, onSelectShape,
   resolution, onChangeResolution,
   graphics, onChangeGraphics,
@@ -65,7 +70,9 @@ const DisplayMenu = ({
   snailOrigin, onSelectSnailOrigin,
   transform, onChangeTransform,
   plotScale, onChangePlotScale,
-  onSelectView, onToggleStatic }) => {
+  onSelectView, onToggleStatic,
+  pngResolution, onChangePngResolution,
+  staticThreshold, onChangeStaticThreshold }) => {
   let context
   view = view || 'blob'
   let blob = (
@@ -196,6 +203,26 @@ const DisplayMenu = ({
         {isStatic || context}
       </MenuDisplaySet>
       { isStatic || <Palettes />}
+      { isStatic || <MenuDisplaySimple name='png resolution (px)'>
+        <NumericInput initialValue={pngResolution} onChange={onChangePngResolution}/>
+      </MenuDisplaySimple>}
+      <MenuDisplaySimple name='static threshold'>
+        <NumericInput
+          initialValue={staticThreshold}
+          onChange={(value)=>{
+            onChangeStaticThreshold(value)
+            setTimeout(
+              ()=>{
+                if (value >= records && isStatic){
+                  onToggleStatic(false,datasetId)
+                }
+                else if (value < records && !isStatic){
+                  onToggleStatic(view,datasetId)
+                }
+              },500
+            )
+          }}/>
+      </MenuDisplaySimple>
 
       <ToolTips set='settingsMenu'/>
     </div>
@@ -219,6 +246,12 @@ class NumericInput extends React.Component {
   constructor(props) {
     super(props);
     this.state = {value:this.props.initialValue}
+  }
+
+  componentDidUpdate(nextProps) {
+    if (nextProps.initialValue != this.props.initialValue){
+      this.setState({value:this.props.initialValue})
+    }
   }
   render(){
     return (
@@ -255,11 +288,13 @@ class MenuDisplayMain extends React.Component {
         onSelectShape: shape => dispatch(choosePlotShape(shape)),
         onChangeResolution: value => {
           this.props.clearTimeouts()
-          this.props.setTimeout(()=>dispatch(choosePlotResolution(value)),500)
+          this.props.setTimeout(()=>dispatch(choosePlotResolution(value)),1000)
           return dispatch(setPlotResolution(value))
         },
         onChangeGraphics: graphics => dispatch(choosePlotGraphics(graphics)),
         onChangeThreshold: threshold => dispatch(chooseSVGThreshold(threshold)),
+        onChangePngResolution: resolution => dispatch(choosePngResolution(resolution)),
+        onChangeStaticThreshold: threshold => dispatch(chooseStaticThreshold(threshold)),
         onSelectReducer: reducer => dispatch(chooseZReducer(reducer)),
         onSelectScale: scale => dispatch(chooseZScale(scale)),
         onChangePlotScale: plotScale => dispatch(choosePlotScale(plotScale)),
@@ -274,10 +309,13 @@ class MenuDisplayMain extends React.Component {
     this.mapStateToProps = (state, props) => {
       return {
         title:getAxisTitle(state,'z'),
+        records:getSelectedDatasetMeta(state).records,
         shape:getPlotShape(state),
         resolution:getPlotResolution(state),
         graphics:getPlotGraphics(state),
         threshold:getSVGThreshold(state),
+        pngResolution:getPngResolution(state),
+        staticThreshold:getStaticThreshold(state),
         reducer:getZReducer(state),
         scale:getZScale(state),
         plotScale:getPlotScale(state),

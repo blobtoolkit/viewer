@@ -128,14 +128,15 @@ class BuscoPlot extends React.Component {
     }
   }
   render(){
+    let side = 400
     let exportButtons = (
       <div className={styles.download}>
         <ExportButton element={'busco_plot'+this.props.id} prefix={this.props.datasetId+'.'+this.props.id} format='svg'/>
-        <ExportButton element={'busco_plot'+this.props.id} prefix={this.props.datasetId+'.'+this.props.id} format='png'/>
+        <ExportButton element={'busco_plot'+this.props.id} prefix={this.props.datasetId+'.'+this.props.id} format='png' size={side}/>
         <ExportButton data={this.props.csv} format='csv' prefix={this.props.datasetId+'.'+this.props.id}/>
       </div>
     )
-    let viewbox = '0 0 400 400'
+    let viewbox = '0 0 '+side+' '+side
     if (!this.props.data){
       return null
     }

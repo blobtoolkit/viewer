@@ -43,6 +43,7 @@ const config = {
       API_URL: JSON.stringify(main.apiUrl),
     	VERSION: JSON.stringify(main.version),
     	BASENAME: JSON.stringify(main.basename),
+      STATIC_THRESHOLD: JSON.stringify(main.staticThreshold),
     	HOME: JSON.stringify(protocol+'://'+main.hostname),
       GIT_VERSION: JSON.stringify(gitRevisionPlugin.version()),
       COMMIT_HASH: JSON.stringify(gitRevisionPlugin.commithash()),

@@ -2,7 +2,6 @@ import React from 'react'
 import { connect } from 'react-redux'
 import styles from './Plot.scss'
 import { getBuscoSets } from '../reducers/summary'
-import ExportButton from './ExportButton'
 import Busco from './Busco'
 
 class BuscoSets extends React.Component {

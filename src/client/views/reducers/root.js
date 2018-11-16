@@ -37,9 +37,10 @@ const rootReducer = (state, action) => {
   if (action.type === 'REFRESH') {
     let availableDatasets = state.availableDatasets
     let datasetIsActive = state.datasetIsActive
+    let staticThreshold = state.staticThreshold
     let pathname = state.pathname
     let hashString = state.hashString
-    state = {availableDatasets,datasetIsActive,pathname,hashString}
+    state = {availableDatasets,datasetIsActive,staticThreshold,pathname,hashString}
   }
   return appReducer(state, action)
 }

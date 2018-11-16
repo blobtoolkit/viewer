@@ -181,17 +181,34 @@ export const refreshStore = createAction('REFRESH')
 
 window.firstLoad = true
 
+export const setStaticThreshold = createAction('SET_STATIC_THRESHOLD')
+export const chooseStaticThreshold = (staticThreshold) => {
+  return function (dispatch) {
+    let values = {staticThreshold}
+    dispatch(queryToStore({values}))
+  }
+}
+export const staticThreshold = handleAction(
+  'SET_STATIC_THRESHOLD',
+  (state, action) => (
+    action.payload
+  ),
+  qs.parse((document.location.search : '').replace(/^\?/,'')).staticThreshold || STATIC_THRESHOLD
+)
+export const getStaticThreshold = state => state.staticThreshold
+
 export const loadDataset = (id,clear) => {
   return function(dispatch){
     let state = store.getState()
     let isStatic = getStatic(state)
-    let threshold = 20000
-    clear = false
+    let threshold = getStaticThreshold(state)
     dispatch(setDatasetIsActive('loading'))
     // dispatch(refreshStore())
     if (!window.firstLoad){
       dispatch(refreshStore())
-      dispatch(queryToStore({values:{},searchReplace:true}))
+      let values = {}
+      if (threshold != STATIC_THRESHOLD) values.staticThreshold = threshold
+      dispatch(queryToStore({values,searchReplace:true}))
     }
     dispatch(fetchMeta(id)).then(() => {
       let meta = deep(store.getState(),['availableDatasets','byId',id])
@@ -282,5 +299,6 @@ export const repositoryReducers = {
   availableDatasets,
   fetchRepository,
   datasetIsActive,
-  reloading
+  reloading,
+  staticThreshold
 }

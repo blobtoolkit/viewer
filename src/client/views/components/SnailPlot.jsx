@@ -101,7 +101,8 @@ class Snail extends React.Component {
     let format = d3format(".2s")
     let pctFormat = d3format(".1%")
     let commaFormat = d3format(",")
-    let viewbox = '0 0 1000 1000'
+    let side = 1000
+    let viewbox = '0 0 '+side+' '+side
     let pathProps = this.props.circular.pathProps
     let paths = []
     let legend = this.props.circular.legend
@@ -246,7 +247,7 @@ class Snail extends React.Component {
     let exportButtons = (
       <span className={styles.download}>
         <ExportButton element='snail_plot' prefix={this.props.meta.id+'.snail'} format='svg'/>
-        <ExportButton element='snail_plot' prefix={this.props.meta.id+'.snail'} format='png'/>
+        <ExportButton element='snail_plot' prefix={this.props.meta.id+'.snail'} format='png' size={side}/>
       </span>
     )
     return (

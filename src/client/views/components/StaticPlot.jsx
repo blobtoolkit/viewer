@@ -2,6 +2,9 @@ import React from 'react'
 import { connect } from 'react-redux'
 import styles from './Plot.scss'
 import { getStaticFields } from '../reducers/dataset'
+import StaticWarning from './StaticWarning'
+import { getSelectedDatasetMeta } from '../reducers/dataset'
+import { getStaticThreshold } from '../reducers/repository'
 
 const apiUrl = API_URL || '/api/v1'
 
@@ -42,7 +45,12 @@ class Static extends React.Component {
   }
 
   render(){
-    return <img  ref="static_image" style={{height:'100%'}} />;
+    return (
+      <div className={styles.fill_parent}>
+        <img  ref="static_image" style={{height:'100%'}} />
+        <StaticWarning name={this.props.meta.name} threshold={this.props.threshold} records={this.props.meta.records} />
+      </div>
+    )
   }
 }
 
@@ -51,7 +59,9 @@ class StaticPlot extends React.Component {
     super(props);
     this.mapStateToProps = state => {
       return {
-        hasStatic: getStaticFields(state)
+        hasStatic: getStaticFields(state),
+        meta: getSelectedDatasetMeta(state),
+        threshold: getStaticThreshold(state)
       }
     }
     this.mapDispatchToProps = dispatch => {

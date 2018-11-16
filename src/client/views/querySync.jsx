@@ -25,9 +25,13 @@ export const colorToRGB = (color) => {
 
 const keyed = (o,k) => Object.prototype.hasOwnProperty.call(o,k)
 
-
 const mapDispatchToQuery = (
   {
+    staticThreshold: {
+      type: 'SET_STATIC_THRESHOLD',
+      payload: (k,v) => v,
+      default: STATIC_THRESHOLD
+    },
     palette: {
       type: 'SELECT_PALETTE',
       payload: (k,v) => v,
@@ -58,6 +62,11 @@ const mapDispatchToQuery = (
       type: 'SET_SVG_THRESHOLD',
       payload: (k,v) => v,
       default: 10000
+    },
+    pngResolution: {
+      type: 'SET_PNG_RESOLUTION',
+      payload: (k,v) => v,
+      default: 2001
     },
     zScale: {
       type: 'SET_Z_SCALE',

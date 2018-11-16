@@ -457,6 +457,11 @@ span.logo {
   margin-right:0.5em;
 }
 
+.range_input {
+  border:solid $lightColor;
+  width:6em;
+}
+
 .inline {
   display:inline-block;
 }
@@ -471,4 +476,46 @@ span.logo {
 
 .external_link:after {
      content: " " url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAIpJREFUeNqEkIEJwCAMBGPpEs7hHK6hY+gauoZr6Bo6RtqEWkxb6EMQnuM/USEirIoxSmOKwDkhBEwp4VPkb4801Xun9xW4e+9FldYarLUvkBPPOp4JGWOgtSaSt6VWQKUU9nPOEiSIgAmNMdadFTjn7utqrXwh6fLvH9nXhamW5ksMnpfDnw4BBgBfunO056MmqAAAAABJRU5ErkJggg==);
+}
+
+.warning {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 10em;
+  background-color: rgba($highlightColor,0.85);
+  padding-left: 2em;
+  color: $lightColor;
+}
+
+.dismiss, .info {
+  font-family: "Comfortaa", Helvetica, Arial, sans-serif;
+  cursor:pointer;
+  display:flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  top: 1em;
+  right: 1em;
+  height: 2em;
+  width: 2em;
+  border-radius:1em;
+  background-color: $deepColor;
+  color: $lightColor;
+}
+
+.dismiss::after {
+  content: "X";
+
+}
+
+.info {
+  background-color: $highlightColor;
+}
+
+.info::after {
+  content: "i";
+  font-style: italic;
+  font-weight: bold;
 }

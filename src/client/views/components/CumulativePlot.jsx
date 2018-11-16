@@ -13,7 +13,8 @@ import { ExportButton } from './ExportButton'
 class Cumulative extends React.Component {
   render(){
     if (!this.props.cumulative) return null
-    let viewbox = '0 0 1110 1110'
+    let side = 1110
+    let viewbox = '0 0 '+side+' '+side
     let legend = <g transform='translate(700,720)'><PlotLegend/></g>
     let colors = this.props.cumulative.palette.colors
     let all = this.props.cumulative.paths.all
@@ -46,7 +47,7 @@ class Cumulative extends React.Component {
     let exportButtons = (
       <span className={styles.download}>
         <ExportButton element='cumulative_plot' prefix={this.props.datasetId+'.cumulative'} format='svg'/>
-        <ExportButton element='cumulative_plot' prefix={this.props.datasetId+'.cumulative'} format='png'/>
+        <ExportButton element='cumulative_plot' prefix={this.props.datasetId+'.cumulative'} format='png' size={side}/>
       </span>
     )
     return (

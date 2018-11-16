@@ -323,11 +323,28 @@ export const tableSortOrder = handleAction(
 )
 export const getTableSortOrder = state => state.tableSortOrder
 
+export const setPngResolution = createAction('SET_PNG_RESOLUTION')
+export const choosePngResolution = (pngResolution) => {
+  return function (dispatch) {
+    let values = {pngResolution}
+    dispatch(queryToStore({values}))
+  }
+}
+export const pngResolution = handleAction(
+  'SET_PNG_RESOLUTION',
+  (state, action) => (
+    action.payload
+  ),
+  qsDefault('pngResolution')
+)
+export const getPngResolution = state => state.pngResolution
+
 export const plotParameterReducers = {
   plotShape,
   plotResolution,
   plotGraphics,
   svgThreshold,
+  pngResolution,
   plotScale,
   zScale,
   zReducer,

@@ -66,7 +66,7 @@ export default class MainPlot extends React.Component {
         return {
           datasetId,
           plotShape,
-          plotGraphics
+          plotGraphics,
         }
       }
     }
@@ -174,14 +174,15 @@ class PlotBox extends React.Component {
         func = ()=>alert('Circles are rendered as canvas to improve performance. Set plot graphics to svg in order to export this plot as svg or png.')
       }
     }
+    let side = 1420
     let exportButtons = (
       <span className={styles.download}>
         <ExportButton element='main_plot' prefix={this.props.datasetId+'.blob'} format='svg' func={func}/>
-        <ExportButton element='main_plot' prefix={this.props.datasetId+'.blob'} format='png' func={func}/>
+        <ExportButton element='main_plot' prefix={this.props.datasetId+'.blob'} format='png' func={func} size={side}/>
       </span>
     )
     let bins = this.state.bins
-    let viewbox = '0 0 1420 1420'
+    let viewbox = '0 0 '+side+' '+side
     let xPlot = <PlotSideBinsSVG axis='x'/>
     let yPlot = <PlotSideBinsSVG axis='y'/>
     let legend = <g transform='translate(1010,-280)'><PlotLegend/></g>

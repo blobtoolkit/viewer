@@ -9,8 +9,6 @@ const BTK_HTTPS = (String(process.env.BTK_HTTPS) === 'true')
 const BTK_ORIGINS = process.env.BTK_ORIGINS ? process.env.BTK_ORIGINS.split(' ') : ['localhost','null',BTK_HOST,(BTK_HTTPS ? 'https' : 'http') + '://'+BTK_HOST+':'+BTK_CLIENT_PORT];
 const FILE_PATH = process.env.BTK_FILE_PATH || appRoot + '/demo';
 
-console.log(FILE_PATH)
-
 module.exports = {
   // setting port for server
   'client_port': BTK_CLIENT_PORT,
@@ -36,5 +34,7 @@ module.exports = {
   'hostname': BTK_HOST,
   // API URL
   'apiUrl': process.env.BTK_API_URL || (BTK_HTTPS ? 'https' : 'http') + '://'+BTK_HOST+':'+BTK_API_PORT,
-  'mode': process.env.NODE_ENV || 'test'
+  'mode': process.env.NODE_ENV || 'test',
+  // static threshold
+  'staticThreshold': process.env.BTK_STATIC_THRESHOLD || 100000
 }
