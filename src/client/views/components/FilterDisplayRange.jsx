@@ -41,6 +41,15 @@ class FilterHandle extends React.Component {
   }
   updateRange(value,bound) {
     let range = this.props.filterRange.slice(0);
+    let clamp = this.props.meta.clamp || this.props.filterLimit[0]
+    if (value < clamp){
+      if (value > range[0]){
+        value = clamp
+      }
+      else {
+        value = this.props.filterLimit[0]
+      }
+    }
     this.setState({offsetX:0})
     let index = bound + 1
     let v = value

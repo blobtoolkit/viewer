@@ -148,6 +148,11 @@ const createSelectorForFieldId = byIdSelectorCreator();
 const _getFieldIdAsMemoKey = (state, fieldId) => fieldId;
 export const getMetaDataForField = (state, fieldId) => state.fields ? state.fields.byId[fieldId] : {};
 
+const clampDomain = (max, clamp, bins) => {
+  let min = Math.pow(10, Math.log10(clamp) - 2 * (Math.log10(max/clamp)/(bins-2)))
+  return [min, max]
+}
+
 export const getDetailsForFieldId = createSelectorForFieldId(
   _getFieldIdAsMemoKey,
   getMetaDataForField,
@@ -155,8 +160,14 @@ export const getDetailsForFieldId = createSelectorForFieldId(
     let range = meta.range || [1,10];
     let xScale = d3[meta.scale || 'scaleLinear']()
     let active = meta.hasOwnProperty('active') ? meta.active : meta.hasOwnProperty('preload') ? meta.preload : false
-    xScale.domain(range)
+    let domain = range
     xScale.range([0,400])
+    if (meta.clamp){
+      domain = clampDomain(range[1], meta.clamp, 25)
+      // domain = [meta.clamp, range[1]]
+      xScale.clamp(true)
+    }
+    xScale.domain(domain)
     let obj = {
       meta,
       xScale,
@@ -214,13 +225,20 @@ export function fetchRawData(id) {
           let meta = getDetailsForFieldId(state,id)
           let max = Number.MIN_VALUE, min = Number.MAX_VALUE;
           let len = json.values.length;
-          for (let i = 0; i < len; i++) {
-            if (json.values[i] > max) max = json.values[i];
-            if (json.values[i] < min) min = json.values[i];
-          }
-          // if (min == 0) min = 0.001
-          let scale = meta.xScale.copy().domain([min,max]).nice(25)
-          let limit = scale.domain().slice(0)
+          // for (let i = 0; i < len; i++) {
+          //   if (json.values[i] > max) max = json.values[i];
+          //   if (json.values[i] < min) min = json.values[i];
+          // }
+          // let scale = meta.xScale.copy().domain([min,max]).nice(25)
+          let scale = meta.xScale.copy()//.nice(25)
+          let limit = meta.meta.range
+          // if (meta.meta.clamp){
+          // //   limit[0] = meta.meta.clamp
+          //   console.log(meta.meta.clamp)
+          // //   console.log(scale.clamp())
+          //   console.log(limit)
+          // //   console.log(scale.domain())
+          // }
           let qLimit = [getQueryValue(id+'--LimitMin'),getQueryValue(id+'--LimitMax')]
           limit[0] = qLimit[0].length > 0 ? 1*qLimit[0] : limit[0]
           limit[1] = qLimit[1].length > 0 ? 1*qLimit[1] : limit[1]
@@ -408,6 +426,34 @@ export const getRawDataForFieldId = createRawDataSelectorForFieldId(
 const createBinSelectorForFieldId = byIdSelectorCreator();
 
 
+export const histogram = (scale, thresholds, data, clamp=Number.NEGATIVE_INFINITY) => {
+  thresholds.push(Number.POSITIVE_INFINITY)
+  let len = thresholds.length
+  let min = scale.domain()[0]
+  let bins = Array.from(Array(len).keys())
+                  .map((x,i)=>{
+                    let arr = []
+                    arr.x0= i > 0 ? thresholds[i-1] : min
+                    arr.x1 = thresholds[i]
+                    return arr
+                  })
+  data.forEach(d=>{
+    if (d < clamp){
+      bins[0].push(d)
+    }
+    else {
+      for (let i=2; i<len; i++){
+        if (d < thresholds[i]){
+          bins[i].push(d)
+          break
+        }
+      }
+    }
+
+  })
+  return bins
+}
+
 export const getBinsForFieldId = createBinSelectorForFieldId(
   _getFieldIdAsMemoKey,
   getRawDataForFieldId,
@@ -422,10 +468,15 @@ export const getBinsForFieldId = createBinSelectorForFieldId(
         let x = details.xScale
         x.range([0,25])
         let thresh = Array.from(Array(24).keys()).map((n)=>{return x.invert((n+1))});
-        bins = d3.histogram()
-            .domain(x.domain())
-            .thresholds(thresh)
-            (data);
+        if (details.meta.clamp){
+          bins = histogram(x, thresh.slice(0), data, details.meta.clamp)
+        }
+        else {
+          bins = d3.histogram()
+              .domain(x.domain())
+              .thresholds(thresh)
+              (data);
+        }
       }
       if (details.meta.type == 'category'){
         let nested = d3.nest()

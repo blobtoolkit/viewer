@@ -6,7 +6,8 @@ import deep from 'deep-get-set'
 import store from '../store'
 import { getDetailsForFieldId,
   getRawDataForFieldId,
-  getBinsForFieldId } from './field'
+  getBinsForFieldId,
+  histogram } from './field'
 import { getDimensionsbyDimensionId, getPreviewDimensions } from './dimension'
 import { getFilteredList, updateFilterList } from './filter'
 import { getSelectedDatasetMeta } from './dataset'
@@ -98,10 +99,15 @@ export const getFilteredBarsForFieldId = createFilteredBarSelectorForFieldId(
       if (details.meta.type == 'variable'){
         x.range([0,25])
         let thresh = Array.from(Array(24).keys()).map((n)=>{return x.invert((n+1))});
-        bins = d3.histogram()
-            .domain(x.domain())
-            .thresholds(thresh)
-            (data.values);
+        if (details.meta.clamp){
+          bins = histogram(x, thresh.slice(0), data.values, details.meta.clamp)
+        }
+        else {
+          bins = d3.histogram()
+              .domain(x.domain())
+              .thresholds(thresh)
+              (data.values);
+        }
       }
       if (details.meta.type == 'category'){
         let nested = d3.nest()

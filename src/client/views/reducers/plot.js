@@ -16,6 +16,7 @@ export const plot = handleAction(
   'EDIT_PLOT',
   (state, action) => {
     let fields = Object.keys(action.payload).filter((key)=>{return key != 'id'})
+    if (!fields) return {}
     return immutableUpdate(state,
       Object.assign(...fields.map(f => ({[f]: action.payload[f]})))
     )

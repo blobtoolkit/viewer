@@ -46,8 +46,14 @@ class RangeDataPreview extends React.Component {
   }
 
   render() {
+    let divider
+    if (this.props.meta.clamp){
+      divider = <line className={styles.clamped_divider}
+                      x1={25} x2={25} y1={0} y2={106.67}/>
+    }
     return (
       <g className={styles.data_preview_container}>
+        {divider}
         <PreviewBars bars={this.props.bars} barcss={this.props.barcss} />
       </g>
     );
