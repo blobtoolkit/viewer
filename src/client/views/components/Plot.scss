@@ -363,3 +363,9 @@ div.download {
   max-height:100%;
   max-width:100%;
 }
+
+.clamped_divider {
+  stroke: rgba($deepColor,0.5);
+  stroke-width: 3px;
+  stroke-dasharray: 5;
+}

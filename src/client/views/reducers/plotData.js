@@ -3,6 +3,7 @@ import { createSelector } from 'reselect'
 import { byIdSelectorCreator } from './selectorCreators'
 import { getMainPlot, getXAxis, getYAxis, getZAxis, getCatAxis } from './plot';
 import { getFilteredList } from './filter';
+import { clampDomain } from './field'
 import { getDatasetID } from './location';
 import { getZScale, getPlotResolution, getTransformFunction, getPlotScale } from './plotParameters';
 import { getColorPalette } from './color';
@@ -171,6 +172,12 @@ export const getAllMainPlotData = createSelector(
     if (xmax){
       xDomain[1] = 1*xmax
     }
+    if (xMeta.meta.clamp){
+      console.log(xMeta)
+      xDomain = clampDomain(xMeta.range[1], xMeta.meta.clamp, 25)
+      // domain = [meta.clamp, range[1]]
+      xMeta.xScale.clamp(true)
+    }
     xMeta.xScale.domain(xDomain)
     plotData.meta.x = xMeta
     plotData.scale.x = xMeta.xScale
@@ -183,6 +190,11 @@ export const getAllMainPlotData = createSelector(
     let ymax = getQueryValue('ymax')
     if (ymax){
       yDomain[1] = 1*ymax
+    }
+    if (yMeta.meta.clamp){
+      yDomain = clampDomain(yMeta.range[1], yMeta.meta.clamp, 25)
+      // domain = [meta.clamp, range[1]]
+      yMeta.xScale.clamp(true)
     }
     yMeta.xScale.domain(yDomain)
     plotData.meta.y = yMeta
@@ -218,9 +230,15 @@ export const getAllScatterPlotData = createSelector(
       scales[axis].range([0,900])
     })
     let len = plotData.axes.x.values.length
+    let yClamp = plotData.meta.y.meta.clamp || Number.NEGATIVE_INFINITY
+    let yMin = plotData.meta.y.range[0]
+    let xClamp = plotData.meta.x.meta.clamp || Number.NEGATIVE_INFINITY
+    let xMin = plotData.meta.x.range[0]
     for (let i = 0; i < len; i++){
-      let y = scales.y(plotData.axes.y.values[i])
-      let x = scales.x(plotData.axes.x.values[i])
+      let y = plotData.axes.y.values[i]
+      y = y < yClamp ? scales.y(yMin) : scales.y(y)
+      let x = plotData.axes.x.values[i]
+      x = x < xClamp ? scales.x(xMin) : scales.x(x)
       if (transform) [x,y] = transform([x,y])
       data.push({
         id:i,
@@ -257,10 +275,16 @@ export const getScatterPlotData = createSelector(
     let min = Number.POSITIVE_INFINITY
     let max = Number.NEGATIVE_INFINITY
     let len = plotData.axes.x.values.length
+    let yClamp = plotData.meta.y.meta.clamp || Number.NEGATIVE_INFINITY
+    let yMin = plotData.meta.y.range[0]
+    let xClamp = plotData.meta.x.meta.clamp || Number.NEGATIVE_INFINITY
+    let xMin = plotData.meta.x.range[0]
     for (let i = 0; i < len; i++){
+      let y = plotData.axes.y.values[i]
+      y = y < yClamp ? scales.y(yMin) : scales.y(y)
+      let x = plotData.axes.x.values[i]
+      x = x < xClamp ? scales.x(xMin) : scales.x(x)
       let z = plotData.axes.z.values[i]
-      let y = scales.y(plotData.axes.y.values[i])
-      let x = scales.x(plotData.axes.x.values[i])
       // if (transform) [x,y] = transform([x,y])
       data.push({
         id:list[i],

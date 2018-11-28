@@ -148,7 +148,7 @@ const createSelectorForFieldId = byIdSelectorCreator();
 const _getFieldIdAsMemoKey = (state, fieldId) => fieldId;
 export const getMetaDataForField = (state, fieldId) => state.fields ? state.fields.byId[fieldId] : {};
 
-const clampDomain = (max, clamp, bins) => {
+export const clampDomain = (max, clamp, bins) => {
   let min = Math.pow(10, Math.log10(clamp) - 2 * (Math.log10(max/clamp)/(bins-2)))
   return [min, max]
 }
