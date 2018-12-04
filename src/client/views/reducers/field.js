@@ -261,9 +261,8 @@ export function fetchRawData(id) {
    }
 }
 
-export const addAllFields = (dispatch,fields,flag,meta,promises) => {
+export const addAllFields = (dispatch,fields,flag,meta,plot,promises) => {
   promises = promises || []
-  let axes = ['x','y','z','cat']
   let state = store.getState()
   let params = getParsedQueryString(state)
   let isStatic = getStatic(state)
@@ -279,14 +278,11 @@ export const addAllFields = (dispatch,fields,flag,meta,promises) => {
       }
     }
   })
-  axes.forEach(axis=>{
-    let f = params[axis+'Field']
-    if (f){
-      let index = fields.findIndex(field=>field.id==f)
-      if (index != -1){
-        fields[index].active = true
-        fields[index].preload = true
-      }
+  Object.values(plot).forEach(f_id=>{
+    let index = fields.findIndex(field=>field.id==f_id)
+    if (index != -1){
+      fields[index].active = true
+      fields[index].preload = true
     }
   })
   if (flag) {
@@ -325,7 +321,7 @@ export const addAllFields = (dispatch,fields,flag,meta,promises) => {
     }
     dispatch(addField(field))
     if (field.children){
-      promises.concat(addAllFields(dispatch,field.children,false,field,promises))
+      promises.concat(addAllFields(dispatch,field.children,false,field,plot,promises))
     }
     else {
       if (field.type == 'variable'){
@@ -353,7 +349,7 @@ export const addAllFields = (dispatch,fields,flag,meta,promises) => {
       }
     }
     if (field.data){
-      promises.concat(addAllFields(dispatch,field.data,false,field,promises))
+      promises.concat(addAllFields(dispatch,field.data,false,field,plot,promises))
     }
     if (status){
       promises.push(status)

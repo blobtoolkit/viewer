@@ -4,7 +4,7 @@ import immutableUpdate from 'immutable-update';
 import deep from 'deep-get-set'
 import shallow from 'shallowequal'
 import store from '../store'
-import { addAllFields } from './field'
+import { addAllFields, editField } from './field'
 import { filterToList } from './filter'
 import { editPlot } from './plot'
 import qs from 'qs'
@@ -212,7 +212,10 @@ export const loadDataset = (id,clear) => {
     }
     dispatch(fetchMeta(id)).then(() => {
       let meta = deep(store.getState(),['availableDatasets','byId',id])
-      let plot = meta.plot
+      let plot = {}
+      Object.keys(meta.plot).forEach(key=>{
+        plot[key] = meta.plot[key]
+      })
       window.plot = plot
       plot.id = 'default'
       Object.keys(plot).forEach(key=>{
@@ -237,7 +240,7 @@ export const loadDataset = (id,clear) => {
         dispatch(updatePathname({},{static:true}))
       }
       dispatch(editPlot(plot))
-      Promise.all(addAllFields(dispatch,meta.fields,1,false))
+      Promise.all(addAllFields(dispatch,meta.fields,1,meta,plot,false))
       .then(()=>{
         if (window.firstLoad){
           dispatch(queryToStore({values:qs.parse(getQueryString(state))}))
