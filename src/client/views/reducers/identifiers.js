@@ -57,6 +57,9 @@ export function fetchIdentifiers() {
         error => console.log('An error occured.', error)
       )
       .then(json => {
+        if (!Array.isArray(json)){
+          json = json.values
+        }
         return dispatch(receiveIdentifiers(json))
       }
 
