@@ -108,7 +108,7 @@ svg text {
   .axis_title {
     font-family:sans-serif;
     text-anchor:middle;
-    font-size:3em;
+    font-size:2em;
   }
 
   .small_axis_title {
@@ -121,6 +121,12 @@ svg text {
     font-family:sans-serif;
     font-size:1.5em;
     dominant-baseline: hanging;
+  }
+
+  .snail_plot_title {
+    font-family:sans-serif;
+    text-anchor:middle;
+    font-size:3em;
   }
 
   .padded_main {

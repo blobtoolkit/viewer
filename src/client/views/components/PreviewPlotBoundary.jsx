@@ -39,23 +39,32 @@ class PlotOutline extends React.Component {
     let altFormat = d3format(".2f")
     let xScale = this.props.details.xScale.copy()
     let ticks, labels
+    let clamp
     if (this.props.details.type == 'variable'){
       let count = 25
       xScale.range([0,count])
       let thresh = Array.from(Array(count-1).keys()).map((n)=>{let v = xScale.invert((n+1)); return v > 0.001 && v < 1 ? altFormat(v) : format(v)});
       ticks = this.props.bars.map((bar,i)=>{
         let x = bar.x
-        return (
-          <line key={i} stroke='black' x1={x} x2={x} y2={6}/>
-        )
+        let line = <line key={i} stroke='black' x1={x} x2={x} y2={6}/>
+        if (xScale.clamp && i < 2) line = null
+        return line
       })
       let w = width / count
       labels = thresh.map((t,i)=>{
-        return (
-          <text transform={'translate('+(w+i*w)+',10),rotate(90)'} key={i} textAnchor='start' dominantBaseline='middle' style={{fontSize}}>{t}</text>
-        )
+        let text = <text transform={'translate('+(w+i*w)+',10),rotate(90)'} key={i} textAnchor='start' dominantBaseline='middle' style={{fontSize}}>{t}</text>
+        if (xScale.clamp && i < 1) text = null
+        return text
       })
       ticks = ticks.slice(1)
+      clamp = (
+        <g stroke='black' transform='translate(0,3)'>
+          <line x1={this.props.bars[0].x} x2={this.props.bars[0].x} y2={6}/>
+          <line x1={this.props.bars[0].x} x2={this.props.bars[1].x}/>
+          <line x1={this.props.bars[1].x} x2={this.props.bars[1].x} y2={6}/>
+          <text stroke='none' transform={'translate('+(this.props.bars[1].x/2)+',10)'} textAnchor='middle' dominantBaseline='hanging' style={{fontSize}}>&lt; {this.props.details.meta.clamp}</text>
+        </g>
+      )
     }
     else if (this.props.details.type == 'category'){
       let count = 10
@@ -88,6 +97,7 @@ class PlotOutline extends React.Component {
           <line stroke='black' x2={width}/>
           {ticks}
           {labels}
+          {clamp}
           <text transform={'translate('+(width/2)+',65)'} textAnchor='middle'>{this.props.xLabel}</text>
         </g>
 

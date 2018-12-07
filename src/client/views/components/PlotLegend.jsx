@@ -36,7 +36,7 @@ const Legend = ({values,zAxis,bins,palette,other,reducer,meta}) => {
   let format = d3format(".2s")
   let commaFormat = d3format(",")
   if (bins){
-    let offset = 10
+    let offset = 20
     let w = 19
     let h = 19
     let gap = 5

@@ -13,8 +13,6 @@ import { getTableData,getBinnedColors,getTableDataForPage } from '../reducers/su
 import { getColorPalette } from '../reducers/color'
 import { chooseCurrentRecord, getCurrentRecord } from '../reducers/record'
 import { addRecords, removeRecords } from '../reducers/select'
-import PlotLegend from './PlotLegend'
-import PlotAxisTitle from './PlotAxisTitle'
 import CumulativePlotBoundary from './CumulativePlotBoundary'
 const saveSvgAsPng = require('save-svg-as-png/lib/saveSvgAsPng.js')
 import AxisTitle from './AxisTitle'

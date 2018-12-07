@@ -11,7 +11,17 @@ export const CategoryPlotBoundary = ({length,maxScore}) => {
   let xScale = d3scaleLinear().range([0,900]).domain([0,length])
   let yScale = d3scaleLinear().range([200,0]).domain([0,maxScore])
   let binSize = 100000
-  let xTicks = Math.min(Math.round(length/binSize),10)
+  let xTicks = Math.min(Math.floor(length/binSize),10)
+  if (length < binSize * Math.sqrt(2)){
+    xTicks = 1
+  }
+  else {
+    xTicks = Math.max(2,xTicks)
+  }
+  let minorTicks = xTicks
+  if (minorTicks < 5){
+    minorTicks *= Math.round(10/minorTicks)
+  }
   let fontSize = 16
   let f = d3Format(".2s");
   return (
@@ -25,7 +35,7 @@ export const CategoryPlotBoundary = ({length,maxScore}) => {
         <text className={styles.small_axis_title}>bitscore</text>
       </g>
       <g transform={'translate(0,200)'} >
-        <Axis {...axisPropsFromTickScale(xScale, xTicks)} format={f} style={{orient: BOTTOM, tickFontSize: fontSize}}/>
+        <Axis {...axisPropsFromTickScale(xScale, minorTicks)} format={f} style={{orient: BOTTOM, tickFontSize: fontSize}}/>
       </g>
       <g transform={'translate(450,250)'}>
         <text className={styles.small_axis_title}>position (bp)</text>

@@ -185,7 +185,7 @@ class PlotBox extends React.Component {
     let viewbox = '0 0 '+side+' '+side
     let xPlot = <PlotSideBinsSVG axis='x'/>
     let yPlot = <PlotSideBinsSVG axis='y'/>
-    let legend = <g transform='translate(1010,-280)'><PlotLegend/></g>
+    let legend = <g transform='translate(1010,-290)'><PlotLegend/></g>
     if (this.props.plotShape == 'circle'){
       if (this.props.plotGraphics != 'svg'){
         plotCanvas = (
@@ -230,8 +230,8 @@ class PlotBox extends React.Component {
                 {yPlot}
                 {legend}
                 <MainPlotBoundary/>
-                <PlotAxisTitle axis='x'/>
-                <PlotAxisTitle axis='y'/>
+                <PlotAxisTitle axis='x' side={side}/>
+                <PlotAxisTitle axis='y' side={side}/>
               </g>
             </svg>
             {exportButtons}
@@ -320,8 +320,8 @@ class PlotBox extends React.Component {
                 >
                 <MainPlotBoundary/>
               </Pointable>
-              <PlotAxisTitle axis='x'/>
-              <PlotAxisTitle axis='y'/>
+              <PlotAxisTitle axis='x' side={side}/>
+              <PlotAxisTitle axis='y' side={side}/>
             </g>
           </svg>
           {exportButtons}

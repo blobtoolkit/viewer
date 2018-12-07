@@ -258,7 +258,7 @@ class Snail extends React.Component {
           viewBox={viewbox}
           preserveAspectRatio="xMinYMin">
           <g transform={'translate(500,45)'} >
-            <text className={styles.axis_title}>
+            <text className={styles.snail_plot_title}>
               {this.props.meta.id}
             </text>
           </g>

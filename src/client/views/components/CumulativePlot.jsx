@@ -15,7 +15,7 @@ class Cumulative extends React.Component {
     if (!this.props.cumulative) return null
     let side = 1110
     let viewbox = '0 0 '+side+' '+side
-    let legend = <g transform='translate(700,720)'><PlotLegend/></g>
+    let legend = <g transform='translate(700,705)'><PlotLegend/></g>
     let colors = this.props.cumulative.palette.colors
     let all = this.props.cumulative.paths.all
     let yValues = this.props.cumulative.values.all
@@ -23,7 +23,7 @@ class Cumulative extends React.Component {
     let span = this.props.cumulative.span
     let byCat = this.props.cumulative.paths.byCat
     let transform = 'translate(0,0)'
-    let yLabel = 'Cumulative ' + this.props.cumulative.zAxis
+    let yLabel = 'cumulative ' + this.props.cumulative.zAxis
     let xLabel = (this.props.meta.record_type || '') + ' number'
     let paths = byCat.map((d,i)=>{
       if (this.props.origin == 'y'){
@@ -66,8 +66,8 @@ class Cumulative extends React.Component {
                   strokeLinecap='round'/>
             {paths}
             {legend}
-            <AxisTitle axis='y' title={yLabel}/>
-            <AxisTitle axis='x' title={xLabel}/>
+            <AxisTitle axis='y' title={yLabel} side={side}/>
+            <AxisTitle axis='x' title={xLabel} side={side}/>
           </g>
         </svg>
         {exportButtons}

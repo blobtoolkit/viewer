@@ -173,9 +173,7 @@ export const getAllMainPlotData = createSelector(
       xDomain[1] = 1*xmax
     }
     if (xMeta.meta.clamp){
-      console.log(xMeta)
       xDomain = clampDomain(xMeta.range[1], xMeta.meta.clamp, 25)
-      // domain = [meta.clamp, range[1]]
       xMeta.xScale.clamp(true)
     }
     xMeta.xScale.domain(xDomain)
