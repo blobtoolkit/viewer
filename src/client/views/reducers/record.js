@@ -4,8 +4,8 @@ import { byIdSelectorCreator } from './selectorCreators'
 import { getDatasetID } from './location'
 import { getCatAxis } from './plot';
 import { format as d3Format } from 'd3-format'
-import { getBinsForCat } from './field'
-import { getRawDataForLength } from './summary'
+import { getBinsForCat, getDetailsForFieldId } from './field'
+import { getRawDataForLength, getLinks } from './summary'
 import { getIdentifiers } from './identifiers'
 import store from '../store'
 
@@ -21,10 +21,23 @@ export const chooseCurrentRecord = (id) => {
     if (id){
       let datasetId = getDatasetID(state)
       let cat = getCatAxis(state)
+      let details = getDetailsForFieldId(state, cat + '_positions')
+      let headers = details.meta.headers
       let url = apiUrl + '/field/' + datasetId + '/' + cat + '_positions/' + id
       let response = await fetch(url);
       let json = await response.json();
-      dispatch(setCurrentRecord({id,...json}))
+      if (details.meta.linked_field){
+        let linked_url = apiUrl + '/field/' + datasetId + '/' + details.meta.linked_field + '/' + id
+        let linked_response = await fetch(linked_url);
+        let linked_json = await linked_response.json();
+        let linked_details = getDetailsForFieldId(state, details.meta.linked_field)
+        headers = headers.concat(linked_details.meta.headers)
+        json.values[0].forEach((arr,i)=>{
+          json.values[0][i] = arr.concat(linked_json.values[0][i])
+        })
+      }
+
+      dispatch(setCurrentRecord({id,...json,category_slot:details.meta.category_slot,headers}))
     }
     else {
       dispatch(setCurrentRecord({id}))
@@ -60,7 +73,8 @@ export const getCategoryDistributionForRecord = createSelector(
   getRawDataForLength,
   getCatBinIndices,
   getIdentifiers,
-  (data,lengths,bins,identifiers) => {
+  getLinks,
+  (data,lengths,bins,identifiers,links) => {
     if (!data || !data.values || !data.id) return false
     let yLimit = 0
     let binSize = 100000
@@ -68,22 +82,36 @@ export const getCategoryDistributionForRecord = createSelector(
     let offsets = {}
     let xLimit = lengths.values[data.id]
     let id = identifiers[data.id]
+    let cat_i = data.category_slot
+    if (Array.isArray(cat_i)){
+      cat_i = cat_i[0]
+    }
+    let start_i = data.headers.indexOf('start')
+    let end_i = data.headers.indexOf('end')
+    let score_i = data.headers.indexOf('score')
     let lines = data.values[0].map(hit=>{
       let points = {}
-      let center = (hit[1] + hit[2]) / 2
-      let width = hit[2] - hit[1]
+      let center = (hit[start_i] + hit[end_i]) / 2
+      let width = hit[end_i] - hit[start_i]
       points.x1 = center
       points.x2 = points.x1
-      let bin = Math.floor(hit[1]/binSize)*binSize
+      let bin = Math.floor(hit[start_i]/binSize)*binSize
       let offset = offsets[bin] || 0
-      offsets[bin] = hit[3] + offset
+      offsets[bin] = hit[score_i] + offset
       if (offsets[bin] > yLimit) yLimit = offsets[bin]
       points.y1 = offsets[bin]
       points.y2 = offset
       points.width = width
-      points.cat = hit[0]
-      if (!labels[hit[0]]){
-        labels[hit[0]] = bins[hit[0]]
+      points.cat = hit[cat_i]
+      if (links.position){
+        let obj = {}
+        data.headers.forEach((header,i)=>{
+          obj[header] = hit[i]
+        })
+        points.link = {title:links.position.title, url:links.position.func(obj)}
+      }
+      if (!labels[hit[cat_i]]){
+        labels[hit[cat_i]] = bins[hit[cat_i]]
       }
       return points
     })

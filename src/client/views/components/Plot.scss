@@ -9,16 +9,6 @@
   margin:0 auto;
 }
 
-.modal_plot_outer {
-  position:relative;
-  top: 0;
-  height: 325px;
-  width: 1000px;
-  max-height: 70vh;
-  max-width: 70vw;
-  margin:0 auto;
-}
-
 svg text {
   font-family:sans-serif;
 }
@@ -368,4 +358,20 @@ div.download {
   stroke: rgba($deepColor,0.5);
   stroke-width: 3px;
   stroke-dasharray: 5;
+}
+
+.modal_plot_outer {
+  position:relative;
+  top: 0;
+  height: 325px;
+  width: 1000px;
+  max-height: 70vh;
+  max-width: 70vw;
+  margin:0 auto;
+  cursor:default;
+
+  .plot_boundary {
+    cursor:default;
+  }
+
 }

@@ -255,12 +255,12 @@ table {
   height:1.4em;
   box-sizing:border-box;
   margin-right:0.4em;
+  cursor: pointer;
 }
 
 .colored_tab.highlight, .colored_tab.clear, .colored_tab.partial  {
   border: 2px solid $shadeColor;
   border-radius: 2px;
-  cursor: pointer;
 }
 
 .view_link {

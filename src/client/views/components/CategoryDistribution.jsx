@@ -34,6 +34,10 @@ class CatDistribution extends React.Component {
     let viewbox = '0 0 1000 325'
     let lines = points.map((line,i)=>{
       let color = this.props.colors[line.cat] || '#999999'
+      let url
+      if (line.link){
+        url = line.link.url
+      }
       return (
         <line
               x1={xScale(line.x1)}
@@ -41,6 +45,8 @@ class CatDistribution extends React.Component {
               y1={yScale(line.y1)+1}
               y2={yScale(line.y2)-1}
               key={i}
+              onClick={url ? ()=>window.open(url,'_blank') : null}
+              style={url ? {cursor:'pointer', pointerEvents:'auto'} : {}}
               strokeWidth={xScale(line.width) < 5 ? 5 : xScale(line.width)}
               fill='none'
               stroke={color}/>

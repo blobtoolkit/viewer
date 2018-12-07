@@ -775,6 +775,10 @@ export const getLinks = createSelector(
             let func = funcFromPattern(meta.links[key][title])
             links.record.push({title,func})
           }
+          else if (key == 'position'){
+            let func = funcFromPattern(meta.links[key][title])
+            links.position = {title,func}
+          }
           else {
             links.dataset[key][title] = links.dataset[key][title] || {}
             Object.keys(meta.links[key][title]).forEach(field=>{
