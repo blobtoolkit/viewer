@@ -899,7 +899,7 @@ export const getSortOrder = createSelector(
     let boolSorts = {asc:ascBool,desc:descBool}
     if (sortField && data[sortField]){
       let arr
-      if (tableData.keys[sortField]){
+      if (tableData.keys[sortField] && tableData.keys[sortField] > 0){
         let keys = tableData.keys[sortField]
         let arr = data[sortField].values.map((v,i)=>[i,keys[v]])
         order = arr.sort(alphaSorts[sortOrder]).map(a=>a[0])
