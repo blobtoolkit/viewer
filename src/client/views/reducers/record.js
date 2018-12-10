@@ -18,7 +18,7 @@ export const chooseCurrentRecord = (id) => {
     let state = store.getState()
     let currentRecord = getCurrentRecord(state)
     // if (id == currentRecord) return
-    if (id){
+    if (typeof(id) != 'undefined'){
       let datasetId = getDatasetID(state)
       let cat = getCatAxis(state)
       let details = getDetailsForFieldId(state, cat + '_positions')
@@ -36,7 +36,6 @@ export const chooseCurrentRecord = (id) => {
           json.values[0][i] = arr.concat(linked_json.values[0][i])
         })
       }
-
       dispatch(setCurrentRecord({id,...json,category_slot:details.meta.category_slot,headers}))
     }
     else {
@@ -75,7 +74,7 @@ export const getCategoryDistributionForRecord = createSelector(
   getIdentifiers,
   getLinks,
   (data,lengths,bins,identifiers,links) => {
-    if (!data || !data.values || !data.id) return false
+    if (!data || !data.values || typeof(data.id) == 'undefined') return false
     let yLimit = 0
     let binSize = 100000
     let labels = {}

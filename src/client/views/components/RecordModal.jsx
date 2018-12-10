@@ -12,7 +12,7 @@ export class RecordModal extends React.Component {
   }
 
   render() {
-    if (!this.props.currentRecord) return null
+    if (!this.props.currentRecord && this.props.currentRecord !== 0) return null
     let content = <CategoryDistribution/>
     return (
       <div style={{position:'absolute', top:0, right:0, bottom:0, left:0}}>

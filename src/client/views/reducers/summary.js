@@ -1015,7 +1015,7 @@ export const getSelectedDatasetTable = createSelector(
   getLinks,
   (details,links) => {
     let data = []
-    if (!details.assembly){
+    if (!details.assembly || !details.taxon){
       return false
     }
     Object.keys(details.taxon).forEach(key=>{
