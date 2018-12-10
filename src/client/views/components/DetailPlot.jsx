@@ -51,10 +51,14 @@ class Detail extends React.Component {
                 </span>
               )
             }
+            let value = d.value
+            if (d.key == 'span' || d.key == 'scaffold-count'){
+              value = value.toLocaleString()
+            }
             return (
               <span>
                 {link}
-                {d.value}
+                {value}
               </span>
             )
           }

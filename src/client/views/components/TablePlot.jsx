@@ -124,7 +124,7 @@ class Table extends React.Component {
         variables.columns.push({
           id: field.id,
           Header: () => field.name.replace('_',' '),
-          accessor: d => d[id],
+          accessor: d => d[id].toLocaleString(),
           minWidth: 50
         })
       }

@@ -51,6 +51,10 @@ const PlotOutline = (data) => {
   }
   let xRange = data.meta.x.range
   let xScale = data.meta.x.xScale.copy()
+  let fx = f
+  if (data.meta.x.meta.scale != 'scaleLog'){
+    fx = d => d
+  }
   xScale.range([50,950])
   let xBreak, xBreakAxis
   if (data.meta.x.meta.clamp){
@@ -75,6 +79,10 @@ const PlotOutline = (data) => {
   }
   let yRange = data.meta.y.range
   let yScale = data.meta.y.xScale.copy()
+  let fy = f
+  if (data.meta.y.meta.scale != 'scaleLog'){
+    fy = d => d
+  }
   yScale.range([950,50])
   let yBreak, yBreakAxis
   if (data.meta.y.meta.clamp){
@@ -105,12 +113,12 @@ const PlotOutline = (data) => {
       {yBreak}
       {yBreakAxis}
       <Axis {...axisPropsFromTickScale(xScale, 10)} style={{orient: BOTTOM, tickFontSize: 0}}/>
-      <Axis {...axisPropsFromTickScale(yScale, 10)} style={{orient: LEFT, tickFontSize: fontSize}} format={f}/>
+      <Axis {...axisPropsFromTickScale(yScale, 10)} style={{orient: LEFT, tickFontSize: fontSize}} format={fy}/>
       <g  transform={'translate(1000)'} >
         <Axis {...axisPropsFromTickScale(yScale, 10)} style={{orient: LEFT, tickFontSize: 0}}/>
       </g>
       <g  transform={'translate(0,1000)'} >
-        <Axis {...axisPropsFromTickScale(xScale, 10)} style={{orient: BOTTOM, tickFontSize: fontSize}} format={f}/>
+        <Axis {...axisPropsFromTickScale(xScale, 10)} style={{orient: BOTTOM, tickFontSize: fontSize}} format={fx}/>
 
       </g>
     </g>
