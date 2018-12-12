@@ -5,10 +5,11 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "api": "node src/server/app.js",
-    "start": "nodemon src/server/app.js",
-    "client": "webpack-dev-server --content-base src/client --config ./webpack.config.js src/client/main.js",
-    "build": "NODE_ENV=production webpack -p --config ./webpack.config.js"
+    "pre-run": "install-changed",
+    "api": "npm run pre-run && node src/server/app.js",
+    "start": "npm run pre-run && nodemon src/server/app.js",
+    "client": "npm run pre-run && webpack-dev-server --content-base src/client --config ./webpack.config.js src/client/main.js",
+    "build": "npm run pre-run && NODE_ENV=production webpack -p --config ./webpack.config.js"
   },
   "author": "Richard Challis",
   "license": "MIT",
@@ -40,6 +41,7 @@
     "hoist-non-react-statics": "^2.5.5",
     "html-webpack-plugin": "^3.2.0",
     "immutable-update": "^1.0.0",
+    "install-changed": "^1.0.8",
     "is-touch-device": "^1.0.1",
     "konva": "^1.7.6",
     "minimist": "^1.2.0",
