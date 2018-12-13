@@ -1034,7 +1034,7 @@ export const getSelectedDatasetTable = createSelector(
       }
       data.push({group:'Assembly',key,value:details.assembly[key],link,meta})
     })
-    if (details.reads.paired){
+    if (details.reads && details.reads.paired){
       details.reads.paired.forEach(row=>{
         let link,meta
         if (links.dataset.reads && links.dataset.reads.paired){
@@ -1044,7 +1044,7 @@ export const getSelectedDatasetTable = createSelector(
         data.push({group:'Reads',key:row[1]+' (paired)',value:row[0],link,meta})
       })
     }
-    if (details.reads.single){
+    if (details.reads && details.reads.single){
       details.reads.single.forEach(row=>{
         let link,meta
         if (links.dataset.reads && links.dataset.reads.single){
