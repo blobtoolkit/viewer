@@ -1,4 +1,4 @@
-# BlobToolKit Viewer (v0.6)
+# BlobToolKit Viewer (v0.7)
 
  [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1134794.svg)](https://doi.org/10.5281/zenodo.1134794)
 
@@ -72,24 +72,9 @@ BTK_OUT_FILE_PATH=/dev/null
 
 ### Use Local data
 
-If you have already analysed a dataset using [BlobTools](https://github.com/DRL/blobtools), data can be exported from the BlobDB using the experimental view (currently requires the [BlobToolKit fork](https://github.com/BlobToolKit/blobtools) of BlobTools):
-```
-blobtools view \
-    -i assembly.BlobDB.json \
-    -x "bestsumorder" \
-    --experimental assembly.yaml
-```
-Any fields added to the assembly or taxon sections of an `assembly.yaml` file will be indexed for search. Fields that will be displayed (and should be filled in in a minimal `assembly.yaml` file) are shown below:
-```
-assembly:
-  level: scaffold
-  accession: draft
-  prefix: Assembly_name
-taxon:
-  name: Genus species
-```
+If you have an assembly you would like to visualise, use [BlobTools2](https://github.com/blobtoolkit/blobtools2), to import the assembly, read mapping and BLAST hits ready for visualisation.
 
-To analyse a new assembly, the [BlobToolKit pipeline](https://github.com/blobtoolkit/insdc-pipeline) can take an assembly and reads as input and automate all steps through to generating a dataset ready to load in the Viewer.
+To analyse a public assembly, the [BlobToolKit pipeline](https://github.com/blobtoolkit/insdc-pipeline) can take an assembly and reads as input and automate all steps through to generating a dataset ready to load in the Viewer.
 
 ## Production build
 
