@@ -107,7 +107,14 @@ export const getCategoryDistributionForRecord = createSelector(
         data.headers.forEach((header,i)=>{
           obj[header] = hit[i]
         })
-        points.link = {title:links.position.title, url:links.position.func(obj)}
+        if (links.position[0]){
+          if (obj.index !== undefined && links.position[obj.index] !== undefined){
+            points.link = {title:links.position[obj.index].title, url:links.position[obj.index].func(obj), meta:obj}
+          }
+          else {
+            points.link = {title:links.position[0].title, url:links.position[0].func(obj), meta:obj}
+          }
+        }
       }
       if (!labels[hit[cat_i]]){
         labels[hit[cat_i]] = bins[hit[cat_i]]

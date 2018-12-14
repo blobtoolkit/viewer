@@ -766,7 +766,7 @@ const funcFromPattern = pattern => {
 export const getLinks = createSelector(
   getSelectedDatasetMeta,
   (meta) => {
-    let links = {dataset:{},record:[]}
+    let links = {dataset:{},record:[],position:[]}
     if (meta.links){
       Object.keys(meta.links).forEach(key=>{
         links.dataset[key] = links.dataset[key] || {}
@@ -776,8 +776,16 @@ export const getLinks = createSelector(
             links.record.push({title,func})
           }
           else if (key == 'position'){
-            let func = funcFromPattern(meta.links[key][title])
-            links.position = {title,func}
+            if (meta.links[key][0]){
+              Object.keys(meta.links[key][title]).forEach(field=>{
+                let func = funcFromPattern(meta.links[key][title][field])
+                links.position[title] = {title:field,func}
+              })
+            }
+            else {
+              let func = funcFromPattern(meta.links[key][title])
+              links.position[0] = {title,func}
+            }
           }
           else {
             links.dataset[key][title] = links.dataset[key][title] || {}

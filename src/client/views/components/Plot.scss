@@ -381,3 +381,19 @@ div.download {
   }
 
 }
+
+.link_info {
+  text {
+    font-family:sans-serif;
+    font-size:1em;
+    dominant-baseline: hanging;
+    text-anchor:middle;
+    fill: $lightColor;
+  }
+
+  rect {
+    fill: $highlightColor;
+  }
+
+
+}

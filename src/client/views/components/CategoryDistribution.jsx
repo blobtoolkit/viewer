@@ -16,7 +16,8 @@ class CatDistribution extends React.Component {
     super(props);
     this.state = {
       loading: false,
-      values: []
+      values: [],
+      hover: false
     }
   }
 
@@ -45,6 +46,8 @@ class CatDistribution extends React.Component {
               y1={yScale(line.y1)+1}
               y2={yScale(line.y2)-1}
               key={i}
+              onMouseOver={url ? ()=>this.setState({hover:line.link}) : ()=>{}}
+              onMouseOut={url ? ()=>this.setState({hover:false}) : ()=>{}}
               onClick={url ? ()=>window.open(url,'_blank') : null}
               style={url ? {cursor:'pointer', pointerEvents:'auto'} : {}}
               strokeWidth={xScale(line.width) < 5 ? 5 : xScale(line.width)}
@@ -52,6 +55,11 @@ class CatDistribution extends React.Component {
               stroke={color}/>
       )
     })
+    let info
+    if (this.state.hover){
+      info = 'accession: ' + this.state.hover.meta.subject
+      info += ' [' + this.state.hover.title + ']'
+    }
     return (
       <div className={styles.modal_plot_outer}>
         <svg id="record_plot"
@@ -71,6 +79,12 @@ class CatDistribution extends React.Component {
           </g>
           <g transform={'translate(75,0)'} >
             <CategoryLegend categories={this.props.data.labels} colors={this.props.colors}/>
+          </g>
+          <g transform={'translate(74,30)'} className={styles.link_info}>
+            {info && <rect width={902} height={21}/>}
+            <g transform={'translate(450,5)'}>
+              <text>{info}</text>
+            </g>
           </g>
         </svg>
       </div>
