@@ -27,6 +27,9 @@ const parseMeta = (obj) => {
     meta.name = meta.prefix
     delete meta.prefix
   }
+  else {
+    meta.name = obj.id
+  }
   return meta
 }
 

@@ -5,11 +5,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "pre-run": "npm-install-changed",
-    "api": "npm run pre-run && node src/server/app.js",
-    "start": "npm run pre-run && nodemon src/server/app.js",
-    "client": "npm run pre-run && webpack-dev-server --content-base src/client --config ./webpack.config.js src/client/main.js",
-    "build": "npm run pre-run && NODE_ENV=production webpack -p --config ./webpack.config.js"
+    "api": "node src/server/app.js",
+    "start": "nodemon src/server/app.js",
+    "client": "webpack-dev-server --content-base src/client --config ./webpack.config.js src/client/main.js",
+    "build": "NODE_ENV=production webpack -p --config ./webpack.config.js"
   },
   "author": "Richard Challis",
   "license": "MIT",
@@ -46,7 +45,6 @@
     "minimist": "^1.2.0",
     "mkdirp-promise": "^5.0.1",
     "node-sass": "^4.9.2",
-    "npm-install-changed": "^1.3.0",
     "postcss-loader": "^2.1.6",
     "promise": "^8.0.1",
     "react": "^15.6.2",
