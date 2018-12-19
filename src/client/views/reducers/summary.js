@@ -1023,25 +1023,26 @@ export const getSelectedDatasetTable = createSelector(
   getLinks,
   (details,links) => {
     let data = []
-    if (!details.assembly && !details.taxon){
-      return false
+    if (details.taxon){
+      Object.keys(details.taxon).forEach(key=>{
+        let link,meta
+        if (links.dataset.taxon && links.dataset.taxon[key]){
+          link = links.dataset.taxon[key]
+          meta = Object.assign({},details.taxon)
+        }
+        data.push({group:'Taxon',key,value:details.taxon[key],link,meta})
+      })
     }
-    Object.keys(details.taxon).forEach(key=>{
-      let link,meta
-      if (links.dataset.taxon && links.dataset.taxon[key]){
-        link = links.dataset.taxon[key]
-        meta = Object.assign({},details.taxon)
-      }
-      data.push({group:'Taxon',key,value:details.taxon[key],link,meta})
-    })
-    Object.keys(details.assembly).forEach(key=>{
-      let link,meta
-      if (links.dataset.assembly && links.dataset.assembly[key]){
-        link = links.dataset.assembly[key]
-        meta = {...details.assembly}
-      }
-      data.push({group:'Assembly',key,value:details.assembly[key],link,meta})
-    })
+    if (details.assembly){
+      Object.keys(details.assembly).forEach(key=>{
+        let link,meta
+        if (links.dataset.assembly && links.dataset.assembly[key]){
+          link = links.dataset.assembly[key]
+          meta = {...details.assembly}
+        }
+        data.push({group:'Assembly',key,value:details.assembly[key],link,meta})
+      })
+    }
     if (details.reads && details.reads.paired){
       details.reads.paired.forEach(row=>{
         let link,meta
