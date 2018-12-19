@@ -87,7 +87,7 @@ class Detail extends React.Component {
             getTheadThProps={this.injectThProps}
           />
           <span className={plotStyles.download}>
-            <ExportButton data={meta} format='json' prefix={meta.id+'.meta'}/>
+            <ExportButton view='detail' data={meta} format='json' prefix={meta.id+'.meta'}/>
           </span>
       </div>
     )

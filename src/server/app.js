@@ -3,12 +3,13 @@ const compression    = require('compression')
 const bodyParser     = require('body-parser');
 const path           = require('path');
 const config         = require('../config/main');
+const resolve        = require('path').resolve
 const app            = express();
 
 app.use(compression())
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.locals.directory = config.filePath;
+app.locals.directory = resolve(config.filePath);
 if (config.cors){
   const cors = require('express-cors');
   app.use(cors(config.cors));

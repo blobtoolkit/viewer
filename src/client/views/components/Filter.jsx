@@ -5,13 +5,17 @@ import { connect } from 'react-redux'
 import { editFilter } from '../reducers/filter'
 import { getDetailsForFilterId } from '../reducers/preview'
 import { queryToStore } from '../querySync'
+import { getDatasetID } from '../reducers/location'
 
 class Filter extends React.Component {
   constructor(props) {
     super(props);
     this.mapStateToProps = () => {
       return (state, props) => {
-        return getDetailsForFilterId(state, props.filterId)
+        let details = getDetailsForFilterId(state, props.filterId)
+        details.datasetId = getDatasetID(state)
+        // return Object.assign({details}, ...{datasetId})
+        return details
       }
     }
     this.mapDispatchToProps = dispatch => {

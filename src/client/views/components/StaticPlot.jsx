@@ -6,6 +6,7 @@ import StaticWarning from './StaticWarning'
 import StaticMissing from './StaticMissing'
 import { getSelectedDatasetMeta } from '../reducers/dataset'
 import { getStaticThreshold } from '../reducers/repository'
+import { getPlotShape } from '../reducers/plotParameters'
 
 const apiUrl = API_URL || '/api/v1'
 
@@ -24,13 +25,33 @@ class Static extends React.Component {
 
   componentDidMount(){
     if (this.refs.static_image && this.props.hasStatic){
-      this.fetchImage(this.props.view)
+      let shape
+      if (this.props.view == 'blob'){
+        shape = this.props.shape
+      }
+      this.fetchImage(this.props.view, shape)
+    }
+  }
+  componentWillUpdate(nextProps){
+    if (this.refs.static_image
+      && this.props.hasStatic
+      && nextProps.shape != this.props.shape
+    ){
+      let shape
+      if (this.props.view == 'blob'){
+        shape = nextProps.shape
+      }
+      this.fetchImage(this.props.view, shape)
     }
   }
 
 
-  fetchImage(view) {
-    fetch(apiUrl + '/image/'+this.props.datasetId+'/'+view)
+  fetchImage(view, shape) {
+    let url = apiUrl + '/image/'+this.props.datasetId+'/'+view
+    if (shape){
+      url += '/' + shape
+    }
+    fetch(url)
       .then(
         response => {
           if (!response.ok){
@@ -74,7 +95,8 @@ class StaticPlot extends React.Component {
       return {
         hasStatic: getStaticFields(state),
         meta: getSelectedDatasetMeta(state),
-        threshold: getStaticThreshold(state)
+        threshold: getStaticThreshold(state),
+        shape: getPlotShape(state)
       }
     }
     this.mapDispatchToProps = dispatch => {

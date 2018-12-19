@@ -31,7 +31,7 @@ const screenScale = () => {
   }
 }
 
-const Button = ({element,data,format,prefix,scale=1,func,size=1000,res=1000}) => {
+const Button = ({view,element,data,format,prefix,scale=1,func,size=1000,res=1000}) => {
   if (!func){
     func = () => {}
     if (format == 'svg'){
@@ -49,7 +49,7 @@ const Button = ({element,data,format,prefix,scale=1,func,size=1000,res=1000}) =>
     }
   }
   return (
-    <a id={'blob_save_'+format} className={styles.save_svg} onClick={func}>&#8681;{format}</a>
+    <a id={`${view}_save_${format}`} className={styles.save_svg} onClick={func}>&#8681;{format}</a>
   )
 }
 

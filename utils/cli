@@ -1,0 +1,170 @@
+#!/usr/bin/env node
+const doc = `
+Usage:
+  utils/cli DATASET [--format STRING] [--host STRING] [--https] [--out PATH]
+  [--param STRING...] [--port INT] [--prefix STRING] [--preview STRING...]
+  [--timeout INT] [--view STRING...]
+Options:
+      --format STRING     Image format (svg|png). [Default: png]
+      --host STRING       Hostname. [Default: localhost]
+      --https             Use https.
+      --out PATH          Directory for outfiles. [Default: ./]
+      --param key=value   Query string parameter.
+      --prefix STRING     URL prefix. [Default: view]
+      --preview STRING    Field name.
+      --port INT          Port number. [Default: 8080]
+      --timeout INT       Time to wait for page load in seconds. Default (0) is no timeout. [Default: 0]
+      --view STRING       Plot type (blob|cumulative|snail).
+`
+const resolve = require('path').resolve
+const docopt = require('docopt').docopt
+const fs = require('fs')
+const readline = require('readline')
+const { execFileSync } = require('child_process');
+const webdriver = require('selenium-webdriver'),
+      By = webdriver.By,
+      until = webdriver.until;
+
+const firefox = require('selenium-webdriver/firefox');
+
+const sleep = ms => {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+const fileReady = async file => {
+  while(file){
+    if (fs.existsSync(file)) {
+      break
+    }
+    else {
+      process.stderr.write('.')
+      await sleep(500)
+    }
+  }
+  process.stderr.write("done\n")
+  return new Promise(resolve => setTimeout(resolve, 100));
+}
+
+const main = async (args) => {
+  let protocol = args['--https'] ? 'https' : 'http'
+  let loc = `${protocol}://${args['--host']}:${args['--port']}/${args['--prefix']}/dataset/${args.DATASET}`
+  let qs = `staticThreshold=${Number.POSITIVE_INFINITY}`
+  qs += `&plotGraphics=svg`
+  if (args['--format'] == 'svg'){
+    qs += `&svgThreshold=${Number.POSITIVE_INFINITY}`
+  }
+  let shape = 'square'
+  args['--param'].forEach(param=>{
+    qs += `&${param}`
+    let [key, value] = param.split('=')
+    if (key == 'plotShape'){
+      shape = value
+    }
+  })
+
+  let timeout = args['--timeout']*1000
+
+  let outdir = resolve(args['--out'])
+
+  const profile = new firefox.Profile()
+  profile.setPreference('browser.download.folderList', 2)
+  profile.setPreference('browser.download.manager.showWhenStarting', false)
+  profile.setPreference('browser.download.dir', outdir)
+  profile.setPreference('browser.download.lastDir', outdir)
+  profile.setPreference('browser.helperApps.neverAsk.saveToDisk', 'image/png, image/svg+xml')
+
+  let firefoxOptions = new firefox.Options();
+  firefoxOptions.setBinary('firefox');
+  firefoxOptions.headless();
+  firefoxOptions.setProfile(profile);
+
+  const driver = new webdriver.Builder()
+     .forBrowser('firefox')
+     .setFirefoxOptions(firefoxOptions)
+     .build();
+
+
+  let view = args['--view'][0] || 'blob'
+  if (args['--preview']){
+    qs += '#Filters'
+  }
+  let url = `${loc}/${view}?${qs}`
+  process.stderr.write(`Loading ${url}\n`)
+  try {
+    await driver.get(url)
+  }
+  catch (err){
+    process.stderr.write(err.message)
+    return
+  }
+
+  while (args['--view'].length > 0){
+    let nextView = args['--view'].shift()
+    if (nextView != view){
+      view = nextView
+      url = `${loc}/${view}?${qs}`
+      process.stderr.write(`Navigating to ${url}\n`)
+      try {
+        await driver.navigate().to(url)
+      }
+      catch (err){
+        process.stderr.write(`${err.message}\n`)
+        continue
+      }
+    }
+    let file = `${args.DATASET}.${view}`
+    if (view == 'blob'){
+      file += `.${shape}`
+    }
+    file += `.${args['--format']}`
+    process.stderr.write(`Fetching ${file}\n`)
+    process.stderr.write('waiting for element\n')
+    let el
+    try {
+      el = await driver.wait(until.elementLocated(By.id(`${view}_save_${args['--format']}`)), timeout);
+      await el.click();
+    }
+    catch (err){
+      process.stderr.write(`${err.message}\n`)
+      continue
+    }
+    process.stderr.write('waiting for file')
+    await fileReady(`${outdir}/${file}`)
+  }
+
+  while (args['--preview'].length > 0){
+    let preview = args['--preview'].shift()
+    process.stderr.write(`Creating ${preview} preview\n`)
+    let el
+    try {
+      el = await driver.findElement(By.id(`${preview}_preview_save_${args['--format']}`));
+      await el.click();
+    }
+    catch (err){
+      process.stderr.write(`${err.message}\n`)
+      continue
+    }
+    process.stderr.write('waiting for file')
+    file = `${args.DATASET}.${preview}.preview.${args['--format']}`
+    await fileReady(`${outdir}/${file}`)
+  }
+
+  driver.quit();
+}
+
+const args = docopt(doc)
+
+if (typeof(args) !== 'object'){
+  process.stderr.write(doc)
+  process.exit(1)
+}
+
+try {
+  execFileSync('which', ['firefox'], {encoding: 'ascii'}).trim()
+}
+catch (err){
+  process.stderr.write("\nERROR: The 'firefox' executable could not be found in your '$PATH'.\n\n")
+  process.exit(1)
+}
+
+main(args)

@@ -125,6 +125,16 @@ npm run build
 http://example.com/viewer/
 ```
 
+## Command line interface
+
+A command line tool to generate plots via the web code is available in the `utils` directory. This runs a Firefox browser in headless mode and can be used to pass any query string parameters to a non-interactive version of the viewer to generate `svg` or `png` images of any of the main plot types. Firefox must be installed locally and both the `firefox` executable and the `geckodriver` Node module must be in your `$PATH` environment variable.
+
+For example, to generate a png image of a cumulative distribution plot for a dataset filtered by minimum length:
+```
+PATH=viewer/node_modules/geckodriver:/path/to/firefox/directory:$PATH
+viewer/utils/cli dataset_id --view cumulative --format png --param length--Min=5000 --out ./
+```
+
 ## Query string/list parameters:
 
 Most settings can be altered directly using the url, the list below provides an overview of most available settings:

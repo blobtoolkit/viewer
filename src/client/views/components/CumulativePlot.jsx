@@ -46,8 +46,8 @@ class Cumulative extends React.Component {
     })
     let exportButtons = (
       <span className={styles.download}>
-        <ExportButton element='cumulative_plot' prefix={this.props.datasetId+'.cumulative'} format='svg'/>
-        <ExportButton element='cumulative_plot' prefix={this.props.datasetId+'.cumulative'} format='png' size={side}/>
+        <ExportButton view='cumulative' element='cumulative_plot' prefix={this.props.datasetId+'.cumulative'} format='svg'/>
+        <ExportButton view='cumulative' element='cumulative_plot' prefix={this.props.datasetId+'.cumulative'} format='png' size={side}/>
       </span>
     )
     return (

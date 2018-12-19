@@ -246,8 +246,8 @@ class Snail extends React.Component {
     })
     let exportButtons = (
       <span className={styles.download}>
-        <ExportButton element='snail_plot' prefix={this.props.meta.id+'.snail'} format='svg'/>
-        <ExportButton element='snail_plot' prefix={this.props.meta.id+'.snail'} format='png' size={side}/>
+        <ExportButton view='snail' element='snail_plot' prefix={this.props.datasetId+'.snail'} format='svg'/>
+        <ExportButton view='snail' element='snail_plot' prefix={this.props.datasetId+'.snail'} format='png' size={side}/>
       </span>
     )
     return (
@@ -324,7 +324,7 @@ class SnailPlot extends React.Component {
         length: getRawDataForFieldId(state,'length'),
         ncount: getRawDataForFieldId(state,'ncount'),
         circular: circularCurves(state),
-        meta: getSelectedDatasetMeta(state,this.props.datasetId)
+        meta: getSelectedDatasetMeta(state)
       }
     }
     this.mapDispatchToProps = dispatch => {

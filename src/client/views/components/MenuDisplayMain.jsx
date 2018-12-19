@@ -77,66 +77,78 @@ const DisplayMenu = ({
   staticThreshold, onChangeStaticThreshold }) => {
   let context
   view = view || 'blob'
-  let blob = (
-    <span>
+  let blob
+  if (isStatic){
+    blob = (
       <MenuDisplaySimple name='shape'>
         <SVGIcon sprite={squareIcon} active={shape == 'square'} onIconClick={()=>onSelectShape('square')}/>
         <SVGIcon sprite={hexIcon} active={shape == 'hex'} onIconClick={()=>onSelectShape('hex')}/>
         <SVGIcon sprite={circleIcon} active={shape == 'circle'} onIconClick={()=>onSelectShape('circle')}/>
       </MenuDisplaySimple>
-      <MenuDisplaySimple name={'resolution [ '+resolution+' ]'}>
-        <div className={styles.full_height}>
-          <span className={styles.middle}>50</span>
-          <input onChange={(e)=>onChangeResolution(e.target.value)}
-            type="range"
-            value={resolution}
-            min="5"
-            max="50"
-            step="1"
-            className={styles.flip_horiz+' '+styles.middle}
-            data-tip data-for='size-slider'
-            />
-          <span className={styles.middle}>5</span>
-        </div>
-      </MenuDisplaySimple>
-      <MenuDisplaySimple name='reducer function'>
-        <SVGIcon sprite={sumIcon} active={reducer.id == 'sum'} onIconClick={()=>onSelectReducer('sum')}/>
-        <SVGIcon sprite={maxIcon} active={reducer.id == 'max'} onIconClick={()=>onSelectReducer('max')}/>
-        <SVGIcon sprite={minIcon} active={reducer.id == 'min'} onIconClick={()=>onSelectReducer('min')}/>
-        <SVGIcon sprite={countIcon} active={reducer.id == 'count'} onIconClick={()=>onSelectReducer('count')}/>
-        <SVGIcon sprite={meanIcon} active={reducer.id == 'mean'} onIconClick={()=>onSelectReducer('mean')}/>
-      </MenuDisplaySimple>
-      <MenuDisplaySimple name='scale function'>
-        <SVGIcon sprite={logIcon} active={scale == 'scaleLog'} onIconClick={()=>onSelectScale('scaleLog')}/>
-        <SVGIcon sprite={linearIcon} active={scale == 'scaleLinear'} onIconClick={()=>onSelectScale('scaleLinear')}/>
-        <SVGIcon sprite={sqrtIcon} active={scale == 'scaleSqrt'} onIconClick={()=>onSelectScale('scaleSqrt')}/>
-      </MenuDisplaySimple>
-      <MenuDisplaySimple name={'scale factor [ '+d3Format(",.1f")(plotScale)+' ]'}>
-        <div className={styles.full_height}>
-          <span className={styles.middle}>0.1</span>
-          <input onChange={(e)=>onChangePlotScale(e.target.value)}
-            type="range"
-            value={plotScale}
-            min="0.1"
-            max="2"
-            step="0.1"
-            className={styles.middle}
-            data-tip data-for='scale-slider'
-            />
-          <span className={styles.middle}>2.0</span>
-        </div>
+    )
+  }
+  else {
+    blob = (
+      <span>
+        <MenuDisplaySimple name='shape'>
+          <SVGIcon sprite={squareIcon} active={shape == 'square'} onIconClick={()=>onSelectShape('square')}/>
+          <SVGIcon sprite={hexIcon} active={shape == 'hex'} onIconClick={()=>onSelectShape('hex')}/>
+          <SVGIcon sprite={circleIcon} active={shape == 'circle'} onIconClick={()=>onSelectShape('circle')}/>
+        </MenuDisplaySimple>
+        <MenuDisplaySimple name={'resolution [ '+resolution+' ]'}>
+          <div className={styles.full_height}>
+            <span className={styles.middle}>50</span>
+            <input onChange={(e)=>onChangeResolution(e.target.value)}
+              type="range"
+              value={resolution}
+              min="5"
+              max="50"
+              step="1"
+              className={styles.flip_horiz+' '+styles.middle}
+              data-tip data-for='size-slider'
+              />
+            <span className={styles.middle}>5</span>
+          </div>
+        </MenuDisplaySimple>
+        <MenuDisplaySimple name='reducer function'>
+          <SVGIcon sprite={sumIcon} active={reducer.id == 'sum'} onIconClick={()=>onSelectReducer('sum')}/>
+          <SVGIcon sprite={maxIcon} active={reducer.id == 'max'} onIconClick={()=>onSelectReducer('max')}/>
+          <SVGIcon sprite={minIcon} active={reducer.id == 'min'} onIconClick={()=>onSelectReducer('min')}/>
+          <SVGIcon sprite={countIcon} active={reducer.id == 'count'} onIconClick={()=>onSelectReducer('count')}/>
+          <SVGIcon sprite={meanIcon} active={reducer.id == 'mean'} onIconClick={()=>onSelectReducer('mean')}/>
+        </MenuDisplaySimple>
+        <MenuDisplaySimple name='scale function'>
+          <SVGIcon sprite={logIcon} active={scale == 'scaleLog'} onIconClick={()=>onSelectScale('scaleLog')}/>
+          <SVGIcon sprite={linearIcon} active={scale == 'scaleLinear'} onIconClick={()=>onSelectScale('scaleLinear')}/>
+          <SVGIcon sprite={sqrtIcon} active={scale == 'scaleSqrt'} onIconClick={()=>onSelectScale('scaleSqrt')}/>
+        </MenuDisplaySimple>
+        <MenuDisplaySimple name={'scale factor [ '+d3Format(",.1f")(plotScale)+' ]'}>
+          <div className={styles.full_height}>
+            <span className={styles.middle}>0.1</span>
+            <input onChange={(e)=>onChangePlotScale(e.target.value)}
+              type="range"
+              value={plotScale}
+              min="0.1"
+              max="2"
+              step="0.1"
+              className={styles.middle}
+              data-tip data-for='scale-slider'
+              />
+            <span className={styles.middle}>2.0</span>
+          </div>
 
-      </MenuDisplaySimple>
-      {shape == 'circle' && <MenuDisplaySimple name='plot graphics'>
-        <div className={styles.full_height}>
-          <label className={styles.middle} htmlFor="#svgThreshold">Threshold</label>
-          <NumericInput initialValue={threshold} onChange={onChangeThreshold}/>
-          <span className={styles.middle}>or</span>
-        </div>
-        <SVGIcon sprite={svgIcon} active={graphics == 'svg'} onIconClick={()=>onChangeGraphics(graphics == 'svg' ? 'canvas' : 'svg')}/>
-      </MenuDisplaySimple>}
-    </span>
-  )
+        </MenuDisplaySimple>
+        {shape == 'circle' && <MenuDisplaySimple name='plot graphics'>
+          <div className={styles.full_height}>
+            <label className={styles.middle} htmlFor="#svgThreshold">Threshold</label>
+            <NumericInput initialValue={threshold} onChange={onChangeThreshold}/>
+            <span className={styles.middle}>or</span>
+          </div>
+          <SVGIcon sprite={svgIcon} active={graphics == 'svg'} onIconClick={()=>onChangeGraphics(graphics == 'svg' ? 'canvas' : 'svg')}/>
+        </MenuDisplaySimple>}
+      </span>
+    )
+  }
   let cumulative = (
     <span>
       <MenuDisplaySimple name='curve origin'>
@@ -202,7 +214,7 @@ const DisplayMenu = ({
         {isStatic || <TextIcon title='table' active={view == 'table'} onIconClick={()=>onSelectView('table')}/>}
       </MenuDisplaySimple>
       <MenuDisplaySet name={view}>
-        {isStatic || context}
+        {isStatic && view != 'blob' || context}
       </MenuDisplaySet>
       { isStatic || <Palettes />}
       { isStatic || <MenuDisplaySimple name='png resolution (px)'>

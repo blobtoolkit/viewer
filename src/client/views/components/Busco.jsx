@@ -131,9 +131,9 @@ class BuscoPlot extends React.Component {
     let side = 400
     let exportButtons = (
       <div className={styles.download}>
-        <ExportButton element={'busco_plot'+this.props.id} prefix={this.props.datasetId+'.'+this.props.id} format='svg'/>
-        <ExportButton element={'busco_plot'+this.props.id} prefix={this.props.datasetId+'.'+this.props.id} format='png' size={side}/>
-        <ExportButton data={this.props.csv} format='csv' prefix={this.props.datasetId+'.'+this.props.id}/>
+        <ExportButton view={`${this.props.id}_busco`} element={'busco_plot'+this.props.id} prefix={this.props.datasetId+'.'+this.props.id+'.busco'} format='svg'/>
+        <ExportButton view={`${this.props.id}_busco`} element={'busco_plot'+this.props.id} prefix={this.props.datasetId+'.'+this.props.id+'.busco'} format='png' size={side}/>
+        <ExportButton view={`${this.props.id}_busco`} data={this.props.csv} format='csv' prefix={this.props.datasetId+'.'+this.props.id+'.busco'}/>
       </div>
     )
     let viewbox = '0 0 '+side+' '+side

@@ -177,8 +177,8 @@ class PlotBox extends React.Component {
     let side = 1420
     let exportButtons = (
       <span className={styles.download}>
-        <ExportButton element='main_plot' prefix={this.props.datasetId+'.blob'} format='svg' func={func}/>
-        <ExportButton element='main_plot' prefix={this.props.datasetId+'.blob'} format='png' func={func} size={side}/>
+        <ExportButton view='blob' element='main_plot' prefix={this.props.datasetId+'.blob.'+this.props.plotShape} format='svg' func={func}/>
+        <ExportButton view='blob' element='main_plot' prefix={this.props.datasetId+'.blob.'+this.props.plotShape} format='png' func={func} size={side}/>
       </span>
     )
     let bins = this.state.bins

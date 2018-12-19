@@ -12,8 +12,8 @@ class FilterBox extends React.Component {
     let display
     let exportButtons = (
       <span className={plotStyles.download}>
-        <ExportButton element={this.props.fieldId+'.preview'} prefix={this.props.fieldId+'.preview'} format='svg'/>
-        <ExportButton element={this.props.fieldId+'.preview'} prefix={this.props.fieldId+'.preview'} format='png' size={1000}/>
+        <ExportButton view={`${this.props.fieldId}_preview`} element={this.props.fieldId+'.preview'} prefix={this.props.datasetId+'.'+this.props.fieldId+'.preview'} format='svg'/>
+        <ExportButton view={`${this.props.fieldId}_preview`} element={this.props.fieldId+'.preview'} prefix={this.props.datasetId+'.'+this.props.fieldId+'.preview'} format='png' size={1000}/>
       </span>
     )
     if (this.props.filterType == 'range'){

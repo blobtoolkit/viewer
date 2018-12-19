@@ -47,17 +47,17 @@ class PlotOutline extends React.Component {
       ticks = this.props.bars.map((bar,i)=>{
         let x = bar.x
         let line = <line key={i} stroke='black' x1={x} x2={x} y2={6}/>
-        if (xScale.clamp && i < 2) line = null
+        if (this.props.details.meta.clamp && i < 2) line = null
         return line
       })
       let w = width / count
       labels = thresh.map((t,i)=>{
         let text = <text transform={'translate('+(w+i*w)+',10),rotate(90)'} key={i} textAnchor='start' dominantBaseline='middle' style={{fontSize}}>{t}</text>
-        if (xScale.clamp && i < 1) text = null
+        if (this.props.details.meta.clamp && i < 1) text = null
         return text
       })
       ticks = ticks.slice(1)
-      clamp = (
+      clamp = this.props.details.meta.clamp && (
         <g stroke='black' transform='translate(0,3)'>
           <line x1={this.props.bars[0].x} x2={this.props.bars[0].x} y2={6}/>
           <line x1={this.props.bars[0].x} x2={this.props.bars[1].x}/>
