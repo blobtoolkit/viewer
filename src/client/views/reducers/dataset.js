@@ -37,7 +37,7 @@ export const getDatasetName = createSelector(
 
 export const getStaticFields = createSelector(
   getCurrentDatasetMeta,
-  meta => meta.static_fields || false
+  meta => meta.static_plots || false
 )
 
 export const getDatasetsById = (state, datasetId) => state.datasets.byId[datasetId] || {};

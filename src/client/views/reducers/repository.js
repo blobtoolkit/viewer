@@ -225,11 +225,11 @@ export const loadDataset = (id,clear) => {
         }
       })
       if ((window.firstLoad || window.records < meta.records) && meta.records > threshold){
-        if (meta.static_fields && !isStatic) {
+        if (meta.static_plots && !isStatic) {
           let view = getView(state)
           dispatch(updatePathname({[view]:true,static:true}))
         }
-        else if (!meta.static_fields) {
+        else if (!meta.static_plots) {
           dispatch(updatePathname({},{static:true}))
         }
       }
