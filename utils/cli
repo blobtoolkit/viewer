@@ -124,7 +124,6 @@ const main = async (args) => {
       let el
       try {
         el = await driver.wait(until.elementLocated(By.id(`${view}_save_${format}`)), timeout);
-        process.stderr.write(Object.keys(el).join(':'))
         await driver.wait(until.elementIsVisible(el), timeout);
         await el.click();
       }
