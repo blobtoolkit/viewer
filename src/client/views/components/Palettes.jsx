@@ -7,7 +7,7 @@ class Palettes extends React.Component {
   render(){
     let palettes = []
     this.props.allIds.forEach(id => {
-      if (this.props.selected==id){
+      if (this.props.selected==id && id != 'default'){
         palettes.push(
           <Palette
             id={id}
@@ -27,7 +27,7 @@ class Palettes extends React.Component {
           <h1 className={styles.inline}>{this.props.name}</h1>
           <div style={{float:'right'}}>
             <TextIcon title='default' active={this.props.selected == 'default'} onIconClick={()=>this.props.selectPalette('default')}/>
-            <TextIcon title='user' active={this.props.selected == 'user'} onIconClick={()=>this.props.selectPalette('user')}/>
+            <TextIcon title='custom' active={this.props.selected == 'user'} onIconClick={()=>this.props.selectPalette('user')}/>
           </div>
         </div>
         <div className={styles.content}>

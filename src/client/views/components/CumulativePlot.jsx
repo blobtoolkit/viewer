@@ -9,6 +9,7 @@ import CumulativePlotBoundary from './CumulativePlotBoundary'
 import { getSelectedDatasetMeta } from '../reducers/dataset'
 import AxisTitle from './AxisTitle'
 import { ExportButton } from './ExportButton'
+import { plotPaths, fillParent } from './PlotStyles'
 
 class Cumulative extends React.Component {
   render(){
@@ -35,7 +36,7 @@ class Cumulative extends React.Component {
         transform = 'translate('+offsets[i].x+','+-offsets[i].y+')'
       }
       return (
-        <path className={styles.bold_path}
+        <path style={plotPaths.bold}
               d={d}
               key={i}
               fill='none'
@@ -54,12 +55,12 @@ class Cumulative extends React.Component {
       <div className={styles.outer}>
         <svg id="cumulative_plot"
           ref={(elem) => { this.svg = elem; }}
-          className={styles.main_plot+' '+styles.fill_parent}
+          style={fillParent}
           viewBox={viewbox}
           preserveAspectRatio="xMinYMin">
           <g transform={'translate(100,10)'} >
             <CumulativePlotBoundary yValues={yValues} records={records} span={span}/>
-            <path className={styles.bold_path}
+            <path style={plotPaths.axis}
                   d={all}
                   fill='none'
                   stroke='#999'

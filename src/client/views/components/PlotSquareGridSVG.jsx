@@ -3,6 +3,12 @@ import { connect } from 'react-redux'
 import styles from './Plot.scss'
 import { getSelectedSquareGrid } from '../reducers/plotSquareBins'
 import { addRecords, removeRecords } from '../reducers/select'
+import {
+  grid as gridStyle,
+  gridShape,
+  gridShapeSelected,
+  gridShapePartSelected
+} from './PlotStyles'
 
 export default class PlotSquareGridSVG extends React.Component {
   constructor(props) {
@@ -49,17 +55,16 @@ export default class PlotSquareGridSVG extends React.Component {
 const SquareGridSVG = ({ data, onClickCell, mouseDown, setMouseDown, setAddRecords }) => {
   let squares = []
   data.forEach((datum,i)=>{
-    let css = styles.square
+    let style = gridShape
     if (datum.selected){
-      css += ' '+styles.selected
+      style = gridShapeSelected
       if (datum.selected < datum.ids.length){
-        css += ' '+styles.partial
+        style = gridShapePartSelected
       }
     }
     squares.push(
       <rect key={i}
-        className={css}
-        fill='none'
+        style={style}
         x={datum.x}
         y={datum.y}
         height={datum.height}
@@ -78,7 +83,7 @@ const SquareGridSVG = ({ data, onClickCell, mouseDown, setMouseDown, setAddRecor
       />)
   })
   return (
-    <g className={styles.padded_main + ' ' + styles.grid}>
+    <g transform='translate(50, 50)' style={{gridStyle}}>
     {squares}
     </g>
   )

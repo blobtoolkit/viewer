@@ -14,8 +14,8 @@ svg text {
 }
 
 .main_plot {
-  height:100%;
-  width:100%;
+  // height:100%;
+  // width:100%;
   pointer-events:none;
 
   .bold_path {
@@ -59,44 +59,6 @@ svg text {
     box-sizing: border-box;
   }
 
-  .grid {
-    stroke:$paleColor;
-    stroke-width:0.5;
-    pointer-events:auto;
-    cursor:pointer;
-
-    .hex {
-      stroke:$paleColor;
-      stroke-width:0.5;
-      fill:$clearColor;
-    }
-    .hex.selected {
-      fill:rgba($highlightColor,0.75);
-      stroke:rgba($highlightColor,1);
-      stroke-width:4px;
-    }
-    .hex.selected.partial {
-      fill:$clearColor;
-      stroke:rgba($highlightColor,1);
-      stroke-width:4px;
-    }
-    .square {
-      stroke:$paleColor;
-      stroke-width:0.5;
-      fill:$clearColor;
-      cursor:pointer;
-    }
-    .square.selected {
-      fill:rgba($highlightColor,0.75);
-      stroke:rgba($highlightColor,1);
-      stroke-width:4px;
-    }
-    .square.selected.partial {
-      fill:$clearColor;
-      stroke:rgba($highlightColor,1);
-      stroke-width:4px;
-    }
-  }
   .plot_boundary {
     stroke:$darkColor;
     stroke-width:2;
@@ -127,10 +89,6 @@ svg text {
     font-family:sans-serif;
     text-anchor:middle;
     font-size:36px;
-  }
-
-  .padded_main {
-    transform:translate(50px,50px)
   }
 
   .legend {
@@ -358,6 +316,9 @@ div.download {
 .static_image {
   max-height:100%;
   max-width:100%;
+  width:100%;
+  object-fit: contain;
+  object-position: center;
 }
 
 .clamped_divider {

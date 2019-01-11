@@ -1,7 +1,8 @@
 import React from 'react';
+import { plotShapes } from './PlotStyles'
 
-const PlotBubbleSVG = ({ css, x, y, r }) => (
-  <circle cx={x} cy={y} r={r} className={css}/>
+const PlotBubbleSVG = ({ x, y, r }) => (
+  <circle cx={x} cy={y} r={r} style={plotShapes.circle}/>
 );
 
 export default PlotBubbleSVG;

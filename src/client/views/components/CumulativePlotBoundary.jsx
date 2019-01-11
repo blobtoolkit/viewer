@@ -5,6 +5,7 @@ import styles from './Plot.scss'
 import {Axis, axisPropsFromTickScale, LEFT, BOTTOM} from 'react-d3-axis';
 import { scaleLinear as d3scaleLinear } from 'd3-scale';
 import { format as d3Format } from 'd3-format'
+import { plotPaths, fillParent } from './PlotStyles'
 
 export const CumulativePlotBoundary = ({yValues,yLabel,records,span}) => {
   yValues = yValues
@@ -22,7 +23,7 @@ export const CumulativePlotBoundary = ({yValues,yLabel,records,span}) => {
       <g  transform={'translate(0,1000)'} >
         <Axis {...axisPropsFromTickScale(xScale, 10)} format={f} style={{orient: BOTTOM, tickFontSize: fontSize}}/>
       </g>
-      <rect className={styles.plot_boundary} x={0} y={0} width={1000} height={1000} fill='none'/>
+      <rect style={plotPaths.boundary} x={0} y={0} width={1000} height={1000} fill='none'/>
     </g>
   )
 }

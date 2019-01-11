@@ -5,6 +5,7 @@ import { getDatasetID } from '../reducers/location'
 import { getDatasetMeta } from '../reducers/repository'
 import styles from './Plot.scss'
 import { format as d3format} from 'd3-format'
+import { plotText } from './PlotStyles'
 
 export default class PlotLegend extends React.Component {
   constructor(props) {
@@ -42,7 +43,7 @@ const Legend = ({values,zAxis,bins,palette,other,reducer,meta}) => {
     let gap = 5
     ds = (
       <g transform={'translate('+0+','+0+')'}>
-        <text className={styles.legend_title}>{meta.name}</text>
+        <text style={plotText.legendTitle}>{meta.name}</text>
       </g>
     )
     let headers = ['count']
@@ -54,7 +55,10 @@ const Legend = ({values,zAxis,bins,palette,other,reducer,meta}) => {
     }
     legendKey = (
       <g transform={'translate('+(w+gap)+','+(offset-gap)+')'}>
-        <text className={styles.legend} transform={'translate(260)'} style={{textAnchor:'end',fontWeight:'normal'}}>[{headers.join('; ')}]</text>
+        <text transform={'translate(260)'}
+              style={Object.assign({}, plotText.legend, {textAnchor:'end',fontWeight:'normal'})}>
+          [{headers.join('; ')}]
+        </text>
       </g>
     )
     let title = 'total'
@@ -72,8 +76,8 @@ const Legend = ({values,zAxis,bins,palette,other,reducer,meta}) => {
       items.push(
         <g key='all' transform={'translate(0,'+offset+')'}>
           <rect x={0} y={0} width={w} height={h} style={{fill:color,stroke:'black'}} />
-          <text className={styles.legend} transform={'translate('+(w+gap)+','+(h-gap)+')'}>{title}</text>
-          <text className={styles.legend} transform={'translate('+(w+gap+260)+','+(h-gap)+')'} style={{textAnchor:'end'}}>[{numbers.join('; ')}]</text>
+          <text style={plotText.legend} transform={'translate('+(w+gap)+','+(h-gap)+')'}>{title}</text>
+          <text style={Object.assign({}, plotText.legend, {textAnchor:'end'})} transform={'translate('+(w+gap+260)+','+(h-gap)+')'}>[{numbers.join('; ')}]</text>
         </g>
       )
       offset += h + gap
@@ -94,8 +98,8 @@ const Legend = ({values,zAxis,bins,palette,other,reducer,meta}) => {
         items.push(
           <g key={i} transform={'translate(0,'+offset+')'}>
             <rect x={0} y={0} width={w} height={h} style={{fill:color,stroke:'black'}} />
-            <text className={styles.legend} transform={'translate('+(w+gap)+','+(h-gap)+')'}>{title}</text>
-            <text className={styles.legend} transform={'translate('+(w+gap+260)+','+(h-gap)+')'} style={{textAnchor:'end'}}>[{numbers.join('; ')}]</text>
+            <text style={plotText.legend} transform={'translate('+(w+gap)+','+(h-gap)+')'}>{title}</text>
+            <text style={Object.assign({}, plotText.legend, {textAnchor:'end'})} transform={'translate('+(w+gap+260)+','+(h-gap)+')'}>[{numbers.join('; ')}]</text>
           </g>
         )
         offset += h + gap
@@ -110,51 +114,3 @@ const Legend = ({values,zAxis,bins,palette,other,reducer,meta}) => {
     </g>
   )
 }
-
-
-// const MenuSummary = ({values,zAxis,bins,palette,other}) => {
-//
-//   let css = styles.long_menu_item
-//   let counts = []
-//   let reduced = []
-//   let listDiv
-//   if (bins){
-//     bins.forEach((bin,i) => {
-//       let title = bin.id
-//       let color = palette.colors[i]
-//       let value = values.counts.selBinned[i]
-//       let total = values.counts.binned[i]
-//       if (total){
-//         counts[i] = <TabbedFraction key={i} {...{value,total,color,title}}/>
-//         value = values.reduced.selBinned[i]
-//         total = values.reduced.binned[i]
-//         reduced[i] = <TabbedFraction key={i} {...{value,total,color,title}}/>
-//       }
-//     })
-//     if (other){
-//       let list = []
-//       other.forEach((id,i) => {
-//         list.push(<span key={i}><span className={styles.no_break}>{id}</span>, </span>)
-//       })
-//       listDiv = (<div className={css}>
-//         <h3>Other Taxa</h3>
-//         {list}
-//       </div>)
-//     }
-//   }
-//   return (
-//     <div>
-//       <div className={css}>
-//         <h3>{zAxis}</h3>
-//         <TabbedFraction value={values.reduced.sel} total={values.reduced.all}/>
-//         {reduced}
-//       </div>
-//       <div className={css}>
-//         <h3>counts</h3>
-//         <TabbedFraction value={values.counts.sel} total={values.counts.all}/>
-//         {counts}
-//       </div>
-//       {listDiv}
-//     </div>
-//   )
-// }

@@ -4,6 +4,12 @@ import styles from './Plot.scss'
 import { getSelectedHexGrid } from '../reducers/plotHexBins'
 import { addRecords, removeRecords } from '../reducers/select'
 import Pointable from 'react-pointable';
+import {
+  grid as gridStyle,
+  gridShape,
+  gridShapeSelected,
+  gridShapePartSelected
+} from './PlotStyles'
 
 export default class PlotHexGridSVG extends React.Component {
   constructor(props) {
@@ -51,100 +57,24 @@ export default class PlotHexGridSVG extends React.Component {
 const HexGridSVG = ({ data, onClickCell, mouseDown, setMouseDown, setAddRecords }) => {
   let hexes = []
   data.forEach((datum,i)=>{
-    let css = styles.hex
+    let style = gridShape
     if (datum.selected){
-      css += ' '+styles.selected
+      style = gridShapeSelected
       if (datum.selected < datum.ids.length){
-        css += ' '+styles.partial
+        style = gridShapePartSelected
       }
     }
     hexes.push(
-      // <Pointable
-      //   key={i}
-      //   tagName='g'
-      //   onPointerMove={(e)=>{
-      //     e.preventDefault()
-      //     console.log(e.layerX + ' ' + e.layerY)
-      //     if (mouseDown){
-      //       onClickCell(datum.ids)
-      //     }
-      //   }}
-      //   onPointerLeave={(e)=>{
-      //     e.preventDefault()
-      //     //e.target.releasePointerCapture(e.pointerId)
-      //     console.log(e)
-      //     console.log('left')
-      //   }}
-      //   onPointerEnter={(e)=>{
-      //     e.preventDefault()
-      //     //e.target.releasePointerCapture(e.pointerId)
-      //     console.log('entered')
-      //   }}
-      //   onPointerDown={(e)=>{
-      //     e.preventDefault()
-      //     //e.target.setPointerCapture(e.pointerId)
-      //     if (datum.selected){
-      //       setAddRecords(false)
-      //     }
-      //     else {
-      //       setAddRecords(true)
-      //     }
-      //     setMouseDown(true)
-      //   }}
-      //   onPointerUp={(e)=>{
-      //     e.preventDefault()
-      //     setMouseDown(false)
-      //   }}
-      //   >
-        <polygon
-          key={i}
-          className={css}
-          points={datum.points}
-          fill={datum.color}
-          // onMouseOver={()=>{
-          //   if (mouseDown){
-          //     onClickCell(datum.ids)
-          //   }
-          // }}
-          // onMouseDown={()=>{
-          //   if (datum.selected){
-          //     setAddRecords(false)
-          //   }
-          //   else {
-          //     setAddRecords(true)
-          //   }
-          //   setMouseDown(true)
-          // }}
-          // onMouseUp={()=>{
-          //   setMouseDown(false)
-          // }}
-          // onTouchStart={(e)=>{
-          //   // TODO: support touch events - need to find bins by coords returned by nativeEvent
-          //   e.preventDefault()
-          //   if (datum.selected){
-          //     setAddRecords(false)
-          //   }
-          //   else {
-          //     setAddRecords(true)
-          //   }
-          //   setMouseDown(true)
-          // }}
-          // onTouchMove={(e)=>{
-          //   // console.log(e.nativeEvent)
-          //   e.preventDefault(); if (mouseDown){onClickCell(datum.ids)}
-          // }}
-          // onTouchEnd={(e)=>{
-          //   e.preventDefault(); setMouseDown(false)
-          // }}
-          // onTouchCancel={(e)=>{
-          //   e.preventDefault(); setMouseDown(false)
-          // }}
-        />
-      //</Pointable>
+      <polygon
+        key={i}
+        style={style}
+        points={datum.points}
+        fill={datum.color}
+      />
     )
   })
   return (
-    <g className={styles.padded_main + ' ' + styles.grid}>
+    <g transform='translate(50, 50)' style={{gridStyle}}>
     {hexes}
     </g>
   )

@@ -4,6 +4,7 @@ import { getBinnedLinesByCategoryForAxis }  from '../reducers/plotSquareBins'
 import styles from './Plot.scss'
 import {Axis, axisPropsFromTickScale, LEFT, RIGHT} from 'react-d3-axis';
 import { format as d3Format } from 'd3-format'
+import { plotPaths } from './PlotStyles'
 
 export default class PlotSideBinsSVG extends React.Component {
   constructor(props) {
@@ -60,9 +61,9 @@ const SideBinsSVG = ({ paths = [], axis='x',scale }) => {
   return (
     <g {...params}>
       {paths.map((path,i) =>
-        <path className={styles.side_bins} d={path.path} key={i} fill={path.color} stroke={path.color} color={path.color}  />
+        <path style={plotPaths.sideBins} d={path.path} key={i} fill={path.color} stroke={path.color} color={path.color}  />
       )}
-      <rect className={styles.plot_boundary} x={0} y={0} width={1000} height={300} fill='none'/>
+      <rect style={plotPaths.boundary} x={0} y={0} width={1000} height={300} fill='none'/>
       {tickMarks}
     </g>
   )

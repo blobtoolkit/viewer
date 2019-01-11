@@ -1,10 +1,10 @@
 import React from 'react';
 import { connect } from 'react-redux'
 import { getMainPlotData }  from '../reducers/plotData'
-import styles from './Plot.scss'
 import {Axis, axisPropsFromTickScale, LEFT, BOTTOM} from 'react-d3-axis';
 import { scaleLinear as d3scaleLinear } from 'd3-scale'
 import { format as d3Format } from 'd3-format'
+import { plotPaths } from './PlotStyles'
 
 export default class MainPlotBoundary extends React.Component {
   constructor(props) {
@@ -72,7 +72,7 @@ const PlotOutline = (data) => {
         </text>
       </g>
     )
-    xBreak = <line className={styles.clamped_divider}
+    xBreak = <line style={plotPaths.clampedDivider}
                    x1={104} x2={104} y1={-300} y2={1050}/>
     xScale.range([122,950])
     xScale.domain([data.meta.x.meta.clamp,xScale.domain()[1]])
@@ -100,14 +100,14 @@ const PlotOutline = (data) => {
         </text>
       </g>
     )
-    yBreak = (<line className={styles.clamped_divider}
+    yBreak = (<line style={plotPaths.clampedDivider}
                     x1={-50} x2={1300} y1={896} y2={896}/>)
     yScale.range([878, 50])
     yScale.domain([data.meta.y.meta.clamp, yScale.domain()[1]])
   }
   return (
     <g>
-      <rect className={styles.plot_boundary} x={0} y={0} width={1000} height={1000} fill='none'/>
+      <rect style={plotPaths.boundary} x={0} y={0} width={1000} height={1000} fill='none'/>
       {xBreak}
       {xBreakAxis}
       {yBreak}
@@ -117,7 +117,7 @@ const PlotOutline = (data) => {
       <g  transform={'translate(1000)'} >
         <Axis {...axisPropsFromTickScale(yScale, 10)} style={{orient: LEFT, tickFontSize: 0}}/>
       </g>
-      <g  transform={'translate(0,1000)'} >
+      <g  transform={'translate(0,1000)'}>
         <Axis {...axisPropsFromTickScale(xScale, 10)} style={{orient: BOTTOM, tickFontSize: fontSize}} format={fx}/>
 
       </g>
