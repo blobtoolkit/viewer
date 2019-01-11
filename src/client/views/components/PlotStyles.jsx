@@ -21,8 +21,7 @@ export const plotText = {
   },
   snailPlotTitle: {
     fontFamily,
-    fontSize: '36px',
-    textAnchor,
+    fontSize: '28px',
     dominantBaseline: 'hanging'
   },
   legend: {

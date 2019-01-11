@@ -2,6 +2,7 @@ import React from 'react';
 import styles from './Plot.scss'
 import { format as d3format} from 'd3-format'
 import Spinner from './Spinner'
+import { plotPaths, plotText } from './PlotStyles'
 
 export const PlotTextInput = ({x,y,height,width,display,content,onChange,onKeyUp}) => {
   if (!display) return null
@@ -45,25 +46,24 @@ export class SnailPlotScale extends React.Component {
     let gap = 10
     let ds = (
       <g transform={'translate('+0+','+0+')'}>
-        <text className={styles.snail_legend_title}>{title}</text>
+        <text style={plotText.snailLegendTitle}>{title}</text>
       </g>
     )
     let format = d3format(".2s")
 
     items.push(
       <g key={offset} transform={'translate(0,'+offset+')'}>
-        <circle cx={w/2} cy={w/2} r={w/2} className={styles.axis_path} style={{fill:'none',stroke:'black'}}/>
-        <line x1={w/2} y1={0} x2={w/2} y2={w/2} className={styles.fine_path} style={{fill:'none',stroke:'black'}}/>
+        <circle cx={w/2} cy={w/2} r={w/2} style={plotPaths.axis} fill='none' stroke='black'/>
+        <line x1={w/2} y1={0} x2={w/2} y2={w/2} style={plotPaths.axis} fill='none' stroke='black'/>
         <rect
           x={w+gap}
           y={0}
           width='80px'
           height={w}
-          className={styles.axis_path}
-          style={{fill:'rgba(255,255,255,0)',stroke:'black',pointerEvents:'auto',cursor:'pointer'}}
+          style={Object.assign({},plotPaths.axis,{fill:'rgba(255,255,255,0)',stroke:'black',pointerEvents:'auto',cursor:'pointer'})}
           onClick={()=>this.setState({editCircumference:true})}
         />
-        <text x={w+3*gap/2} y={w-gap/2} className={styles.snail_legend}>{format(scale.circumference)}</text>
+      <text x={w+3*gap/2} y={w-gap/2} style={plotText.snailLegend}>{format(scale.circumference)}</text>
         <PlotTextInput
           x={w+gap}
           y={-1}
@@ -87,18 +87,17 @@ export class SnailPlotScale extends React.Component {
 
     items.push(
       <g key={offset} transform={'translate(0,'+offset+')'}>
-        <circle cx={w/2} cy={w/2} r={w/2} className={styles.fine_path} style={{fill:'none',stroke:'black'}}/>
-        <line x1={w/2} y1={0} x2={w/2} y2={w/2} className={styles.axis_path} style={{fill:'none',stroke:'black'}}/>
+        <circle cx={w/2} cy={w/2} r={w/2} style={plotPaths.axis} fill='none' stroke='black'/>
+        <line x1={w/2} y1={0} x2={w/2} y2={w/2} style={plotPaths.axis} fill='none' stroke='black'/>
         <rect
           x={w+gap}
           y={0}
           width='80px'
           height={w}
-          className={styles.axis_path}
-          style={{fill:'rgba(255,255,255,0)',stroke:'black',pointerEvents:'auto',cursor:'pointer'}}
+          style={Object.assign({},plotPaths.axis,{fill:'rgba(255,255,255,0)',stroke:'black',pointerEvents:'auto',cursor:'pointer'})}
           onClick={()=>this.setState({editRadius:true})}
         />
-        <text x={w+3*gap/2} y={w-gap/2} className={styles.snail_legend}>{format(scale.radius)}</text>
+        <text x={w+3*gap/2} y={w-gap/2} style={plotText.snailLegend}>{format(scale.radius)}</text>
         <PlotTextInput
           x={w+gap}
           y={-1}

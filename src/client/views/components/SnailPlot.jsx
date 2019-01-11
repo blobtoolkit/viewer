@@ -2,7 +2,7 @@ import React from 'react'
 import { connect } from 'react-redux'
 import styles from './Plot.scss'
 import { cumulativeCurves } from '../reducers/summary'
-import { getCircular, circularCurves } from '../reducers/summary'
+import { getCircular, circularCurves, getBuscoSets, getBuscoData, getBuscoPaths } from '../reducers/summary'
 import { getCurveOrigin, chooseCircumferenceScale, chooseRadiusScale } from '../reducers/plotParameters'
 import { getSelectedDatasetMeta } from '../reducers/dataset'
 import { getRawDataForFieldId, getDetailsForFieldId, fetchRawData } from '../reducers/field'
@@ -13,6 +13,7 @@ import Pointable from 'react-pointable';
 import { scaleLinear as d3scaleLinear } from 'd3-scale';
 import { arc as d3Arc } from 'd3-shape';
 import { ExportButton } from './ExportButton'
+import { plotPaths, plotText, fillParent } from './PlotStyles'
 
 const xScale = d3scaleLinear().range([-425,425])
 const yScale = d3scaleLinear().range([425,-425])
@@ -94,6 +95,9 @@ class Snail extends React.Component {
         this.props.activate(f)
       }
     })
+    if (this.props.buscoSets && !this.props.buscoData){
+      this.props.activate(this.props.buscoSets[0])
+    }
   }
 
   render(){
@@ -101,7 +105,7 @@ class Snail extends React.Component {
     let format = d3format(".2s")
     let pctFormat = d3format(".1%")
     let commaFormat = d3format(",")
-    let side = 1000
+    let side = 1050
     let viewbox = '0 0 '+side+' '+side
     let pathProps = this.props.circular.pathProps
     let paths = []
@@ -121,7 +125,10 @@ class Snail extends React.Component {
     let gcs = this.props.data.values.gc
     let ns = this.props.data.values.n
     let stats = SegmentStats({...this.state,sums,gcs,ns,nXlens,nXnums})
-    let topLeft, topRight, bottomRight
+    let topLeft, bottomRight, topRight
+    if (legend.composition){
+      bottomRight = <SnailPlotLegend title={'Composition'} list={legend.composition}/>
+    }
     if (stats.path){
       segment = <SnailSegment path={stats.path}/>
       let list = legend.composition.map(l=>(
@@ -152,16 +159,122 @@ class Snail extends React.Component {
           label: 'length: ' + commaFormat(stats.nX.len),
           color:legend.stats[1].color
         }]
-        topRight = <SnailPlotLegend title={'N'+stats.pct} list={list}/>
-      }
-    }
-    else {
-      if (legend.composition){
-        bottomRight = <SnailPlotLegend title={'Composition'} list={legend.composition}/>
+        bottomRight = <SnailPlotLegend title={'N'+stats.pct} list={list}/>
       }
     }
     if (legend.stats){
       topLeft = <SnailPlotLegend title={'Scaffold statistics'} list={legend.stats}/>
+    }
+    if (this.props.buscoPaths){
+      let buscoListA = []
+      let buscoListB = []
+      let subtitle = []
+      buscoListA.push({label:'Complete', value:pctFormat(this.props.buscoData.fractions.c), color:'rgb(51, 160, 44)'})
+      buscoListA.push({label:'Duplicated', value:pctFormat(this.props.buscoData.fractions.d), color:'rgb(32, 100, 27)'})
+      if (this.props.buscoMeta.meta.set){
+        subtitle.push({label:this.props.buscoMeta.meta.set, value:this.props.buscoData.total})
+      }
+      else{
+        subtitle.push({label:'Total: '+this.props.buscoData.total})
+      }
+      buscoListB.push({label:'Fragmented', value:pctFormat(this.props.buscoData.fractions.f), color:'rgb(163, 226, 127)'})
+      buscoListB.push({label:'Missing', value:pctFormat(this.props.buscoData.fractions.m), color:'white'})
+
+      let axis = this.props.circular.axes.inner
+      let buscoAxis = []
+      buscoAxis.push(
+        <path style={plotPaths.bold}
+              d={axis.path}
+              key={'ring'}
+              fill='none'
+              stroke='black'
+              strokeLinecap='round'/>
+      )
+      if (axis.ticks){
+        axis.ticks.major.forEach((d,idx) => {
+          buscoAxis.push(
+            <path style={plotPaths.bold}
+                  d={d}
+                  key={'major_'+idx}
+                  fill='none'
+                  stroke='black'
+                  strokeLinecap='round'/>
+          )
+        })
+        axis.ticks.minor.forEach((d,idx) => {
+          buscoAxis.push(
+            <path style={plotPaths.bold}
+                  d={d}
+                  key={'minor_'+idx}
+                  fill='none'
+                  stroke='black'
+                  strokeLinecap='round'/>
+          )
+        })
+        if (axis.ticks.labels){
+          axis.ticks.labels.forEach((d,idx) => {
+            let textAnchor = 'middle'
+            let startOffset = '50%'
+            let fontSize = d.fontSize ? d.fontSize : '18px'
+            if (d.align == 'left'){
+              textAnchor = 'left'
+              startOffset = 0
+            }
+            if (d.align == 'right'){
+              textAnchor = 'end'
+              startOffset = '100%'
+            }
+            buscoAxis.push(
+              <path style={plotPaths.bold}
+                    d={d.path}
+                    key={'path_'+idx}
+                    id={'path_'+idx}
+                    fill='none'
+                    stroke='none'/>
+            )
+            buscoAxis.push(
+              <text key={'text_'+idx}
+                    style={Object.assign({}, plotText.axisLabel, {fontSize:'60px'})}>
+                <textPath
+                    xlinkHref={'#path_'+idx}
+                    textAnchor={textAnchor}
+                    startOffset={startOffset}>
+                  {d.text}
+                </textPath>
+              </text>
+            )
+          })
+        }
+      }
+
+      topRight = (
+        <g transform='translate(10,0)'>
+          <g transform='translate(-175,0)'>
+            <SnailPlotLegend title={'BUSCO'} list={buscoListA}/>
+          </g>
+          <g transform='translate(-60,-25)'>
+            <SnailPlotLegend title={''} list={subtitle}/>
+          </g>
+          <g transform='translate(0,0)'>
+            <SnailPlotLegend title={''} list={buscoListB}/>
+          </g>
+          <g transform='translate(70,170) scale(0.35)'>
+            <path d={this.props.buscoPaths.c}
+                  fill={'rgb(51, 160, 44)'}
+                  stroke={'none'}/>
+            <path d={this.props.buscoPaths.d}
+                  fill={'rgb(32, 100, 27)'}
+                  stroke={'none'}/>
+            <path d={this.props.buscoPaths.f}
+                  fill={'rgb(163, 226, 127)'}
+                  stroke={'none'}/>
+          </g>
+          <g transform='translate(70,170) scale(0.20)'>
+            {buscoAxis}
+            <line y2={-375} style={plotPaths.bold} stroke='black'></line>
+          </g>
+        </g>
+        )
     }
     Object.keys(this.props.circular.paths).forEach((k,i)=>{
       let d = this.props.circular.paths[k]
@@ -176,10 +289,11 @@ class Snail extends React.Component {
       )
     })
     let axes = this.props.circular.axes
+    console.log(axes)
     Object.keys(axes).forEach((k,i)=>{
       let axis = axes[k]
       paths.push(
-        <path className={styles.axis_path}
+        <path style={plotPaths.axis}
               d={axis.path}
               key={k}
               fill='none'
@@ -189,7 +303,7 @@ class Snail extends React.Component {
       if (axis.ticks){
         axis.ticks.major.forEach((d,idx) => {
           paths.push(
-            <path className={styles.axis_path}
+            <path style={plotPaths.axis}
                   d={d}
                   key={k+'_major_'+idx}
                   fill='none'
@@ -199,7 +313,7 @@ class Snail extends React.Component {
         })
         axis.ticks.minor.forEach((d,idx) => {
           paths.push(
-            <path className={styles.fine_path}
+            <path style={plotPaths.fine}
                   d={d}
                   key={k+'_minor_'+idx}
                   fill='none'
@@ -211,7 +325,7 @@ class Snail extends React.Component {
           axis.ticks.labels.forEach((d,idx) => {
             let textAnchor = 'middle'
             let startOffset = '50%'
-            let fontSize = d.fontSize ? d.fontSize : '1.4em'
+            let fontSize = d.fontSize ? d.fontSize : '18px'
             if (d.align == 'left'){
               textAnchor = 'left'
               startOffset = 0
@@ -221,7 +335,7 @@ class Snail extends React.Component {
               startOffset = '100%'
             }
             paths.push(
-              <path className={styles.axis_path}
+              <path style={plotPaths.axis}
                     d={d.path}
                     key={k+'_path_'+idx}
                     id={k+'_path_'+idx}
@@ -230,8 +344,7 @@ class Snail extends React.Component {
             )
             paths.push(
               <text key={k+'_text_'+idx}
-                    className={styles.axis_label}
-                    style={{fontSize}}>
+                    style={Object.assign({}, plotText.axisLabel, {fontSize})}>
                 <textPath
                     xlinkHref={'#'+k+'_path_'+idx}
                     textAnchor={textAnchor}
@@ -254,15 +367,15 @@ class Snail extends React.Component {
       <div className={styles.outer}>
         <svg id="snail_plot"
           ref={(elem) => { this.svg = elem; }}
-          className={styles.main_plot+' '+styles.fill_parent}
+          style={fillParent}
           viewBox={viewbox}
           preserveAspectRatio="xMinYMin">
-          <g transform={'translate(500,45)'} >
-            <text className={styles.snail_plot_title}>
-              {this.props.meta.id}
+          <g transform={'translate(10,1000)'} >
+            <text style={plotText.snailPlotTitle}>
+              Dataset: {this.props.meta.id}
             </text>
           </g>
-          <g transform={'translate(500,500)'} >
+          <g transform={'translate(525,550)'} >
             {paths}
             {segment}
           </g>
@@ -289,8 +402,8 @@ class Snail extends React.Component {
             >
             <circle
             r={425}
-            cx={500}
-            cy={500}
+            cx={520}
+            cy={550}
             fill='rgba(255,255,255,0)'
             stroke='none'
             style={{pointerEvents:'auto',stroke:'none'}} />
@@ -298,13 +411,13 @@ class Snail extends React.Component {
           <g transform={'translate(10,35)'} >
             {topLeft}
           </g>
-          <g transform={'translate(10,860)'} >
+          <g transform={'translate(10,890)'} >
             {bottomLeft}
           </g>
-          <g transform={'translate(800,860)'} >
+          <g transform={'translate(850,890)'} >
             {bottomRight}
           </g>
-          <g transform={'translate(800,35)'} >
+          <g transform={'translate(850,35)'} >
             {topRight}
           </g>
         </svg>
@@ -318,13 +431,24 @@ class SnailPlot extends React.Component {
   constructor(props) {
     super(props);
     this.mapStateToProps = state => {
+      let buscoSets = getBuscoSets(state)
+      let buscoData, buscoPaths, buscoMeta
+      if (buscoSets && buscoSets.length > 0){
+        buscoData = getBuscoData(state, buscoSets[0]),
+        buscoPaths = getBuscoPaths(state, buscoSets[0]),
+        buscoMeta = getDetailsForFieldId(state, buscoSets[0])
+      }
       return {
         data: getCircular(state),
         gc: getRawDataForFieldId(state,'gc'),
         length: getRawDataForFieldId(state,'length'),
         ncount: getRawDataForFieldId(state,'ncount'),
         circular: circularCurves(state),
-        meta: getSelectedDatasetMeta(state)
+        meta: getSelectedDatasetMeta(state),
+        buscoSets,
+        buscoData,
+        buscoPaths,
+        buscoMeta
       }
     }
     this.mapDispatchToProps = dispatch => {
