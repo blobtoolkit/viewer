@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 const doc = `
 Usage:
-  utils/cli DATASET [--format STRING] [--host STRING] [--https] [--out PATH]
+  utils/cli DATASET [--format STRING...] [--host STRING] [--https] [--out PATH]
   [--param STRING...] [--port INT] [--prefix STRING] [--preview STRING...]
   [--timeout INT] [--view STRING...]
 Options:
@@ -112,24 +112,29 @@ const main = async (args) => {
         continue
       }
     }
-    let file = `${args.DATASET}.${view}`
-    if (view == 'blob'){
-      file += `.${shape}`
+    for (let i = 0; i < args['--format'].length; i++){
+      let format = args['--format'][i]
+      let file = `${args.DATASET}.${view}`
+      if (view == 'blob'){
+        file += `.${shape}`
+      }
+      file += `.${format}`
+      process.stderr.write(`Fetching ${file}\n`)
+      process.stderr.write('waiting for element\n')
+      let el
+      try {
+        el = await driver.wait(until.elementLocated(By.id(`${view}_save_${format}`)), timeout);
+        process.stderr.write(Object.keys(el).join(':'))
+        await driver.wait(until.elementIsVisible(el), timeout);
+        await el.click();
+      }
+      catch (err){
+        process.stderr.write(`${err.message}\n`)
+        continue
+      }
+      process.stderr.write('waiting for file')
+      await fileReady(`${outdir}/${file}`)
     }
-    file += `.${args['--format']}`
-    process.stderr.write(`Fetching ${file}\n`)
-    process.stderr.write('waiting for element\n')
-    let el
-    try {
-      el = await driver.wait(until.elementLocated(By.id(`${view}_save_${args['--format']}`)), timeout);
-      await el.click();
-    }
-    catch (err){
-      process.stderr.write(`${err.message}\n`)
-      continue
-    }
-    process.stderr.write('waiting for file')
-    await fileReady(`${outdir}/${file}`)
   }
 
   while (args['--preview'].length > 0){
