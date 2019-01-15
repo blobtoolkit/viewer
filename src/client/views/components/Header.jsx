@@ -1,6 +1,5 @@
 import React from 'react'
 import styles from './Layout.scss'
-import BTKLogos from './BTKLogos'
 
 const home = HOME || '/'
 
@@ -27,7 +26,6 @@ const Header = ( { tabs, onTabClick } ) => {
           <h2>About</h2>
         </span>
       </a>
-      <BTKLogos/>
     </div>
   )
 }

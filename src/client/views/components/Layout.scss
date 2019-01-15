@@ -116,6 +116,20 @@
       text-decoration: underline;
     }
   }
+
+  span.logo {
+    float: right;
+    height: 2em;
+    img {
+      cursor:pointer;
+      height: 2em;
+      background-color: $lightColor;
+      box-sizing: border-box;
+      border: 2px solid $lightColor;
+      margin: 0 0.2em;
+      border-radius: 0.2em;
+    }
+  }
 }
 
 .right_align {
@@ -377,24 +391,6 @@ table {
   border-color: $deepColor;
   background-color:$darkColor;
   color: $darkColor;
-}
-
-
-
-
-span.logo {
-  position:absolute;
-  top: 0.4em;
-  right: 0.4em;
-  img {
-    cursor:pointer;
-    height: 3.5em;
-    background-color: $lightColor;
-    box-sizing: border-box;
-    border: 2px solid $lightColor;
-    margin-left: 0.35em;
-    border-radius: 0.2em;
-  }
 }
 
 .simple {

@@ -8,6 +8,7 @@ import LayoutHeader from './LayoutHeader'
 import LayoutPlots from './LayoutPlots'
 import ExternalLink from './ExternalLink'
 import Spinner from './Spinner'
+import BTKLogos from './BTKLogos'
 import DOIBadge from './DOIBadge'
 import { queryToStore } from '../querySync'
 import qs from 'qs'
@@ -46,6 +47,7 @@ class LayoutComponent extends React.Component {
             BlobToolKit Viewer, version <a href={url} target={text}>{text}</a>
           </span>
           <DOIBadge/>
+          <BTKLogos/>  
         </div>
       </div>
     )
