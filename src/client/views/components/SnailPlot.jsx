@@ -289,7 +289,6 @@ class Snail extends React.Component {
       )
     })
     let axes = this.props.circular.axes
-    console.log(axes)
     Object.keys(axes).forEach((k,i)=>{
       let axis = axes[k]
       paths.push(
