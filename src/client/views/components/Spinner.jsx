@@ -28,7 +28,7 @@ class Spinner extends React.Component {
       return null
     }
     return (
-      <div className={styles.outer}>
+      <div id='spinner' className={styles.outer}>
         <div className={styles['lds-ripple']}>
           <div></div>
           <div></div>
