@@ -103,13 +103,14 @@
   .doi_badge {
     position:relative;
     float:right;
-    margin: 0.4em;
+    margin: 0.8em 0.6em 0.6em 0;
   }
 
   span {
     color: white;
     display: inline-block;
     margin: 0.5em;
+    margin-top: 1em;
 
     a {
       color: $highlightColor;
@@ -120,6 +121,7 @@
   span.logo {
     float: right;
     height: 2em;
+    margin-top: 0.5em;
     img {
       cursor:pointer;
       height: 2em;

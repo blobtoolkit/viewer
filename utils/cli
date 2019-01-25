@@ -124,13 +124,6 @@ const main = async (args) => {
       try {
         let el = await driver.wait(until.elementLocated(By.id(`${view}_save_${format}`)), timeout);
         await driver.wait(until.elementIsVisible(el), timeout);
-        try {
-          let spinner = await driver.findElement(By.id('spinner'));
-          await driver.wait(until.elementIsNotVisible(spinner), timeout);
-        }
-        catch (err){
-          continue
-        }
         await el.click();
       }
       catch (err){

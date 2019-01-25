@@ -106,7 +106,7 @@ export const plotPaths = {
   },
   clampedDivider: {
     stroke: colors.deepColor,
-    strokeOpacity: 0.5,
+    strokeOpacity: 0.6,
     strokeWidth: 3,
     strokeDasharray: 5
   }
