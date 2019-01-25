@@ -85,7 +85,8 @@ export const plotPaths = {
   },
   axis: {
     strokeWidth: 3,
-    opacity: 1
+    opacity: 1,
+    fill: 'none'
   },
   fine: {
     strokeWidth: 1,

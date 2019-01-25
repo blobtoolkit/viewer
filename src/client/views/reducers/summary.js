@@ -27,7 +27,6 @@ import { arc as d3Arc } from 'd3-shape';
 import { format as d3Format } from 'd3-format'
 import { default as Simplify } from 'simplify-js'
 import { getIdentifiersForList } from './list'
-import { format as d3format } from 'd3-format'
 
 export const getSelectedScatterPlotDataByCategory = createSelector(
   getMainPlotData,
@@ -689,8 +688,8 @@ export const circularCurves = createSelector(
       pathProps.endGC = {fill:'none',stroke:'#cccccc',strokeWidth:2}
     }
 
-    let format = d3format(".2s")
-    let gcFormat = d3format(".1f")
+    let format = d3Format(".2s")
+    let gcFormat = d3Format(".1f")
     let legend = {
       'stats': [
         {

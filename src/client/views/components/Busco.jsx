@@ -9,7 +9,7 @@ import { format as d3Format } from 'd3-format'
 import ReactTable from 'react-table'
 import { getDatasetID } from '../reducers/location'
 import { addRecords, removeRecords } from '../reducers/select'
-
+import { CircleAxis } from './CircleAxis'
 
 const RecordSelector = ({sel,val,records,id,toggleSelect}) => {
   let css = layoutStyles.colored_tab
@@ -128,7 +128,7 @@ class BuscoPlot extends React.Component {
     }
   }
   render(){
-    let side = 400
+    let side = 480
     let exportButtons = (
       <div className={styles.download}>
         <ExportButton view={`${this.props.id}_busco`} element={'busco_plot'+this.props.id} prefix={this.props.datasetId+'.'+this.props.id+'.busco'} format='svg'/>
@@ -147,7 +147,7 @@ class BuscoPlot extends React.Component {
           style={{width:'11em',height:'11em'}}
           viewBox={viewbox}
           preserveAspectRatio="xMinYMin">
-          <g transform='translate(200,200)'>
+          <g transform='translate(240,240)'>
             <path d={this.props.paths.c}
                   fill={'rgb(51, 160, 44)'}
                   stroke={'none'}/>
@@ -157,6 +157,7 @@ class BuscoPlot extends React.Component {
             <path d={this.props.paths.f}
                   fill={'rgb(163, 226, 127)'}
                   stroke={'none'}/>
+            <CircleAxis radius={200}/>
           </g>
         </svg>
         {exportButtons}

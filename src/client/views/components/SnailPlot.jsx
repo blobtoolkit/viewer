@@ -14,6 +14,8 @@ import { scaleLinear as d3scaleLinear } from 'd3-scale';
 import { arc as d3Arc } from 'd3-shape';
 import { ExportButton } from './ExportButton'
 import { plotPaths, plotText, fillParent } from './PlotStyles'
+import { CircleAxis } from './CircleAxis'
+
 
 const xScale = d3scaleLinear().range([-425,425])
 const yScale = d3scaleLinear().range([425,-425])
@@ -181,71 +183,71 @@ class Snail extends React.Component {
       buscoListB.push({label:'Missing', value:pctFormat(this.props.buscoData.fractions.m), color:'white'})
 
       let axis = this.props.circular.axes.inner
-      let buscoAxis = []
-      buscoAxis.push(
-        <path style={plotPaths.bold}
-              d={axis.path}
-              key={'ring'}
-              fill='none'
-              stroke='black'
-              strokeLinecap='round'/>
-      )
-      if (axis.ticks){
-        axis.ticks.major.forEach((d,idx) => {
-          buscoAxis.push(
-            <path style={plotPaths.bold}
-                  d={d}
-                  key={'major_'+idx}
-                  fill='none'
-                  stroke='black'
-                  strokeLinecap='round'/>
-          )
-        })
-        axis.ticks.minor.forEach((d,idx) => {
-          buscoAxis.push(
-            <path style={plotPaths.bold}
-                  d={d}
-                  key={'minor_'+idx}
-                  fill='none'
-                  stroke='black'
-                  strokeLinecap='round'/>
-          )
-        })
-        if (axis.ticks.labels){
-          axis.ticks.labels.forEach((d,idx) => {
-            let textAnchor = 'middle'
-            let startOffset = '50%'
-            let fontSize = d.fontSize ? d.fontSize : '18px'
-            if (d.align == 'left'){
-              textAnchor = 'left'
-              startOffset = 0
-            }
-            if (d.align == 'right'){
-              textAnchor = 'end'
-              startOffset = '100%'
-            }
-            buscoAxis.push(
-              <path style={plotPaths.bold}
-                    d={d.path}
-                    key={'path_'+idx}
-                    id={'path_'+idx}
-                    fill='none'
-                    stroke='none'/>
-            )
-            buscoAxis.push(
-              <text key={'text_'+idx}
-                    style={Object.assign({}, plotText.axisLabel, {fontSize:'60px'})}>
-                <textPath
-                    xlinkHref={'#path_'+idx}
-                    textAnchor={textAnchor}
-                    startOffset={startOffset}>
-                  {d.text}
-                </textPath>
-              </text>
-            )
-          })
-        }
-      }
+      let buscoAxis = <CircleAxis radius={200}/>
+      // buscoAxis.push(
+      //   <path style={plotPaths.bold}
+      //         d={axis.path}
+      //         key={'ring'}
+      //         fill='none'
+      //         stroke='black'
+      //         strokeLinecap='round'/>
+      // )
+      // if (axis.ticks){
+      //   axis.ticks.major.forEach((d,idx) => {
+      //     buscoAxis.push(
+      //       <path style={plotPaths.bold}
+      //             d={d}
+      //             key={'major_'+idx}
+      //             fill='none'
+      //             stroke='black'
+      //             strokeLinecap='round'/>
+      //     )
+      //   })
+      //   axis.ticks.minor.forEach((d,idx) => {
+      //     buscoAxis.push(
+      //       <path style={plotPaths.bold}
+      //             d={d}
+      //             key={'minor_'+idx}
+      //             fill='none'
+      //             stroke='black'
+      //             strokeLinecap='round'/>
+      //     )
+      //   })
+      //   if (axis.ticks.labels){
+      //     axis.ticks.labels.forEach((d,idx) => {
+      //       let textAnchor = 'middle'
+      //       let startOffset = '50%'
+      //       let fontSize = d.fontSize ? d.fontSize : '18px'
+      //       if (d.align == 'left'){
+      //         textAnchor = 'left'
+      //         startOffset = 0
+      //       }
+      //       if (d.align == 'right'){
+      //         textAnchor = 'end'
+      //         startOffset = '100%'
+      //       }
+      //       buscoAxis.push(
+      //         <path style={plotPaths.bold}
+      //               d={d.path}
+      //               key={'path_'+idx}
+      //               id={'path_'+idx}
+      //               fill='none'
+      //               stroke='none'/>
+      //       )
+      //       buscoAxis.push(
+      //         <text key={'text_'+idx}
+      //               style={Object.assign({}, plotText.axisLabel, {fontSize:'60px'})}>
+      //           <textPath
+      //               xlinkHref={'#path_'+idx}
+      //               textAnchor={textAnchor}
+      //               startOffset={startOffset}>
+      //             {d.text}
+      //           </textPath>
+      //         </text>
+      //       )
+      //     })
+      //   }
+      // }
 
       topRight = (
         <g transform='translate(10,0)'>
@@ -268,11 +270,9 @@ class Snail extends React.Component {
             <path d={this.props.buscoPaths.f}
                   fill={'rgb(163, 226, 127)'}
                   stroke={'none'}/>
-          </g>
-          <g transform='translate(70,170) scale(0.20)'>
             {buscoAxis}
-            <line y2={-375} style={plotPaths.bold} stroke='black'></line>
           </g>
+          
         </g>
         )
     }
