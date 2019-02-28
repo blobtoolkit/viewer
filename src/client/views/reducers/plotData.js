@@ -115,7 +115,7 @@ export const getMainPlotData = createSelector(
   getDetailsForZ,
   getDetailsForCat,
   (dsId,xData,yData,zData,catData,xMeta,yMeta,zMeta,catMeta) => {
-    if (!dsId || !xData || !yData || !zData || !catData) return undefined
+    if (!dsId || !catData) return undefined
     let plotData = {id:'default',axes:{},meta:{}};
     plotData.axes.x = xData || {values:[]}
     let xDomain = xMeta.xScale.domain().slice(0)
@@ -258,8 +258,8 @@ export const getScatterPlotData = createSelector(
     let data = [];
     let scales = {};
     let axes = ['x','y','z']
-    if (plotData.axes.x.values.length == 0 ||
-        plotData.axes.y.values.length == 0 ||
+    if (plotData.axes.x.values.length == 0 &&
+        plotData.axes.y.values.length == 0 &&
         plotData.axes.z.values.length == 0){
       return {data:[]}
     }
@@ -272,7 +272,11 @@ export const getScatterPlotData = createSelector(
     })
     let min = Number.POSITIVE_INFINITY
     let max = Number.NEGATIVE_INFINITY
-    let len = plotData.axes.x.values.length
+    let len = Math.max(
+                plotData.axes.x.values.length,
+                plotData.axes.y.values.length,
+                plotData.axes.z.values.length
+              )
     let yClamp = plotData.meta.y.meta.clamp || Number.NEGATIVE_INFINITY
     let yMin = plotData.meta.y.range[0]
     let xClamp = plotData.meta.x.meta.clamp || Number.NEGATIVE_INFINITY
@@ -311,10 +315,7 @@ export const getScatterPlotDataByCategory = createSelector(
     if (!plotData || !scatterData || !bins) return undefined
     let data = [];
     let keys = {}
-    if (plotData.axes.x.values.length == 0 ||
-        plotData.axes.y.values.length == 0 ||
-        plotData.axes.z.values.length == 0 ||
-        plotData.axes.cat.values.length == 0){
+    if (plotData.axes.cat.values.length == 0){
       return {data:[]}
     }
     bins.forEach((bin,i)=>{
@@ -323,6 +324,7 @@ export const getScatterPlotDataByCategory = createSelector(
         keys[key] = i
       })
     })
+    console.log(data)
     let len = plotData.axes.x.values.length
     for (let i = 0; i < len; i++){
       data[keys[plotData.axes.cat.values[i]]].push(

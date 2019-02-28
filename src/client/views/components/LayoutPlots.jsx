@@ -100,11 +100,11 @@ class LayoutPlots extends React.Component {
           static: true
         }
       }
-      if (!getScatterPlotData(state)) {
-        return {
-          datasetId: getDatasetID(state)
-        }
-      }
+      // if (!getScatterPlotData(state)) {
+      //   return {
+      //     datasetId: getDatasetID(state)
+      //   }
+      // }
       return {
         active: getDatasetIsActive(state),
         datasetId: getDatasetID(state),

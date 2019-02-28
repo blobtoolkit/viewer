@@ -37,13 +37,12 @@ export const getSelectedScatterPlotDataByCategory = createSelector(
   getBinsForCat,
   (plotData,active,scatterData,selected,zAxis,bins) => {
     if (!active || active == 'loading') return false
+    if (!plotData || !scatterData.data) return false
     let byCat = [];
     let selByCat = [];
     let selAll = [];
     let catKeys = {}
-    if (plotData.axes.x.values.length == 0 ||
-        plotData.axes.y.values.length == 0 ||
-        plotData.axes.z.values.length == 0 ||
+    if (plotData.axes.z.values.length == 0 ||
         plotData.axes.cat.values.length == 0){
       return {data:[]}
     }
@@ -158,7 +157,7 @@ export const getCumulative = createSelector(
   getScatterPlotData,
   getSelectedScatterPlotDataByCategory,
   (all,selected) => {
-    if (all.data.length == 0) return false
+    if (!all || all.data.length == 0) return false
     let zAxis = selected.zAxis
     let bins = selected.bins
     let values = {all:[],byCat:[]}

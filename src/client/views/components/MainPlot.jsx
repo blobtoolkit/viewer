@@ -28,6 +28,7 @@ import { addRecords, removeRecords } from '../reducers/select'
 import { scaleLinear as d3scaleLinear } from 'd3-scale';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { ExportButton } from './ExportButton'
+import { NoBlobWarning } from './NoBlobWarning'
 import { getDatasetID } from '../reducers/location'
 
 export default class MainPlot extends React.Component {
@@ -164,7 +165,7 @@ class PlotBox extends React.Component {
   }
 
   render(){
-    if (!this.props.datasetId) return null
+    if (!this.props.datasetId) return <NoBlobWarning/>
     let plotContainer
     let plotGrid
     let plotCanvas
