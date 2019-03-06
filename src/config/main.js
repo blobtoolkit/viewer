@@ -36,5 +36,8 @@ module.exports = {
   'apiUrl': process.env.BTK_API_URL || (BTK_HTTPS ? 'https' : 'http') + '://'+BTK_HOST+':'+BTK_API_PORT,
   'mode': process.env.NODE_ENV || 'test',
   // static threshold
-  'staticThreshold': process.env.BTK_STATIC_THRESHOLD || 100000
+  'staticThreshold': process.env.BTK_STATIC_THRESHOLD || 100000,
+  // SSL
+  'keyFile': process.env.BTK_KEYFILE || '',
+  'certFile': process.env.BTK_CERTFILE || ''
 }
