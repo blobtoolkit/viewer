@@ -223,32 +223,22 @@ export function fetchRawData(id) {
       .then(json => {
         if (!json.keys || json.keys.length == 0){
           let meta = getDetailsForFieldId(state,id)
-          let max = Number.MIN_VALUE, min = Number.MAX_VALUE;
-          let len = json.values.length;
-          // for (let i = 0; i < len; i++) {
-          //   if (json.values[i] > max) max = json.values[i];
-          //   if (json.values[i] < min) min = json.values[i];
-          // }
-          // let scale = meta.xScale.copy().domain([min,max]).nice(25)
-          let scale = meta.xScale.copy()//.nice(25)
-          let limit = meta.meta.range
-          // if (meta.meta.clamp){
-          // //   limit[0] = meta.meta.clamp
-          //   console.log(meta.meta.clamp)
-          // //   console.log(scale.clamp())
-          //   console.log(limit)
-          // //   console.log(scale.domain())
-          // }
-          let qLimit = [getQueryValue(id+'--LimitMin'),getQueryValue(id+'--LimitMax')]
-          limit[0] = qLimit[0].length > 0 ? 1*qLimit[0] : limit[0]
-          limit[1] = qLimit[1].length > 0 ? 1*qLimit[1] : limit[1]
-          dispatch(editField({id,range:limit}))
-          let range = limit.slice(0)
-          let qRange = [getQueryValue(id+'--Min'),getQueryValue(id+'--Max')]
-          range[0] = qRange[0].length > 0 ? 1*qRange[0] : range[0]
-          range[1] = qRange[1].length > 0 ? 1*qRange[1] : range[1]
-          let invert = getQueryValue(id+'--Inv') || false
-          dispatch(editFilter({id,range:limit,invert,limit}))
+          if (meta.meta.range){
+            let max = Number.MIN_VALUE, min = Number.MAX_VALUE;
+            let len = json.values.length;
+            let scale = meta.xScale.copy()
+            let limit = meta.meta.range
+            let qLimit = [getQueryValue(id+'--LimitMin'),getQueryValue(id+'--LimitMax')]
+            limit[0] = qLimit[0].length > 0 ? 1*qLimit[0] : limit[0]
+            limit[1] = qLimit[1].length > 0 ? 1*qLimit[1] : limit[1]
+            dispatch(editField({id,range:limit}))
+            let range = limit.slice(0)
+            let qRange = [getQueryValue(id+'--Min'),getQueryValue(id+'--Max')]
+            range[0] = qRange[0].length > 0 ? 1*qRange[0] : range[0]
+            range[1] = qRange[1].length > 0 ? 1*qRange[1] : range[1]
+            let invert = getQueryValue(id+'--Inv') || false
+            dispatch(editFilter({id,range:limit,invert,limit}))
+          }
         }
         else {
           let keystr = getQueryValue(id+'--Keys') || ''
