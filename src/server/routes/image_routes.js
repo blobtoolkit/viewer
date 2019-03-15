@@ -22,14 +22,18 @@ module.exports = function(app, db) {
   });
 
   app.get('/api/v1/image/:dataset_id/:view', async (req, res) => {
+    let type = ''
+    if (req.params.view == 'blob'){
+      type = '.square'
+    }
     if (req.query.format == 'svg'){
       res.setHeader('content-type', 'image/svg+xml');
-      let file = directory+"/"+req.params.dataset_id+"/"+req.params.view+".svg"
+      let file = directory+"/"+req.params.dataset_id+"/"+req.params.view+type+".svg"
       res.sendFile(file);
     }
     else {
       res.setHeader('content-type', 'image/png');
-      let file = directory+"/"+req.params.dataset_id+"/"+req.params.view+".png"
+      let file = directory+"/"+req.params.dataset_id+"/"+req.params.view+type+".png"
       if (req.query.width){
         let outputBuffer = await resize(file, Math.floor(1*req.query.width))
         res.send(outputBuffer)
