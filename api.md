@@ -189,3 +189,24 @@ curl -o LFJK02.blob.hex.png "https://example.com/api/v1/image/LFJK02/blob/hex"
 ```
 curl -o LFJK02.blob.square.png "https://example.com/api/v1/image/LFJK02/blob/square"
 ```
+
+### query string parameters
+
+#### /api/v1/image/:dataset_id/:type?format=:format
+
+Determines the image `:format` to retrieve, typically `PNG` and `SVG` formats will be available. If not specified, the default format is `PNG`.
+
+```
+curl -o LFJK02.blob.png "https://example.com/api/v1/image/LFJK02/blob?format=png"
+```
+```
+curl -o LFJK02.blob.svg "https://example.com/api/v1/image/LFJK02/blob?format=svg"
+```
+
+#### /api/v1/image/:dataset_id/:type?width=:width
+
+For `PNG` format images, determines the `:width` (in pixels) of the image to be returned. If the width specified is greater than the width of the available image, the image will be returned at its native resolution and will not be scaled up.
+
+```
+curl -o LFJK02.cumulative.1000.svg "https://example.com/api/v1/image/LFJK02/cumulative?width=1000"
+```
