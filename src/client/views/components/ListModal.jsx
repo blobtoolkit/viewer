@@ -19,13 +19,16 @@ class ListModal extends React.Component {
 
   _downloadJSONFile(name,content){
     var element = document.createElement('a');
-    var file = new Blob([JSON.stringify(content)], {type: 'text/plain'});
+    var file = new Blob([JSON.stringify(content, null, (content.identifiers ? null : 2))], {type: 'text/plain'});
     element.href = URL.createObjectURL(file);
     element.download = (name || 'file') + '.json';
-    element.click();
+    element.dispatchEvent(new MouseEvent(`click`, {bubbles: true, cancelable: true, view: window}))
   }
 
   render() {
+    if (!this.props.list.params){
+      return null
+    }
     let inParams = this.props.list.params;
     let params = {};
     Object.keys(inParams).sort().forEach(function(key) {
@@ -33,6 +36,13 @@ class ListModal extends React.Component {
     });
     let loadButton = (<a className={styles.button} onClick={()=>{this.props.chooseList(this.props.name,Boolean(params['selection--Active']));this.handleClose()}}>Load List</a>)
     let loadList = this.props.name == 'current' ? '' : loadButton
+    let list = this.props.list
+    let noIdList = {}
+    Object.keys(list).forEach(key=>{
+      if (key != 'identifiers'){
+        noIdList[key] = list[key]
+      }
+    })
     return (
       <div style={{position:'absolute', top:0, right:0, bottom:0, left:0}} onClick={()=>this.handleClick()}>
         {
@@ -40,7 +50,16 @@ class ListModal extends React.Component {
           <ModalContainer onClose={()=>this.handleClose()}>
             <ModalDialog onClose={()=>this.handleClose()}>
               <div className={styles.modal}>
-                <a className={styles.button} onClick={()=>this._downloadJSONFile(this.props.dataset+'.'+this.props.name,this.props.list)}>Download JSON</a>
+                <a id='full_list_download'
+                  className={styles.button}
+                  onClick={()=>this._downloadJSONFile(this.props.dataset+'.'+this.props.name,list)}>
+                    Full List
+                 </a>&nbsp;
+                <a id='noId_list_download'
+                  className={styles.button}
+                  onClick={()=>this._downloadJSONFile(this.props.dataset+'.'+this.props.name,noIdList)}>
+                    List Stats
+                </a>
                 {loadList}
                 <h2>{this.props.name}</h2>
                 <p>{this.props.list.identifiers.length} {this.props.type}</p>

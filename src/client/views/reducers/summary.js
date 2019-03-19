@@ -252,7 +252,8 @@ export const getBuscoData = createSelectorForBuscoId(
   getDetailsForFieldId,
   getFilteredList,
   getSelectedRecordsAsObject,
-  (data,details,list,selected) => {
+  _getBuscoIdAsMemoKey,
+  (data,details,list,selected,id) => {
     if (!data){
       return false
     }
@@ -315,9 +316,51 @@ export const getBuscoData = createSelectorForBuscoId(
                 + '],F:' + pct(fractions.f)
                 + ',M:' + pct(fractions.m)
                 + ',n:' + total
-    return {total,scores,selections,records,fractions}
+    return {total,scores,selections,records,fractions,string}
   }
 );
+
+export const getAllBuscoData = createSelector(
+  getBuscoSets,
+  (state) => getBuscoData(state,Object.values(getBuscoSets(state))[0] || false),
+  (state) => getBuscoData(state,Object.values(getBuscoSets(state))[1] || false),
+  (state) => getBuscoData(state,Object.values(getBuscoSets(state))[2] || false),
+  (state) => getBuscoData(state,Object.values(getBuscoSets(state))[3] || false),
+  (state) => getBuscoData(state,Object.values(getBuscoSets(state))[4] || false),
+  (state) => getBuscoData(state,Object.values(getBuscoSets(state))[5] || false),
+  (sets, ...other) => {
+    // let labels = ['first', 'second', 'third', 'fourth', 'fifth', 'sixth']
+    let data = {}
+    if (sets) sets.forEach((set,i)=>{data[set] = other[i]})
+    return data
+  }
+)
+
+export const getAllBuscoCSV = createSelector(
+  getAllBuscoData,
+  (all) => {
+    let fields = {
+      "c": "Complete",
+      "d": "Duplicated",
+      "f": "Fragmented",
+      "m": "Missing",
+      "s": "Single copy",
+      "t": "Total"
+    }
+    let data = [["Lineage"].concat(Object.values(fields))]
+    Object.keys(all).forEach(key => {
+      let values = [key.replace('_busco','')]
+      if(all[key]){
+        Object.keys(fields).forEach(field => {
+          values.push(all[key].scores[field])
+        })
+      }
+      data.push(values)
+    })
+    return data
+  }
+)
+
 
 export const getBuscoPaths = createSelectorForBuscoId(
   _getBuscoIdAsMemoKey,
@@ -1073,5 +1116,107 @@ export const getSelectedDatasetTable = createSelector(
       }
     })
     return {data,meta}
+  }
+)
+
+export const getPhylum = createSelector(
+  getSelectedDatasetMeta,
+  (meta)=> {
+    if (meta && meta.taxon && meta.taxon.phylum){
+      return meta.taxon.phylum
+    }
+    return false
+  }
+)
+
+export const getLineage = createSelector(
+  getSelectedDatasetMeta,
+  getMainPlot,
+  (meta, plot)=> {
+    let ranks = ['superkingdom', 'kingdom', 'phylum', 'class', 'order', 'family', 'genus', 'species']
+    let lineageArr = []
+    let targetRank
+    if (plot.axes.cat){
+      targetRank = plot.axes.cat.replace(/^.+_/,'')
+    }
+    let target
+    ranks.forEach(rank=>{
+      if (meta && meta.taxon && meta.taxon[rank]){
+        lineageArr.push(meta.taxon[rank])
+        if (rank == targetRank){
+          target = meta.taxon[rank]
+        }
+      }
+    })
+    return {lineage:lineageArr.join('; '), target, targetRank}
+  }
+)
+
+export const getFullSummary = createSelector(
+  getSummary,
+  getLineage,
+  getSelectedDatasetMeta,
+  getCircular,
+  getAllBuscoData,
+  (summary, lineage, meta, circular, busco) => {
+    let data = {}
+    if (!summary || !summary.zAxis === 'length' || !summary.values.reducer === 'sum'){
+      return false
+    }
+    if (!summary.values.reduced.all || !summary.values.n50.all) return false
+    data.hits = {
+      total: {
+        span: summary.values.reduced.all,
+        count: summary.values.counts.all,
+        n50: summary.values.n50.all
+      }
+    }
+    data.taxonomy = {
+      taxid: meta.taxid,
+      lineage: lineage.lineage,
+      target: lineage.target,
+      targetRank: lineage.targetRank
+    }
+    let f = d3Format(".3r");
+    if (circular){
+      data.baseComposition = {
+        at: f(circular.composition.at)*1,
+        gc: f(circular.composition.gc)*1,
+        n: f(circular.composition.n)*1
+      }
+      data.hits.total.l50 = circular.values.nXnum[499]
+      data.hits.total.n90 = circular.values.nXlen[899]
+      data.hits.total.l90 = circular.values.nXnum[899]
+    }
+    let index = summary.bins.findIndex(bin => bin.id == 'no-hit')
+    let nohit = index > -1 ? summary.values.reduced.binned[index] : 0
+    let target = 0
+    if (lineage.target){
+      index = summary.bins.findIndex(bin => bin.id == lineage.target)
+      target = index > -1 ? summary.values.reduced.binned[index] : 0
+    }
+    if (busco){
+      data.busco = {}
+      Object.keys(busco).forEach(field => {
+        if (busco[field]){
+          let lineage = field.replace('_busco','')
+          data.busco[lineage] = {...busco[field].scores}
+          data.busco[lineage].string = busco[field].string
+        }
+      })
+    }
+    summary.bins.forEach((bin,i)=>{
+      data.hits[bin.id] = {
+        count:summary.values.counts.binned[i],
+        span:summary.values.reduced.binned[i],
+        n50:summary.values.n50.binned[i]
+      }
+    })
+    data.stats = {
+      noHit: f(nohit/data.hits.total.span)*1,
+      target: f(target/(data.hits.total.span - nohit))*1,
+      spanOverN50: f(data.hits.total.span/data.hits.total.n50)*1
+    }
+    return data
   }
 )

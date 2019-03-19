@@ -2,7 +2,7 @@
 const doc = `
 Usage:
   utils/cli DATASET [--format STRING...] [--host STRING] [--https] [--out PATH]
-  [--param STRING...] [--port INT] [--prefix STRING] [--preview STRING...]
+  [--param STRING...] [--port INT] [--prefix STRING] [--preview STRING...] [--stats]
   [--timeout INT] [--view STRING...]
 Options:
       --format STRING     Image format (svg|png). [Default: png]
@@ -13,6 +13,7 @@ Options:
       --prefix STRING     URL prefix. [Default: view]
       --preview STRING    Field name.
       --port INT          Port number. [Default: 8080]
+      --stats             Download assembly stats.
       --timeout INT       Time to wait for page load in seconds. Default (0) is no timeout. [Default: 0]
       --view STRING       Plot type (blob|cumulative|snail).
 `
@@ -71,10 +72,10 @@ const main = async (args) => {
   profile.setPreference('browser.download.manager.showWhenStarting', false)
   profile.setPreference('browser.download.dir', outdir)
   profile.setPreference('browser.download.lastDir', outdir)
-  profile.setPreference('browser.helperApps.neverAsk.saveToDisk', 'image/png, image/svg+xml')
+  profile.setPreference('browser.helperApps.neverAsk.saveToDisk', 'image/png, image/svg+xml, text/csv, text/plain, application/json')
 
   let firefoxOptions = new firefox.Options();
-  firefoxOptions.setBinary('firefox');
+  // firefoxOptions.setBinary('firefox');
   firefoxOptions.headless();
   firefoxOptions.setProfile(profile);
 
@@ -118,11 +119,18 @@ const main = async (args) => {
       if (view == 'blob'){
         file += `.${shape}`
       }
+      if (view == 'busco'){
+        view = `all_${view}`
+      }
       file += `.${format}`
       process.stderr.write(`Fetching ${file}\n`)
       process.stderr.write('waiting for element\n')
+
+      process.stderr.write(`waiting for element ${view}_save_${format}\n`)
       try {
         let el = await driver.wait(until.elementLocated(By.id(`${view}_save_${format}`)), timeout);
+        await sleep(1000)
+        el = await driver.wait(until.elementLocated(By.id(`${view}_save_${format}`)), timeout)
         await driver.wait(until.elementIsVisible(el), timeout);
         await el.click();
       }
@@ -150,6 +158,42 @@ const main = async (args) => {
     process.stderr.write('waiting for file')
     file = `${args.DATASET}.${preview}.preview.${args['--format']}`
     await fileReady(`${outdir}/${file}`)
+  }
+
+  if (args['--stats']){
+    process.stderr.write(`Fetching stats\n`)
+    let el
+    try {
+      qs = qs.replace('#Filters','#Lists')
+      url = `${loc}/${view}?${qs}`
+      process.stderr.write(`Navigating to ${url}\n`)
+      await driver.navigate().to(url)
+      unstable = 1
+      while(unstable){
+        try {
+          el = await driver.findElement(By.id('list_current'));
+          await el.click();
+          let button = await driver.findElement(By.id('noId_list_download'));
+          await button.click();
+          unstable = false
+          process.stderr.write('waiting for file')
+          file = `${args.DATASET}.current.json`
+          await fileReady(`${outdir}/${file}`)
+        }
+        catch(err){
+          unstable++
+        }
+        if (unstable > 10){
+          process.stderr.write('cannot fetch list')
+          break
+        }
+      }
+
+
+    }
+    catch (err){
+      process.stderr.write(`${err.message}\n`)
+    }
   }
 
   driver.quit();

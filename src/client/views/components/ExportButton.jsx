@@ -13,9 +13,9 @@ const _downloadJSONFile = (name,content) => {
   element.dispatchEvent(new MouseEvent(`click`, {bubbles: true, cancelable: true, view: window}))
 }
 
-const _downloadTextFile = (name,content,format) => {
+const _downloadTextFile = (name,content,format='text') => {
   var element = document.createElement('a');
-  var file = new Blob([content], {type: 'text/plain'});
+  var file = new Blob([content+"\n"], {type: 'text/'+format});
   element.href = URL.createObjectURL(file);
   element.download = (name || 'file') + '.'+format;
   element.dispatchEvent(new MouseEvent(`click`, {bubbles: true, cancelable: true, view: window}))

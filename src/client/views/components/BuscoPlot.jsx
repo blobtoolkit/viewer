@@ -1,12 +1,24 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import styles from './Plot.scss'
-import { getBuscoSets } from '../reducers/summary'
+import { getBuscoSets, getAllBuscoCSV } from '../reducers/summary'
 import Busco from './Busco'
+import BuscoData from './BuscoData'
 import PlotMissing from './PlotMissing'
 import getSelectedDatasetMeta from '../reducers/dataset'
 
 class BuscoSets extends React.Component {
+
+  shouldComponentUpdate(nextProps, nextState){
+    if (Object.keys(this.props.buscoData).length === 0){
+      return false
+    }
+    if (nextProps.buscoData.every((x,i)=>(this.props.buscoData[i] && x.length == this.props.buscoData[i].length),this)){
+      return false
+    }
+    return false
+  }
+
   render(){
     if (!this.props.buscoSets) {
       return (
@@ -19,6 +31,7 @@ class BuscoSets extends React.Component {
     })
     return (
       <div className={styles.fill_parent}>
+        <BuscoData {...this.props}/>
         {buscos}
       </div>
     )
@@ -30,7 +43,8 @@ class BuscoPlot extends React.Component {
     super(props);
     this.mapStateToProps = state => {
       return {
-        buscoSets: getBuscoSets(state)
+        buscoSets: getBuscoSets(state),
+        buscoData: getAllBuscoCSV(state)
       }
     }
   }

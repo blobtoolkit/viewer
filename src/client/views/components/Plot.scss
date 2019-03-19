@@ -136,7 +136,7 @@ span.download {
   }
 }
 
-div.download {
+div.download, div.download_all {
   position:absolute;
   display:flex;
   align-items: center;
@@ -152,6 +152,14 @@ div.download {
     margin-right: 0.5em;
     font-size: 0.8em;
     cursor:pointer;
+  }
+}
+
+div.download_all {
+  margin:0;
+  justify-content: flex-start;
+  .save_svg {
+    left:0;
   }
 }
 

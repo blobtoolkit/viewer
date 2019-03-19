@@ -11,15 +11,28 @@ import { getSearchTerm } from '../reducers/location'
 import { getSelectedList, updateSelectedList, getIdentifiersForList, chooseList } from '../reducers/list'
 import ListModal from './ListModal';
 
-const ListItem = ({id,list,params,search,onClick,identifiers,active,onChooseList,meta}) => {
+const ListItem = ({id,list,params,search,onClick,identifiers,active,onChooseList,meta,summaryStats}) => {
   let css = styles.menu_item
   if (active) css += ' '+styles.active
-  let obj = {id,search,params,identifiers}
+  let taxon = meta.taxon_name
+  let taxid = meta.taxid
+  let obj = {
+    id,
+    datasetId:meta.id,
+    taxon,
+    taxid,
+    search,
+    params,
+    identifiers
+  }
+  if (id == 'current'){
+    obj.summaryStats = summaryStats
+  }
   return (
-    <div className={css}>
+    <div id={'list_'+id} className={css}>
       <ListModal name={id} selected={active} dismiss={()=>onClick(null)} list={obj} type={meta.record_type} dataset={meta.id} chooseList={onChooseList}>&nbsp;</ListModal>
       <h3>{id}</h3>
-      <span className={styles.menu_subtitle}>{list.length} {meta.record_type}</span>
+      {list && <span className={styles.menu_subtitle}>{list.length} {meta.record_type}</span>}
     </div>
   )
 }

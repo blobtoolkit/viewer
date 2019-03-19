@@ -49,17 +49,18 @@ const TabbedFraction = ({value,total,color='rgba(0,0,0,0)',title='total',sel=fal
           </span>
         ) : ' '}
       </td>
-      
+
     </tr>
   )
 }
 
-const MenuSummary = ({values,zAxis,bins,palette,other}) => {
+const MenuSummary = ({values,zAxis,bins,palette,other,fullSummary}) => {
 
   let css = styles.long_menu_item
   let counts = []
   let reduced = []
   let listDiv
+  console.log(fullSummary)
   if (bins){
     bins.forEach((bin,i) => {
       let title = bin.id
