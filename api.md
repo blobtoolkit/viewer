@@ -150,6 +150,78 @@ curl "https://example.com/api/v1/dataset/id/LFJK02/static_plots"
 "true"
 ```
 
+## Summary
+
+### /api/v1/summary/:dataset_id
+
+Returns a pre-computed summary for `:dataset_id`, if available.
+
+```
+curl "https://example.com/api/v1/summary/AACW02"
+```
+
+```json
+{
+  "id": "current",
+  "datasetId": "AACW02",
+  "taxon": "Rhizopus delemar RA 99-880",
+  "taxid": 246409,
+  "search": "all",
+  "params": {},
+  "summaryStats": {
+    "hits": {
+      "total": {
+        "span": 46148878,
+        "count": 83,
+        "n50": 3104119,
+        "l50": 6,
+        "n90": 783160,
+        "l90": 17
+      },
+      "Mucoromycota": {
+        "count": 68,
+        "span": 42389618,
+        "n50": 2712543
+      },
+      "no-hit": {
+        "count": 4,
+        "span": 28432,
+        "n50": 7630
+      },
+      ...
+    },
+    "taxonomy": {
+      "taxid": 246409,
+      "lineage": "Eukaryota; Fungi; Mucoromycota; Mucoromycetes; Mucorales; Rhizopodaceae; Rhizopus; Rhizopus delemar",
+      "target": "Mucoromycota",
+      "targetRank": "phylum"
+    },
+    "baseComposition": {
+      "at": 0.644,
+      "gc": 0.356,
+      "n": 0.0178
+    },
+    "busco": {
+      "fungi_odb9": {
+        "c": 276,
+        "d": 112,
+        "m": 9,
+        "f": 5,
+        "t": 290,
+        "s": 164,
+        "string": "C:95.2%[S:56.6%,D:38.6%],F:1.7%,M:3.1%,n:290"
+      },
+      ...
+    },
+    "stats": {
+      "noHit": 0.000616,
+      "target": 0.919,
+      "spanOverN50": 14.9
+    }
+  }
+}
+```
+
 ## Image
 
 The following routes are available if static images have been pre-generated for a dataset (i.e. if `/dataset/id/:dataset_id/static_plots` returns `"true"`)
