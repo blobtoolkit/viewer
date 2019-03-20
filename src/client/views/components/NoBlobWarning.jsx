@@ -20,8 +20,9 @@ export class NoBlobWarning extends React.Component {
       return (
         <div className={styles.warning}>
           <h2>Blob view is not available for this dataset</h2>
-          {this.props.source && <p>Displaying {this.props.source} view instead.</p>}
-          Use the Settings menu to choose a different view.
+          No coverage information is available for this dataset.
+          {this.props.source && <span><br/> {this.props.source} view is shown instead.</span>}
+          <p>Use the Settings menu to choose a different view.</p>
           <span className={styles.dismiss} onClick={()=>this.toggleDismissed(true)}/>
         </div>
       )

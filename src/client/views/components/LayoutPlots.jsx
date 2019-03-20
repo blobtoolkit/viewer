@@ -26,7 +26,6 @@ class PlotsLayoutComponent extends React.Component {
     if (Object.keys(this.props.plot).length < 4){
       defaultPlot = <CumulativePlot {...this.props} warning='noBlob'/>
     }
-    console.log(this.props)
     if (!this.props.datasetId) return <HomePage toggleHash={this.props.toggleHash}/>
     let view
     if (this.props.static){
