@@ -49,11 +49,20 @@ const PlotOutline = (data) => {
     }
     return ''
   }
+  let g = d => {
+    if (d < 1 && d > 0.0001 && String(d).match(/^[0\.1]+$/)){
+      return d
+    }
+    return d3Format(".0s")(d)
+  }
   let xRange = data.meta.x.range
   let xScale = data.meta.x.xScale.copy()
   let fx = f
   if (data.meta.x.meta.scale != 'scaleLog'){
     fx = d => d
+  }
+  else if (xRange[0] * 10 < xRange[1]){
+    fx = g
   }
   xScale.range([50,950])
   let xBreak, xBreakAxis
@@ -82,6 +91,9 @@ const PlotOutline = (data) => {
   let fy = f
   if (data.meta.y.meta.scale != 'scaleLog'){
     fy = d => d
+  }
+  else if (yRange[0] * 10 < yRange[1]){
+    fy = g
   }
   yScale.range([950,50])
   let yBreak, yBreakAxis
