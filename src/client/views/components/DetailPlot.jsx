@@ -35,10 +35,12 @@ class Detail extends React.Component {
       columns:
       [
         {
-          accessor: 'group'
+          accessor: 'group',
+          width: 100
         },
         {
-          accessor: 'key'
+          accessor: 'key',
+          width: 160
         },
         {
           id: 'value',
@@ -61,7 +63,8 @@ class Detail extends React.Component {
                 {value}
               </span>
             )
-          }
+          },
+          width: 300
         },
         // {
         //   Header: 'Links',
@@ -76,7 +79,7 @@ class Detail extends React.Component {
       ]
     }]
     return (
-      <div className={plotStyles.outer} style={{top:'4em',width:'calc(100% - 8em)',height:'calc(100% - 8em)'}}>
+      <div className={plotStyles.outer} style={{top:'2em',maxWidth:'calc(100% - 2em)',maxHeight:'calc(100% - 4em)',overflow:'scroll'}}>
         <ReactTable
             data={data}
             page={this.state.page}
@@ -85,6 +88,7 @@ class Detail extends React.Component {
             showPagination={false}
             defaultPageSize={data.length}
             getTheadThProps={this.injectThProps}
+            style={{width:'560px'}}
           />
           <span className={plotStyles.download}>
             <ExportButton view='detail' data={meta} format='json' prefix={meta.id+'.meta'}/>

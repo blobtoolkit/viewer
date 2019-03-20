@@ -1064,16 +1064,7 @@ export const getSelectedDatasetTable = createSelector(
   getLinks,
   (details,links) => {
     let data = []
-    if (details.taxon){
-      Object.keys(details.taxon).forEach(key=>{
-        let link,meta
-        if (links.dataset.taxon && links.dataset.taxon[key]){
-          link = links.dataset.taxon[key]
-          meta = Object.assign({},details.taxon)
-        }
-        data.push({group:'Taxon',key,value:details.taxon[key],link,meta})
-      })
-    }
+    let f = d3Format(".3r");
     if (details.assembly){
       Object.keys(details.assembly).forEach(key=>{
         let link,meta
@@ -1084,30 +1075,46 @@ export const getSelectedDatasetTable = createSelector(
         data.push({group:'Assembly',key,value:details.assembly[key],link,meta})
       })
     }
-    if (details.reads && details.reads.paired){
-      details.reads.paired.forEach(row=>{
-        let link,meta
-        if (links.dataset.reads && links.dataset.reads.paired){
-          link = links.dataset.reads.paired
-          meta = {accession:row[0],platform:row[1]}
-        }
-        data.push({group:'Reads',key:row[1]+' (paired)',value:row[0],link,meta})
-      })
-    }
-    if (details.reads && details.reads.single){
-      details.reads.single.forEach(row=>{
-        let link,meta
-        if (links.dataset.reads && links.dataset.reads.single){
-          link = links.dataset.reads.single
-          meta = {accession:row[0],platform:row[1]}
-        }
-        data.push({group:'Reads',key:row[1]+' (single)',value:row[0],link,meta})
-      })
-    }
     if (details.settings && details.settings.commit && links.dataset.blobtoolkit){
       let link = links.dataset.blobtoolkit.commit
       let meta = details.settings
       data.push({group:'BlobToolKit',key:'pipeline version',value:details.settings.commit,link,meta})
+    }
+    if (details.reads){
+      Object.keys(details.reads).forEach(acc=>{
+        let link,meta
+        meta = {
+          accession:acc,
+          ...details.reads[acc]
+        }
+        if (links.dataset.reads){
+          if (links.dataset.reads.paired){
+            link = links.dataset.reads.paired
+          }
+          else if (links.dataset.reads.single){
+            link = links.dataset.reads.single
+          }
+        }
+        if (meta.platform){
+          data.push({
+            group:'Reads',
+            key:meta.platform+' ('+meta.strategy+')',
+            value:meta.accession+' (cov: '+f(meta.coverage)+')',
+            link,
+            meta
+          })
+        }
+      })
+    }
+    if (details.taxon){
+      Object.keys(details.taxon).forEach(key=>{
+        let link,meta
+        if (links.dataset.taxon && links.dataset.taxon[key]){
+          link = links.dataset.taxon[key]
+          meta = Object.assign({},details.taxon)
+        }
+        data.push({group:'Taxon',key,value:details.taxon[key],link,meta})
+      })
     }
     let meta = {}
     Object.keys(details).forEach(k=>{

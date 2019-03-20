@@ -61,7 +61,7 @@ const PlotOutline = (data) => {
   if (data.meta.x.meta.scale != 'scaleLog'){
     fx = d => d
   }
-  else if (xRange[0] * 10 < xRange[1]){
+  else if (xRange[0] * 10 > xRange[1]){
     fx = g
   }
   xScale.range([50,950])
@@ -92,7 +92,7 @@ const PlotOutline = (data) => {
   if (data.meta.y.meta.scale != 'scaleLog'){
     fy = d => d
   }
-  else if (yRange[0] * 10 < yRange[1]){
+  else if (yRange[0] * 19 > yRange[1]){
     fy = g
   }
   yScale.range([950,50])
