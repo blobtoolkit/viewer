@@ -47,7 +47,7 @@ class LayoutComponent extends React.Component {
             BlobToolKit Viewer, version <a href={url} target={text}>{text}</a>
           </span>
           <DOIBadge/>
-          <BTKLogos/>  
+          <BTKLogos/>
         </div>
       </div>
     )

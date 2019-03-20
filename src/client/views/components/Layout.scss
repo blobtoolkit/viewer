@@ -30,8 +30,8 @@
   float:left;
   width:50%;
   height:50%;
-  min-width:calc(600px - 0%);
-  min-height:calc(600px - 0%);
+  min-width:calc(500px - 0%);
+  min-height:calc(500px - 0%);
 }
 
 .modal {
@@ -478,6 +478,7 @@ table {
 
 .warning {
   position: absolute;
+  z-index:10;
   bottom: 0;
   left: 0;
   right: 0;

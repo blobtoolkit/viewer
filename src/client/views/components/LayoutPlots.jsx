@@ -5,6 +5,7 @@ import { getDatasetIsActive } from '../reducers/repository'
 import { toggleHash, getView, getStatic, getDatasetID } from '../reducers/location'
 import { getDatasetName } from '../reducers/dataset'
 import { getScatterPlotData } from '../reducers/plotData'
+import { getMainPlot } from '../reducers/plot'
 import GetStarted from './GetStarted'
 import MainPlot from './MainPlot'
 import BuscoPlot from './BuscoPlot'
@@ -21,6 +22,11 @@ import SelectWarning from './SelectWarning'
 class PlotsLayoutComponent extends React.Component {
 
   render(){
+    let defaultPlot = <MainPlot {...this.props}/>
+    if (Object.keys(this.props.plot).length < 4){
+      defaultPlot = <CumulativePlot {...this.props} warning='noBlob'/>
+    }
+    console.log(this.props)
     if (!this.props.datasetId) return <HomePage toggleHash={this.props.toggleHash}/>
     let view
     if (this.props.static){
@@ -57,9 +63,6 @@ class PlotsLayoutComponent extends React.Component {
           view = (
             <div className={styles.fill_parent}>
               <div className={styles.quarter}>
-                <DetailPlot {...this.props}/>
-              </div>
-              <div className={styles.quarter}>
                 <MainPlot {...this.props}/>
               </div>
               <div className={styles.quarter}>
@@ -68,11 +71,17 @@ class PlotsLayoutComponent extends React.Component {
               <div className={styles.quarter}>
                 <SnailPlot {...this.props}/>
               </div>
+              <div className={styles.quarter}>
+                <BuscoPlot {...this.props}/>
+              </div>
+              <div>
+                <DetailPlot {...this.props}/>
+              </div>
             </div>
           )
           break
         default:
-          view = <MainPlot {...this.props}/>
+          view = defaultPlot
           break
       }
 
@@ -81,7 +90,6 @@ class PlotsLayoutComponent extends React.Component {
       <div className={styles.fill_parent}>
         {view}
         <DatasetSpinner/>
-        <SelectWarning/>
       </div>
     )
   }
@@ -97,6 +105,7 @@ class LayoutPlots extends React.Component {
           active: getDatasetIsActive(state),
           datasetId: getDatasetID(state),
           view: getView(state),
+          plot: getMainPlot(state),
           static: true
         }
       }
@@ -109,6 +118,7 @@ class LayoutPlots extends React.Component {
         active: getDatasetIsActive(state),
         datasetId: getDatasetID(state),
         datasetName: getDatasetName(state),
+        plot: getMainPlot(state),
         view: getView(state)
       }
     },

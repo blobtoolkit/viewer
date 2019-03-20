@@ -10,6 +10,7 @@ import { getSelectedDatasetMeta } from '../reducers/dataset'
 import AxisTitle from './AxisTitle'
 import { ExportButton } from './ExportButton'
 import { plotPaths, fillParent } from './PlotStyles'
+import { NoBlobWarning } from './NoBlobWarning'
 
 class Cumulative extends React.Component {
   render(){
@@ -51,6 +52,10 @@ class Cumulative extends React.Component {
         <ExportButton view='cumulative' element='cumulative_plot' prefix={this.props.datasetId+'.cumulative'} format='png' size={side}/>
       </span>
     )
+    let warning
+    if (this.props.warning == 'noBlob'){
+      warning = <NoBlobWarning source='Cumulative'/>
+    }
     return (
       <div className={styles.outer}>
         <svg id="cumulative_plot"
@@ -72,6 +77,7 @@ class Cumulative extends React.Component {
           </g>
         </svg>
         {exportButtons}
+        {warning}
       </div>
     )
   }
