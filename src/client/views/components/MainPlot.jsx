@@ -85,7 +85,7 @@ export default class MainPlot extends React.Component {
       this.mapDispatchToProps
     )(PlotBox)
     return (
-      <ConnectedMainPlot />
+      <ConnectedMainPlot {...this.props}/>
     )
   }
 }
@@ -165,7 +165,12 @@ class PlotBox extends React.Component {
   }
 
   render(){
-    if (!this.props.datasetId) return <NoBlobWarning/>
+    if (this.props.active && this.props.active != 'loading' && Object.keys(this.props.plot.axes).length < 4){
+      return <NoBlobWarning/>
+    }
+    else if (!this.props.plotShape){
+      return null
+    }
     let plotContainer
     let plotGrid
     let plotCanvas

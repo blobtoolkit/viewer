@@ -23,7 +23,7 @@ class PlotsLayoutComponent extends React.Component {
 
   render(){
     let defaultPlot = <MainPlot {...this.props}/>
-    if (Object.keys(this.props.plot.axes).length < 4){
+    if (this.props.active && this.props.active != 'loading' && Object.keys(this.props.plot.axes).length < 4){
       defaultPlot = <CumulativePlot {...this.props} warning='noBlob'/>
     }
     if (!this.props.datasetId) return <HomePage toggleHash={this.props.toggleHash}/>
