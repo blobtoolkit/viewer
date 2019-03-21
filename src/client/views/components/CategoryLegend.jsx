@@ -1,7 +1,7 @@
 import React from 'react';
 import styles from './Plot.scss'
 
-export const CategoryLegend = ({categories,colors}) => {
+export const CategoryLegend = ({categories,colors,otherColor}) => {
   let items = []
   if (categories){
     let w = 14
@@ -11,8 +11,8 @@ export const CategoryLegend = ({categories,colors}) => {
     let row = 0
 
     Object.keys(categories).forEach((key,i) => {
-      let color = colors[key] || '#999999'
-      let title = categories[key] || 'Other'
+      let color = colors[key] || otherColor
+      let title = categories[key] || 'extra'
       items.push(
           <g key={i} transform={'translate('+offset+','+(5+row*20)+')'}>
             <rect x={0} y={0} width={w} height={h} style={{fill:color,stroke:'black',strokeWidth:'1'}} />

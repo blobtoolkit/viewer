@@ -7,6 +7,7 @@ import { format as d3Format } from 'd3-format'
 import { getBinsForCat, getDetailsForFieldId } from './field'
 import { getRawDataForLength, getLinks } from './summary'
 import { getIdentifiers } from './identifiers'
+import { getColorPalette } from '../reducers/color'
 import store from '../store'
 
 const apiUrl = API_URL || '/api/v1'
@@ -73,17 +74,23 @@ export const getCategoryDistributionForRecord = createSelector(
   getCatBinIndices,
   getIdentifiers,
   getLinks,
-  (data,lengths,bins,identifiers,links) => {
+  getColorPalette,
+  (data,lengths,bins,identifiers,links, colors) => {
     if (!data || !data.values || typeof(data.id) == 'undefined') return false
     let yLimit = 0
     let binSize = 100000
     let labels = {}
+    let other = false
     let offsets = {}
     let xLimit = lengths.values[data.id]
     let id = identifiers[data.id]
     let cat_i = data.category_slot
     if (Array.isArray(cat_i)){
       cat_i = cat_i[0]
+    }
+    let other_key = Object.keys(bins).find(k => bins[k] === 'other');
+    if (!other_key){
+      other_key = 1+1*Math.max(...Object.keys(bins))
     }
     let start_i = data.headers.indexOf('start')
     let end_i = data.headers.indexOf('end')
@@ -117,11 +124,25 @@ export const getCategoryDistributionForRecord = createSelector(
         }
       }
       if (!labels[hit[cat_i]]){
-        labels[hit[cat_i]] = bins[hit[cat_i]]
+        if (bins[hit[cat_i]]){
+          if (bins[hit[cat_i]] == 'other'){
+            if (!other){
+              labels[hit[cat_i]] = bins[hit[cat_i]]
+            }
+            other = true
+          }
+          else {
+            labels[hit[cat_i]] = bins[hit[cat_i]]
+          }
+        }
+        else {
+          labels[other_key] = 'other'
+          other = true
+        }
       }
       return points
     })
-    return {lines,yLimit,xLimit,labels,id}
+    return {lines,yLimit,xLimit,labels,id,otherColor:colors.colors[9]}
   }
 )
 

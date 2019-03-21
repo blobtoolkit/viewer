@@ -34,7 +34,7 @@ class CatDistribution extends React.Component {
     let yScale = d3scaleLinear().domain([0,yLimit]).range([200,0])
     let viewbox = '0 0 1000 325'
     let lines = points.map((line,i)=>{
-      let color = this.props.colors[line.cat] || '#999999'
+      let color = this.props.colors[line.cat] || this.props.data.otherColor
       let url
       if (line.link){
         url = line.link.url
@@ -78,7 +78,7 @@ class CatDistribution extends React.Component {
             {lines}
           </g>
           <g transform={'translate(75,0)'} >
-            <CategoryLegend categories={this.props.data.labels} colors={this.props.colors}/>
+            <CategoryLegend categories={this.props.data.labels} colors={this.props.colors} otherColor={this.props.data.otherColor}/>
           </g>
           <g transform={'translate(74,30)'} className={styles.link_info}>
             {info && <rect width={902} height={21}/>}

@@ -126,17 +126,14 @@ const search = term => {
 
 module.exports = function(app, db) {
   app.get('/api/v1/search/autocomplete/:term', async (req, res) => {
-    console.log(req.params)
     res.setHeader('content-type', 'application/json');
     res.json(autocomplete(req.params.term))
   });
   app.get('/api/v1/search/:term', async (req, res) => {
-    console.log(req.params)
     res.setHeader('content-type', 'application/json');
     res.json(search(req.params.term))
   });
   app.get('/api/v1/search', async (req, res) => {
-    console.log(req.params)
     res.setHeader('content-type', 'application/json');
     res.json([])
   });
