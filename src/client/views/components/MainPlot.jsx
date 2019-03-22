@@ -29,7 +29,9 @@ import { scaleLinear as d3scaleLinear } from 'd3-scale';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { ExportButton } from './ExportButton'
 import { NoBlobWarning } from './NoBlobWarning'
+import { NoHitWarning } from './NoHitWarning'
 import { getDatasetID } from '../reducers/location'
+import { getRecordCount } from '../reducers/summary'
 
 export default class MainPlot extends React.Component {
   constructor(props) {
@@ -39,6 +41,7 @@ export default class MainPlot extends React.Component {
         let plotShape = getPlotShape(state)
         let plotGraphics = getPlotGraphics(state)
         let datasetId = getDatasetID(state)
+        let records = getRecordCount(state)
         if (plotShape == 'hex'){
           let binned = getScatterPlotDataByHexBin(state)
           if (!binned) return {}
@@ -68,6 +71,7 @@ export default class MainPlot extends React.Component {
           datasetId,
           plotShape,
           plotGraphics,
+          records
         }
       }
     }
@@ -198,7 +202,7 @@ class PlotBox extends React.Component {
           <g>
             <foreignObject width={900} height={900}>
               <div xmlns="http://www.w3.org/1999/xhtml" className={styles.fill_parent}>
-                <PlotBubblesCanvasLayers />
+                <PlotBubblesCanvasLayers {...this.props}/>
               </div>
             </foreignObject>
           </g>
@@ -206,7 +210,7 @@ class PlotBox extends React.Component {
         plotContainer = ''
       }
       else {
-        plotContainer = <PlotBubblesSVGLayers />
+        plotContainer = <PlotBubblesSVGLayers {...this.props}/>
       }
     }
     else if (this.props.plotShape == 'square'){
@@ -242,6 +246,7 @@ class PlotBox extends React.Component {
             </svg>
             {exportButtons}
           </div>
+          { this.props.records > 1000000 && <NoHitWarning/> }
         </div>
       )
     }

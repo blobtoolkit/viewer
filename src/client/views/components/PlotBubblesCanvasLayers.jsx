@@ -19,15 +19,20 @@ export default class PlotBubblesCanvasLayers extends React.Component {
       this.mapStateToProps
     )(BubblesCanvasLayers)
     return (
-      <ConnectedBubbleCanvasLayers />
+      <ConnectedBubbleCanvasLayers {...this.props}/>
     )
   }
 }
 
-const BubblesCanvasLayers = ({ bins }) => (
+const BubblesCanvasLayers = ({ bins, records }) => (
     <div className={styles.fill_parent}>
-      {bins.map((layer,i) =>
-        <PlotBubblesCanvas key={layer.id} x0={layer.x0} />
-      )}
+      {
+        bins.map((layer,i) => {
+          if (records > 1000000 && layer.id == 'no-hit'){
+            return null
+          }
+          return <PlotBubblesCanvas key={layer.id} x0={layer.x0} />
+        })
+      }
     </div>
 );

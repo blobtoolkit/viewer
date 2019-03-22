@@ -18,15 +18,20 @@ export default class PlotBubblesSVGLayers extends React.Component {
       this.mapStateToProps
     )(BubblesSVGLayers)
     return (
-      <ConnectedBubbleSVGLayers />
+      <ConnectedBubbleSVGLayers {...this.props}/>
     )
   }
 }
 
-const BubblesSVGLayers = ({ bins }) => (
+const BubblesSVGLayers = ({ bins, records }) => (
     <g>
-      {bins.map((layer,i) =>
-        <PlotBubblesSVG key={layer.id} x0={layer.x0} />
-      )}
+      {
+        bins.map((layer,i) => {
+          if (records > 1000000 && layer.id == 'no-hit'){
+            return null
+          }
+          return <PlotBubblesSVG key={layer.id} x0={layer.x0} />
+        })
+      }
     </g>
 );

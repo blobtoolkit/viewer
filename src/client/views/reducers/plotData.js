@@ -324,7 +324,6 @@ export const getScatterPlotDataByCategory = createSelector(
         keys[key] = i
       })
     })
-    console.log(data)
     let len = plotData.axes.x.values.length
     for (let i = 0; i < len; i++){
       data[keys[plotData.axes.cat.values[i]]].push(

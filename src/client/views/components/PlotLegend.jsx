@@ -1,8 +1,9 @@
 import React from 'react';
 import { connect } from 'react-redux'
 import { getSummary }  from '../reducers/summary'
-import { getDatasetID } from '../reducers/location'
+import { getDatasetID, getView } from '../reducers/location'
 import { getDatasetMeta } from '../reducers/repository'
+import { getPlotShape } from '../reducers/plotParameters'
 import styles from './Plot.scss'
 import { format as d3format} from 'd3-format'
 import { plotText } from './PlotStyles'
@@ -15,7 +16,9 @@ export default class PlotLegend extends React.Component {
         let summary = getSummary(state)
         let id = getDatasetID(state)
         let meta = getDatasetMeta(state,id)
-        return {meta,...summary}
+        let shape = getPlotShape(state)
+        let view = getView(state)
+        return {meta,...summary,shape,view}
       }
     }
   }
@@ -30,7 +33,7 @@ export default class PlotLegend extends React.Component {
   }
 }
 
-const Legend = ({values,zAxis,bins,palette,other,reducer,meta}) => {
+const Legend = ({values,zAxis,bins,palette,other,reducer,meta,shape,view}) => {
   let items = []
   let legendKey
   let ds
@@ -84,6 +87,9 @@ const Legend = ({values,zAxis,bins,palette,other,reducer,meta}) => {
     }
     bins.forEach((bin,i) => {
       let title = bin.id
+      if (title == 'no-hit' && values.counts.all > 1000000 && view=='blob' && shape == 'circle'){
+        title += ' (not shown)'
+      }
       let color = palette.colors[i]
       let numbers = []
       let count = values.counts.binned[i] > 0
