@@ -86,8 +86,11 @@ const main = async (args) => {
 
 
   let view = args['--view'][0] || 'blob'
-  if (args['--preview']){
+  if (args['--preview'].length > 0){
     qs += '#Filters'
+  }
+  else {
+    qs += '#Lists'
   }
   let url = `${loc}/${view}?${qs}`
   process.stderr.write(`Loading ${url}\n`)
@@ -127,19 +130,22 @@ const main = async (args) => {
       process.stderr.write('waiting for element\n')
 
       process.stderr.write(`waiting for element ${view}_save_${format}\n`)
-      try {
-        let el = await driver.wait(until.elementLocated(By.id(`${view}_save_${format}`)), timeout);
-        await sleep(1000)
-        el = await driver.wait(until.elementLocated(By.id(`${view}_save_${format}`)), timeout)
-        await driver.wait(until.elementIsVisible(el), timeout);
-        await el.click();
+      let unstable = 1
+      while(unstable){
+        try {
+          let el = await driver.wait(until.elementLocated(By.id(`${view}_save_${format}`)), timeout);
+          await driver.wait(until.elementIsVisible(el), timeout);
+          await el.click();
+
+          unstable = false
+          process.stderr.write('waiting for file')
+          await fileReady(`${outdir}/${file}`)
+        }
+        catch(err){
+          unstable++
+          await sleep(500)
+        }
       }
-      catch (err){
-        process.stderr.write(`${err.message}\n`)
-        continue
-      }
-      process.stderr.write('waiting for file')
-      await fileReady(`${outdir}/${file}`)
     }
   }
 
@@ -164,23 +170,17 @@ const main = async (args) => {
     process.stderr.write(`Fetching stats\n`)
     let el
     try {
-      qs = qs.replace('#Filters','#Lists')
-      url = `${loc}/${view}?${qs}`
-      process.stderr.write(`Navigating to ${url}\n`)
-      await driver.get(`${loc}/detail?${qs}`)
-      // await driver.navigate().to(url)
-      unstable = 1
+      if (args['--preview'].length > 0){
+        qs = qs.replace('#Filters','#Lists')
+        url = `${loc}/${view}?${qs}`
+        process.stderr.write(`Navigating to ${url}\n`)
+        await driver.get(`${loc}/detail?${qs}`)
+      }
+      let unstable = 1
       while(unstable){
         try {
           el = await driver.findElement(By.id('list_current'));
           await el.click();
-          // driver.takeScreenshot().then(
-          //   function(image, err) {
-          //     require('fs').writeFile('out.png', image, 'base64', function(err) {
-          //     });
-          //   }
-          // );
-          //
           let button = await driver.findElement(By.id('noId_list_download'));
           await button.click();
 
@@ -192,10 +192,6 @@ const main = async (args) => {
         catch(err){
           unstable++
         }
-        // if (unstable > 100){
-        //   process.stderr.write('cannot fetch list')
-        //   break
-        // }
       }
 
 
