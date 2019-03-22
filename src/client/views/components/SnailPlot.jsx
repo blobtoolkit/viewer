@@ -272,7 +272,7 @@ class Snail extends React.Component {
                   stroke={'none'}/>
             {buscoAxis}
           </g>
-          
+
         </g>
         )
     }
@@ -366,7 +366,7 @@ class Snail extends React.Component {
       <div className={styles.outer}>
         <svg id="snail_plot"
           ref={(elem) => { this.svg = elem; }}
-          style={fillParent}
+          style={{...fillParent,fontSize:'14px'}}
           viewBox={viewbox}
           preserveAspectRatio="xMinYMin">
           <g transform={'translate(10,1000)'} >

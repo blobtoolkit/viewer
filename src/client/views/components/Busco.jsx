@@ -144,7 +144,7 @@ class BuscoPlot extends React.Component {
       <div style={{flex:'0 0 50%',display:'flex',alignItems:'center',justifyContent:'flex-start',padding:'1em'}}>
         <svg id={'busco_plot'+this.props.id}
           ref={(elem) => { this.svg = elem; }}
-          style={{width:'11em',height:'11em'}}
+          style={{width:'11em',height:'11em',fontSize:'14px'}}
           viewBox={viewbox}
           preserveAspectRatio="xMinYMin">
           <g transform='translate(240,240)'>

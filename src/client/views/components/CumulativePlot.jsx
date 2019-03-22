@@ -61,7 +61,7 @@ class Cumulative extends React.Component {
       <div className={styles.outer}>
         <svg id="cumulative_plot"
           ref={(elem) => { this.svg = elem; }}
-          style={fillParent}
+          style={{...fillParent, fontSize:'14px'}}
           viewBox={viewbox}
           preserveAspectRatio="xMinYMin">
           <g transform={'translate(100,10)'} >

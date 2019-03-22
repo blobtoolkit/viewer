@@ -257,6 +257,7 @@ class PlotBox extends React.Component {
             ref={(elem) => { this.svg = elem; }}
             className={styles.main_plot+' '+styles.fill_parent}
             viewBox={viewbox}
+            style={{fontSize:'14px'}}
             preserveAspectRatio="xMinYMin">
             <g transform={'translate(100,320)'} >
               <PlotTransformLines />
