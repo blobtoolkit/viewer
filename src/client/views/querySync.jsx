@@ -32,6 +32,11 @@ const mapDispatchToQuery = (
       payload: (k,v) => v,
       default: STATIC_THRESHOLD
     },
+    circleLimit: {
+      type: 'SET_CIRCLE_LIMIT',
+      payload: (k,v) => v,
+      default: CIRCLE_LIMIT
+    },
     palette: {
       type: 'SELECT_PALETTE',
       payload: (k,v) => v,

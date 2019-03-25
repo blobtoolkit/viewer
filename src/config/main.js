@@ -37,6 +37,8 @@ module.exports = {
   'mode': process.env.NODE_ENV || 'test',
   // static threshold
   'staticThreshold': process.env.BTK_STATIC_THRESHOLD || 100000,
+  // static threshold
+  'circleLimit': process.env.BTK_CIRCLE_LIMIT || 100000,
   // SSL
   'keyFile': process.env.BTK_KEYFILE || '',
   'certFile': process.env.BTK_CERTFILE || ''

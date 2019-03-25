@@ -283,6 +283,23 @@ export const getPlotGraphics = createSelector(
   }
 )
 
+export const setCircleLimit = createAction('SET_CIRCLE_LIMIT')
+export const chooseCircleLimit = (circleLimit) => {
+  return function (dispatch) {
+    let values = {circleLimit}
+    dispatch(queryToStore({values}))
+  }
+}
+export const circleLimit = handleAction(
+  'SET_CIRCLE_LIMIT',
+  (state, action) => (
+    action.payload
+  ),
+  qs.parse((document.location.search : '').replace(/^\?/,'')).circleLimit || CIRCLE_LIMIT
+)
+export const getCircleLimit = state => state.circleLimit
+
+
 export const setTablePage = createAction('SET_TABLE_PAGE')
 export const tablePage = handleAction(
   'SET_TABLE_PAGE',
@@ -353,6 +370,7 @@ export const plotParameterReducers = {
   circumferenceScale,
   radiusScale,
   snailOrigin,
+  circleLimit,
   tablePage,
   tablePageSize,
   tableSortField,

@@ -44,6 +44,7 @@ const config = {
     	VERSION: JSON.stringify(main.version),
     	BASENAME: JSON.stringify(main.basename),
       STATIC_THRESHOLD: JSON.stringify(main.staticThreshold),
+      CIRCLE_LIMIT: JSON.stringify(main.circleLimit),
     	HOME: JSON.stringify(protocol+'://'+main.hostname),
       GIT_VERSION: JSON.stringify(gitRevisionPlugin.version()),
       COMMIT_HASH: JSON.stringify(gitRevisionPlugin.commithash()),

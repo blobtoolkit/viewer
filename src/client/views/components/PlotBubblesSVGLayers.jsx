@@ -23,11 +23,11 @@ export default class PlotBubblesSVGLayers extends React.Component {
   }
 }
 
-const BubblesSVGLayers = ({ bins, records }) => (
+const BubblesSVGLayers = ({ bins, records, circleLimit }) => (
     <g>
       {
         bins.map((layer,i) => {
-          if (records > 1000000 && layer.id == 'no-hit'){
+          if (records > circleLimit && layer.id == 'no-hit'){
             return null
           }
           return <PlotBubblesSVG key={layer.id} x0={layer.x0} />

@@ -1,6 +1,6 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import { getPlotShape,getPlotGraphics } from '../reducers/plotParameters'
+import { getPlotShape,getPlotGraphics, getCircleLimit } from '../reducers/plotParameters'
 import styles from './Plot.scss'
 import MainPlotBoundary from './MainPlotBoundary'
 import PlotBubblesCanvasLayers from './PlotBubblesCanvasLayers'
@@ -71,7 +71,8 @@ export default class MainPlot extends React.Component {
           datasetId,
           plotShape,
           plotGraphics,
-          records
+          records,
+          circleLimit: getCircleLimit(state)
         }
       }
     }
@@ -165,6 +166,9 @@ class PlotBox extends React.Component {
     else if (this.props.plotGraphics != nextProps.plotGraphics){
       return true
     }
+    else if (this.props.circleLimit != nextProps.circleLimit){
+      return true
+    }
     return false
   }
 
@@ -246,7 +250,7 @@ class PlotBox extends React.Component {
             </svg>
             {exportButtons}
           </div>
-          { this.props.records > 1000000 && <NoHitWarning/> }
+          { this.props.records > this.props.circleLimit && <NoHitWarning circleLimit={this.props.circleLimit}/> }
         </div>
       )
     }

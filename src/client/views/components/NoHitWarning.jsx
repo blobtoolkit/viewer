@@ -20,7 +20,7 @@ export class NoHitWarning extends React.Component {
       return (
         <div className={styles.warning}>
           <h2>'no-hit' data are not shown</h2>
-          This dataset has over 1 million records so 'no-hit' circles are not plotted.
+          This dataset has over {Number(this.props.circleLimit).toLocaleString()} records so 'no-hit' circles are not plotted.
           <span className={styles.dismiss} onClick={()=>this.toggleDismissed(true)}/>
         </div>
       )

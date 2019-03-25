@@ -24,11 +24,11 @@ export default class PlotBubblesCanvasLayers extends React.Component {
   }
 }
 
-const BubblesCanvasLayers = ({ bins, records }) => (
+const BubblesCanvasLayers = ({ bins, records, circleLimit }) => (
     <div className={styles.fill_parent}>
       {
         bins.map((layer,i) => {
-          if (records > 1000000 && layer.id == 'no-hit'){
+          if (records > circleLimit && layer.id == 'no-hit'){
             return null
           }
           return <PlotBubblesCanvas key={layer.id} x0={layer.x0} />

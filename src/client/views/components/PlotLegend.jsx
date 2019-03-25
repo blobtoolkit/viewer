@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 import { getSummary }  from '../reducers/summary'
 import { getDatasetID, getView } from '../reducers/location'
 import { getDatasetMeta } from '../reducers/repository'
-import { getPlotShape } from '../reducers/plotParameters'
+import { getPlotShape, getCircleLimit } from '../reducers/plotParameters'
 import styles from './Plot.scss'
 import { format as d3format} from 'd3-format'
 import { plotText } from './PlotStyles'
@@ -18,7 +18,8 @@ export default class PlotLegend extends React.Component {
         let meta = getDatasetMeta(state,id)
         let shape = getPlotShape(state)
         let view = getView(state)
-        return {meta,...summary,shape,view}
+        let circleLimit = getCircleLimit(state)
+        return {meta,...summary,shape,view,circleLimit}
       }
     }
   }
@@ -33,7 +34,7 @@ export default class PlotLegend extends React.Component {
   }
 }
 
-const Legend = ({values,zAxis,bins,palette,other,reducer,meta,shape,view}) => {
+const Legend = ({values,zAxis,bins,palette,other,reducer,meta,shape,view,circleLimit}) => {
   let items = []
   let legendKey
   let ds
@@ -87,7 +88,7 @@ const Legend = ({values,zAxis,bins,palette,other,reducer,meta,shape,view}) => {
     }
     bins.forEach((bin,i) => {
       let title = bin.id
-      if (title == 'no-hit' && values.counts.all > 1000000 && view=='blob' && shape == 'circle'){
+      if (title == 'no-hit' && values.counts.all > circleLimit && view=='blob' && shape == 'circle'){
         title += ' (not shown)'
       }
       let color = palette.colors[i]

@@ -16,6 +16,8 @@ import { getPlotShape,
   choosePlotGraphics,
   getSVGThreshold,
   chooseSVGThreshold,
+  getCircleLimit,
+  chooseCircleLimit,
   getZReducer,
   chooseZReducer,
   getZScale,
@@ -66,6 +68,7 @@ const DisplayMenu = ({
   resolution, onChangeResolution,
   graphics, onChangeGraphics,
   threshold, onChangeThreshold,
+  circleLimit, onChangeCircleLimit,
   reducer, onSelectReducer,
   scale, onSelectScale,
   curveOrigin, onSelectCurveOrigin,
@@ -145,6 +148,11 @@ const DisplayMenu = ({
             <span className={styles.middle}>or</span>
           </div>
           <SVGIcon sprite={svgIcon} active={graphics == 'svg'} onIconClick={()=>onChangeGraphics(graphics == 'svg' ? 'canvas' : 'svg')}/>
+        </MenuDisplaySimple>}
+        {shape == 'circle' && <MenuDisplaySimple name='circle limit'>
+          <div className={styles.full_height}>
+            <NumericInput initialValue={circleLimit} onChange={onChangeCircleLimit}/>
+          </div>
         </MenuDisplaySimple>}
       </span>
     )
@@ -309,6 +317,7 @@ class MenuDisplayMain extends React.Component {
         onChangeThreshold: threshold => dispatch(chooseSVGThreshold(threshold)),
         onChangePngResolution: resolution => dispatch(choosePngResolution(resolution)),
         onChangeStaticThreshold: threshold => dispatch(chooseStaticThreshold(threshold)),
+        onChangeCircleLimit: limit => dispatch(chooseCircleLimit(limit)),
         onSelectReducer: reducer => dispatch(chooseZReducer(reducer)),
         onSelectScale: scale => dispatch(chooseZScale(scale)),
         onChangePlotScale: plotScale => dispatch(choosePlotScale(plotScale)),
@@ -330,6 +339,7 @@ class MenuDisplayMain extends React.Component {
         threshold:getSVGThreshold(state),
         pngResolution:getPngResolution(state),
         staticThreshold:getStaticThreshold(state),
+        circleLimit:getCircleLimit(state),
         reducer:getZReducer(state),
         scale:getZScale(state),
         plotScale:getPlotScale(state),
