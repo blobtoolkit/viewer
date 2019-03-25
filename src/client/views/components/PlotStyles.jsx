@@ -1,6 +1,6 @@
 import colors from './_colors'
 
-let fontFamily = 'sans-serif'
+let fontFamily = 'Arial, sans-serif'
 let textAnchor = 'middle'
 
 export const plotText = {
