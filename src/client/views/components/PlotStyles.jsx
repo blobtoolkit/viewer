@@ -1,6 +1,6 @@
 import colors from './_colors'
 
-let fontFamily = 'Tahoma, "Liberation Sans", "Open Sanas", Arial, sans-serif'
+let fontFamily = '"Open Sans", Arial, sans-serif'
 let textAnchor = 'middle'
 
 export const plotText = {
@@ -25,7 +25,8 @@ export const plotText = {
     dominantBaseline: 'hanging'
   },
   legend: {
-    fontFamily
+    fontFamily,
+    fontSize: '13px'
   },
   horizLegend: {
     fontFamily,
