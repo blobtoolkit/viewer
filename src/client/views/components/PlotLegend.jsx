@@ -38,7 +38,12 @@ const Legend = ({values,zAxis,bins,palette,other,reducer,meta,shape,view,circleL
   let items = []
   let legendKey
   let ds
-  let format = d3format(".2s")
+  let format = x => {
+    if (x < 1000){
+      return x
+    }
+    return d3format(".2s")(x)
+  }
   let commaFormat = d3format(",")
   if (bins){
     let offset = 20
@@ -69,7 +74,8 @@ const Legend = ({values,zAxis,bins,palette,other,reducer,meta,shape,view,circleL
     let color = '#999'
     let numbers = []
     let count = values.counts.all > 0
-    numbers.push(commaFormat(values.counts.all))
+    // numbers.push(commaFormat(values.counts.all))
+    numbers.push(format(values.counts.all))
     if (reducer != 'count'){
       numbers.push(format(values.reduced.all))
     }
@@ -94,7 +100,8 @@ const Legend = ({values,zAxis,bins,palette,other,reducer,meta,shape,view,circleL
       let color = palette.colors[i]
       let numbers = []
       let count = values.counts.binned[i] > 0
-      numbers.push(commaFormat(values.counts.binned[i]))
+      // numbers.push(commaFormat(values.counts.binned[i]))
+      numbers.push(format(values.counts.binned[i]))
       if (reducer != 'count'){
         numbers.push(format(values.reduced.binned[i]))
       }
