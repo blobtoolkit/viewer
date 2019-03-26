@@ -8,6 +8,7 @@ import { getSelectedDatasetMeta } from '../reducers/dataset'
 import { getStaticThreshold } from '../reducers/repository'
 import { getPlotShape, getPngResolution } from '../reducers/plotParameters'
 import { ExportButton } from './ExportButton'
+import { NoBlobWarning } from './NoBlobWarning'
 
 const apiUrl = API_URL || '/api/v1'
 
@@ -106,6 +107,13 @@ class Static extends React.Component {
 
   render(){
     let warning
+    if (Object.keys(this.props.plot.axes).length < 4){
+      return (
+        <div className={styles.fill_parent+' '+styles.centered_content}>
+          <NoBlobWarning/>
+        </div>
+      )
+    }
     if (this.state.available){
       warning = <StaticWarning name={this.props.meta.name} threshold={this.props.threshold} records={this.props.meta.records} />
     }
