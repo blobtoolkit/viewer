@@ -106,21 +106,21 @@ class Static extends React.Component {
   }
 
   render(){
-    let warning
-    if (Object.keys(this.props.plot.axes).length < 4){
+    let view = this.props.view
+    if (view == 'blob' && Object.keys(this.props.plot.axes).length < 4){
       return (
         <div className={styles.fill_parent+' '+styles.centered_content}>
           <NoBlobWarning/>
         </div>
       )
     }
+    let warning
     if (this.state.available){
       warning = <StaticWarning name={this.props.meta.name} threshold={this.props.threshold} records={this.props.meta.records} />
     }
     else {
       warning = <StaticMissing name={this.props.meta.name} view={this.props.view} />
     }
-    let view = this.props.view
     let shape
     let prefix = this.props.datasetId+'.'+view
     if (view == 'blob'){
