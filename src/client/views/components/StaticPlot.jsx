@@ -107,14 +107,11 @@ class Static extends React.Component {
 
   render(){
     let view = this.props.view
-    if (view == 'blob' && Object.keys(this.props.plot.axes).length < 4){
-      return (
-        <div className={styles.fill_parent+' '+styles.centered_content}>
-          <NoBlobWarning/>
-        </div>
-      )
-    }
     let warning
+    if (view == 'blob' && Object.keys(this.props.plot.axes).length < 4){
+      warning = <NoBlobWarning source='Cumulative'/>
+      view = 'cumulative'
+    }
     if (this.state.available){
       warning = <StaticWarning name={this.props.meta.name} threshold={this.props.threshold} records={this.props.meta.records} />
     }
