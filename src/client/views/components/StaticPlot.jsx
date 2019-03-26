@@ -112,7 +112,7 @@ class Static extends React.Component {
       warning = <NoBlobWarning source='Cumulative'/>
       view = 'cumulative'
     }
-    if (this.state.available){
+    else if (this.state.available){
       warning = <StaticWarning name={this.props.meta.name} threshold={this.props.threshold} records={this.props.meta.records} />
     }
     else {
