@@ -38,10 +38,15 @@ class Static extends React.Component {
   componentDidMount(){
     if (this.refs.static_image && this.props.hasStatic){
       let shape
-      if (this.props.view == 'blob'){
+      let view = this.props.view
+      if (view == 'blob' && Object.keys(this.props.plot.axes).length == 4){
         shape = this.props.shape
       }
-      this.fetchImage(this.props.view, shape, this.getResolution())
+      else {
+        view = 'cumulative'
+      }
+
+      this.fetchImage(view, shape, this.getResolution())
     }
   }
   componentWillUpdate(nextProps){
