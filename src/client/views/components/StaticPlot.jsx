@@ -8,6 +8,7 @@ import { getSelectedDatasetMeta } from '../reducers/dataset'
 import { getStaticThreshold } from '../reducers/repository'
 import { getPlotShape, getPngResolution } from '../reducers/plotParameters'
 import { ExportButton } from './ExportButton'
+import { NoBlobWarning } from './NoBlobWarning'
 
 const apiUrl = API_URL || '/api/v1'
 
@@ -37,10 +38,14 @@ class Static extends React.Component {
   componentDidMount(){
     if (this.refs.static_image && this.props.hasStatic){
       let shape
-      if (this.props.view == 'blob'){
+      let view = this.props.view
+      if (view == 'blob' && Object.keys(this.props.plot.axes).length < 4) {
+        view = 'cumulative'
+      }
+      else if (view == 'blob'){
         shape = this.props.shape
       }
-      this.fetchImage(this.props.view, shape, this.getResolution())
+      this.fetchImage(view, shape, this.getResolution())
     }
   }
   componentWillUpdate(nextProps){
@@ -105,14 +110,18 @@ class Static extends React.Component {
   }
 
   render(){
+    let view = this.props.view
     let warning
-    if (this.state.available){
+    if (view == 'blob' && Object.keys(this.props.plot.axes).length < 4){
+      warning = <NoBlobWarning source='Cumulative'/>
+      view = 'cumulative'
+    }
+    else if (this.state.available){
       warning = <StaticWarning name={this.props.meta.name} threshold={this.props.threshold} records={this.props.meta.records} />
     }
     else {
       warning = <StaticMissing name={this.props.meta.name} view={this.props.view} />
     }
-    let view = this.props.view
     let shape
     let prefix = this.props.datasetId+'.'+view
     if (view == 'blob'){

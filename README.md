@@ -22,6 +22,15 @@ cd viewer
 npm install
 ```
 
+If individual npm packages fail to install, you may be able to install a different version by installing the package directly, then continuing with the rest of the install, e.g.:
+
+```
+npm install fsevents
+npm install
+```
+
+The installer will highlight known vulnerabilities in the dependencies, these are generally harmless when run on a local machine or private cluster but please note that the included dev server should not be used to host a public instance (see Production Build below).
+
 3. Start BlobToolKit Viewer
 - on Linux/OS X (start in a detached screen session)
 ```

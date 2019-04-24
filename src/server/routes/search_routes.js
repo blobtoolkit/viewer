@@ -118,8 +118,14 @@ const search = term => {
   if (term.match(/^all$/i)) return meta
   if (!index.values[term]) return []
   let arr = []
+  let ids = {}
   index.values[term].forEach(entry=>{
-    arr = arr.concat(entry.i.map(i=>meta[i]))
+    entry.i.forEach(i=>{
+      if (!ids[meta[i].id]){
+        arr.push(meta[i])
+        ids[meta[i].id] = 1
+      }
+    })
   })
   return arr
 }

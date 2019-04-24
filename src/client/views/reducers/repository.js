@@ -233,12 +233,16 @@ export const loadDataset = (id,clear) => {
           dispatch(updatePathname({},{static:true}))
         }
       }
+      else if (!meta.static_plots) {
+        dispatch(updatePathname({},{static:true}))
+      }
       else if (window.records > meta.records && meta.records < threshold && isStatic){
         dispatch(updatePathname({},{static:true}))
       }
-      else if (isStatic) {
+      else if (meta.records < threshold){
         dispatch(updatePathname({},{static:true}))
       }
+
       dispatch(editPlot(plot))
       Promise.all(addAllFields(dispatch,meta.fields,1,meta,plot,false))
       .then(()=>{
