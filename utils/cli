@@ -75,7 +75,6 @@ const main = async (args) => {
   profile.setPreference('browser.helperApps.neverAsk.saveToDisk', 'image/png, image/svg+xml, text/csv, text/plain, application/json')
 
   let firefoxOptions = new firefox.Options();
-  // firefoxOptions.setBinary('firefox');
   firefoxOptions.headless();
   firefoxOptions.setProfile(profile);
 
@@ -174,7 +173,7 @@ const main = async (args) => {
         qs = qs.replace('#Filters','#Lists')
         url = `${loc}/${view}?${qs}`
         process.stderr.write(`Navigating to ${url}\n`)
-        await driver.get(`${loc}/detail?${qs}`)
+        await driver.get(`${url}`)
       }
       let unstable = 1
       while(unstable){
@@ -182,6 +181,7 @@ const main = async (args) => {
           el = await driver.findElement(By.id('list_current'));
           await el.click();
           let button = await driver.findElement(By.id('noId_list_download'));
+          //await sleep(5000)
           await button.click();
 
           unstable = false
@@ -191,6 +191,7 @@ const main = async (args) => {
         }
         catch(err){
           unstable++
+          await sleep(500)
         }
       }
 

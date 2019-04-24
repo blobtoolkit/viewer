@@ -19,7 +19,7 @@ import { getDatasetID, getHashString } from '../reducers/location'
 class ListsMenu extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {called: -1}
+    this.state = {called: -1, loading: true}
   }
 
   loadBusco() {
@@ -33,6 +33,7 @@ class ListsMenu extends React.Component {
           }
           break
         }
+        this.setState({loading:false})
       }
     }
   }
@@ -74,8 +75,6 @@ class ListsMenu extends React.Component {
             onDatasetMount={()=>{}}
           />
           <DatasetCreateList />
-          { this.props.lists.map((list,i) => (<MenuList key={i} onListClick={this.props.onListClick}/>))}
-          {<ListUpload active={false} onDrop={this.props.onDrop}/>}
         </div>
       )
     }

@@ -18,6 +18,7 @@ class ListModal extends React.Component {
   }
 
   _downloadJSONFile(name,content){
+    console.log(name)
     var element = document.createElement('a');
     var file = new Blob([JSON.stringify(content, null, (content.identifiers ? null : 2))], {type: 'text/plain'});
     element.href = URL.createObjectURL(file);
@@ -26,7 +27,10 @@ class ListModal extends React.Component {
   }
 
   render() {
-    if (!this.props.list.params){
+    if (!this.props.list.params || !this.props.dataset){
+      return null
+    }
+    if (!this.props.list.identifiers || this.props.list.identifiers.length == 0){
       return null
     }
     let inParams = this.props.list.params;

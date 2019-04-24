@@ -1224,6 +1224,19 @@ export const getFullSummary = createSelector(
       target: f(target/(data.hits.total.span - nohit))*1,
       spanOverN50: f(data.hits.total.span/data.hits.total.n50)*1
     }
+    data.readMapping = {}
+    Object.keys(meta.reads).forEach(acc=>{
+      data.readMapping[acc] = {
+        total: meta.reads[acc]['Total reads'],
+        coverage: meta.reads[acc].coverage,
+        mapped: meta.reads[acc]['Mapped reads'],
+        mappedPortion: f(meta.reads[acc]['Mapped reads'] / meta.reads[acc]['Total reads'])*1,
+        platform: meta.reads[acc].platform,
+        strategy: meta.reads[acc].strategy
+      }
+    })
+    console.log(meta)
+    console.log(data)
     return data
   }
 )
