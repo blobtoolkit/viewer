@@ -96,9 +96,14 @@ function variableRawDataToCategory (data,meta){
 export function cloneField(obj) {
   return dispatch => {
     let state = store.getState()
-    let id = obj.id
-    let new_id = id + '_1'
     let linked_id = obj.id
+    let source = state.fields.byId[linked_id]
+    let parent = source.parent
+    let sibs
+    if (parent){
+      sibs = getFieldsByParent(state,parent)
+    }
+    let id = `sum_${parent}`
     let parent_id = 'userDefined'
     let field = Object.keys(state.fields.byId[linked_id])
         .filter((key)=>{return key != 'id'})
@@ -106,29 +111,70 @@ export function cloneField(obj) {
           obj[key] = state.fields.byId[linked_id][key];
           return obj;
         }, {});
-    field.id = new_id
-    field.clonedFrom = obj.id
-    field.type = "category"
+    let values = []
+    sibs.forEach((sib,i)=>{
+      let meta = state.fields.byId[sib.id]
+      if (meta.active){
+        let rawData = state.rawData.byId[sib.id]
+        if (values.length == 0){
+          values = rawData.values.slice(0)
+          id += `_${i}`
+        }
+        else {
+          values.forEach((value,i)=>{
+            values[i] += rawData.values[i]
+          })
+          id += `,${i}`
+        }
+      }
+    })
+    field.id = id
+    field.clonedFrom = parent
+    field.range = [Math.min(...values),Math.max(...values)]
     dispatch(addField(field))
-    let child = {id: new_id, name: new_id, active: false}
+    let child = {id: id, name: id, active: false}
     let children = state.fields.byId[parent_id].children.concat(child)
     dispatch(editField({id:parent_id,children}))
-    let raw_data = state.rawData.byId[linked_id]
-    let converted_data = variableRawDataToCategory(raw_data,field)
-    dispatch(receiveRawData({id:new_id,json:converted_data}))
-    let filt = Object.keys(state.filters.byId[linked_id])
-        .filter((key)=>{return key != 'id'})
-        .reduce((obj, key) => {
-          obj[key] = state.filters.byId[linked_id][key];
-          return obj;
-        }, {});
-    filt.id = new_id
-    filt.type = 'list'
-    filt.keys = converted_data.keys.slice(0)
-    filt.toggled = Array.from(Array(10).keys()).map(i=>false)
-    dispatch(addFilter(filt))
-   }
+    dispatch(receiveRawData({id,json:{values}}))
+  }
 }
+
+// export function cloneField(obj) {
+//   return dispatch => {
+//     let state = store.getState()
+//     let id = obj.id
+//     let new_id = id + '_1'
+//     let linked_id = obj.id
+//     let parent_id = 'userDefined'
+//     let field = Object.keys(state.fields.byId[linked_id])
+//         .filter((key)=>{return key != 'id'})
+//         .reduce((obj, key) => {
+//           obj[key] = state.fields.byId[linked_id][key];
+//           return obj;
+//         }, {});
+//     field.id = new_id
+//     field.clonedFrom = obj.id
+//     field.type = "category"
+//     dispatch(addField(field))
+//     let child = {id: new_id, name: new_id, active: false}
+//     let children = state.fields.byId[parent_id].children.concat(child)
+//     dispatch(editField({id:parent_id,children}))
+//     let raw_data = state.rawData.byId[linked_id]
+//     let converted_data = variableRawDataToCategory(raw_data,field)
+//     dispatch(receiveRawData({id:new_id,json:converted_data}))
+//     let filt = Object.keys(state.filters.byId[linked_id])
+//         .filter((key)=>{return key != 'id'})
+//         .reduce((obj, key) => {
+//           obj[key] = state.filters.byId[linked_id][key];
+//           return obj;
+//         }, {});
+//     filt.id = new_id
+//     filt.type = 'list'
+//     filt.keys = converted_data.keys.slice(0)
+//     filt.toggled = Array.from(Array(10).keys()).map(i=>false)
+//     dispatch(addFilter(filt))
+//    }
+// }
 
 const hashCode = (json) => {
   let string = JSON.stringify(json)
@@ -302,6 +348,7 @@ export const addAllFields = (dispatch,fields,flag,meta,plot,promises) => {
         if (key != 'children' && key != 'data' && !field.hasOwnProperty(key)){
           field[key] = meta[key];
         }
+        field.parent = meta.id
       })
     }
     let params = ['Min','Max','Inv','Keys','Active'].map(x=>field.id+'--'+x)

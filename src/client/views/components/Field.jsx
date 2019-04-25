@@ -10,7 +10,7 @@ import { makeGetFieldMetadata,
   fetchRawData } from '../reducers/field'
 import { editFilter, filterToList } from '../reducers/filter'
 import { editPlot } from '../reducers/plot'
-import { getStatic } from '../reducers/location'
+import { getDatasetID, getStatic } from '../reducers/location'
 import { getSelectionDisplay,
   selectNone,
   toggleSelection } from '../reducers/select'
@@ -27,6 +27,7 @@ class Field extends React.Component {
         obj.plot = getMainPlot(state)
         obj.hideSelection = !getSelectionDisplay(state)
         obj.isStatic = getStatic(state)
+        obj.datasetId = getDatasetID(state)
         return obj
       }
     }

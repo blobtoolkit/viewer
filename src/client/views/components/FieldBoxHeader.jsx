@@ -34,7 +34,10 @@ class FieldBoxHeader extends React.Component {
             <SVGIcon sprite={xAxisIcon} active={this.checkAxisStatus('x')} onIconClick={()=>{this.props.onAxisButtonClick('x',this.props.fieldId)}}/>
             <SVGIcon sprite={yAxisIcon} active={this.checkAxisStatus('y')} onIconClick={()=>{this.props.onAxisButtonClick('y',this.props.fieldId)}}/>
             <SVGIcon sprite={zAxisIcon} active={this.checkAxisStatus('z')} onIconClick={()=>{this.props.onAxisButtonClick('z',this.props.fieldId)}}/>
-            <SVGIcon sprite={cloneIcon} onIconClick={()=>{this.props.onCloneButtonClick(this.props.fieldId)}}/>
+            { this.props.meta.parent != this.props.datasetId &&
+              !this.props.clonedFrom &&
+              <SVGIcon sprite={cloneIcon} onIconClick={()=>{this.props.onCloneButtonClick(this.props.fieldId)}}/>
+            }
           </span>
         )
       }

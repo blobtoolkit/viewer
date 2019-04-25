@@ -13,7 +13,7 @@ const sets = (set) => {
   tips.yAxis = {name:'yAxis',detail:'assign variable to y-axis',filterMenu:1}
   tips.zAxis = {name:'zAxis',detail:'use variable to scale points/bins',filterMenu:1}
   tips.category = {name:'category',filterMenu:1}
-  tips.clone = {name:'clone',filterMenu:1}
+  tips.clone = {name:'sum active fields',filterMenu:1}
   tips.invert = {name:'invert',filterMenu:1}
   tips.show = {name:'showSelection',filterMenu:1}
   tips.showHide = {name:'hideSelection',filterMenu:1}
