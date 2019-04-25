@@ -36,7 +36,12 @@ class Filter extends React.Component {
             remove.push(id+'--Min')
           }
           dispatch(queryToStore({values,remove,action:'FILTER'}))
-          //dispatch(editFilter({id,range}))
+        },
+        onUpdateClamp: (id,value) => {
+          let values = {}
+          let remove = []
+          values[id+'--Clamp'] = value
+          dispatch(queryToStore({values,remove,action:'FIELD'}))
         }
       }
     }

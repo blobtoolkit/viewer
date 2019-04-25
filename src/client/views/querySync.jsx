@@ -282,6 +282,9 @@ const mapDispatchToQuery = (
       array: (k,v) => ({key:'filter',index:'min',...v}),
       default: Number.NEGATIVE_INFINITY
     },
+    Clamp: {
+      array: (k,v) => ({key:'field',index:'clamp',...v})
+    },
     LimitMax: {
       array: (k,v) => ({key:'field',index:'max',...v}),
     },

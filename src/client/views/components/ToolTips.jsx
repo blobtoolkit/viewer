@@ -25,6 +25,7 @@ const sets = (set) => {
   tips['active-field-header'] = {name:'deactivate',filterMenu:1}
   tips['draggable-arrow'] = {name:'drag to set range',filterMenu:1}
   tips['range-input'] = {name:'set range',filterMenu:1}
+  tips['clamp-input'] = {name:'set clamp',filterMenu:1}
   tips['create-list-input'] = {name:'set list name',filterMenu:1}
   tips['create-list-button'] = {name:'convert current filter to list',filterMenu:1}
   tips['filter-summary'] = {name:'summary of filtered dataset',filterMenu:1}
