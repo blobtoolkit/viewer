@@ -65,7 +65,7 @@ class SearchBox extends Component {
   }
 
   render(){
-    let placeholder = this.props.datasetIds.length == 0 ? "Search datasets to begin... (e.g. Arthropoda)" : "Search for datasets..."
+    let placeholder = this.props.datasetIds.length == 0 ? "Search datasets to begin... (e.g. Nematoda)" : "Search for datasets..."
     return (
       <form onSubmit={e=>e.preventDefault()}>
         <input
