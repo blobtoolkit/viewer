@@ -1235,8 +1235,6 @@ export const getFullSummary = createSelector(
         strategy: meta.reads[acc].strategy
       }
     })
-    console.log(meta)
-    console.log(data)
     return data
   }
 )

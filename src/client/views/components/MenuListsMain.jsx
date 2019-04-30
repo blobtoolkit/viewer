@@ -24,19 +24,26 @@ class ListsMenu extends React.Component {
 
   loadBusco() {
     if (this.props.buscoSets && this.props.fullSummary.busco){
-      for (let i = 0; i < this.props.buscoSets.length; i++){
-        let set = this.props.buscoSets[i].replace('_busco','')
-        if (!this.props.fullSummary.busco[set]){
-          if (i > this.state.called){
-            this.props.fetchBuscoData(this.props.buscoSets[i])
-            this.setState({called:i})
+      let set = this.props.buscoSets[(this.props.buscoSets.length -1)].replace('_busco','')
+      if (this.props.fullSummary.busco[set]){
+        this.setState({called:(this.props.buscoSets.length)})
+        this.loadNs()
+      }
+      else {
+        for (let i = 0; i < this.props.buscoSets.length; i++){
+          let set = this.props.buscoSets[i].replace('_busco','')
+          if (!this.props.fullSummary.busco[set]){
+            if (i > this.state.called){
+              this.props.fetchBuscoData(this.props.buscoSets[i])
+              this.setState({called:i})
+            }
+            break
+            this.loadNs()
           }
-          break
-          this.loadNs()
         }
       }
     }
-    else {
+    else if (this.state.loading) {
       this.loadNs()
     }
   }
@@ -53,6 +60,12 @@ class ListsMenu extends React.Component {
   }
 
   shouldComponentUpdate(nextProps, nextState){
+    if (nextState.loading != this.state.loading){
+      return true
+    }
+    if (nextState.called != this.state.called){
+      return true
+    }
     if (nextProps.buscoSets && nextProps.buscoSets.length > 1 && nextProps.fullSummary.busco){
       if (!this.props.fullSummary.busco){
         return true
