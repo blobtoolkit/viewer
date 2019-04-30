@@ -32,9 +32,19 @@ class ListsMenu extends React.Component {
             this.setState({called:i})
           }
           break
+          this.loadNs()
         }
-        this.setState({loading:false})
       }
+    }
+    else {
+      this.loadNs()
+    }
+  }
+
+  loadNs() {
+    if (!this.props.buscoSets || this.state.called == this.props.buscoSets.length){
+      this.props.fetchBuscoData('ncount')
+      this.setState({loading:false})
     }
   }
 
