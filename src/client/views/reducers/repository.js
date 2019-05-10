@@ -193,7 +193,7 @@ export const staticThreshold = handleAction(
   (state, action) => (
     action.payload
   ),
-  qs.parse((document.location.search : '').replace(/^\?/,'')).staticThreshold || STATIC_THRESHOLD
+  qs.parse((document.location.search || '').replace(/^\?/,'')).staticThreshold || STATIC_THRESHOLD
 )
 export const getStaticThreshold = state => state.staticThreshold
 

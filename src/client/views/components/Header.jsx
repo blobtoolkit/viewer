@@ -30,4 +30,4 @@ const Header = ( { tabs, onTabClick } ) => {
   )
 }
 
-module.exports = Header;
+export default Header;

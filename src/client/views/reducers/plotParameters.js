@@ -295,7 +295,7 @@ export const circleLimit = handleAction(
   (state, action) => (
     action.payload
   ),
-  qs.parse((document.location.search : '').replace(/^\?/,'')).circleLimit || CIRCLE_LIMIT
+  qs.parse((document.location.search || '').replace(/^\?/,'')).circleLimit || CIRCLE_LIMIT
 )
 export const getCircleLimit = state => state.circleLimit
 

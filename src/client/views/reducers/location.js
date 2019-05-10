@@ -147,7 +147,7 @@ export const queryString = handleAction(
   (state, action) => (
     action.payload
   ),
-  (document.location.search : '').replace('?','')
+  (document.location.search || '').replace('?','')
 )
 export const getQueryString = state => state.queryString || ''
 
@@ -162,7 +162,7 @@ export const hashString = handleAction(
   (state, action) => (
     action.payload
   ),
-  (document.location.hash : '').replace('#','')
+  (document.location.hash || '').replace('#','')
 )
 export const getHashString = state => state.hashString || ''
 

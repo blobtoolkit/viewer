@@ -1,9 +1,9 @@
 import { createSelector } from 'reselect'
 import { byIdSelectorCreator } from './selectorCreators'
-import createHistory from 'history/createBrowserHistory';
+import { createBrowserHistory } from 'history'
 import qs from 'qs'
 const basename = BASENAME || ''
-export const history = createHistory({
+export const history = createBrowserHistory({
   basename
 })
 

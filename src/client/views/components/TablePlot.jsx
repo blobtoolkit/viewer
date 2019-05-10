@@ -175,6 +175,7 @@ class Table extends React.Component {
     let page = this.props.page
     let pages = this.props.data.pages
     let pageSize = this.props.pageSize
+    console.log(columns)
     return (
       <div className={plotStyles.fill_parent}>
         <ReactTable
@@ -188,6 +189,7 @@ class Table extends React.Component {
               updated.page = page
               updated.canNext = updated.page < updated.pages - 1
               updated.canPrevious = updated.page > 0
+              console.log(updated)
               return updated
             }}
             onSortedChange={(arr)=>{this.props.updateSort(arr);}}
@@ -207,20 +209,6 @@ class TablePlot extends React.Component {
     this.mapStateToProps = state => {
       let data = getTableDataForPage(state)
       if (!data) return {}
-      // let warning
-      // if (data.values.length > 100000){
-      //   let subset = {}
-      //   subset.values = data.values.slice(0,100000)
-      //   subset.keys = data.keys
-      //   subset.plot = data.plot
-      //   subset.fields = data.fields
-      //   subset.links = data.links
-      //   warning = true
-      //   data = subset
-      // }
-      // let selected = getSelectedRecords(state)
-      // let list = getFilteredList(state)
-      // let selectAll = (selected.length == list.length)
       let selCount = data.values.filter(o=>o.sel==true).length
       let selectAll = (selCount == data.values.length)
       return {

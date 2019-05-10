@@ -8,6 +8,11 @@ import 'babel-polyfill'
 
 
 
+// render(
+//   <a>working</a>,
+//   document.getElementById('app')
+// )
+
 render(
   <BrowserRouter>
     <Provider store={store}>
