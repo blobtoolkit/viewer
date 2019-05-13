@@ -1240,7 +1240,7 @@ export const getFullSummary = createSelector(
 )
 
 
-export const summaryBuscoSet = () => 'eukaryota'
+export const summaryBuscoSet = () => ''
 
 export const columnAccessors = createSelector(
   summaryBuscoSet,
