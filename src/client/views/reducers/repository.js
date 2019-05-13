@@ -60,13 +60,13 @@ export const availableDatasets = handleActions(
       })
     ),
     RECEIVE_REPOSITORY: (state, action) => (
-      immutableUpdate(state, {
+      {
         isFetching: false,
         isInitialised: true,
         byId: (action.payload).reduce((obj, item) => (obj[item.id] = item, obj) ,{}),
         allIds: (action.payload).map(item => item.id),
         lastUpdated: action.meta.receivedAt
-      })
+      }
     ),
     INVALIDATE_DATASET: (state, action) => (
       state
@@ -88,6 +88,8 @@ export const getRepositoryIsFetching = state => state.availableDatasets.isFetchi
 export const getRepositoryIsInitialised = state => deep(state,'availableDatasets.isInitialised') || false
 
 export const getAvailableDatasetIds = state => deep(state,'availableDatasets.allIds') || []
+
+export const getAvailableDatasets = state => deep(state,'availableDatasets.byId') || []
 
 export function fetchRepository(searchTerm) {
   return function (dispatch) {

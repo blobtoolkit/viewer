@@ -2,6 +2,7 @@ import React from 'react'
 import { connect } from 'react-redux'
 import styles from './HomePage.scss'
 import Search from './Search'
+import FindDatasets from './FindDatasets'
 import figure1 from './img/figure1.png'
 import figure2 from './img/figure2.png'
 
@@ -24,11 +25,8 @@ export default class HomePage extends React.Component {
           fragmented assemblies.
         </p>
         <hr/>
-        <p>
-          To get started, search by assembly name, id, species or phylum in the <span className={styles.toggle_menu} onClick={()=>{this.props.toggleHash('Datasets')}}>Datasets</span> menu.
-        </p>
-        <hr/>
-        <p>
+        {<FindDatasets/>}
+        {/*<p>
           Multiple views and data export options dynamically update as filter
           parameters and selections are modified (Figure 1).
         </p>
@@ -44,7 +42,7 @@ export default class HomePage extends React.Component {
         </p>
         <p>
           &nbsp;
-        </p>
+        </p>*/}
 
 
       </div>

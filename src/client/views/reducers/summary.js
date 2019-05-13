@@ -9,7 +9,7 @@ import { getScatterPlotDataByCategory,
   getFilteredDataForLength,
   getFilteredDataForNCount
 } from './plotData';
-import { getDatasetIsActive } from './repository'
+import { getDatasetIsActive, getAvailableDatasets, getAvailableDatasetIds } from './repository'
 import { getRawDataForFieldId, getDetailsForFieldId, getBinsForFieldId, getAllActiveFields, getBinsForCat } from './field'
 import { getMainPlot, getZAxis } from './plot';
 import { getSelectedDatasetMeta } from './dataset';
@@ -1236,5 +1236,91 @@ export const getFullSummary = createSelector(
       }
     })
     return data
+  }
+)
+
+
+export const summaryBuscoSet = () => 'eukaryota'
+
+export const columnAccessors = createSelector(
+  summaryBuscoSet,
+  (buscoSet) => {
+    let busco = {}
+    if (buscoSet){
+      busco.lineage = d => {
+        if (!d.summaryStats || !d.summaryStats.busco || !d.summaryStats.busco[`${buscoSet}_odb9`]){
+          return ''
+        }
+        return buscoSet
+      }
+      busco.string = d => {
+        if (!d.summaryStats || !d.summaryStats.busco || !d.summaryStats.busco[`${buscoSet}_odb9`]){
+          return ''
+        }
+        return d.summaryStats.busco[`${buscoSet}_odb9`].string
+      }
+    }
+    else {
+      busco.lineage = d => {
+        if (!d.summaryStats || !d.summaryStats.busco){
+          return ''
+        }
+        return Object.keys(d.summaryStats.busco)[0].replace('_odb9','')
+      }
+      busco.string = d => {
+        if (!d.summaryStats || !d.summaryStats.busco){
+          return ''
+        }
+        return d.summaryStats.busco[Object.keys(d.summaryStats.busco)[0]].string
+      }
+    }
+    let accessors = {
+      id: d => d.id,
+      accession: d => d.accession,
+      species: d => d.species,
+      phylum: d => d.phylum,
+      order: d => d.order
+    }
+    if (busco){
+      Object.keys(busco).forEach(key=>{
+        accessors[`busco-${key}`] = busco[key]
+      })
+    }
+    return accessors
+  }
+)
+
+export const datasetSummaries = createSelector(
+  getAvailableDatasetIds,
+  getAvailableDatasets,
+  columnAccessors,
+  (ids,datasets,accessors) => {
+    let data = []
+    ids.forEach(id=>{
+      let values = {}
+      Object.keys(accessors).forEach(key=>{
+        values[key] = accessors[key](datasets[id])
+      })
+      data.push(values)
+    })
+    return data
+  }
+)
+
+export const listingColumns = createSelector(
+  columnAccessors,
+  (accessors) => {
+    let columns = []
+    Object.keys(accessors).forEach(key=>{
+      let config = {}
+      config.id = key,
+      config.Header = key.charAt(0).toUpperCase() + key.slice(1),
+      config.accessor = d => d[key]
+      if (key == 'busco-string'){
+        config.width = 300
+      }
+      columns.push(config)
+    })
+    return columns
   }
 )

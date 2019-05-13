@@ -2,11 +2,12 @@ import React from 'react'
 import { connect } from 'react-redux'
 import styles from './Layout.scss'
 import { getDatasetIsActive } from '../reducers/repository'
-import { toggleHash, getView, getStatic, getDatasetID } from '../reducers/location'
+import { toggleHash, getView, getStatic, getDatasetID, getHashString } from '../reducers/location'
 import { getDatasetName } from '../reducers/dataset'
 import { getScatterPlotData } from '../reducers/plotData'
 import { getMainPlot } from '../reducers/plot'
 import GetStarted from './GetStarted'
+import FindDatasets from './FindDatasets'
 import MainPlot from './MainPlot'
 import BuscoPlot from './BuscoPlot'
 import CumulativePlot from './CumulativePlot'
@@ -22,11 +23,13 @@ import SelectWarning from './SelectWarning'
 class PlotsLayoutComponent extends React.Component {
 
   render(){
+    if (!this.props.datasetId || this.props.activeTab == 'Datasets'){
+      return <HomePage toggleHash={this.props.toggleHash}/>
+    }
     let defaultPlot = <MainPlot {...this.props}/>
     if (this.props.active && this.props.active != 'loading' && Object.keys(this.props.plot.axes).length < 4){
       defaultPlot = <CumulativePlot {...this.props} warning='noBlob'/>
     }
-    if (!this.props.datasetId) return <HomePage toggleHash={this.props.toggleHash}/>
     let view
     if (this.props.static){
       switch (this.props.view) {
@@ -105,6 +108,7 @@ class LayoutPlots extends React.Component {
           datasetId: getDatasetID(state),
           view: getView(state),
           plot: getMainPlot(state),
+          activeTab: getHashString(state),
           static: true
         }
       }
@@ -118,6 +122,7 @@ class LayoutPlots extends React.Component {
         datasetId: getDatasetID(state),
         datasetName: getDatasetName(state),
         plot: getMainPlot(state),
+        activeTab: getHashString(state),
         view: getView(state)
       }
     },

@@ -53,7 +53,7 @@ class ControlsLayoutComponent extends React.Component {
       tabs.push({id:tab,active:activeTab == tab})
     })
     let menu
-    if (activeTab == 'Datasets') menu = <MenuDatasetMain />
+    // if (activeTab == 'Datasets') menu = <MenuDatasetMain />
     if (activeTab == 'Filters') menu = <MenuFilterMain/>
     if (activeTab == 'Lists') menu = <MenuListsMain/>
     if (activeTab == 'Settings') menu = <MenuDisplayMain/>

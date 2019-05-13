@@ -1,6 +1,7 @@
 const fs = require('fs');
 const read = require('read-yaml');
 const config = require('../../config/main');
+const fileExists = require('../functions/io').fileExists;
 const dataDirectory = config.filePath;
 
 const parseMeta = (obj) => {
@@ -43,6 +44,15 @@ const readMeta = (dir,md) => {
     else if (file == 'meta.json' && fs.statSync(path).isFile()){
       let dsMeta = parseMeta(read.sync(path))
       dsMeta.id = dir.replace(/^.+\//,'')
+      let sumpath = dir+'/summary.json'
+      fileExists(sumpath).then((bool)=>{
+        if (bool){
+          let summary = read.sync(sumpath)
+          if (summary.hasOwnProperty('summaryStats')){
+            dsMeta.summaryStats = summary.summaryStats
+          }
+        }
+      })
       md.push(dsMeta)
     }
   })
