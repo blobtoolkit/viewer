@@ -1262,13 +1262,13 @@ export const columnAccessors = createSelector(
     }
     else {
       busco.lineage = d => {
-        if (!d.summaryStats || !d.summaryStats.busco){
+        if (!d.summaryStats || !d.summaryStats.busco || Object.keys(d.summaryStats.busco).length == 0){
           return ''
         }
         return Object.keys(d.summaryStats.busco)[0].replace('_odb9','')
       }
       busco.string = d => {
-        if (!d.summaryStats || !d.summaryStats.busco){
+        if (!d.summaryStats || !d.summaryStats.busco || Object.keys(d.summaryStats.busco).length == 0){
           return ''
         }
         return d.summaryStats.busco[Object.keys(d.summaryStats.busco)[0]].string
