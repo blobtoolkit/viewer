@@ -1280,11 +1280,11 @@ export const columnAccessors = createSelector(
       species: d => d.species,
       phylum: d => d.phylum,
       'read-sets': d => {
-        if (d.summaryStats && d.summaryStats.reads){
-          return Object.keys(d.summaryStats.reads).length
+        if (d.summaryStats && d.summaryStats.readMapping){
+          return Object.keys(d.summaryStats.readMapping).length
         }
         else {
-          return 0
+          return ''
         }
       }
     }
