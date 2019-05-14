@@ -31,13 +31,13 @@ ul.autocomplete {
   list-style-type: none;
 
   li {
-    background-color: $deepColor;
+    background-color: rgba($shadeColor,0.25);
     display:block;
     padding:0.5em;
     cursor:pointer;
   }
 
   li:hover {
-    background-color: $highlightColor;
+    background-color: $shadeColor;
   }
 }

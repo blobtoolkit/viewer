@@ -1279,7 +1279,14 @@ export const columnAccessors = createSelector(
       accession: d => d.accession,
       species: d => d.species,
       phylum: d => d.phylum,
-      order: d => d.order
+      'read-sets': d => {
+        if (d.summaryStats && d.summaryStats.reads){
+          return Object.keys(d.summaryStats.reads).length
+        }
+        else {
+          return 0
+        }
+      }
     }
     if (busco){
       Object.keys(busco).forEach(key=>{

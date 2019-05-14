@@ -15,7 +15,6 @@ import { NoBlobWarning } from './NoBlobWarning'
 class Cumulative extends React.Component {
   render(){
     if (!this.props.cumulative || !this.props.cumulative.zAxis || this.props.cumulative.paths.byCat.length == 0) return null
-    console.log(this.props.cumulative)
     let side = 1110
     let viewbox = '0 0 '+side+' '+side
     let legend = <g transform='translate(700,705)'><PlotLegend/></g>

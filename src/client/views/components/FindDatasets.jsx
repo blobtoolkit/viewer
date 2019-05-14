@@ -7,7 +7,10 @@ import { getRepositoryIsFetching,
   setDatasetIsActive,refreshStore } from '../reducers/repository'
 import { getDatasetID,
   updatePathname,
-  getSearchTerm } from '../reducers/location'
+  getSearchTerm,
+  toggleHash,
+  removeHash,
+  chooseView } from '../reducers/location'
 import styles from './Layout.scss'
 import MenuDataset from './MenuDataset'
 import DatasetTable from './DatasetTable'
@@ -24,7 +27,7 @@ const DatasetFinder = ({ searchTerm, selectedDataset, isFetching, datasetIds, da
       { datasetIds.length > 0 ? (
         <span className={styles.result_count} style={{marginLeft:'1em'}} key='span'>{datasetIds.length+' datasets match "'+searchTerm+'"'}</span>
       ) : null }
-      <DatasetTable/>
+      <DatasetTable onDatasetClick={onDatasetClick}/>
     </div>
   )
 }
@@ -40,10 +43,16 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    onDatasetClick: id => {
+    onDatasetClick: (id,view) => {
       dispatch(refreshStore())
       dispatch(setDatasetIsActive(false))
-      dispatch(updatePathname({dataset:id}))
+      if (view){
+        dispatch(updatePathname({dataset:id,[view]:true}))
+      }
+      else {
+        dispatch(updatePathname({dataset:id}))
+      }
+      dispatch(removeHash('Datasets'))
     },
     onDatasetMount: id => dispatch(fetchMeta(id))
   }

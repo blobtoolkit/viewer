@@ -5,6 +5,7 @@ import ReactDOM from "react-dom";
 import styles from './Layout.scss';
 import 'react-table/react-table.css';
 import { datasetSummaries, listingColumns } from '../reducers/summary'
+import colors from './_colors'
 
 class DatasetTableComponent extends Component {
   constructor() {
@@ -55,6 +56,20 @@ class DatasetTableComponent extends Component {
           filterable={this.props.data.length > 1}
           defaultFilterMethod={(filter, row) =>
             (String(row[filter.id]).toLowerCase().startsWith(filter.value.toLowerCase()))}
+          getTrProps={(state, rowInfo, column) => {
+            return {
+              onClick: (e, handleOriginal) => {
+                let view
+                if (!rowInfo.row['read-sets']){
+                  view = 'cumulative'
+                }
+                this.props.onDatasetClick(rowInfo.row.id, view)
+              },
+              style: {
+                cursor: 'pointer',
+              }
+            }
+    }}
         />
       </div>
     );

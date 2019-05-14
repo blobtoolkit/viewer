@@ -183,6 +183,7 @@ class Table extends React.Component {
             page={0}
             pageSize={pageSize}
             columns={columns}
+            manual
             getPaginationProps={(props)=>{
               let updated = {...props}
               updated.pages = pages
