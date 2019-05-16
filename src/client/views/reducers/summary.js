@@ -1276,12 +1276,27 @@ export const columnAccessors = createSelector(
     }
     let accessors = {
       id: d => d.id,
+      taxon: d => d.taxon_name,
       accession: d => d.accession,
-      species: d => d.species,
-      phylum: d => d.phylum,
-      'read-sets': d => {
-        if (d.summaryStats && d.summaryStats.readMapping){
-          return Object.keys(d.summaryStats.readMapping).length
+      records: d => {
+        if (d.summaryStats && d.summaryStats.hits && d.summaryStats.hits.total){
+          return d.summaryStats.hits.total.count
+        }
+        else {
+          return ''
+        }
+      },
+      span: d => {
+        if (d.summaryStats && d.summaryStats.hits && d.summaryStats.hits.total){
+          return d.summaryStats.hits.total.span
+        }
+        else {
+          return ''
+        }
+      },
+      n50: d => {
+        if (d.summaryStats && d.summaryStats.hits && d.summaryStats.hits.total){
+          return d.summaryStats.hits.total.n50
         }
         else {
           return ''
@@ -1292,6 +1307,15 @@ export const columnAccessors = createSelector(
       Object.keys(busco).forEach(key=>{
         accessors[`busco-${key}`] = busco[key]
       })
+    }
+    accessors.phylum = d => d.phylum
+    accessors['read-sets'] = d => {
+      if (d.summaryStats && d.summaryStats.readMapping){
+        return Object.keys(d.summaryStats.readMapping).length
+      }
+      else {
+        return ''
+      }
     }
     return accessors
   }
@@ -1318,13 +1342,23 @@ export const listingColumns = createSelector(
   columnAccessors,
   (accessors) => {
     let columns = []
+    let numeric = ['records','span','n50','read-sets']
+    let wide = ['taxon','busco-string']
     Object.keys(accessors).forEach(key=>{
       let config = {}
       config.id = key,
       config.Header = key.charAt(0).toUpperCase() + key.slice(1),
-      config.accessor = d => d[key]
-      if (key == 'busco-string'){
+      config.accessor = d => {
+        if (numeric.includes(key)){
+          return d[key].toLocaleString()
+        }
+        return d[key]
+      }
+      if (wide.includes(key)){
         config.width = 300
+      }
+      if (numeric.includes(key)){
+        config.style = {textAlign:'right'}
       }
       columns.push(config)
     })
