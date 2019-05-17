@@ -52,7 +52,7 @@ const mapDispatchToProps = dispatch => {
       else {
         dispatch(updatePathname({dataset:id}))
       }
-      dispatch(removeHash('Datasets'))
+      dispatch(toggleHash('Filters'))
     },
     onDatasetMount: id => dispatch(fetchMeta(id))
   }

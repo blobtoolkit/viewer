@@ -3,7 +3,8 @@ import { connect } from 'react-redux'
 import ReactTable from 'react-table'
 import ReactDOM from "react-dom";
 import styles from './Layout.scss';
-import 'react-table/react-table.css';
+//import 'react-table/react-table.css';
+import './style/node_modules.css'
 import { datasetSummaries, listingColumns } from '../reducers/summary'
 import colors from './_colors'
 
@@ -59,10 +60,11 @@ class DatasetTableComponent extends Component {
           getTrProps={(state, rowInfo, column) => {
             return {
               onClick: (e, handleOriginal) => {
-                let view
-                if (!rowInfo.row['read-sets']){
+                let view = 'blob'
+                if (!rowInfo.row['read-sets'] || rowInfo.row['read-sets'] == 0){
                   view = 'cumulative'
                 }
+                console.log(view)
                 this.props.onDatasetClick(rowInfo.row.id, view)
               },
               style: {

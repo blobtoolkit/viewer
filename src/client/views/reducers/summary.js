@@ -1338,6 +1338,13 @@ export const datasetSummaries = createSelector(
   }
 )
 
+const ascComma = (a,b) => {
+  if (a.length === b.length) {
+    return a > b ? 1 : -1;
+  }
+  return a.length > b.length ? 1 : -1;
+}
+
 export const listingColumns = createSelector(
   columnAccessors,
   (accessors) => {
@@ -1359,6 +1366,7 @@ export const listingColumns = createSelector(
       }
       if (numeric.includes(key)){
         config.style = {textAlign:'right'}
+        config.sortMethod = ascComma
       }
       columns.push(config)
     })
