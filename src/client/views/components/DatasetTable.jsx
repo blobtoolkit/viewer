@@ -5,7 +5,15 @@ import ReactDOM from "react-dom";
 import styles from './Layout.scss';
 //import 'react-table/react-table.css';
 import './style/node_modules.css'
-import { datasetSummaries, listingColumns } from '../reducers/summary'
+import {
+  datasetSummaries,
+  listingColumns,
+  getDatasetPage,
+  setDatasetPage,
+  getDatasetPageSize,
+  setDatasetPageSize,
+  getDatasetSorted,
+  setDatasetSorted} from '../reducers/datasetTable'
 import colors from './_colors'
 
 class DatasetTableComponent extends Component {
@@ -44,17 +52,20 @@ class DatasetTableComponent extends Component {
       css += ` ${styles.active}`
     }
     let columns = this.props.columns
+    console.log(this.props)
     return (
-      <div id="list" className={css} style={{fontSize:'0.75em'}}>
+      <div id="list" className={css} style={{fontSize:'0.75em',paddingBottom:'0.5em'}}>
         <ReactTable
           data={this.props.data}
           columns={columns}
           className={'-highlight'}
           min-width={50}
-          defaultPageSize={Math.min(10,this.props.data.length)}
+          defaultPageSize={Math.min(this.props.pageSize,this.props.data.length)}
           showPageSizeOptions={this.props.data.length > 10}
           showPagination={this.props.data.length > 10}
           filterable={this.props.data.length > 1}
+          sorted={this.props.sorted}
+          page={this.props.page}
           defaultFilterMethod={(filter, row) =>
             (String(row[filter.id]).toLowerCase().startsWith(filter.value.toLowerCase()))}
           getTrProps={(state, rowInfo, column) => {
@@ -64,34 +75,54 @@ class DatasetTableComponent extends Component {
                 if (!rowInfo.row['read-sets'] || rowInfo.row['read-sets'] == 0){
                   view = 'cumulative'
                 }
-                console.log(view)
                 this.props.onDatasetClick(rowInfo.row.id, view)
               },
               style: {
                 cursor: 'pointer',
               }
             }
-    }}
+          }}
+          onSortedChange={(arr)=>{this.props.setSorted(arr);}}
+          onPageChange={(newPage)=>{this.props.setPage(newPage)}}
+          onPageSizeChange={(newPageSize, pageIndex)=>{this.props.setPageSize(newPageSize); return (newPageSize,pageIndex)}}
+
         />
       </div>
     );
   }
 }
 
+// getTableProps={(props)=>{
+//   return props
+//   // props.page
+//   // props.pageSize
+//   // props.sorted
+// }}
 class DatasetTable extends React.Component {
   constructor(props) {
     super(props);
     this.mapStateToProps = state => {
       return {
         data: datasetSummaries(state),
-        columns: listingColumns(state)
+        columns: listingColumns(state),
+        page: getDatasetPage(state),
+        pageSize: getDatasetPageSize(state),
+        sorted: getDatasetSorted(state)
+      }
+    }
+    this.mapDispatchToProps = dispatch => {
+      return {
+        setPage: (page) => dispatch(setDatasetPage(page)),
+        setPageSize: (pageSize) => dispatch(setDatasetPageSize(pageSize)),
+        setSorted: (arr) => dispatch(setDatasetSorted(arr))
       }
     }
   }
 
   render(){
     const ConnectedTable = connect(
-      this.mapStateToProps
+      this.mapStateToProps,
+      this.mapDispatchToProps
     )(DatasetTableComponent)
     return <ConnectedTable {...this.props}/>
   }

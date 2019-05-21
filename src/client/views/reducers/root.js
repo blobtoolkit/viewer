@@ -14,6 +14,7 @@ import { selectReducers } from './select'
 import { plotParameterReducers } from './plotParameters'
 import { recordReducers } from './record'
 import { trackingReducers } from './tracking'
+import { datasetTableReducers } from './datasetTable'
 
 const allReducers = Object.assign(
   {},
@@ -30,7 +31,8 @@ const allReducers = Object.assign(
   selectReducers,
   plotParameterReducers,
   recordReducers,
-  trackingReducers
+  trackingReducers,
+  datasetTableReducers
 );
 
 const appReducer = combineReducers(allReducers);
@@ -44,7 +46,21 @@ const rootReducer = (state, action) => {
     let staticThreshold = state.staticThreshold
     let pathname = state.pathname
     let hashString = state.hashString
-    state = {analytics,cookieConsent,availableDatasets,datasetIsActive,staticThreshold,pathname,hashString}
+    let datasetPage = state.datasetPage
+    let datasetPageSize = state.datasetPageSize
+    let datasetSorted = state.datasetSorted
+    state = {
+      analytics,
+      cookieConsent,
+      availableDatasets,
+      datasetIsActive,
+      staticThreshold,
+      pathname,
+      hashString,
+      datasetPage,
+      datasetPageSize,
+      datasetSorted
+    }
   }
   return appReducer(state, action)
 }

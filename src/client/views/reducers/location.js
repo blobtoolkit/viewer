@@ -8,6 +8,7 @@ import { loadDataset } from './repository'
 import history from './history'
 import { getAnalytics, trackPage } from './tracking'
 import { getStaticFields } from './dataset'
+import { setDatasetPage, setDatasetPageSize, setDatasetSorted } from './datasetTable'
 
 const basename = BASENAME || ''
 
@@ -103,6 +104,11 @@ export const updatePathname = (update = {},remove = {}) => {
     if (views.dataset) newViews.dataset = views.dataset
     let primary = views.primary
     Object.keys(update).forEach(key=>{
+      if (key == 'search'){
+        dispatch(setDatasetPage(0))
+        // dispatch(setDatasetPageSize(10))
+        dispatch(setDatasetSorted([]))
+      }
       newViews[key] = update[key]
       if (key != 'dataset' && key != 'static' && options.indexOf(key) != -1){
         primary = key
