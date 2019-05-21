@@ -21,7 +21,7 @@ export default class HomePage extends React.Component {
         </h1>
         <p>
           BlobToolKit Viewer allows browser-based interactive visualisation and
-          filtering of preliminary or published genomic datasets even for highly
+          filtering of preliminary or published genomic datasets, even for highly
           fragmented assemblies.
         </p>
         <hr/>

@@ -6,6 +6,7 @@ import { queryToStore, qsDefault } from '../querySync'
 import { byIdSelectorCreator } from './selectorCreators'
 import { loadDataset } from './repository'
 import history from './history'
+import { getAnalytics, trackPage } from './tracking'
 import { getStaticFields } from './dataset'
 
 const basename = BASENAME || ''
@@ -91,6 +92,10 @@ export const viewsToPathname = views => {
 export const updatePathname = (update = {},remove = {}) => {
   return function (dispatch) {
     let state = store.getState()
+    let currentPathname = getPathname(state)
+    let hash = getHashString(state)
+    let search = getQueryString(state)
+    let id = getDatasetID(state)
     let views = getViews(state)
     let static_url = state.staticURL
     let newViews = {}
@@ -112,12 +117,11 @@ export const updatePathname = (update = {},remove = {}) => {
       if (views.static && !remove.static) newViews.static = true
     }
     let pathname = viewsToPathname(newViews)
-    let currentPathname = getPathname(state)
-    let hash = getHashString(state)
-    let search = getQueryString(state)
-    let id = getDatasetID(state)
     if (pathname != currentPathname){
       history.push({pathname,hash,search})
+      if (getAnalytics(state)){
+        trackPage(pathname + (search ? `?${search}` : '') + (hash ? `#${hash}` : ''));
+      }
       dispatch(setPathname(pathname))
     }
   }

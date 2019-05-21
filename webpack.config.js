@@ -56,7 +56,9 @@ const config = {
     	HOME: JSON.stringify(protocol+'://'+main.hostname),
       GIT_VERSION: JSON.stringify(gitRevisionPlugin.version()),
       COMMIT_HASH: JSON.stringify(gitRevisionPlugin.commithash()),
-      BRANCH: JSON.stringify(gitRevisionPlugin.branch())
+      BRANCH: JSON.stringify(gitRevisionPlugin.branch()),
+      GA_ID: JSON.stringify(main.ga_id),
+      GDPR_URL: JSON.stringify(main.gdpr_url)
     }),
     new HtmlWebpackPlugin({
       hash: true,

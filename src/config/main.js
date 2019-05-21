@@ -41,5 +41,7 @@ module.exports = {
   'circleLimit': process.env.BTK_CIRCLE_LIMIT || 100000,
   // SSL
   'keyFile': process.env.BTK_KEYFILE || '',
-  'certFile': process.env.BTK_CERTFILE || ''
+  'certFile': process.env.BTK_CERTFILE || '',
+  'ga_id': process.env.BTK_GA_ID || '',
+  'gdpr_url': process.env.BTK_GDPR_URL || ''
 }

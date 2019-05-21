@@ -1,6 +1,8 @@
 import React from 'react'
 import { connect } from 'react-redux'
+import CookieConsent from 'react-cookie-consent'
 import styles from './Layout.scss'
+import colors from './_colors'
 import { getDatasetIsActive, getReloading, setReloading } from '../reducers/repository'
 import { getQueryString, setQueryString, getDatasetID, getHashString } from '../reducers/location'
 import LayoutControls from './LayoutControls'
@@ -16,6 +18,7 @@ import qs from 'qs'
 const branch = BRANCH || ''
 const version = GIT_VERSION || ''
 const hash = COMMIT_HASH || ''
+const gdpr_url = GDPR_URL || ''
 
 window.scrollTop = {}
 
@@ -28,9 +31,36 @@ class LayoutComponent extends React.Component {
   }
 
   render(){
+    let message = 'We use browser cookies to analyse traffic to this site. To use this site you must agree to our ';
     let text = version
     let url = 'https://github.com/blobtoolkit/viewer/tree/'+hash
     // {this.props.datasetId ? this.props.active ? <LayoutPlots/> : <Spinner/> : <LayoutPlots/> }
+    let notice = (
+      <CookieConsent
+          style={{ background: colors.darkColor}}
+          contentStyle= {{ margin:'15px' }}
+          buttonText='Accept'
+          declineButtonText='Decline'
+          enableDeclineButton={true}
+          cookieValue={true}
+          declineCookieValue={false}
+          buttonStyle={{ backgroundColor: colors.highlightColor,
+            color: colors.lightColor,
+            border: `${colors.lightColor} solid 1px`,
+            fontSize: "13px" }}
+          declineButtonStyle={{ backgroundColor: colors.lightColor,
+            color: colors.highlightColor,
+            border: `${colors.highlightColor} solid 1px`,
+            fontSize: "13px" }}
+          flipButtons={true}
+        >
+        This website uses cookies to help us monitor usage.
+        To allow us to do this, please accept the terms of our <a style={{textDecoration:'underline', color:colors.highlightColor, fontWeight:'bold'}}
+           href={gdpr_url} target='_blank'>
+           Privacy Policy
+         </a>.
+      </CookieConsent>
+    )
     return (
       <div className={styles.main}>
         <div className={styles.main_header}>
@@ -48,6 +78,7 @@ class LayoutComponent extends React.Component {
           </span>
           <DOIBadge/>
           <BTKLogos/>
+          {notice}
         </div>
       </div>
     )

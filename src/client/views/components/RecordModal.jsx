@@ -1,5 +1,5 @@
 import React from 'react';
-import {ModalContainer, ModalDialog} from 'react-modal-dialog';
+import {ModalContainer, ModalDialog} from 'react-modal-dialog-react16';
 import styles from './Layout.scss'
 import CategoryDistribution from './CategoryDistribution'
 

@@ -13,6 +13,7 @@ import { plotReducers } from './plot'
 import { selectReducers } from './select'
 import { plotParameterReducers } from './plotParameters'
 import { recordReducers } from './record'
+import { trackingReducers } from './tracking'
 
 const allReducers = Object.assign(
   {},
@@ -28,19 +29,22 @@ const allReducers = Object.assign(
   plotReducers,
   selectReducers,
   plotParameterReducers,
-  recordReducers
+  recordReducers,
+  trackingReducers
 );
 
 const appReducer = combineReducers(allReducers);
 
 const rootReducer = (state, action) => {
   if (action.type === 'REFRESH') {
+    let cookieConsent = state.cookieConsent
+    let analytics = state.analytics
     let availableDatasets = state.availableDatasets
     let datasetIsActive = state.datasetIsActive
     let staticThreshold = state.staticThreshold
     let pathname = state.pathname
     let hashString = state.hashString
-    state = {availableDatasets,datasetIsActive,staticThreshold,pathname,hashString}
+    state = {analytics,cookieConsent,availableDatasets,datasetIsActive,staticThreshold,pathname,hashString}
   }
   return appReducer(state, action)
 }

@@ -6,17 +6,38 @@ import Routes from './Routes';
 import Repository from './Repository';
 import { NotFound } from './Error';
 import history from '../reducers/history';
+import { cookieConsent, analytics } from '../reducers/tracking';
 import Spinner from './Spinner'
 import { getDatasetID } from '../reducers/location'
 import { getDatasetIsActive } from '../reducers/repository'
+import { getCookieConsent, getAnalytics, setCookieConsent, startAnalytics } from '../reducers/tracking'
 import { fetchRepository, getRepositoryIsInitialised, getRepositoryIsFetching } from '../reducers/repository'
+import ReactGA from 'react-ga';
 
 class MainDiv extends React.Component {
+  constructor(props) {
+    super(props);
+  }
+
   componentDidMount(){
     if (!this.props.initialised){
       this.props.onLoad()
     }
-    else if (!this.props.fetching){
+    if (!this.props.cookieConsent){
+      if (this.props.cookies.cookies && String(this.props.cookies.cookies.CookieConsent) == 'true'){
+        this.props.setCookieConsent(true)
+      }
+    }
+    else {
+      if (!this.props.analytics){
+        this.props.startAnalytics(true)
+      }
+    }
+  }
+
+  componentDidUpdate(){
+    if (this.props.cookieConsent){
+      this.props.startAnalytics(true)
     }
   }
 
@@ -30,7 +51,6 @@ class MainDiv extends React.Component {
     if (this.props.fetching){
       return <Spinner/>
     }
-
     return (
       <div>
         <Routes/>
@@ -47,12 +67,16 @@ export default class Main extends React.Component {
       {
         initialised: getRepositoryIsInitialised(state),
         fetching: getRepositoryIsFetching(state),
-        datasetId: getDatasetID(state)
+        datasetId: getDatasetID(state),
+        cookieConsent: getCookieConsent(state),
+        analytics: getAnalytics(state)
       }
     )
     this.mapDispatchToProps = dispatch => (
       {
-        onLoad: (searchTerm) => dispatch(fetchRepository(searchTerm))
+        onLoad: (searchTerm) => dispatch(fetchRepository(searchTerm)),
+        setCookieConsent: (bool) => dispatch(setCookieConsent(bool)),
+        startAnalytics: () => dispatch(startAnalytics())
       }
     )
 
