@@ -44,15 +44,17 @@ const readMeta = (dir,md) => {
     else if (file == 'meta.json' && fs.statSync(path).isFile()){
       let dsMeta = parseMeta(read.sync(path))
       dsMeta.id = dir.replace(/^.+\//,'')
-      let sumpath = dir+'/summary.json'
-      fileExists(sumpath).then((bool)=>{
-        if (bool){
-          let summary = read.sync(sumpath)
-          if (summary.hasOwnProperty('summaryStats')){
-            dsMeta.summaryStats = summary.summaryStats
+      if (config.dataset_table){
+        let sumpath = dir+'/summary.json'
+        fileExists(sumpath).then((bool)=>{
+          if (bool){
+            let summary = read.sync(sumpath)
+            if (summary.hasOwnProperty('summaryStats')){
+              dsMeta.summaryStats = summary.summaryStats
+            }
           }
-        }
-      })
+        })
+      }
       md.push(dsMeta)
     }
   })

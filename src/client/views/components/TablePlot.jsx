@@ -190,7 +190,6 @@ class Table extends React.Component {
               updated.page = page
               updated.canNext = updated.page < updated.pages - 1
               updated.canPrevious = updated.page > 0
-              console.log(updated)
               return updated
             }}
             onSortedChange={(arr)=>{this.props.updateSort(arr);}}

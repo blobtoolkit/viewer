@@ -20,10 +20,13 @@ import DatasetSpinner from './DatasetSpinner'
 import HomePage from './HomePage'
 import SelectWarning from './SelectWarning'
 
+const dataset_table = DATASET_TABLE || false
+
 class PlotsLayoutComponent extends React.Component {
 
   render(){
-    if (!this.props.datasetId || this.props.activeTab == 'Datasets'){
+    if (!this.props.datasetId ||
+    dataset_table && this.props.activeTab == 'Datasets'){
       return <HomePage toggleHash={this.props.toggleHash}/>
     }
     let defaultPlot = <MainPlot {...this.props}/>

@@ -10,6 +10,7 @@ import MenuHelpMain from './MenuHelpMain'
 import { getTopLevelFields } from '../reducers/field'
 import { getDatasetID, getHashString } from '../reducers/location'
 
+const dataset_table = DATASET_TABLE || false
 
 class ControlsLayoutComponent extends React.Component {
   constructor(props) {
@@ -46,14 +47,16 @@ class ControlsLayoutComponent extends React.Component {
     let labels = ['Datasets','Filters','Lists','Settings','Summary','Help']
     let tabs = []
     let activeTab = this.props.activeTab
-    // if (!activeTab && !this.props.datasetId){
-    //   activeTab = 'Datasets'
-    // }
+    if (!activeTab && !this.props.datasetId){
+      activeTab = 'Datasets'
+    }
     labels.forEach(tab=>{
       tabs.push({id:tab,active:activeTab == tab})
     })
     let menu
-    // if (activeTab == 'Datasets') menu = <MenuDatasetMain />
+    if (!dataset_table){
+      if (activeTab == 'Datasets') menu = <MenuDatasetMain />
+    }
     if (activeTab == 'Filters') menu = <MenuFilterMain/>
     if (activeTab == 'Lists') menu = <MenuListsMain/>
     if (activeTab == 'Settings') menu = <MenuDisplayMain/>

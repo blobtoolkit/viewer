@@ -18,16 +18,18 @@ import Spinner from './Spinner'
 import ToolTips from './ToolTips'
 import Search from './Search'
 
-const DatasetFinder = ({ searchTerm, selectedDataset, isFetching, datasetIds, datasets, onDatasetMount, onDatasetClick }) => {
+const dataset_table = DATASET_TABLE || false
 
+const DatasetFinder = ({ searchTerm, selectedDataset, isFetching, datasetIds, datasets, onDatasetMount, onDatasetClick }) => {
+  let css = dataset_table ? styles.fill_parent : ''
   return (
-    <div className={styles.fill_parent}>
+    <div className={css}>
       <Search/>
       {isFetching ? <Spinner /> : null}
       { datasetIds.length > 0 ? (
         <span className={styles.result_count} style={{marginLeft:'1em'}} key='span'>{datasetIds.length+' datasets match "'+searchTerm+'"'}</span>
       ) : null }
-      <DatasetTable onDatasetClick={onDatasetClick}/>
+      {dataset_table && <DatasetTable onDatasetClick={onDatasetClick}/>}
     </div>
   )
 }

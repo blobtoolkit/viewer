@@ -7,6 +7,8 @@ import figure1 from './img/figure1.png'
 import figure2 from './img/figure2.png'
 
 
+const dataset_table = DATASET_TABLE || false
+
 export default class HomePage extends React.Component {
   constructor(props) {
     super(props);
@@ -25,8 +27,11 @@ export default class HomePage extends React.Component {
           fragmented assemblies.
         </p>
         <hr/>
-        {<FindDatasets/>}
-        {/*<p>
+        {dataset_table && <FindDatasets/>}
+        {!dataset_table && <span>
+          Search datasets to begin (search 'all' to show all available datasets).
+        <hr/>
+        <p>
           Multiple views and data export options dynamically update as filter
           parameters and selections are modified (Figure 1).
         </p>
@@ -42,7 +47,7 @@ export default class HomePage extends React.Component {
         </p>
         <p>
           &nbsp;
-        </p>*/}
+        </p></span>}
 
 
       </div>

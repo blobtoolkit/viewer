@@ -58,7 +58,8 @@ const config = {
       COMMIT_HASH: JSON.stringify(gitRevisionPlugin.commithash()),
       BRANCH: JSON.stringify(gitRevisionPlugin.branch()),
       GA_ID: JSON.stringify(main.ga_id),
-      GDPR_URL: JSON.stringify(main.gdpr_url)
+      GDPR_URL: JSON.stringify(main.gdpr_url),
+      DATASET_TABLE: (main.dataset_table ? true : false)
     }),
     new HtmlWebpackPlugin({
       hash: true,

@@ -52,7 +52,6 @@ class DatasetTableComponent extends Component {
       css += ` ${styles.active}`
     }
     let columns = this.props.columns
-    console.log(this.props)
     return (
       <div id="list" className={css} style={{fontSize:'0.75em',paddingBottom:'0.5em'}}>
         <ReactTable
@@ -82,9 +81,9 @@ class DatasetTableComponent extends Component {
               }
             }
           }}
-          onSortedChange={(arr)=>{this.props.setSorted(arr);}}
+          onSortedChange={(arr)=>{this.props.setPage(0); this.props.setSorted(arr);}}
           onPageChange={(newPage)=>{this.props.setPage(newPage)}}
-          onPageSizeChange={(newPageSize, pageIndex)=>{this.props.setPageSize(newPageSize); return (newPageSize,pageIndex)}}
+          onPageSizeChange={(newPageSize, pageIndex)=>{this.props.changePageSize(newPageSize,this.props.pageSize,this.props.page); return (newPageSize,pageIndex)}}
 
         />
       </div>
@@ -113,7 +112,11 @@ class DatasetTable extends React.Component {
     this.mapDispatchToProps = dispatch => {
       return {
         setPage: (page) => dispatch(setDatasetPage(page)),
-        setPageSize: (pageSize) => dispatch(setDatasetPageSize(pageSize)),
+        changePageSize: (newSize,oldSize,oldPage) => {
+          dispatch(setDatasetPageSize(newSize))
+          let newPage = Math.floor(oldSize / newSize * oldPage)
+          dispatch(setDatasetPage(newPage))
+        },
         setSorted: (arr) => dispatch(setDatasetSorted(arr))
       }
     }
