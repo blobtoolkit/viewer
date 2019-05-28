@@ -52,8 +52,9 @@ class DatasetTableComponent extends Component {
       css += ` ${styles.active}`
     }
     let columns = this.props.columns
-    return (
-      <div id="list" className={css} style={{fontSize:'0.75em',paddingBottom:'0.5em'}}>
+    let table
+    if (this.props.data.length > 0){
+      table = (
         <ReactTable
           data={this.props.data}
           columns={columns}
@@ -84,8 +85,21 @@ class DatasetTableComponent extends Component {
           onSortedChange={(arr)=>{this.props.setPage(0); this.props.setSorted(arr);}}
           onPageChange={(newPage)=>{this.props.setPage(newPage)}}
           onPageSizeChange={(newPageSize, pageIndex)=>{this.props.changePageSize(newPageSize,this.props.pageSize,this.props.page); return (newPageSize,pageIndex)}}
-
         />
+      )
+    }
+    else {
+      table = (
+        <span style={{fontSize:'1.33em'}}>
+          <p>Use the search box above to find datasets.</p>
+          <p>Matching datasets and associated metadata will be displayed in a sortable table.</p>
+          <p>If you are unsure what to search for, type 'all' to show all available datasets.</p>  
+        </span>
+      )
+    }
+    return (
+      <div id="list" className={css} style={{fontSize:'0.75em',paddingBottom:'0.5em'}}>
+        {table}
       </div>
     );
   }
