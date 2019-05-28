@@ -6,6 +6,7 @@ const dataDirectory = config.filePath;
 
 const parseMeta = (obj) => {
   let meta = {}
+  if (!obj) return meta
   if (obj.hasOwnProperty('assembly')){
     let props = ['accession','alias','bioproject','biosample','prefix']
     props.forEach(prop=>{
@@ -42,6 +43,7 @@ const readMeta = (dir,md) => {
       readMeta(path,md)
     }
     else if (file == 'meta.json' && fs.statSync(path).isFile()){
+      console.log(path)
       let dsMeta = parseMeta(read.sync(path))
       dsMeta.id = dir.replace(/^.+\//,'')
       if (config.dataset_table){
