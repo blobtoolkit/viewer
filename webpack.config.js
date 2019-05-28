@@ -17,17 +17,39 @@ const protocol = main.https ? 'https' : 'http'
 const API_PORT = main.https ? 'https' : 'http'
 
 const config = {
-  entry: [
-    'babel-polyfill',
-    APP_DIR + '/index.jsx'
-  ],
+  entry: {
+    polyfill: 'babel-polyfill',
+    main: APP_DIR + '/index.jsx',
+    cumulative: APP_DIR + '/components/CumulativePlot.jsx',
+    blob: APP_DIR + '/components/MainPlot.jsx',
+    snail: APP_DIR + '/components/SnailPlot.jsx',
+    table: APP_DIR + '/components/TablePlot.jsx'
+  },
   output: {
       publicPath: main.mode == 'production' ? main.basename + '/' : '/',
       path: BUILD_DIR + '/',
-      filename: 'js/bundle.js'
+      // filename: 'js/bundle.js'
+      filename: devMode ? 'js/bundle.js' : 'js/[name].[hash].js',
+      chunkFilename: 'js/[id].js',
   },
   resolve: {
     extensions: ['.js', '.jsx']
+  },
+  optimization: {
+    splitChunks: {
+      chunks: 'all',
+      maxInitialRequests: Infinity,
+      minSize: 0,
+      cacheGroups: {
+        vendor: {
+          test: /[\\/]node_modules[\\/]/,
+          name(module) {
+            const packageName = module.context.match(/[\\/]node_modules[\\/](.*?)([\\/]|$)/)[1];
+            return `npm.${packageName.replace('@', '')}`;
+          },
+        },
+      }
+    }
   },
   devServer: {
     hot: true,
@@ -43,9 +65,9 @@ const config = {
   devtool: 'source-map',
   plugins: [
     new MiniCssExtractPlugin({
-      filename: 'css/styles.css',
-      // filename: devMode ? '[name].css' : '[name].[hash].css',
-      // chunkFilename: 'css/[id].css',
+      // filename: 'css/styles.css',
+      filename: devMode ? 'css/styles.css' : 'css/[name].[hash].css',
+      chunkFilename: 'css/[id].css'
     }),
     new webpack.DefinePlugin({
       API_URL: JSON.stringify(main.apiUrl),

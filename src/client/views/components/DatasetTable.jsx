@@ -15,6 +15,7 @@ import {
   getDatasetSorted,
   setDatasetSorted} from '../reducers/datasetTable'
 import colors from './_colors'
+import figure1 from './img/figure1.jpg'
 
 class DatasetTableComponent extends Component {
   constructor() {
@@ -91,9 +92,9 @@ class DatasetTableComponent extends Component {
     else {
       table = (
         <span style={{fontSize:'1.33em'}}>
-          <p>Use the search box above to find datasets.</p>
-          <p>Matching datasets and associated metadata will be displayed in a sortable table.</p>
-          <p>If you are unsure what to search for, type 'all' to show all available datasets.</p>  
+          <p>Use the search box above to find datasets – matching datasets and associated metadata will be displayed in a sortable table.</p>
+          <p>If you are unsure what to search for, type 'all' to show all available datasets.</p>
+          <img src={figure1} alt='Figure 1' />
         </span>
       )
     }

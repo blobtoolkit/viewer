@@ -3,8 +3,8 @@ import { connect } from 'react-redux'
 import styles from './HomePage.scss'
 import Search from './Search'
 import FindDatasets from './FindDatasets'
-import figure1 from './img/figure1.png'
-import figure2 from './img/figure2.png'
+import figure1 from './img/figure1.jpg'
+import figure2 from './img/figure2.jpg'
 
 
 const dataset_table = DATASET_TABLE || false
