@@ -18,12 +18,11 @@ const API_PORT = main.https ? 'https' : 'http'
 
 const config = {
   entry: {
-    polyfill: 'babel-polyfill',
-    main: APP_DIR + '/index.jsx',
-    cumulative: APP_DIR + '/components/CumulativePlot.jsx',
-    blob: APP_DIR + '/components/MainPlot.jsx',
-    snail: APP_DIR + '/components/SnailPlot.jsx',
-    table: APP_DIR + '/components/TablePlot.jsx'
+    main: ['babel-polyfill', APP_DIR + '/index.jsx'],
+    // cumulative: APP_DIR + '/components/CumulativePlot.jsx',
+    // blob: APP_DIR + '/components/MainPlot.jsx',
+    // snail: APP_DIR + '/components/SnailPlot.jsx',
+    // table: APP_DIR + '/components/TablePlot.jsx'
   },
   output: {
       publicPath: main.mode == 'production' ? main.basename + '/' : '/',

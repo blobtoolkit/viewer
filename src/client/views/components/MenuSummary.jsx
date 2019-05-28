@@ -60,7 +60,6 @@ const MenuSummary = ({values,zAxis,bins,palette,other,fullSummary}) => {
   let counts = []
   let reduced = []
   let listDiv
-  console.log(fullSummary)
   if (bins){
     bins.forEach((bin,i) => {
       let title = bin.id
