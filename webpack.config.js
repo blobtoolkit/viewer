@@ -18,7 +18,7 @@ const API_PORT = main.https ? 'https' : 'http'
 
 const config = {
   entry: {
-    main: ['babel-polyfill', APP_DIR + '/index.jsx'],
+    main: ['@babel/polyfill', APP_DIR + '/index.jsx'],
     // cumulative: APP_DIR + '/components/CumulativePlot.jsx',
     // blob: APP_DIR + '/components/MainPlot.jsx',
     // snail: APP_DIR + '/components/SnailPlot.jsx',
