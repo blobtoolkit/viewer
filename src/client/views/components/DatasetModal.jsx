@@ -1,5 +1,5 @@
 import React from 'react';
-import {ModalContainer, ModalDialog} from 'react-modal-dialog-react16';
+import {ModalContainer, FlexDialog} from 'react-modal-dialog-react16';
 import styles from './Layout.scss'
 import JSONPretty from 'react-json-pretty';
 
@@ -10,7 +10,7 @@ export class DatasetModal extends React.Component {
       isShowingModal: this.props.selected,
     }
   }
-  handleClick(){ this.setState({isShowingModal: true}) }
+  handleClick(){ this.setState({isShowingModal: !this.state.isShowingModal}) }
   handleClose(){
     this.setState({isShowingModal: false})
     this.props.dismiss()
@@ -41,7 +41,7 @@ export class DatasetModal extends React.Component {
         {
           this.state.isShowingModal &&
           <ModalContainer onClose={()=>this.handleClose()}>
-            <ModalDialog onClose={()=>this.handleClose()}>
+            <FlexDialog onClose={()=>this.handleClose()}>
               <div className={styles.modal}>
                 <a className={styles.button} onClick={()=>this._downloadJSONFile(this.props.meta.id+'.meta',full)}>Download full metadata</a>
                 <h2>{meta.name}</h2>
@@ -49,7 +49,7 @@ export class DatasetModal extends React.Component {
                   <JSONPretty id="json-pretty" json={meta}/>
                 </div>
               </div>
-            </ModalDialog>
+            </FlexDialog>
           </ModalContainer>
         }
       </div>

@@ -1,5 +1,5 @@
 import React from 'react';
-import {ModalContainer, ModalDialog} from 'react-modal-dialog-react16'
+import {ModalContainer, FlexDialog} from 'react-modal-dialog-react16'
 import styles from './Layout.scss'
 import JSONPretty from 'react-json-pretty';
 import { queryToStore } from '../querySync'
@@ -11,7 +11,7 @@ class ListModal extends React.Component {
       isShowingModal: this.props.selected,
     }
   }
-  handleClick(){ this.setState({isShowingModal: true}) }
+  handleClick(){ this.setState({isShowingModal: !this.state.isShowingModal}) }
   handleClose(){
     this.setState({isShowingModal: false})
     this.props.dismiss()
@@ -52,7 +52,7 @@ class ListModal extends React.Component {
         {
           this.state.isShowingModal &&
           <ModalContainer onClose={()=>this.handleClose()}>
-            <ModalDialog onClose={()=>this.handleClose()}>
+            <FlexDialog onClose={()=>this.handleClose()}>
               <div className={styles.modal}>
                 <a id='full_list_download'
                   className={styles.button}
@@ -71,7 +71,7 @@ class ListModal extends React.Component {
                   <JSONPretty id="json-pretty" json={params}/>
                 </div>
               </div>
-            </ModalDialog>
+            </FlexDialog>
           </ModalContainer>
         }
       </div>

@@ -175,7 +175,6 @@ class Table extends React.Component {
     let page = this.props.page
     let pages = this.props.data.pages
     let pageSize = this.props.pageSize
-    console.log(columns)
     return (
       <div className={plotStyles.fill_parent}>
         <ReactTable
