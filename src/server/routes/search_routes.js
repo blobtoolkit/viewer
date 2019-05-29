@@ -43,7 +43,6 @@ const readMeta = (dir,md) => {
       readMeta(path,md)
     }
     else if (file == 'meta.json' && fs.statSync(path).isFile()){
-      console.log(path)
       let dsMeta = parseMeta(read.sync(path))
       dsMeta.id = dir.replace(/^.+\//,'')
       if (config.dataset_table){

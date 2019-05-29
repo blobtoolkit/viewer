@@ -29,15 +29,8 @@ class Spinner extends React.Component {
     }
     return (
       <div id='spinner' className={styles.outer}>
-        <div className={styles['lds-ripple']}>
-          <div></div>
-          <div></div>
-          <div></div>
-          <div></div>
-        </div>
-        <div className={styles.text}>
-          loading
-        </div>
+        <div className={styles['flex-item']}><h2>Loading Dataset</h2></div>
+        <div className={styles['flex-item']}><div className={styles['lds-ripple']}><div></div><div></div></div></div>
       </div>
     )
   }
