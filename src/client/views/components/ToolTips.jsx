@@ -14,6 +14,11 @@ const sets = (set) => {
   tips.zAxis = {name:'zAxis',detail:'use variable to scale points/bins',filterMenu:1}
   tips.category = {name:'category',filterMenu:1}
   tips.clone = {name:'sum active fields',filterMenu:1}
+  tips.scale = {name:'toggle scale',filterMenu:1}
+  tips.zero = {name:'curves start at 0',filterMenu:1}
+  tips.xLetter = {name:'stack curves by x position',filterMenu:1}
+  tips.yLetter = {name:'stack curves by y position',filterMenu:1}
+  tips.sumActive = {name:'sum active fields',filterMenu:1}
   tips.invert = {name:'invert',filterMenu:1}
   tips.show = {name:'showSelection',filterMenu:1}
   tips.showHide = {name:'hideSelection',filterMenu:1}

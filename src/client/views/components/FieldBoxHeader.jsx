@@ -7,7 +7,7 @@ import xAxisIcon from './svg/xAxis.svg';
 import yAxisIcon from './svg/yAxis.svg';
 import zAxisIcon from './svg/zAxis.svg';
 import categoryIcon from './svg/category.svg';
-import cloneIcon from './svg/clone.svg';
+import sumActiveIcon from './svg/sumActive.svg';
 import showIcon from './svg/show.svg';
 import hideIcon from './svg/showHide.svg';
 import selectInverseIcon from './svg/invert.svg';
@@ -36,7 +36,7 @@ class FieldBoxHeader extends React.Component {
             <SVGIcon sprite={zAxisIcon} active={this.checkAxisStatus('z')} onIconClick={()=>{this.props.onAxisButtonClick('z',this.props.fieldId)}}/>
             { this.props.meta.parent != this.props.datasetId &&
               !this.props.clonedFrom &&
-              <SVGIcon sprite={cloneIcon} onIconClick={()=>{this.props.onCloneButtonClick(this.props.fieldId)}}/>
+              <SVGIcon sprite={sumActiveIcon} onIconClick={()=>{this.props.onSumButtonClick(this.props.fieldId)}}/>
             }
           </span>
         )

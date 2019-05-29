@@ -15,7 +15,7 @@ import { getMainPlot, getZAxis } from './plot';
 import { getSelectedDatasetMeta } from './dataset';
 import { getFilteredList } from './filter';
 import { getFilteredDataForFieldId } from './preview';
-import { getZReducer, getZScale, zReducers, getCircumferenceScale, getRadiusScale, getSnailOrigin, getTablePage, getTablePageSize, getTableSortField, getTableSortOrder } from './plotParameters';
+import { getZReducer, getZScale, zReducers, getCircumferenceScale, getRadiusScale, getSnailOrigin, getTablePage, getTablePageSize, getTableSortField, getTableSortOrder, getScaleTo } from './plotParameters';
 import { getColorPalette } from './color';
 import immutableUpdate from 'immutable-update';
 import { scaleLinear as d3scaleLinear } from 'd3-scale';
@@ -184,15 +184,26 @@ export const cumulativeCurves = createSelector(
   getColorPalette,
   getRecordCount,
   getSpan,
-  (cumulative,palette,records,span) => {
+  getSummary,
+  getScaleTo,
+  (cumulative,palette,records,span,summary,scaleTo) => {
     if (!cumulative) return false
     let values = cumulative.values
     let all = values.all
     let byCat = values.byCat
     let zAxis = cumulative.zAxis
     span = span || all[all.length - 1]
-    let xScale = d3scaleLinear().range([50,950]).domain([0,records])
-    let yScale = d3scaleLinear().range([950,50]).domain([0,span])
+    let xScale, yScale
+    if (scaleTo == 'total'){
+      xScale = d3scaleLinear().range([50,950]).domain([0,records])
+      yScale = d3scaleLinear().range([950,50]).domain([0,span])
+    }
+    else {
+      records = summary.values.counts.all
+      span = summary.values.reduced.all
+      xScale = d3scaleLinear().range([50,950]).domain([0,summary.values.counts.all])
+      yScale = d3scaleLinear().range([950,50]).domain([0,summary.values.reduced.all])
+    }
     let f = d3Format(".3f");
     let line = d3Line().x(d=>f(d.x)).y(d=>f(d.y))
     let xyScale = arr => [0].concat(arr).map((y,x)=>({x:xScale(x),y:yScale(y)}))
@@ -451,7 +462,9 @@ export const circularCurves = createSelector(
   getSpan,
   getGreatestX,
   getBuscoData,
-  (circular,palette,circumference,radius,origin,span,longest,busco) => {
+  getSummary,
+  getScaleTo,
+  (circular,palette,circumference,radius,origin,span,longest,busco,summary,scaleTo) => {
     if (!circular) return false
     let invert = origin == 'center'
     let values = circular.values
@@ -468,11 +481,17 @@ export const circularCurves = createSelector(
       rRange = [0,350]
       lRange = [350,100]
     }
-    circumference = Math.max(span,circumference,sum[999])
-    let maxAngle = 2*Math.PI*sum[999]/circumference
     let all = values.all
     let max = all[0].z
-    radius = Math.max(longest,radius,max)
+    if (scaleTo == 'total'){
+      circumference = Math.max(span,circumference,sum[999])
+      radius = Math.max(longest,radius,max)
+    }
+    else {
+      circumference = Math.max(summary.values.reduced.all,circumference,sum[999])
+      radius = Math.max(radius,max)
+    }
+    let maxAngle = 2*Math.PI*sum[999]/circumference
     let min = 0
     let cScale = d3scaleLinear().range([0,maxAngle]).domain([0,999])
     let rScale = d3scaleSqrt().range(rRange).domain([min,radius])

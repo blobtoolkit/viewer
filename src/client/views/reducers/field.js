@@ -93,7 +93,7 @@ function variableRawDataToCategory (data,meta){
   return {keys,values,fixedOrder:true}
 }
 
-export function cloneField(obj) {
+export function sumField(obj) {
   return dispatch => {
     let state = store.getState()
     let linked_id = obj.id

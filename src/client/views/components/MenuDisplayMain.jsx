@@ -28,6 +28,8 @@ import { getPlotShape,
   setTransformFunction,
   getCurveOrigin,
   chooseCurveOrigin,
+  getScaleTo,
+  chooseScaleTo,
   getSnailOrigin,
   chooseSnailOrigin } from '../reducers/plotParameters'
 import {
@@ -55,6 +57,7 @@ import xIcon from './svg/xLetter.svg';
 import yIcon from './svg/yLetter.svg';
 import zeroIcon from './svg/zero.svg';
 import invertIcon from './svg/invert.svg';
+import scaleIcon from './svg/scale.svg';
 import MenuItem from './MenuItem'
 import ToolTips from './ToolTips'
 import Timeout from './Timeout'
@@ -72,6 +75,7 @@ const DisplayMenu = ({
   reducer, onSelectReducer,
   scale, onSelectScale,
   curveOrigin, onSelectCurveOrigin,
+  scaleTo, onSelectScaleTo,
   snailOrigin, onSelectSnailOrigin,
   transform, onChangeTransform,
   plotScale, onChangePlotScale,
@@ -163,6 +167,7 @@ const DisplayMenu = ({
         <SVGIcon sprite={zeroIcon} active={curveOrigin == '0'} onIconClick={()=>onSelectCurveOrigin('0')}/>
         <SVGIcon sprite={xIcon} active={curveOrigin == 'x'} onIconClick={()=>onSelectCurveOrigin('x')}/>
         <SVGIcon sprite={yIcon} active={curveOrigin == 'y'} onIconClick={()=>onSelectCurveOrigin('y')}/>
+        <SVGIcon sprite={scaleIcon} active={scaleTo == 'filtered'} onIconClick={()=>onSelectScaleTo(scaleTo == 'total' ? 'filtered' : 'total')}/>
       </MenuDisplaySimple>
     </span>
   )
@@ -170,6 +175,7 @@ const DisplayMenu = ({
     <span>
       <MenuDisplaySimple name='snail origin'>
         <SVGIcon sprite={invertIcon} active={snailOrigin == 'center'} onIconClick={()=>onSelectSnailOrigin(snailOrigin == 'center' ? 'outer' : 'center')}/>
+        <SVGIcon sprite={scaleIcon} active={scaleTo == 'filtered'} onIconClick={()=>onSelectScaleTo(scaleTo == 'total' ? 'filtered' : 'total')}/>
       </MenuDisplaySimple>
     </span>
   )
@@ -324,6 +330,7 @@ class MenuDisplayMain extends React.Component {
         onSelectView: view => dispatch(chooseView(view)),
         onToggleStatic: (view,datasetId) => dispatch(toggleStatic(view,datasetId)),
         onSelectCurveOrigin: origin => dispatch(chooseCurveOrigin(origin)),
+        onSelectScaleTo: origin => dispatch(chooseScaleTo(origin)),
         onSelectSnailOrigin: origin => dispatch(chooseSnailOrigin(origin)),
         onChangeTransform: object => dispatch(setTransformFunction(object))
       }
@@ -344,6 +351,7 @@ class MenuDisplayMain extends React.Component {
         scale:getZScale(state),
         plotScale:getPlotScale(state),
         curveOrigin:getCurveOrigin(state),
+        scaleTo:getScaleTo(state),
         snailOrigin:getSnailOrigin(state),
         transform:getTransformFunctionParams(state),
         view: getView(state),

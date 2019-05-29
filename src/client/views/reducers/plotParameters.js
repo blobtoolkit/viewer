@@ -187,6 +187,23 @@ export const curveOrigin = handleAction(
 )
 export const getCurveOrigin = state => state.curveOrigin
 
+export const setScaleTo = createAction('SET_SCALE_TO')
+export const chooseScaleTo = (scaleTo) => {
+  return function (dispatch) {
+    let values = {scaleTo}
+    dispatch(queryToStore({values}))
+  }
+}
+export const scaleTo = handleAction(
+  'SET_SCALE_TO',
+  (state, action) => (
+    action.payload
+  ),
+  qsDefault('scaleTo')
+)
+export const getScaleTo = state => state.scaleTo
+
+
 export const setCircumferenceScale = createAction('SET_CIRCUMFERENCE_SCALE')
 export const chooseCircumferenceScale = (circumferenceScale) => {
   return function (dispatch) {
@@ -367,6 +384,7 @@ export const plotParameterReducers = {
   zReducer,
   transformFunction,
   curveOrigin,
+  scaleTo,
   circumferenceScale,
   radiusScale,
   snailOrigin,

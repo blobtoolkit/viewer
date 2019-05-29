@@ -88,6 +88,11 @@ const mapDispatchToQuery = (
       payload: (k,v) => v,
       default: '0'
     },
+    scaleTo: {
+      type: 'SET_SCALE_TO',
+      payload: (k,v) => v,
+      default: 'total'
+    },
     circumferenceScale: {
       type: 'SET_CIRCUMFERENCE_SCALE',
       payload: (k,v) => v,

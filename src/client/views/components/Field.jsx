@@ -6,7 +6,7 @@ import { getMainPlot } from '../reducers/plot'
 import { makeGetFieldMetadata,
   getDetailsForFieldId,
   editField,
-  cloneField,
+  sumField,
   fetchRawData } from '../reducers/field'
 import { editFilter, filterToList } from '../reducers/filter'
 import { editPlot } from '../reducers/plot'
@@ -50,7 +50,7 @@ class Field extends React.Component {
           let values = {[axis+'Field']:id}
           dispatch(queryToStore({values}))
         },
-        cloneField: (id) => {dispatch(cloneField({id}))},
+        sumField: (id) => {dispatch(sumField({id}))},
         showData: (id) => dispatch(fetchRawData(id)),
         toggleSelection: (visible) => dispatch(toggleSelection(visible)),
         selectAll: () => dispatch(selectAll()),
