@@ -111,7 +111,7 @@ class ListsMenu extends React.Component {
           onDatasetMount={()=>{}}
         />
         <DatasetCreateList />
-        { this.props.lists.map((list,i) => (<MenuList key={i} {...list} summaryStats={this.props.fullSummary} onListClick={this.props.onListClick}/>))}
+        { this.props.lists.map((list,i) => (<MenuList key={i} {...list} summaryStats={this.props.fullSummary} onListClick={this.props.onListClick} buscos={this.props.buscoSets.length}/>))}
         {<ListUpload active={false} onDrop={this.props.onDrop}/>}
       </div>
     )

@@ -11,7 +11,7 @@ import { getSearchTerm } from '../reducers/location'
 import { getSelectedList, updateSelectedList, getIdentifiersForList, chooseList } from '../reducers/list'
 import ListModal from './ListModal';
 
-const ListItem = ({id,list,params,search,onClick,identifiers,active,onChooseList,meta,summaryStats}) => {
+const ListItem = ({id,list,params,search,onClick,identifiers,active,onChooseList,meta,summaryStats,buscos}) => {
   let css = styles.menu_item
   if (active) css += ' '+styles.active
   let taxon = meta.taxon_name
@@ -26,7 +26,10 @@ const ListItem = ({id,list,params,search,onClick,identifiers,active,onChooseList
     identifiers
   }
   if (id == 'current'){
-    if (!summaryStats.stats){
+    if (!summaryStats.stats ||
+        !summaryStats.hits || !summaryStats.hits.total ||
+        Object.keys(summaryStats.busco).length != buscos ||
+        !summaryStats.taxonomy || !summaryStats.taxonomy.target){
       return null
     }
     obj.summaryStats = summaryStats
