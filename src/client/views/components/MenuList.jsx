@@ -26,6 +26,9 @@ const ListItem = ({id,list,params,search,onClick,identifiers,active,onChooseList
     identifiers
   }
   if (id == 'current'){
+    if (!summaryStats.stats){
+      return null
+    }
     obj.summaryStats = summaryStats
   }
   return (
