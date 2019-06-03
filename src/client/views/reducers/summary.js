@@ -1166,11 +1166,18 @@ export const getLineage = createSelector(
       targetRank = plot.axes.cat.replace(/^.+_/,'')
     }
     let target
+    let parent = ''
     ranks.forEach(rank=>{
       if (meta && meta.taxon && meta.taxon[rank]){
         lineageArr.push(meta.taxon[rank])
+        parent = meta.taxon[rank]
         if (rank == targetRank){
           target = meta.taxon[rank]
+        }
+      }
+      else {
+        if (rank == targetRank){
+          target = parent ? `${parent}-undef` : 'undef'
         }
       }
     })
@@ -1198,7 +1205,7 @@ export const getFullSummary = createSelector(
       }
     }
     data.taxonomy = {
-      taxid: meta.taxid,
+      taxid: meta.taxon.taxid,
       lineage: lineage.lineage,
       target: lineage.target,
       targetRank: lineage.targetRank
