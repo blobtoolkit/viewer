@@ -2,6 +2,17 @@
 @import 'colors';
 @import url(web-fonts-url('Open Sans', 'Comfortaa'));
 
+.container {
+  max-width: 100%;
+}
+
+.scroller {
+  overflow-x: auto;
+  white-space: nowrap;
+  font-size:0.75em;
+  padding-bottom:0.5em;
+}
+
 .group {
   border: none;
   display: inline-block;
@@ -9,13 +20,34 @@
   // flex: 0 40em;
   vertical-align: top;
   border-left:1px solid $darkColor;
-  background-color: rgba($highlightColor,0.15);
+  margin-left:-1px;
+  background-color: rgba($shadeColor,0.05);
+  box-sizing: border-box;
 }
+
+.header {
+  border: none;
+  display: inline-block;
+  vertical-align: top;
+  font-weight: bold;
+  background-color: $deepColor;
+  border-left:1px solid $lightColor;
+  margin-left:-1px;
+  color:$lightColor;
+  padding-left: 0.5em;
+  box-sizing: border-box;
+}
+
+// .header ~ .header {
+//   margin-left:0;
+// }
+
 
 .outer {
   display:block;
   text-align: left;
   box-sizing: border-box;
+  margin-left:-1px;
 }
 .outer {
 
@@ -29,8 +61,8 @@
   border: none;
   padding-left: 0.5em;
   display:inline-block;
-  width:10em;
   overflow:hidden;
+  box-sizing: border-box;
   span {
     cursor:pointer;
   }
@@ -41,8 +73,13 @@
 
 }
 
+.total {
+  color: $shadeColor;
+}
+
 
 
 .leaf {
   width: auto;
+  box-sizing: border-box;
 }

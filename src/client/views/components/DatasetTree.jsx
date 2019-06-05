@@ -6,6 +6,7 @@ import treeStyles from './Tree.scss';
 import {
   getDatasetTree,
   fetchDatasetTree,
+  treeData,
   getExpandedNodes,
   expandNode,
   collapseNode} from '../reducers/datasetTree'
@@ -24,93 +25,73 @@ class DatasetTreeComponent extends Component {
     }
   }
 
-  drawNested(obj,name){
-    console.log(this.props)
-    let nodes = this.props.expanded
-    if (obj.d){
-      let nested = Object.keys(obj.d).map((key,i) => {
-        let inner
-        let toggleNode = this.props.expandNode
-        if (this.props.expanded[obj.d[key].n]){
+
+
+  drawNested(obj){
+    let widths = this.props.treeData.widths
+    let nested = obj.map((child,i) => {
+      let inner
+      let toggleNode = this.props.expandNode
+      if (this.props.expanded.hasOwnProperty(child.node_id)){
           inner = (<div className={treeStyles.group}>
-            {this.drawNested(obj.d[key],key)}
+            {this.drawNested((child.descendants || []))}
           </div>)
           toggleNode = this.props.collapseNode
         }
         let count
-        if (obj.d[key].c){
-          count = (<span onClick={()=>toggleNode([obj.d[key].n])}>
-            ({obj.d[key].c})
+        if (child.count){
+          count = (<span onClick={()=>toggleNode([child.node_id],child.parent)}>
+            ({child.count}
+             {child.total && <span className={treeStyles.total}>/{child.total}</span>})
           </span>)
         }
         return (
           <div key={i} className={treeStyles.outer}>
-            <div className={treeStyles.name}>
-              <span onClick={()=>this.props.onChooseTerm(key)}>
-                {key} </span>
+            <div className={treeStyles.name}
+                 style={{width:widths[child.depth]*this.props.scale+'em'}}>
+              <span onClick={()=>this.props.onChooseTerm(child.name)}>
+                {child.name} </span>
               {count}
             </div>
             {inner}
           </div>
         )
-        // return this.drawNestedDivs(obj.d[key],name, rank)
       })
-      return nested
-    }
-  }
-
-  drawNestedDivs(obj,name,rank){
-    if (obj.d){
-      let nested = Object.keys(obj.d).map((key,i) => {
-        if (obj.d[key].r && obj.d[key].r != rank){
-          return (
-            <div key={i} className={treeStyles.outer}>
-              <div className={treeStyles.name}>
-                <span onClick={()=>this.props.onChooseTerm(key)}>
-                  {key} </span>
-                <span onClick={()=>this.props.setExpandedNodes(obj.d[key].n)}>
-                  ({obj.d[key].c})
-                </span>
-              </div>
-              <div className={treeStyles.group}>
-                {this.drawNestedDivs(obj.d[key],key,rank)}
-              </div>
-            </div>
-          )
-        }
-        else if (rank && obj.d[key].r == rank){
-          return (<div key={i} className={treeStyles.outer}>
-            <div className={treeStyles.name}>
-              <span onClick={()=>this.props.onChooseTerm(key)}>
-                {key} </span>
-              <span onClick={()=>this.props.setExpandedNodes(obj.d[key].n)}>
-                ({obj.d[key].c})
-              </span>
-            </div>
-          </div>)
-        }
-        return this.drawNestedDivs(obj.d[key],name, rank)
-      })
-      return nested
-    }
-    return (
-      <div key={name}
-           className={treeStyles.leaf}
-           onClick={()=>this.props.onChooseTerm(name)}>
-        {name}
-      </div>
-    )
+    return nested
   }
 
   render() {
     if (!this.props.data.tree){
       return null
     }
-    // let nestedDivs = this.drawNestedDivs(this.props.data.tree,'root','family')
-    let nestedDivs = this.drawNested(this.props.data.tree,'root')
+    let ranks = this.props.treeData.ranks
+    let widths = this.props.treeData.widths
+    let scale = this.props.scale
+    let headers = (<div>
+      {ranks.map((rank,i)=>{
+        return (
+          <span key={i}
+                className={treeStyles.header}
+                style={{width:widths[i]*scale+'em'}}>
+            {rank}
+          </span>
+        )
+      })}
+    </div>)
+    let nestedDivs = this.drawNested(this.props.treeData.nested)
+    let width = Math.max(widths.reduce((a,b)=>a+b)*scale, 60)
     return (
-      <div id="list" className={'none'} style={{fontSize:'0.75em',paddingBottom:'0.5em'}}>
-        {nestedDivs}
+      <div className={treeStyles.container}
+           style={{width:width+'em'}}>
+        Browse datasets:
+        <ul style={{marginTop:'0.25em'}}>
+          <li>Click a taxon name below to list all assemblies in that taxon.</li>
+          <li>Numbers indicate available assemblies, click a number to expand taxonomy.</li>
+        </ul>
+        <div className={treeStyles.scroller}>
+          {headers}
+          {nestedDivs}
+        </div>
       </div>
     )
   }
@@ -122,16 +103,18 @@ class DatasetTree extends React.Component {
     this.mapStateToProps = state => {
       return {
         data: getDatasetTree(state),
-        expanded: getExpandedNodes(state)
+        expanded: getExpandedNodes(state),
+        treeData: treeData(state),
+        scale: 0.75
       }
     }
     this.mapDispatchToProps = dispatch => {
       return {
         fetchDatasetTree: () => dispatch(fetchDatasetTree()),
-        expandNode: (int) => dispatch(expandNode(int)),
-        collapseNode: (int) => dispatch(collapseNode(int)),
+        expandNode: (node,parent) => dispatch(expandNode(node,parent)),
+        collapseNode: (node) => dispatch(collapseNode(node)),
         onChooseTerm: (str) => {
-          dispatch(fetchRepository(str))
+          dispatch(fetchRepository(str.replace('-undef','')))
         }
       }
     }

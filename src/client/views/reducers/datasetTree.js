@@ -57,29 +57,79 @@ export const expandedNodes = handleAction(
   (state, action) => (
     action.payload
   ),
-  {}
+  {1: 0}
 )
 
 export const getExpandedNodes = state => state.expandedNodes
 
 
-export function expandNode(id) {
+export function expandNode(id,parent) {
   return dispatch => {
     let state = store.getState()
     let nodes = Object.assign({},getExpandedNodes(state))
-    nodes[id] = true
+    nodes[id*1] = parent
     dispatch(setExpandedNodes(nodes))
   }
+}
+
+const collapseChildren = (nodes,id) => {
+  delete nodes[id*1]
+  let sibs = Object.keys(nodes).filter(key => nodes[key] == id)
+  sibs.forEach(sib=>{
+    collapseChildren(nodes,sib)
+  })
 }
 
 export function collapseNode(id) {
   return dispatch => {
     let state = store.getState()
     let nodes = Object.assign({},getExpandedNodes(state))
-    delete nodes[id]
+    collapseChildren(nodes,id)
     dispatch(setExpandedNodes(nodes))
   }
 }
+
+export const treeData = createSelector(
+  getDatasetTree,
+  getExpandedNodes,
+  (data, nodes) => {
+    if (!data.tree){
+      return false
+    }
+    let ranks = []
+    let widths = []
+    let depth = 0;
+    const prepareNested = (obj, name, depth) => {
+      if (obj.d){
+        let nested = Object.keys(obj.d).map((key,i) => {
+          let descendants
+          if (nodes.hasOwnProperty(obj.d[key].n)){
+            descendants = prepareNested(obj.d[key],key,depth+1)
+          }
+          let count = obj.d[key].c
+          let node_id = obj.d[key].n
+          let rank = obj.d[key].r || ''
+          ranks[depth] = rank
+          let width = key.length + String((count || 0)).length + 3
+          widths[depth] = Math.max(rank.length,width,(widths[depth] || 0))
+          return {
+            name: key,
+            depth,
+            descendants,
+            node_id,
+            count,
+            parent: obj.n
+          }
+        })
+        return nested
+      }
+    }
+    let nested = prepareNested(data.tree,'root',depth)
+
+
+    return {nested, ranks, widths}
+  }
+)
 
 
 export const datasetTreeReducers = {

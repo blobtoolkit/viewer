@@ -28,11 +28,20 @@ const DatasetFinder = ({ searchTerm, selectedDataset, isFetching, datasetIds, da
       <Search/>
       {isFetching ? <Spinner /> : null}
       { datasetIds.length > 0 ? (
-        <span className={styles.result_count} style={{marginLeft:'1em'}} key='span'>{datasetIds.length+' datasets match "'+searchTerm+'"'}</span>
+        <span className={styles.result_count}
+              style={{marginLeft:'1em'}}
+              key='span'>
+          {datasetIds.length+' datasets match "'+searchTerm+'"'}:
+          <ul style={{margin:'0.25em'}}>
+            <li>Click headers to sort results.</li>
+            <li>Click a row to view an assembly.</li>
+          </ul>
+        </span>
       ) : null }
       {dataset_table && <DatasetTable onDatasetClick={onDatasetClick}/>}
+      <hr/>
       <DatasetTree/>
-      
+
     </div>
   )
 }
