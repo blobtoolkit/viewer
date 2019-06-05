@@ -14,6 +14,7 @@ import { getDatasetID,
 import styles from './Layout.scss'
 import MenuDataset from './MenuDataset'
 import DatasetTable from './DatasetTable'
+import DatasetTree from './DatasetTree'
 import Spinner from './Spinner'
 import ToolTips from './ToolTips'
 import Search from './Search'
@@ -30,6 +31,8 @@ const DatasetFinder = ({ searchTerm, selectedDataset, isFetching, datasetIds, da
         <span className={styles.result_count} style={{marginLeft:'1em'}} key='span'>{datasetIds.length+' datasets match "'+searchTerm+'"'}</span>
       ) : null }
       {dataset_table && <DatasetTable onDatasetClick={onDatasetClick}/>}
+      <DatasetTree/>
+      
     </div>
   )
 }

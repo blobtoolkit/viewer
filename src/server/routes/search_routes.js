@@ -95,11 +95,63 @@ const generateIndex = meta => {
   return index
 }
 
+const ranks = ['superkingdom', 'kingdom', 'phylum', 'class', 'order', 'family', 'genus', 'species', 'taxon_name', 'id']
+
+const generateTree = (meta) => {
+  let tree = {n: 0, r: 'root', d:{}, c:0}
+  let nodes = ['root']
+  meta.forEach((ds,i) => {
+    let parent_node = tree
+    ranks.forEach(rank=>{
+      let skip
+      if (rank == 'id'){
+        let assembly = ds[rank]
+        parent_node.d[assembly] = {
+          n: nodes.length,
+          // assembly,
+          p: parent_node.id
+        }
+        nodes.push(assembly)
+        parent_node.c++
+      }
+      else {
+        let taxon = ds[rank]
+        if (!taxon){
+          let parent = nodes[parent_node.n]
+          taxon = parent.match('undef') ? parent : `${parent}-undef`
+        }
+        if (!parent_node.d[taxon]){
+          if (rank == 'taxon_name' && taxon == nodes[parent_node.n]){
+            skip = true
+          }
+          else {
+            parent_node.d[taxon] = {
+              n: nodes.length,
+              r: rank,
+              p: parent_node.id,
+              d: {},
+              c: 0
+            }
+            nodes.push(taxon)
+          }
+        }
+        if (!skip){
+          parent_node.c++
+          parent_node = parent_node.d[taxon]
+        }
+      }
+    })
+  })
+  return tree
+}
+
 const meta = readMeta(dataDirectory)
 
 const index = generateIndex(meta)
 
 const keys = Object.keys(index.values)
+
+const tree = generateTree(meta)
 
 const autocomplete = term => {
   query = term.toUpperCase()
@@ -143,7 +195,12 @@ const search = term => {
   return arr
 }
 
+
 module.exports = function(app, db) {
+  app.get('/api/v1/search', async (req, res) => {
+    res.setHeader('content-type', 'application/json');
+    res.json(tree)
+  });
   app.get('/api/v1/search/autocomplete/:term', async (req, res) => {
     res.setHeader('content-type', 'application/json');
     res.json(autocomplete(req.params.term))
@@ -151,9 +208,5 @@ module.exports = function(app, db) {
   app.get('/api/v1/search/:term', async (req, res) => {
     res.setHeader('content-type', 'application/json');
     res.json(search(req.params.term))
-  });
-  app.get('/api/v1/search', async (req, res) => {
-    res.setHeader('content-type', 'application/json');
-    res.json([])
   });
 };

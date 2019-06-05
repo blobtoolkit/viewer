@@ -15,6 +15,7 @@ import { plotParameterReducers } from './plotParameters'
 import { recordReducers } from './record'
 import { trackingReducers } from './tracking'
 import { datasetTableReducers } from './datasetTable'
+import { datasetTreeReducers } from './datasetTree'
 
 const allReducers = Object.assign(
   {},
@@ -32,7 +33,8 @@ const allReducers = Object.assign(
   plotParameterReducers,
   recordReducers,
   trackingReducers,
-  datasetTableReducers
+  datasetTableReducers,
+  datasetTreeReducers
 );
 
 const appReducer = combineReducers(allReducers);
@@ -49,6 +51,8 @@ const rootReducer = (state, action) => {
     let datasetPage = state.datasetPage
     let datasetPageSize = state.datasetPageSize
     let datasetSorted = state.datasetSorted
+    let datasetTree = state.datasetTree
+    let expandedNodes = state.expandedNodes
     state = {
       analytics,
       cookieConsent,
@@ -59,7 +63,9 @@ const rootReducer = (state, action) => {
       hashString,
       datasetPage,
       datasetPageSize,
-      datasetSorted
+      datasetSorted,
+      datasetTree,
+      expandedNodes
     }
   }
   return appReducer(state, action)

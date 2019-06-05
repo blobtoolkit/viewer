@@ -110,7 +110,7 @@ export const columnAccessors = createSelector(
         accessors[`busco-${key}`] = busco[key]
       })
     }
-    accessors.phylum = d => d.phylum
+    accessors.phylum = d => d.phylum ? d.phylum : '-'
     accessors['read-sets'] = d => {
       if (d.summaryStats && d.summaryStats.readMapping){
         return Object.keys(d.summaryStats.readMapping).length
