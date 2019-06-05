@@ -5,6 +5,7 @@ import Search from './Search'
 import FindDatasets from './FindDatasets'
 import figure1 from './img/figure1.jpg'
 import figure2 from './img/figure2.jpg'
+import hexBlur from './img/hex_blur.jpg'
 
 
 const dataset_table = DATASET_TABLE || false
@@ -17,16 +18,17 @@ export default class HomePage extends React.Component {
   render(){
     return (
       <div className={styles.outer}>
-
+        <div style={{backgroundImage:`url(${hexBlur})`,
+                     margin: '-1em -2em 0 -2em',
+                     padding: '1em 2em 1em 2em',
+                     color: 'white'}}>
         <h1>
-          Welcome to the BlobToolKit Viewer
+          BlobToolKit Viewer
         </h1>
         <p>
-          BlobToolKit Viewer allows browser-based interactive visualisation and
-          filtering of preliminary or published genomic datasets, even for highly
-          fragmented assemblies.
+          Interactive visualisation of genomic datasets.
         </p>
-        <hr/>
+      </div>
         {dataset_table && <FindDatasets/>}
         {!dataset_table && <span>
           Search datasets to begin (search 'all' to show all available datasets).

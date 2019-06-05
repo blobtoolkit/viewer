@@ -23,6 +23,7 @@ const dataset_table = DATASET_TABLE || false
 
 const DatasetFinder = ({ searchTerm, selectedDataset, isFetching, datasetIds, datasets, onDatasetMount, onDatasetClick }) => {
   let css = dataset_table ? styles.fill_parent : ''
+  console.log(datasets)
   return (
     <div className={css}>
       <Search/>
@@ -34,15 +35,7 @@ const DatasetFinder = ({ searchTerm, selectedDataset, isFetching, datasetIds, da
           {datasetIds.length+' datasets match "'+searchTerm+'"'}:
         </span>
       ) : null }
-      {dataset_table && <span>
-        <DatasetTable onDatasetClick={onDatasetClick}/>
-        <span className={styles.hints}>
-          <ul style={{marginTop:'0.25em'}}>
-            <li>Click headers to sort results.</li>
-            <li>Click a row to view an assembly.</li>
-          </ul>
-        </span>
-      </span>}
+      {dataset_table && <DatasetTable onDatasetClick={onDatasetClick}/>}
       <hr/>
       <DatasetTree/>
 

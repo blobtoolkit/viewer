@@ -54,6 +54,7 @@ class DatasetTableComponent extends Component {
     }
     let columns = this.props.columns
     let table
+    let hints
     if (this.props.data.length > 0){
       table = (
         <ReactTable
@@ -88,19 +89,35 @@ class DatasetTableComponent extends Component {
           onPageSizeChange={(newPageSize, pageIndex)=>{this.props.changePageSize(newPageSize,this.props.pageSize,this.props.page); return (newPageSize,pageIndex)}}
         />
       )
+      hints = (<span className={styles.hints}>
+        <ul style={{marginTop:'0.25em'}}>
+          <li>Click headers to sort results.</li>
+          <li>Click a row to view an assembly.</li>
+        </ul>
+      </span>)
     }
     else {
-      table = (
-        <span style={{fontSize:'1.33em'}}>
-          <p>Use the search box above to find datasets – matching datasets and associated metadata will be displayed in a sortable table.</p>
-          <p>If you are unsure what to search for, type 'all' to show all available datasets.</p>
-          
-        </span>
-      )
+      hints = (<span className={styles.hints}>
+        <ul style={{marginTop:'0.25em'}}>
+          <li>Use the search box above to find datasets – matching datasets and associated metadata will be displayed in a sortable table.</li>
+          <li>If you are unsure what to search for, browse available datasets below or type 'all' to show all available datasets.</li>
+        </ul>
+      </span>)
+      // table = (
+      //
+      //   <span style={{fontSize:'1.33em'}}>
+      //     <p>Use the search box above to find datasets – matching datasets and associated metadata will be displayed in a sortable table.</p>
+      //     <p>If you are unsure what to search for, type 'all' to show all available datasets.</p>
+      //
+      //   </span>
+      // )
     }
     return (
-      <div id="list" className={css} style={{fontSize:'0.75em',paddingBottom:'0.5em'}}>
-        {table}
+      <div id="list" className={css}>
+        <div style={{fontSize:'0.75em',paddingBottom:'0.5em'}}>
+          {table}
+        </div>
+        {hints}
       </div>
     );
   }

@@ -65,7 +65,7 @@
   width:100%;
   flex: 0 0 4em;
   background-color: $darkColor;
-  box-shadow: 0px 0px 4px 1px $shadeColor;
+  // box-shadow: 0px 0px 4px 1px $shadeColor;
 }
 
 .main_header_tab {
@@ -98,7 +98,7 @@
   width:100%;
   flex: 0 0 calc(20px + 0.8em);
   background-color: $darkColor;
-  box-shadow: 0px 0px 4px 1px $shadeColor;
+  // box-shadow: 0px 0px 4px 1px $shadeColor;
 
   .doi_badge {
     position:relative;
@@ -177,10 +177,10 @@ table {
   bottom:0;
   flex: 0 0 31em;
   z-index:5;
-  background-color: $shadeColor;
+  background-color: $deepColor;
   overflow-y: auto;
   overflow-x: hidden;
-  box-shadow: 0px 0px 8px 4px $shadeColor;
+  // box-shadow: 0px 0px 8px 4px $shadeColor;
   color:$lightColor;
 
   a {
