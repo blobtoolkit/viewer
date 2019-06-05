@@ -32,13 +32,17 @@ const DatasetFinder = ({ searchTerm, selectedDataset, isFetching, datasetIds, da
               style={{marginLeft:'1em'}}
               key='span'>
           {datasetIds.length+' datasets match "'+searchTerm+'"'}:
-          <ul style={{margin:'0.25em'}}>
+        </span>
+      ) : null }
+      {dataset_table && <span>
+        <DatasetTable onDatasetClick={onDatasetClick}/>
+        <span className={styles.hints}>
+          <ul style={{marginTop:'0.25em'}}>
             <li>Click headers to sort results.</li>
             <li>Click a row to view an assembly.</li>
           </ul>
         </span>
-      ) : null }
-      {dataset_table && <DatasetTable onDatasetClick={onDatasetClick}/>}
+      </span>}
       <hr/>
       <DatasetTree/>
 
