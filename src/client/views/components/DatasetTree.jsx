@@ -117,7 +117,7 @@ class DatasetTreeComponent extends Component {
         <span className={styles.hints}>
           <ul style={{marginTop:'0.25em'}}>
             <li>Click a taxon name to list all assemblies in that taxon.</li>
-            <li>Numbers indicate available assemblies, click a number to expand taxonomy.</li>
+            <li>Numbers indicate available assemblies / total INSDC registered assemblies, click a number to expand taxonomy.</li>
           </ul>
         </span>
       </div>
