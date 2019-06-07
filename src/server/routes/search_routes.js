@@ -98,9 +98,11 @@ const generateIndex = meta => {
 const ranks = ['superkingdom', 'kingdom', 'phylum', 'class', 'order', 'family', 'genus', 'species', 'taxon_name', 'id']
 
 const generateTree = (meta) => {
-  let tree = {n: 0, r: 'root', d:{}, c:0}
+  let tree = {n: 0, r: 'root', d:{}, a:0, s:0}
   let nodes = ['root']
+  let species = {}
   meta.forEach((ds,i) => {
+    let spid = ranks.map(r=>ds[r]).reduce((a,b)=>a+','+b)
     let parent_node = tree
     ranks.forEach(rank=>{
       let skip
@@ -112,7 +114,7 @@ const generateTree = (meta) => {
           p: parent_node.id
         }
         nodes.push(assembly)
-        parent_node.c++
+        parent_node.a++
       }
       else {
         let taxon = ds[rank]
@@ -130,17 +132,22 @@ const generateTree = (meta) => {
               r: rank,
               p: parent_node.id,
               d: {},
-              c: 0
+              a: 0,
+              s: 0
             }
             nodes.push(taxon)
           }
         }
+        if (!species[spid]){
+          parent_node.s++
+        }
         if (!skip){
-          parent_node.c++
+          parent_node.a++
           parent_node = parent_node.d[taxon]
         }
       }
     })
+    species[spid] = true
   })
   return tree
 }
@@ -197,7 +204,10 @@ const search = term => {
 
 
 module.exports = function(app, db) {
-  app.get('/api/v1/search', async (req, res) => {
+  app.get('/api/v1/search/tree/target', async (req, res) => {
+    res.sendFile(`${dataDirectory}/targets.json`)
+  });
+  app.get('/api/v1/search/tree/available', async (req, res) => {
     res.setHeader('content-type', 'application/json');
     res.json(tree)
   });

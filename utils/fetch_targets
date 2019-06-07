@@ -1,0 +1,125 @@
+#!/usr/bin/env node
+const doc = `
+Usage:
+  utils/fetch_targets TAXID
+`
+const parser = require('fast-xml-parser')
+const fetch = require('node-fetch')
+const resolve = require('path').resolve
+const docopt = require('docopt').docopt
+const fs = require('fs')
+// const readline = require('readline')
+// const { execFileSync } = require('child_process');
+
+const sleep = ms => {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+const fetchAsyncText = async (url) =>
+	await (await fetch(url)).text()
+
+const countAssemblies = async (root) => {
+  let baseUrl = 'https://www.ebi.ac.uk/ena/data/warehouse'
+  let url = `${baseUrl}/search?query="tax_tree(${root})"&result=assembly&resultcount`
+  let text = await fetchAsyncText(url)
+  let count = text.match(/[\d,]+/)[0]
+  return count.replace(',','')
+}
+
+const listAssemblies = async (root, offset, count) => {
+  let baseUrl = 'https://www.ebi.ac.uk/ena/data/warehouse'
+  let url = `${baseUrl}/search?query="tax_tree(${root})"&result=assembly&display=xml&offset=${offset}&length=${count}`
+  let xmlData = await fetchAsyncText(url)
+  let jsonObj = parser.parse(xmlData)
+  let assemblies = jsonObj.ROOT.ASSEMBLY
+  return Array.isArray(assemblies) ? assemblies : [assemblies]
+}
+
+const hierarchy = [
+  'superkingdom',
+  'kingdom',
+  'phylum',
+  'class',
+  'order',
+  'family',
+  'genus',
+  'species'
+]
+
+let n = 0
+let species = {}
+
+const addAssemblyToTree = (taxid,acc,taxdump,tree) => {
+  let ancestors = taxdump.ancestors[taxid]
+  if (!ancestors) return
+  let spid = ancestors['species']
+  let node = tree
+  node.ta++
+  if (!species[spid]) node.ts++
+  hierarchy.forEach(r=>{
+    let ancid = ancestors[r]
+    if (ancid > 0){
+      name = taxdump.names[ancid]
+    }
+    else {
+      name = taxdump.names[-ancid]+'-undef'
+    }
+    if (!node.d[name]){
+      n++
+      node.d[name] = {n,r,ta:0,ts:0,d:{}}
+    }
+    node = node.d[name]
+    node.ta++
+    if (!species[spid]) node.ts++
+  })
+  species[spid] = true
+  let taxon_name = taxdump.names[taxid]
+  if (taxon_name != taxdump.names[spid]){
+    if (!node.d[taxon_name]){
+      n++
+      node.d[taxon_name] = {n,r:'taxon_name',ta:0,d:{}}
+    }
+    node = node.d[taxon_name]
+    node.ta++
+  }
+  n++
+  node.d[acc] = {n}
+}
+
+const main = async (args) => {
+  let count = await countAssemblies(args.TAXID)
+  process.stderr.write(`Processing ${count} assemblies...\n`)
+  let offset = 0
+  let step = 50
+  let taxids = {}
+  let taxdump = JSON.parse(fs.readFileSync(`${__dirname}/taxdump.json`))
+  let targets = {n,r:'root',ta:0,ts:0,d:{}}
+  while (offset < count){
+    process.stderr.write(`${offset}\r`)
+    step = Math.min(count-offset,step)
+    let assemblies = await listAssemblies(args.TAXID,offset,step)
+    assemblies.forEach(asm=>{
+      let taxid = asm.TAXON.TAXON_ID
+      let acc
+      if (asm.WGS_SET){
+        acc = asm.WGS_SET.PREFIX + (asm.WGS_SET.VERSION < 10 ? '0'+ asm.WGS_SET.VERSION : asm.WGS_SET.VERSION)
+      }
+      else {
+        acc = asm.NAME
+      }
+      addAssemblyToTree(taxid,acc,taxdump,targets,n)
+    })
+    offset += step
+  }
+  process.stderr.write(`done\n`)
+  process.stdout.write(JSON.stringify(targets))
+}
+
+const args = docopt(doc)
+
+if (typeof(args) !== 'object'){
+  process.stderr.write(doc)
+  process.exit(1)
+}
+
+main(args)

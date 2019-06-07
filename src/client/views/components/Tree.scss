@@ -21,8 +21,12 @@
   vertical-align: top;
   border-left:1px solid $darkColor;
   margin-left:-1px;
-  background-color: rgba($shadeColor,0.05);
+  // background-color: rgba($shadeColor,0.05);
   box-sizing: border-box;
+}
+
+.group .zero {
+  // background-color: rgba($highlightColor,0.05);
 }
 
 .header {
@@ -32,7 +36,7 @@
   font-weight: bold;
   background-color: $deepColor;
   border-left:1px solid $lightColor;
-  margin-left:-1px;
+  // margin-left:-1px;
   color:$lightColor;
   padding-left: 0.5em;
   box-sizing: border-box;
@@ -47,15 +51,107 @@
   display:block;
   text-align: left;
   box-sizing: border-box;
-  margin-left:-1px;
+  // margin-left:-1px;
 }
-.outer {
 
+.outer.zero.d1 {
+  background-color: mix(white, $highlightColor, 90%);
+}
+
+.outer.zero.d2 {
+  background-color: mix(white, $highlightColor, 80%);
+}
+
+.outer.zero.d3 {
+  background-color: mix(white, $highlightColor, 70%);
+}
+
+.outer.zero.d4 {
+  background-color: mix(white, $highlightColor, 60%);
+}
+
+.outer.zero.d5 {
+  background-color: mix(white, $highlightColor, 50%);
+}
+
+.outer.zero.d6 {
+  background-color: mix(white, $highlightColor, 40%);
+}
+
+.outer.zero.d7 {
+  background-color: mix(white, $highlightColor, 30%);
+}
+
+.outer.zero.d8 {
+  background-color: mix(white, $highlightColor, 20%);
+}
+
+.outer.zero.d9 {
+  background-color: mix(white, $highlightColor, 10%);
+}
+
+
+.outer.partial.d1 {
+  background-color: mix(white, $partialColor, 90%);
+}
+.outer.partial.d2 {
+  background-color: mix(white, $partialColor, 80%);
+}
+.outer.partial.d3 {
+  background-color: mix(white, $partialColor, 70%);
+}
+.outer.partial.d4 {
+  background-color: mix(white, $partialColor, 60%);
+}
+.outer.partial.d5 {
+  background-color: mix(white, $partialColor, 50%);
+}
+.outer.partial.d6 {
+  background-color: mix(white, $partialColor, 40%);
+}
+.outer.partial.d7 {
+  background-color: mix(white, $partialColor, 30%);
+}
+.outer.partial.d8 {
+  background-color: mix(white, $partialColor, 20%);
+}
+.outer.partial.d9 {
+  background-color: mix(white, $partialColor, 10%);
+}
+
+.outer.complete.d2 {
+  background-color: mix(white, $completeColor, 90%);
+}
+.outer.complete.d3 {
+  background-color: mix(white, $completeColor, 80%);
+}
+.outer.complete.d3 {
+  background-color: mix(white, $completeColor, 70%);
+}
+.outer.complete.d4 {
+  background-color: mix(white, $completeColor, 60%);
+}
+.outer.complete.d5 {
+  background-color: mix(white, $completeColor, 50%);
+}
+.outer.complete.d6 {
+  background-color: mix(white, $completeColor, 40%);
+}
+.outer.complete.d7 {
+  background-color: mix(white, $completeColor, 30%);
+}
+.outer.complete.d8 {
+  background-color: mix(white, $completeColor, 20%);
+}
+.outer.complete.d9 {
+  background-color: mix(white, $completeColor, 10%);
 }
 
 .outer ~ .outer {
   margin-top:2px;
 }
+
+
 
 .name {
   border: none;
@@ -63,10 +159,10 @@
   display:inline-block;
   overflow:hidden;
   box-sizing: border-box;
-  span {
+  span.search {
     cursor:pointer;
   }
-  span:hover {
+  span.search:hover {
     text-decoration: underline;
     color: $highlightColor;
   }

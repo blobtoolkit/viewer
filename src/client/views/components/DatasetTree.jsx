@@ -14,6 +14,9 @@ import { fetchRepository } from '../reducers/repository'
 import colors from './_colors'
 import Spinner from './Spinner'
 
+
+
+
 class DatasetTreeComponent extends Component {
   constructor() {
     super();
@@ -32,6 +35,18 @@ class DatasetTreeComponent extends Component {
     let nested = obj.map((child,i) => {
       let inner
       let toggleNode = this.props.expandNode
+      let css = treeStyles.outer
+      if (!child.leaf && !child.count){
+        css += ' '+treeStyles.zero
+      }
+      else if (child.count && child.count < child.total){
+        css += ' '+treeStyles.partial
+      }
+      else {
+        css += ' '+treeStyles.complete
+      }
+      css += ' '+treeStyles['d'+child.depth]
+
       if (this.props.expanded.hasOwnProperty(child.node_id)){
           inner = (<div className={treeStyles.group}>
             {this.drawNested((child.descendants || []))}
@@ -39,18 +54,29 @@ class DatasetTreeComponent extends Component {
           toggleNode = this.props.collapseNode
         }
         let count
+        let label = (<span className={treeStyles.plain}>
+          {child.name} </span>)
+
         if (child.count){
-          count = (<span onClick={()=>toggleNode([child.node_id],child.parent)}>
+          count = (<span className={treeStyles.search} onClick={()=>toggleNode([child.node_id],child.parent)}>
             ({child.count}
              {child.total && <span className={treeStyles.total}>/{child.total}</span>})
           </span>)
+          label = (<span className={treeStyles.search} onClick={() => this.props.onChooseTerm(child.name)}>
+            {child.name} </span>)
+        }
+        else if (child.total){
+          count = (<span className={treeStyles.search} onClick={()=>toggleNode([child.node_id],child.parent)}>
+            (0
+              <span className={treeStyles.total}>/{child.total}</span>
+            )
+          </span>)
         }
         return (
-          <div key={i} className={treeStyles.outer}>
+          <div key={i} className={css}>
             <div className={treeStyles.name}
                  style={{width:widths[child.depth]*this.props.scale+'em'}}>
-              <span onClick={()=>this.props.onChooseTerm(child.name)}>
-                {child.name} </span>
+              {label}
               {count}
             </div>
             {inner}
@@ -61,7 +87,7 @@ class DatasetTreeComponent extends Component {
   }
 
   render() {
-    if (!this.props.data.tree){
+    if (!this.props.treeData.nested){
       return null
     }
     let ranks = this.props.treeData.ranks

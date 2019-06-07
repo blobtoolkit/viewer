@@ -37,13 +37,57 @@ export const getDatasetTree = state => state.datasetTree
 export function fetchDatasetTree() {
   return function (dispatch) {
     dispatch(requestDatasetTree())
-    return fetch(apiUrl + '/search/')
+    return fetch(apiUrl + '/search/tree/available')
       .then(
         response => response.json(),
         error => console.log('An error occured.', error)
       )
       .then(json =>{
         dispatch(receiveDatasetTree(json))
+        dispatch(fetchTargetTree())
+      }
+    )
+  }
+}
+
+const requestTargetTree = createAction('REQUEST_TARGET_TREE')
+const receiveTargetTree = createAction(
+  'RECEIVE_TARGET_TREE',
+  json => json,
+  {}
+)
+
+export const targetTree = handleActions(
+  {
+    REQUEST_TARGET_TREE: (state, action) => (
+      {
+        isFetching: true,
+        isInitialised: false,
+      }
+    ),
+    RECEIVE_TARGET_TREE: (state, action) => (
+      {
+        isFetching: false,
+        isInitialised: true,
+        tree: action.payload
+      }
+    )
+  },
+  {isInitialised: false}
+)
+
+export const getTargetTree = state => state.targetTree
+
+export function fetchTargetTree() {
+  return function (dispatch) {
+    dispatch(requestTargetTree())
+    return fetch(apiUrl + '/search/tree/target')
+      .then(
+        response => response.json(),
+        error => console.log('An error occured.', error)
+      )
+      .then(json =>{
+        dispatch(receiveTargetTree(json))
       }
     )
   }
@@ -91,22 +135,35 @@ export function collapseNode(id) {
 
 export const treeData = createSelector(
   getDatasetTree,
+  getTargetTree,
   getExpandedNodes,
-  (data, nodes) => {
-    if (!data.tree){
+  (data, target, nodes) => {
+    if (!data.tree || !target.tree){
       return false
     }
     let ranks = []
     let widths = []
     let depth = 0;
-    const prepareNested = (obj, name, depth) => {
+    const prepareNested = (obj, avail, name, depth) => {
       if (obj.d){
         let nested = Object.keys(obj.d).map((key,i) => {
           let descendants
-          if (nodes.hasOwnProperty(obj.d[key].n)){
-            descendants = prepareNested(obj.d[key],key,depth+1)
+          let count = 0
+          let species = 0
+          let leaf
+          if (avail.d && avail.d[key]){
+            if (nodes.hasOwnProperty(obj.d[key].n)){
+              descendants = prepareNested(obj.d[key],avail.d[key],key,depth+1)
+            }
+            count = avail.d[key].a
+            species = avail.d[key].s
+            leaf = true
           }
-          let count = obj.d[key].c
+          else if (nodes.hasOwnProperty(obj.d[key].n)){
+            descendants = prepareNested(obj.d[key],{},key,depth+1)
+          }
+          let total = obj.d[key].ta
+          let speciesTotal = obj.d[key].ts
           let node_id = obj.d[key].n
           let rank = obj.d[key].r || ''
           ranks[depth] = rank
@@ -118,15 +175,18 @@ export const treeData = createSelector(
             descendants,
             node_id,
             count,
+            total,
+            leaf,
+            species,
+            speciesTotal,
             parent: obj.n
           }
         })
         return nested
       }
     }
-    let nested = prepareNested(data.tree,'root',depth)
-
-
+    let nested = prepareNested(target.tree, data.tree,'root',depth)
+    let targetNested
     return {nested, ranks, widths}
   }
 )
@@ -134,5 +194,6 @@ export const treeData = createSelector(
 
 export const datasetTreeReducers = {
   datasetTree,
+  targetTree,
   expandedNodes
 }
