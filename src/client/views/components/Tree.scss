@@ -55,93 +55,85 @@
 }
 
 .outer.zero.d1 {
-  background-color: mix(white, $highlightColor, 90%);
+  background-color: mix(white, $warnColor, 50%);
 }
-
 .outer.zero.d2 {
-  background-color: mix(white, $highlightColor, 80%);
+  background-color: mix(white, $warnColor, 45%);
 }
-
 .outer.zero.d3 {
-  background-color: mix(white, $highlightColor, 70%);
+  background-color: mix(white, $warnColor, 40%);
 }
-
 .outer.zero.d4 {
-  background-color: mix(white, $highlightColor, 60%);
+  background-color: mix(white, $warnColor, 35%);
 }
-
 .outer.zero.d5 {
-  background-color: mix(white, $highlightColor, 50%);
+  background-color: mix(white, $warnColor, 30%);
 }
-
 .outer.zero.d6 {
-  background-color: mix(white, $highlightColor, 40%);
+  background-color: mix(white, $warnColor, 25%);
 }
-
 .outer.zero.d7 {
-  background-color: mix(white, $highlightColor, 30%);
+  background-color: mix(white, $warnColor, 20%);
 }
-
 .outer.zero.d8 {
-  background-color: mix(white, $highlightColor, 20%);
+  background-color: mix(white, $warnColor, 15%);
 }
-
 .outer.zero.d9 {
-  background-color: mix(white, $highlightColor, 10%);
+  background-color: mix(white, $warnColor, 10%);
 }
 
 
 .outer.partial.d1 {
-  background-color: mix(white, $partialColor, 90%);
-}
-.outer.partial.d2 {
-  background-color: mix(white, $partialColor, 80%);
-}
-.outer.partial.d3 {
-  background-color: mix(white, $partialColor, 70%);
-}
-.outer.partial.d4 {
-  background-color: mix(white, $partialColor, 60%);
-}
-.outer.partial.d5 {
   background-color: mix(white, $partialColor, 50%);
 }
-.outer.partial.d6 {
+.outer.partial.d2 {
+  background-color: mix(white, $partialColor, 45%);
+}
+.outer.partial.d3 {
   background-color: mix(white, $partialColor, 40%);
 }
-.outer.partial.d7 {
+.outer.partial.d4 {
+  background-color: mix(white, $partialColor, 35%);
+}
+.outer.partial.d5 {
   background-color: mix(white, $partialColor, 30%);
 }
-.outer.partial.d8 {
+.outer.partial.d6 {
+  background-color: mix(white, $partialColor, 25%);
+}
+.outer.partial.d7 {
   background-color: mix(white, $partialColor, 20%);
+}
+.outer.partial.d8 {
+  background-color: mix(white, $partialColor, 15%);
 }
 .outer.partial.d9 {
   background-color: mix(white, $partialColor, 10%);
 }
 
 .outer.complete.d2 {
-  background-color: mix(white, $completeColor, 90%);
-}
-.outer.complete.d3 {
-  background-color: mix(white, $completeColor, 80%);
-}
-.outer.complete.d3 {
-  background-color: mix(white, $completeColor, 70%);
-}
-.outer.complete.d4 {
-  background-color: mix(white, $completeColor, 60%);
-}
-.outer.complete.d5 {
   background-color: mix(white, $completeColor, 50%);
 }
-.outer.complete.d6 {
+.outer.complete.d3 {
+  background-color: mix(white, $completeColor, 45%);
+}
+.outer.complete.d3 {
   background-color: mix(white, $completeColor, 40%);
 }
-.outer.complete.d7 {
+.outer.complete.d4 {
+  background-color: mix(white, $completeColor, 35%);
+}
+.outer.complete.d5 {
   background-color: mix(white, $completeColor, 30%);
 }
-.outer.complete.d8 {
+.outer.complete.d6 {
+  background-color: mix(white, $completeColor, 25%);
+}
+.outer.complete.d7 {
   background-color: mix(white, $completeColor, 20%);
+}
+.outer.complete.d8 {
+  background-color: mix(white, $completeColor, 15%);
 }
 .outer.complete.d9 {
   background-color: mix(white, $completeColor, 10%);

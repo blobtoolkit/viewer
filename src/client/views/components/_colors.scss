@@ -9,8 +9,10 @@ $highlightColor: rgb(156, 82, 139);
 $paleColor: rgb(215, 205, 204);
 $brightColor: rgb(255,255,30);
 $clearColor: none;
-$completeColor: rgb(82, 156, 102);
-$partialColor: rgb(82, 108, 156);
+$completeColor: rgb(178,223,138);
+// $partialColor: rgb(82, 108, 156);
+$partialColor: rgb(253,191,111);
+$warnColor: rgb(251,154,153);
 
 @mixin fadeFromPercent($fadeFromDirection,$FadeFromColor,$fadeFromPercent) {
   background:linear-gradient(to $fadeFromDirection,$clearColor 0%,$clearColor $fadeFromPercent,rgba($FadeFromColor,1) $fadeFromPercent,rgba($FadeFromColor,0) 100%);
