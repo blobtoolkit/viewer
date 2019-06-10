@@ -56,8 +56,10 @@ class DatasetTreeComponent extends Component {
         let count
         let progress
         let pbar
+        let name = child.name
+        if (name.endsWith('-undef')) name = 'Other '+name.replace('-undef','')
         let label = (<span className={treeStyles.plain}>
-          {child.name} </span>)
+          {name} </span>)
 
         if (child.count){
           count = (<span className={treeStyles.search} onClick={()=>toggleNode([child.node_id],child.parent)}>
@@ -65,7 +67,7 @@ class DatasetTreeComponent extends Component {
              {child.total && <span className={treeStyles.total}>/{child.total}</span>})
           </span>)
           label = (<span className={treeStyles.search} onClick={() => this.props.onChooseTerm(child.name)}>
-            {child.name} </span>)
+            {name} </span>)
           progress = <div className={treeStyles.progress} style={{width:(child.count/child.total*100)+'%'}}></div>
         }
         else if (child.total){

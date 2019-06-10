@@ -145,6 +145,7 @@ export const treeData = createSelector(
     let widths = []
     let depth = 0;
     const prepareNested = (obj, avail, name, depth) => {
+      if (name.match('-undef')) name = 'Other '+name.replace('-undef','')
       if (obj.d){
         let nested = Object.keys(obj.d).map((key,i) => {
           let descendants
@@ -161,6 +162,7 @@ export const treeData = createSelector(
           }
           else if (nodes.hasOwnProperty(obj.d[key].n)){
             descendants = prepareNested(obj.d[key],{},key,depth+1)
+
           }
           let total = obj.d[key].ta
           let speciesTotal = obj.d[key].ts
@@ -182,10 +184,11 @@ export const treeData = createSelector(
             parent: obj.n
           }
         })
-        return nested
+        return nested.sort((a,b)=>(a.name == b.name ? 0 : a.name.endsWith('-undef') ? 1 : b.name.endsWith('-undef') ? -1 : a.name > b.name ? 1 : -1))
       }
     }
     let nested = prepareNested(target.tree, data.tree,'root',depth)
+
     let targetNested
     return {nested, ranks, widths}
   }
