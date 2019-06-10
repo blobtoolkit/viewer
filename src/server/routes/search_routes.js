@@ -102,7 +102,7 @@ const generateTree = (meta) => {
   let nodes = ['root']
   let species = {}
   meta.forEach((ds,i) => {
-    let spid = ranks.map(r=>ds[r]).reduce((a,b)=>a+','+b)
+    let spid = ranks.slice(0,8).map(r=>ds[r]).reduce((a,b)=>a+','+b)
     let parent_node = tree
     ranks.forEach(rank=>{
       let skip
