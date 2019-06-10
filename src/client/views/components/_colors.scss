@@ -9,9 +9,9 @@ $highlightColor: rgb(156, 82, 139);
 $paleColor: rgb(215, 205, 204);
 $brightColor: rgb(255,255,30);
 $clearColor: none;
-$completeColor: rgb(178,223,138);
-// $partialColor: rgb(82, 108, 156);
-$partialColor: rgb(253,191,111);
+$completeColor: rgb(51,160,44);
+$partialColor: $shadeColor;
+// $partialColor: rgb(253,191,111);
 $warnColor: rgb(251,154,153);
 
 @mixin fadeFromPercent($fadeFromDirection,$FadeFromColor,$fadeFromPercent) {

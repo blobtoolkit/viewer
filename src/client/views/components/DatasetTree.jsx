@@ -36,15 +36,15 @@ class DatasetTreeComponent extends Component {
       let inner
       let toggleNode = this.props.expandNode
       let css = treeStyles.outer
-      if (!child.leaf && !child.count){
-        css += ' '+treeStyles.zero
-      }
-      else if (child.count && child.count < child.total){
-        css += ' '+treeStyles.partial
-      }
-      else {
-        css += ' '+treeStyles.complete
-      }
+      // if (!child.leaf && !child.count){
+      //   css += ' '+treeStyles.zero
+      // }
+      // else if (child.count && child.count < child.total){
+      //   css += ' '+treeStyles.partial
+      // }
+      // else {
+      //   css += ' '+treeStyles.complete
+      // }
       css += ' '+treeStyles['d'+child.depth]
 
       if (this.props.expanded.hasOwnProperty(child.node_id)){
@@ -54,6 +54,8 @@ class DatasetTreeComponent extends Component {
           toggleNode = this.props.collapseNode
         }
         let count
+        let progress
+        let pbar
         let label = (<span className={treeStyles.plain}>
           {child.name} </span>)
 
@@ -64,6 +66,7 @@ class DatasetTreeComponent extends Component {
           </span>)
           label = (<span className={treeStyles.search} onClick={() => this.props.onChooseTerm(child.name)}>
             {child.name} </span>)
+          progress = <div className={treeStyles.progress} style={{width:(child.count/child.total*100)+'%'}}></div>
         }
         else if (child.total){
           count = (<span className={treeStyles.search} onClick={()=>toggleNode([child.node_id],child.parent)}>
@@ -72,12 +75,20 @@ class DatasetTreeComponent extends Component {
             )
           </span>)
         }
+        if (child.total){
+          let pcss = treeStyles.progress_outer
+          if (child.count){
+            pcss += ' '+treeStyles.partial
+          }
+          pbar = <div className={pcss}>{progress}</div>
+        }
         return (
           <div key={i} className={css}>
             <div className={treeStyles.name}
                  style={{width:widths[child.depth]*this.props.scale+'em'}}>
               {label}
               {count}
+              {pbar}
             </div>
             {inner}
           </div>
