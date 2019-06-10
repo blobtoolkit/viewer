@@ -107,6 +107,20 @@ export const expandedNodes = handleAction(
 export const getExpandedNodes = state => state.expandedNodes
 
 
+export const setDatasetCounter = createAction('SET_DATASET_COUNTER')
+
+export const datasetCounter = handleAction(
+  'SET_DATASET_COUNTER',
+  (state, action) => (
+    action.payload
+  ),
+  'assemblies'
+)
+
+export const getDatasetCounter = state => state.datasetCounter
+
+
+
 export function expandNode(id,parent) {
   return dispatch => {
     let state = store.getState()
@@ -197,6 +211,7 @@ export const treeData = createSelector(
 
 export const datasetTreeReducers = {
   datasetTree,
+  datasetCounter,
   targetTree,
   expandedNodes
 }
