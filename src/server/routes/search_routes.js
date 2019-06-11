@@ -158,7 +158,11 @@ const index = generateIndex(meta)
 
 const keys = Object.keys(index.values)
 
-const tree = generateTree(meta)
+let tree = {}
+
+if (config.dataset_table){
+  tree = generateTree(meta)
+}
 
 const autocomplete = term => {
   query = term.toUpperCase()
