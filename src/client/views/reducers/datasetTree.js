@@ -1,6 +1,7 @@
 import { createAction, handleAction, handleActions } from 'redux-actions'
 import { createSelector } from 'reselect'
 import { getAvailableDatasets, getAvailableDatasetIds } from './repository'
+import { getSearchTerm } from './location'
 import store from '../store'
 
 const apiUrl = API_URL || '/api/v1'
@@ -78,21 +79,6 @@ export const targetTree = handleActions(
 
 export const getTargetTree = state => state.targetTree
 
-export function fetchTargetTree() {
-  return function (dispatch) {
-    dispatch(requestTargetTree())
-    return fetch(apiUrl + '/search/tree/target')
-      .then(
-        response => response.json(),
-        error => console.log('An error occured.', error)
-      )
-      .then(json =>{
-        dispatch(receiveTargetTree(json))
-      }
-    )
-  }
-}
-
 
 export const setExpandedNodes = createAction('SET_EXPANDED_NODES')
 
@@ -105,6 +91,19 @@ export const expandedNodes = handleAction(
 )
 
 export const getExpandedNodes = state => state.expandedNodes
+
+
+export const setTargetNodes = createAction('SET_TARGET_NODES')
+
+export const targetNodes = handleAction(
+  'SET_TARGET_NODES',
+  (state, action) => (
+    action.payload
+  ),
+  {}
+)
+
+export const getTargetNodes = state => state.targetNodes
 
 
 export const setDatasetCounter = createAction('SET_DATASET_COUNTER')
@@ -144,6 +143,33 @@ export function collapseNode(id) {
     let nodes = Object.assign({},getExpandedNodes(state))
     collapseChildren(nodes,id)
     dispatch(setExpandedNodes(nodes))
+  }
+}
+
+export function expandSearchTerm(target) {
+  return dispatch => {
+    let state = store.getState()
+    let nodes = Object.assign({},getExpandedNodes(state))
+    let term = getSearchTerm(state)
+    target = target || getTargetTree(state).tree || {}
+    let termNodes = {}
+    let termIds = {}
+    const findTerm = (tree, term, path) => {
+      if (tree.d){
+        Object.keys(tree.d).forEach(key=>{
+          if (key == term){
+            Object.assign(termNodes,path)
+            termIds[tree.d[key].n] = true
+          }
+          let newPath = Object.assign({},path)
+          newPath[tree.d[key].n] = tree.n
+          findTerm(tree.d[key], term, newPath)
+        })
+      }
+    }
+    findTerm(target, term, {})
+    dispatch(setExpandedNodes(termNodes))
+    dispatch(setTargetNodes(termIds))
   }
 }
 
@@ -208,10 +234,26 @@ export const treeData = createSelector(
   }
 )
 
+export function fetchTargetTree() {
+  return function (dispatch) {
+    dispatch(requestTargetTree())
+    return fetch(apiUrl + '/search/tree/target')
+      .then(
+        response => response.json(),
+        error => console.log('An error occured.', error)
+      )
+      .then(json =>{
+        dispatch(receiveTargetTree(json))
+        dispatch(expandSearchTerm(json))
+      }
+    )
+  }
+}
 
 export const datasetTreeReducers = {
   datasetTree,
   datasetCounter,
   targetTree,
-  expandedNodes
+  expandedNodes,
+  targetNodes
 }

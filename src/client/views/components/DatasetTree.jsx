@@ -8,10 +8,13 @@ import {
   fetchDatasetTree,
   treeData,
   getExpandedNodes,
+  getTargetNodes,
   expandNode,
   collapseNode,
   getDatasetCounter,
-  setDatasetCounter} from '../reducers/datasetTree'
+  setDatasetCounter,
+  expandSearchTerm } from '../reducers/datasetTree'
+import { getSearchTerm } from '../reducers/location'
 import { fetchRepository } from '../reducers/repository'
 import colors from './_colors'
 import Spinner from './Spinner'
@@ -20,17 +23,33 @@ import Spinner from './Spinner'
 
 
 class DatasetTreeComponent extends Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
+    // this.state = {
+    //   searchTerm: props.searchTerm
+    // };
   }
 
   componentDidMount(){
     if (!this.props.data.isInitialised && !this.props.data.isFetching){
       this.props.fetchDatasetTree()
     }
+    // else if (this.state.searchTerm != this.props.searchTerm){
+      this.props.expandSearchTerm()
+      // this.setState({searchTerm: this.props.searchTerm})
+    // }
   }
 
-
+  // componentWillUpdate(nextProps){
+  //   console.log(nextProps)
+  //   if (nextProps.searchTerm != this.props.searchTerm){
+  //     this.props.expandSearchTerm()
+  //   }
+  // }
+  // shouldComponentUpdate(nextProps){
+  //   console.log(nextProps)
+  //   return true
+  // }
 
   drawNested(obj){
     let widths = this.props.treeData.widths
@@ -90,11 +109,18 @@ class DatasetTreeComponent extends Component {
           if (child[countField]){
             pcss += ' '+treeStyles.partial
           }
+          if (this.props.targetNodes[child.node_id]){
+            pcss += ' '+treeStyles.target_node
+          }
           pbar = <div className={pcss}>{progress}</div>
+        }
+        let ncss = treeStyles.name
+        if (this.props.targetNodes[child.node_id]){
+          ncss += ' '+treeStyles.target_node
         }
         return (
           <div key={i} className={css}>
-            <div className={treeStyles.name}
+            <div className={ncss}
                  style={{width:widths[child.depth]*this.props.scale+'em'}}>
               {label}
               {count}
@@ -172,6 +198,7 @@ class DatasetTree extends React.Component {
         expanded: getExpandedNodes(state),
         treeData: treeData(state),
         datasetCounter: getDatasetCounter(state),
+        targetNodes: getTargetNodes(state),
         scale: 0.75
       }
     }
@@ -183,7 +210,8 @@ class DatasetTree extends React.Component {
         collapseNode: (node) => dispatch(collapseNode(node)),
         onChooseTerm: (str) => {
           dispatch(fetchRepository(str.replace('-undef','')))
-        }
+        },
+        expandSearchTerm: () => dispatch(expandSearchTerm())
       }
     }
   }

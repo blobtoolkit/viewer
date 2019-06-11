@@ -23,7 +23,6 @@ const dataset_table = DATASET_TABLE || false
 
 const DatasetFinder = ({ searchTerm, selectedDataset, isFetching, datasetIds, datasets, onDatasetMount, onDatasetClick }) => {
   let css = dataset_table ? styles.fill_parent : ''
-  console.log(datasets)
   return (
     <div className={css}>
       <Search/>
@@ -37,7 +36,7 @@ const DatasetFinder = ({ searchTerm, selectedDataset, isFetching, datasetIds, da
       ) : null }
       {dataset_table && <DatasetTable onDatasetClick={onDatasetClick}/>}
       <hr/>
-      <DatasetTree/>
+      <DatasetTree searchTerm={searchTerm}/>
 
     </div>
   )

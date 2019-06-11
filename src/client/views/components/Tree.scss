@@ -167,6 +167,18 @@
 
 }
 
+.name.target_node {
+  border-right: 0.5em solid $highlightColor;
+}
+
+.progress_outer.target_node {
+  width: calc(100% - 0.5em);
+}
+
+.progress_outer.partial.target_node {
+  width: calc(100% - 0.5em);
+}
+
 .total {
   color: $shadeColor;
 }
@@ -191,6 +203,8 @@
   width: calc(100% - 1em);
   background-color: $deepColor;
 }
+
+
 
 
 .leaf {
