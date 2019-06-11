@@ -1206,9 +1206,11 @@ export const getFullSummary = createSelector(
     }
     data.taxonomy = {
       taxid: (meta.taxon ? meta.taxon.taxid : 0),
-      lineage: lineage.lineage,
-      target: lineage.target,
-      targetRank: lineage.targetRank
+    }
+    if (lineage){
+      data.taxonomy.lineage = lineage.lineage,
+      data.taxonomy.target = lineage.target,
+      data.taxonomy.targetRank = lineage.targetRank
     }
     let f = d3Format(".3r");
     if (circular){
@@ -1224,7 +1226,7 @@ export const getFullSummary = createSelector(
     let index = summary.bins.findIndex(bin => bin.id == 'no-hit')
     let nohit = index > -1 ? summary.values.reduced.binned[index] : 0
     let target = 0
-    if (lineage.target){
+    if (lineage && lineage.target){
       index = summary.bins.findIndex(bin => bin.id == lineage.target)
       target = index > -1 ? summary.values.reduced.binned[index] : 0
     }
@@ -1251,16 +1253,18 @@ export const getFullSummary = createSelector(
       spanOverN50: f(data.hits.total.span/data.hits.total.n50)*1
     }
     data.readMapping = {}
-    Object.keys(meta.reads).forEach(acc=>{
-      data.readMapping[acc] = {
-        total: meta.reads[acc]['Total reads'],
-        coverage: meta.reads[acc].coverage,
-        mapped: meta.reads[acc]['Mapped reads'],
-        mappedPortion: f(meta.reads[acc]['Mapped reads'] / meta.reads[acc]['Total reads'])*1,
-        platform: meta.reads[acc].platform,
-        strategy: meta.reads[acc].strategy
-      }
-    })
+    if (meta.reads){
+      Object.keys(meta.reads).forEach(acc=>{
+        data.readMapping[acc] = {
+          total: meta.reads[acc]['Total reads'],
+          coverage: meta.reads[acc].coverage,
+          mapped: meta.reads[acc]['Mapped reads'],
+          mappedPortion: f(meta.reads[acc]['Mapped reads'] / meta.reads[acc]['Total reads'])*1,
+          platform: meta.reads[acc].platform,
+          strategy: meta.reads[acc].strategy
+        }
+      })
+    }
     return data
   }
 )
