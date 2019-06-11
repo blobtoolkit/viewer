@@ -1205,7 +1205,7 @@ export const getFullSummary = createSelector(
       }
     }
     data.taxonomy = {
-      taxid: meta.taxon.taxid,
+      taxid: (meta.taxon ? meta.taxon.taxid : 0),
       lineage: lineage.lineage,
       target: lineage.target,
       targetRank: lineage.targetRank
