@@ -120,7 +120,7 @@ const generateTree = (meta) => {
         let taxon = ds[rank]
         if (!taxon){
           let parent = nodes[parent_node.n]
-          taxon = parent.match('undef') ? parent : `${parent}-undef`
+          taxon = parent.endsWith('undef') ? parent : `${parent}-undef`
         }
         if (!parent_node.d[taxon]){
           if (rank == 'taxon_name' && taxon == nodes[parent_node.n]){
