@@ -151,6 +151,7 @@ export function expandSearchTerm(target) {
     let state = store.getState()
     let nodes = Object.assign({},getExpandedNodes(state))
     let term = getSearchTerm(state)
+    if (!term) return
     target = target || getTargetTree(state).tree || {}
     let termNodes = {}
     let termIds = {}
