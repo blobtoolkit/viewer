@@ -54,8 +54,8 @@ class CustomiseComponent extends Component {
                 defaultValue='Lineage'>
           <option disabled={true}>Lineage</option>
           {this.props.buscoLineages.map((lineage,i)=>(
-            <option key={i} value={`${lineage}_odb9`}>
-              {`${lineage}_odb9`}
+            <option key={i} value={lineage}>
+              {lineage}
             </option>
           ))}
         </select>
