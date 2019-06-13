@@ -57,11 +57,8 @@ export const datasetColumns = handleAction(
     '-hits-count',
     '-hits-span',
     '-hits-n50',
-    // 'gc',
-    // 'n',
     '-busco-lineage',
     '-busco-string',
-    'eukaryota-busco-m',
     'reads'
   ]
 )
