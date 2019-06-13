@@ -73,37 +73,6 @@ const requireTotal = (d,key) => {
   return ''
 }
 
-
-
-export const buscoLineages = [
-  'actinopterygii',
-  'arthropoda',
-  'ascomycota',
-  'aves',
-  'basidiomycota',
-  'dikarya',
-  'diptera',
-  'embryophyta',
-  'endopterygota',
-  'euarchontoglires',
-  'eukaryota',
-  'eurotiomycetes',
-  'fungi',
-  'hymenoptera',
-  'insecta',
-  'laurasiatheria',
-  'mammalia',
-  'metazoa',
-  'microsporidia',
-  'nematoda',
-  'pezizomycotina',
-  'saccharomyceta',
-  'saccharomycetales',
-  'sordariomyceta',
-  'tetrapoda',
-  'vertebrata'
-]
-
 export const buscoFields = {
   c: 'Complete',
   d: 'Duplicated',
@@ -377,6 +346,23 @@ export const hitTaxa = createSelector(
     return Object.keys(taxa).sort((a,b) => (a > b ? 1 : -1))
   }
 )
+
+export const buscoLineages = createSelector(
+  getAvailableDatasetIds,
+  getAvailableDatasets,
+  (ids,datasets) => {
+    let lineages = {}
+    ids.forEach(id=>{
+      if (datasets[id].summaryStats && datasets[id].summaryStats.busco){
+        Object.keys(datasets[id].summaryStats.busco).forEach(lineage=>{
+          lineages[lineage] = true
+        })
+      }
+    })
+    return Object.keys(lineages).sort((a,b) => (a > b ? 1 : -1))
+  }
+)
+
 
 const ascComma = (a,b) => {
   if (a.length === b.length) {

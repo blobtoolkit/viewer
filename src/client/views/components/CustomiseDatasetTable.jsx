@@ -53,7 +53,7 @@ class CustomiseComponent extends Component {
         <select onChange={(e)=>{this.setState({buscoLineage:e.target.value})}}
                 defaultValue='Lineage'>
           <option disabled={true}>Lineage</option>
-          {buscoLineages.map((lineage,i)=>(
+          {this.props.buscoLineages.map((lineage,i)=>(
             <option key={i} value={`${lineage}_odb9`}>
               {`${lineage}_odb9`}
             </option>
@@ -178,7 +178,7 @@ class CustomiseDatasetTable extends React.Component {
       return {
         columns: getDatasetColumns(state),
         info: columnInfo(state),
-        buscoLineages,
+        buscoLineages: buscoLineages(state),
         buscoFields,
         hitTaxa: hitTaxa(state)
       }
