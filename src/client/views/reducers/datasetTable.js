@@ -441,7 +441,6 @@ export const getDatasetCSVdata = createSelector(
     })
     arr.push(cells)
     data.forEach(row=>{
-      console.log(row)
       cells = []
       Object.keys(columns).forEach(groupName=>{
         let group = columns[groupName]
