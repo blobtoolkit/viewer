@@ -17,6 +17,40 @@ import {
 import colors from './_colors'
 import figure1 from './img/figure1.jpg'
 import CustomiseDatasetTable from './CustomiseDatasetTable'
+import DatasetTableCSV from './DatasetTableCSV'
+
+
+class CSVWrapper extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      clicked:false
+    }
+  }
+
+  toggleClicked(clicked){
+    if (typeof clicked == 'undefined') clicked = !this.state.clicked
+    this.setState({clicked})
+  }
+
+  render(){
+    let download
+    if (this.state.clicked){
+      download = <DatasetTableCSV/>
+    }
+    return (
+      <span className={styles.tableDownload}
+        onMouseDown={()=>this.toggleClicked(true)}
+        onMouseUp={()=>this.toggleClicked(false)}>
+        <span className={styles.save_svg}>
+          &#8681;csv
+          {download}
+        </span>
+      </span>
+    )
+  }
+
+}
 
 
 class DatasetTableComponent extends Component {
@@ -95,6 +129,7 @@ class DatasetTableComponent extends Component {
         <div style={{fontSize:'0.75em',paddingBottom:'0.5em'}}>
           {table}
         </div>
+        <CSVWrapper />
         {hints}
         {customise}
       </div>

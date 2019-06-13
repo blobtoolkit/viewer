@@ -535,3 +535,17 @@ table {
 .toggle:hover {
   color: $highlightColor;
 }
+
+span.tableDownload {
+  float:right;
+  .save_svg {
+    position:relative;
+    display:inline-block;
+    right:0;
+    background-color: rgba($lightColor,0.8);
+    color:$highlightColor;
+    margin-right: 0.5em;
+    font-size: 0.8em;
+    cursor:pointer;
+  }
+}

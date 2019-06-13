@@ -425,6 +425,37 @@ export const listingColumns = createSelector(
   }
 )
 
+export const getDatasetCSVdata = createSelector(
+  columnInfo,
+  datasetSummaries,
+  (columns,data)=>{
+    let arr = []
+    let cells = []
+    Object.keys(columns).forEach(groupName=>{
+      let group = columns[groupName]
+      Object.keys(group).forEach(key=>{
+        if (group[key].active){
+          cells.push(colInfo[key].title)
+        }
+      })
+    })
+    arr.push(cells)
+    data.forEach(row=>{
+      console.log(row)
+      cells = []
+      Object.keys(columns).forEach(groupName=>{
+        let group = columns[groupName]
+        Object.keys(group).forEach(key=>{
+          if (group[key].active){
+            cells.push(row[key])
+          }
+        })
+      })
+      arr.push(cells)
+    })
+    return arr
+  }
+)
 
 
 export const datasetTableReducers = {
