@@ -90,7 +90,7 @@ class DatasetTableComponent extends Component {
             return {
               onClick: (e, handleOriginal) => {
                 let view = 'blob'
-                if (!rowInfo.row['read-sets'] || rowInfo.row['read-sets'] == 0){
+                if (!rowInfo.row['reads'] || rowInfo.row['reads'] == 0){
                   view = 'cumulative'
                 }
                 this.props.onDatasetClick(rowInfo.row.id, view)
