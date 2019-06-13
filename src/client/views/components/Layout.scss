@@ -526,3 +526,12 @@ table {
   color:$shadeColor;
   display:block;
 }
+
+.toggle {
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.toggle:hover {
+  color: $highlightColor;
+}

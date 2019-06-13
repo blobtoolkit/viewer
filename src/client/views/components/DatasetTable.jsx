@@ -16,36 +16,18 @@ import {
   setDatasetSorted} from '../reducers/datasetTable'
 import colors from './_colors'
 import figure1 from './img/figure1.jpg'
+import CustomiseDatasetTable from './CustomiseDatasetTable'
+
 
 class DatasetTableComponent extends Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
+    this.state = {customise: false}
   }
 
-  // btkUrl(props){
-  //   let url = `https://blobtoolkit.genomehubs.org/view/${props.id}/dataset/${props.id}`
-  //   if (!props.reads){
-  //     url += '/cumulative'
-  //   }
-  //   return url
-  // }
-
-  // openWithAll(props){
-  //   let sites = {
-  //     BTK: {url:this.btkUrl(props)},
-  //     Ensembl: {url:`http://ensembl.lepbase.org/${props.id}`},
-  //     Download: {url:`http://download.lepbase.org/${props.id}`}
-  //   }
-  //   let links = []
-  //   Object.keys(sites).forEach((site,i)=>{
-  //     links.push(
-  //       <a key={i} href={sites[site].url} target="_blank">
-  //         {site}
-  //       </a>
-  //     )
-  //   })
-  //   return <span className={styles.links}>{links}</span>
-  // }
+  toggleCustomise (){
+    this.setState({customise: !this.state.customise})
+  }
 
   render() {
     let css = styles.list_container
@@ -93,6 +75,8 @@ class DatasetTableComponent extends Component {
         <ul style={{marginTop:'0.25em'}}>
           <li>Click headers to sort results.</li>
           <li>Click a row to view an assembly.</li>
+          <li>Type in the box at the top of each column to filter assemblies.</li>
+          <li><span className={styles.toggle} onClick={()=>this.toggleCustomise()}>Customise table</span></li>
         </ul>
       </span>)
     }
@@ -103,32 +87,22 @@ class DatasetTableComponent extends Component {
           <li>If you are unsure what to search for, browse available datasets below or type 'all' to show all available datasets.</li>
         </ul>
       </span>)
-      // table = (
-      //
-      //   <span style={{fontSize:'1.33em'}}>
-      //     <p>Use the search box above to find datasets – matching datasets and associated metadata will be displayed in a sortable table.</p>
-      //     <p>If you are unsure what to search for, type 'all' to show all available datasets.</p>
-      //
-      //   </span>
-      // )
     }
+    let customise
+    if (this.state.customise) customise = <CustomiseDatasetTable/>
     return (
       <div id="list" className={css}>
         <div style={{fontSize:'0.75em',paddingBottom:'0.5em'}}>
           {table}
         </div>
         {hints}
+        {customise}
       </div>
     );
   }
 }
 
-// getTableProps={(props)=>{
-//   return props
-//   // props.page
-//   // props.pageSize
-//   // props.sorted
-// }}
+
 class DatasetTable extends React.Component {
   constructor(props) {
     super(props);

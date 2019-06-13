@@ -51,6 +51,7 @@ const rootReducer = (state, action) => {
     let datasetPage = state.datasetPage
     let datasetPageSize = state.datasetPageSize
     let datasetSorted = state.datasetSorted
+    let datasetColumns = state.datasetColumns
     let datasetTree = state.datasetTree
     let datasetCounter = state.datasetCounter
     let targetTree = state.targetTree
@@ -66,6 +67,7 @@ const rootReducer = (state, action) => {
       datasetPage,
       datasetPageSize,
       datasetSorted,
+      datasetColumns,
       datasetTree,
       datasetCounter,
       targetTree,
