@@ -85,7 +85,7 @@ class DatasetTreeComponent extends Component {
         let pbar
         let name = child.name
         if (name.endsWith('-undef')) name = 'Other '+name.replace('-undef','')
-        let label = (<span className={treeStyles.plain}>
+        let label = (<span className={treeStyles.search} onClick={() => this.props.onChooseTerm(child.name)}>
           {name} </span>)
 
         if (child[countField]){
@@ -93,9 +93,13 @@ class DatasetTreeComponent extends Component {
             ({child[countField]}
              {child[totalField] && <span className={treeStyles.total}>/{child[totalField]}</span>})
           </span>)
-          label = (<span className={treeStyles.search} onClick={() => this.props.onChooseTerm(child.name)}>
-            {name} </span>)
-          progress = <div className={treeStyles.progress} style={{width:(child[countField]/child[totalField]*100)+'%'}}></div>
+          if (child[totalField]){
+            progress = <div className={treeStyles.progress} style={{width:(child[countField]/child[totalField]*100)+'%'}}></div>
+          }
+          else {
+            count = undefined
+            progress = <div className={treeStyles.progress} style={{width:'100%'}}></div>
+          }
         }
         else if (child[totalField]){
           count = (<span className={treeStyles.search} onClick={()=>toggleNode([child.node_id],child.parent)}>
@@ -103,17 +107,33 @@ class DatasetTreeComponent extends Component {
               <span className={treeStyles.total}>/{child[totalField]}</span>
             )
           </span>)
+          label = (<span className={treeStyles.plain}>
+          {name} </span>)
         }
+        if (child.count){
+          if (child[totalField]){
+            progress = <div className={treeStyles.progress} style={{width:(child[countField]/child[totalField]*100)+'%'}}></div>
+          }
+          else {
+            count = undefined
+            progress = <div className={treeStyles.progress} style={{width:'100%'}}></div>
+          }
+        }
+        else {
+          label = (<span className={treeStyles.plain}>
+            {name} </span>)
+          // progress = <div className={treeStyles.progress} style={{width:'100%'}}></div>
+        }
+        let pcss = treeStyles.progress_outer
         if (child[totalField]){
-          let pcss = treeStyles.progress_outer
           if (child[countField]){
             pcss += ' '+treeStyles.partial
           }
           if (this.props.targetNodes[child.node_id]){
             pcss += ' '+treeStyles.target_node
           }
-          pbar = <div className={pcss}>{progress}</div>
         }
+        pbar = <div className={pcss}>{progress}</div>
         let ncss = treeStyles.name
         if (this.props.targetNodes[child.node_id]){
           ncss += ' '+treeStyles.target_node

@@ -71,7 +71,7 @@ export const getDatasetID = createSelector(
 
 export const getSearchTerm = createSelector(
   getViews,
-  views => views.search
+  views => decodeURI(views.search)
 )
 
 export const viewsToPathname = views => {

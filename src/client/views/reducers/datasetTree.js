@@ -197,7 +197,7 @@ export const treeData = createSelector(
             if (nodes.hasOwnProperty(obj.d[key].n)){
               descendants = prepareNested(obj.d[key],avail.d[key],key,depth+1)
             }
-            count = avail.d[key].a
+            count = avail.d[key].a || avail.d[key] ? 1 : undefined
             species = avail.d[key].s
             leaf = true
           }
@@ -208,7 +208,16 @@ export const treeData = createSelector(
           let total = obj.d[key].ta
           let speciesTotal = obj.d[key].ts
           let node_id = obj.d[key].n
-          let rank = obj.d[key].r || ''
+          let rank = obj.d[key].r
+          if (!rank || rank == 'taxon_name'){
+            rank = 'taxon/assembly name'
+            if (ranks[(depth-1)] == rank){
+              rank = 'assembly name'
+            }
+            else if (ranks[depth] == ranks[(depth-1)]){
+              rank = 'assembly name'
+            }
+          }
           ranks[depth] = rank
           let width = key.length + String((count || 0)).length + 3
           widths[depth] = Math.max(rank.length,width,(widths[depth] || 0))

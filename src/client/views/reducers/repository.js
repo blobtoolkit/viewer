@@ -10,7 +10,6 @@ import { editPlot } from './plot'
 import qs from 'qs'
 import { qsDefault, queryToStore } from '../querySync'
 import { history } from './history'
-// import { getSearchTerm, setSearchTerm } from './search'
 import { fetchIdentifiers } from './identifiers'
 import { getDatasetID,
   getView,
