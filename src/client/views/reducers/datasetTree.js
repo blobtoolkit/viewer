@@ -197,7 +197,7 @@ export const treeData = createSelector(
             if (nodes.hasOwnProperty(obj.d[key].n)){
               descendants = prepareNested(obj.d[key],avail.d[key],key,depth+1)
             }
-            count = avail.d[key].a || avail.d[key] ? 1 : undefined
+            count = avail.d[key] ? avail.d[key].a ? avail.d[key].a : 1 : undefined
             species = avail.d[key].s
             leaf = true
           }
