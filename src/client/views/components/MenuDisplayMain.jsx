@@ -220,7 +220,7 @@ const DisplayMenu = ({
       </MenuDisplaySimple>
       <MenuDisplaySimple invert={false}>
         <TextIcon title='blob' active={view == 'blob'} onIconClick={()=>onSelectView('blob')}/>
-        {isStatic || busco && <TextIcon title='busco' active={view == 'busco'} onIconClick={()=>onSelectView('busco')}/>}
+        <TextIcon title='busco' active={view == 'busco'} onIconClick={()=>onSelectView('busco')}/>
         <TextIcon title='cumulative' active={view == 'cumulative'} onIconClick={()=>onSelectView('cumulative')}/>
         <TextIcon title='detail' active={view == 'detail'} onIconClick={()=>onSelectView('detail')}/>
         {isStatic || <TextIcon title='report' active={view == 'report'} onIconClick={()=>onSelectView('report')}/>}

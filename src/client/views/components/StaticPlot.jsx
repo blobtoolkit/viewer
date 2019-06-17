@@ -9,6 +9,7 @@ import { getStaticThreshold } from '../reducers/repository'
 import { getPlotShape, getPngResolution } from '../reducers/plotParameters'
 import { ExportButton } from './ExportButton'
 import { NoBlobWarning } from './NoBlobWarning'
+import StaticBuscoPlot from './StaticBuscoPlot'
 
 const apiUrl = API_URL || '/api/v1'
 
@@ -136,6 +137,16 @@ class Static extends React.Component {
           prefix={prefix} format='png'/>
       </span>
     )
+    if (view == 'busco'){
+      return (
+        <div className={styles.fill_parent+' '+styles.centered_content}>
+          <div className={styles.outer} style={{overflow:'scroll'}}>
+            <StaticBuscoPlot/>
+          </div>
+          {warning}
+        </div>
+      )
+    }
     return (
       <div className={styles.fill_parent+' '+styles.centered_content}>
         <div className={styles.outer}>

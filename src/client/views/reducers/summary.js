@@ -405,6 +405,44 @@ export const getBuscoPaths = createSelectorForBuscoId(
   }
 )
 
+export const getStaticBuscoPaths = createSelector(
+  getSelectedDatasetMeta,
+  (meta) => {
+    if (!meta || !meta.summaryStats || !meta.summaryStats.busco){
+      return false
+    }
+    let all = meta.summaryStats.busco
+    let allPaths = {}
+    Object.keys(all).forEach(id=>{
+      let data = all[id]
+      console.log(data)
+      allPaths[id] = {}
+
+      let cScale = d3scaleLinear().range([0,2*Math.PI]).domain([0,data.t])
+      let rScale = d3scaleLinear().range([75,200]).domain([0,1])
+      allPaths[id].c = d3Arc()({
+        startAngle: cScale(0),
+        endAngle: cScale(data.c),
+        innerRadius: rScale(0),
+        outerRadius: rScale(1)
+      })
+      allPaths[id].d = d3Arc()({
+        startAngle: cScale(0),
+        endAngle: cScale(data.d),
+        innerRadius: rScale(0),
+        outerRadius: rScale(1)
+      })
+      allPaths[id].f = d3Arc()({
+        startAngle: cScale(data.c),
+        endAngle: cScale(data.c + data.f),
+        innerRadius: rScale(0),
+        outerRadius: rScale(1)
+      })
+    })
+    return allPaths
+  }
+)
+
 const mean = arr => arr.reduce((a,b) => a + b, 0) / arr.length
 
 export const getCircular = createSelector(
