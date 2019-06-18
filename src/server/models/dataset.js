@@ -91,10 +91,42 @@ const storeMeta = async function() {
   return success;
 }
 
+const defaultLinks = {
+  "links": {
+    "taxon": {
+      "taxid" : {
+        "ENA": "https://www.ebi.ac.uk/ena/data/view/Taxon:{taxid}"
+      },
+      "species" : {
+        "Wikipedia": "https://wikipedia.org/{species}"
+      }
+    },
+    "blobtoolkit": {
+      "commit" : {
+        "Github": "{pipeline}/tree/{commit}"
+      }
+    },
+    "assembly": {
+      "biosample": {
+        "ENA": "https://www.ebi.ac.uk/ena/data/view/{biosample}"
+      },
+      "bioproject": {
+        "ENA": "https://www.ebi.ac.uk/ena/data/view/{bioproject}"
+      }
+    },
+    "position": [
+      {"NCBI": "https://www.ncbi.nlm.nih.gov/nuccore/{subject}"},
+      {"UniProt": "https://www.uniprot.org/uniprot/{subject}"}
+    ]
+  }
+}
+
+
 const loadMeta = async function() {
   if (!this.meta){
     let filePath = this.filePath || config.filePath;
     let defaultMeta = await io.readJSON(filePath+'/default.json');
+    if (!defaultMeta && config.use_default) defaultMeta = defaultLinks
     this.meta = await io.readJSON(filePath+'/'+this.id+'/meta.json');
     if (defaultMeta){
       Object.keys(defaultMeta).forEach(key=>{

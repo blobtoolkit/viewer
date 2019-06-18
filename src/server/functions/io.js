@@ -22,7 +22,7 @@ const readJSON = async (filename) => {
   let abs_path = await absolutePath(filename);
   return readFile(abs_path, 'utf8')
     .then(JSON.parse)
-    .catch((err) => { return err })
+    .catch((err) => { return undefined })
 }
 
 const writeJSON = async (filename, data) => {

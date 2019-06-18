@@ -44,5 +44,6 @@ module.exports = {
   'certFile': process.env.BTK_CERTFILE || '',
   'ga_id': process.env.BTK_GA_ID || '',
   'gdpr_url': process.env.BTK_GDPR_URL || '',
-  'dataset_table': process.env.BTK_DATASET_TABLE || false
+  'dataset_table': process.env.BTK_DATASET_TABLE || false,
+  'use_default': process.env.BTK_USE_DEFAULT_LINKS || false
 }

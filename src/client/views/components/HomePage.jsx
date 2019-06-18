@@ -30,7 +30,7 @@ export default class HomePage extends React.Component {
         </p>
       </div>
         {dataset_table && <FindDatasets/>}
-        {!dataset_table && <span>
+        {!dataset_table && <span className={styles.no_table}>
           Search datasets to begin (search 'all' to show all available datasets).
         <hr/>
         <p>
@@ -40,7 +40,7 @@ export default class HomePage extends React.Component {
 
         <img src={figure1} alt='Figure 1' />
         <p>
-          We are running the <a href='https://github.com/blobtoolkit/insdc-pipeline'>BlobToolKit pipeline</a> (Figure 2) on all public (INSDC registered) eukaryote genome assemblies and making the results available here.
+          We are running the <a href='https://github.com/blobtoolkit/insdc-pipeline'>BlobToolKit pipeline</a> (Figure 2) on all public (INSDC registered) eukaryote genome assemblies and making the results available at <a href='http://blobtoolkit.genomehubs.org/view'>blobtoolkit.genomehubs.org/view</a>.
         </p>
 
         <img src={figure2} alt='Figure 2' />
