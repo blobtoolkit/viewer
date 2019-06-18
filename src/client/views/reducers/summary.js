@@ -415,7 +415,6 @@ export const getStaticBuscoPaths = createSelector(
     let allPaths = {}
     Object.keys(all).forEach(id=>{
       let data = all[id]
-      console.log(data)
       allPaths[id] = {}
 
       let cScale = d3scaleLinear().range([0,2*Math.PI]).domain([0,data.t])
@@ -440,6 +439,35 @@ export const getStaticBuscoPaths = createSelector(
       })
     })
     return allPaths
+  }
+)
+
+export const getStaticBuscoCSV = createSelector(
+  getSelectedDatasetMeta,
+  (meta) => {
+    if (!meta || !meta.summaryStats || !meta.summaryStats.busco){
+      return false
+    }
+    let all = meta.summaryStats.busco
+    let fields = {
+      "c": "Complete",
+      "d": "Duplicated",
+      "f": "Fragmented",
+      "m": "Missing",
+      "s": "Single copy",
+      "t": "Total"
+    }
+    let data = [["Lineage"].concat(Object.values(fields))]
+    Object.keys(all).forEach(key => {
+      let values = [key]
+      if(all[key]){
+        Object.keys(fields).forEach(field => {
+          values.push(all[key][field])
+        })
+      }
+      data.push(values)
+    })
+    return data
   }
 )
 

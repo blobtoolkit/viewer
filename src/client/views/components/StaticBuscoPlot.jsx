@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 import styles from './Plot.scss'
 // import { getBuscoSets, getAllBuscoCSV } from '../reducers/summary'
 import StaticBusco from './StaticBusco'
-// import BuscoData from './BuscoData'
+import StaticBuscoData from './StaticBuscoData'
 import PlotMissing from './PlotMissing'
 import { getDatasetID } from '../reducers/location'
 import { getSelectedDatasetMeta } from '../reducers/dataset'
@@ -14,7 +14,7 @@ class BuscoSets extends React.Component {
     let buscoSets = this.props.meta.summaryStats.busco
     if (!buscoSets) {
       return (
-        <PlotMissing view='busco' name={this.props.datasetName}/>
+        <PlotMissing view='busco' name={this.props.datasetId}/>
       )
     }
     let buscos = []
@@ -24,6 +24,7 @@ class BuscoSets extends React.Component {
     // <BuscoData {...this.props}/>
     return (
       <div className={styles.fill_parent}>
+        <StaticBuscoData {...this.props}/>
         {buscos}
       </div>
     )
@@ -36,7 +37,7 @@ class StaticBuscoPlot extends React.Component {
     this.mapStateToProps = state => {
       return {
         meta: getSelectedDatasetMeta(state),
-        datasetName: getDatasetID(state)
+        datasetId: getDatasetID(state)
       }
     }
   }
