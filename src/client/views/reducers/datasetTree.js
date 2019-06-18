@@ -152,6 +152,7 @@ export function expandSearchTerm(target) {
     let nodes = Object.assign({},getExpandedNodes(state))
     let term = getSearchTerm(state)
     if (!term) return
+    if (term == 'all') term = 'Eukaryota'
     target = target || getTargetTree(state).tree || {}
     let termNodes = {}
     let termIds = {}
@@ -169,7 +170,8 @@ export function expandSearchTerm(target) {
       }
     }
     findTerm(target, term, {})
-    dispatch(setExpandedNodes(termNodes))
+    let expNodes = Object.keys(termNodes).length ? termNodes : {1:0}
+    dispatch(setExpandedNodes(expNodes))
     dispatch(setTargetNodes(termIds))
   }
 }
@@ -219,7 +221,7 @@ export const treeData = createSelector(
             }
           }
           ranks[depth] = rank
-          let width = key.length + String((count || 0)).length + 3
+          let width = key.length + String((count || 0)).length  + String((total || 0)).length + 2
           widths[depth] = Math.max(rank.length,width,(widths[depth] || 0))
           return {
             name: key,
