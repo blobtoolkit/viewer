@@ -73,7 +73,7 @@ const MenuSummary = ({values,zAxis,bins,palette,other,fullSummary}) => {
         reduced[i] = <TabbedFraction key={i} {...{value,total,color,title,sel:values.counts.sel}}/>
       }
     })
-    if (other){
+    if (other && other.length){
       let list = []
       other.forEach((id,i) => {
         list.push(<span key={i}><span className={styles.no_break}>{id}</span>, </span>)
