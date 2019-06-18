@@ -5,7 +5,7 @@ div.icon {
   width:1.5em;
   margin:0.3em;
   display: table-cell;
-  padding: 0.3em 0.3em 0 0;
+  padding: 0.3em 0 0 0;
 
   svg {
     height:1.5em;
@@ -13,16 +13,25 @@ div.icon {
     cursor:pointer;
     background-color:inherit;
     color:inherit;
+    height: 1.5em;
+    width: 1.5em;
+    border: 0.25em solid;
+    margin-top: -0.3em;
+    cursor: pointer;
+
+    border-color:$highlightColor;
   }
 
   svg.active {
     background-color:$deepColor;
     color:$lightColor;
+    border-color: $deepColor;
   }
 
   svg:hover {
     background-color:$paleColor;
     color:$lightColor;
+    border-color: $paleColor;
   }
 
   svg.active:hover {
@@ -41,4 +50,9 @@ div.icon {
 .text_icon.active {
   background-color: $deepColor;
   color: $lightColor;
+}
+.text_icon:hover {
+  background-color:$paleColor;
+  color:$deepColor;
+  border-color: $paleColor;
 }
