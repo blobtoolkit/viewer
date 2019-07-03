@@ -261,31 +261,6 @@ let colInfo = {
   }
 }
 
-export const columnInfo = createSelector(
-  () => colInfo,
-  getDatasetColumns,
-  (obj, columns) => {
-    let info = {}
-    Object.keys(obj).forEach(key=>{
-      let group = obj[key].group
-      if (!info[group]){
-        info[group] = {}
-      }
-      if (key.startsWith('-hits-')){
-        let base = key.replace('-hits-','')
-        delete info[group][base]
-      }
-      info[group][key] = {
-        title: obj[key].title
-      }
-      if (columns.includes(key)){
-        info[group][key].active = true
-      }
-    })
-    return info
-  }
-)
-
 export const datasetSummaries = createSelector(
   getAvailableDatasetIds,
   getAvailableDatasets,
@@ -370,6 +345,32 @@ const ascComma = (a,b) => {
   }
   return a.length > b.length ? 1 : -1;
 }
+
+export const columnInfo = createSelector(
+  () => colInfo,
+  getDatasetColumns,
+  datasetSummaries,
+  (obj, columns) => {
+    let info = {}
+    Object.keys(obj).forEach(key=>{
+      let group = obj[key].group
+      if (!info[group]){
+        info[group] = {}
+      }
+      if (key.startsWith('-hits-')){
+        let base = key.replace('-hits-','')
+        delete info[group][base]
+      }
+      info[group][key] = {
+        title: obj[key].title
+      }
+      if (columns.includes(key)){
+        info[group][key].active = true
+      }
+    })
+    return info
+  }
+)
 
 export const listingColumns = createSelector(
   columnInfo,
