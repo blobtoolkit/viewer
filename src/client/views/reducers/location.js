@@ -45,9 +45,13 @@ export const getViews = createSelector(
         views['dataset'] = path[i]
         nextView = undefined
       }
-      else {
+      else if (path[i] !== 'undefined'){
         views['search'] = path[i]
       }
+    }
+
+    if (views['dataset'] && !views['search']) {
+      views['search'] = views['dataset']
     }
     views.primary = primary || 'blob'
     return views
@@ -101,7 +105,10 @@ export const updatePathname = (update = {},remove = {}) => {
     let static_url = state.staticURL
     let newViews = {}
     if (views.search) newViews.search = views.search
-    if (views.dataset) newViews.dataset = views.dataset
+    if (views.dataset){
+      newViews.dataset = views.dataset
+      if (!newViews.search || newViews.search === 'undefined') newViews.search = views.dataset
+    }
     let primary = views.primary
     Object.keys(update).forEach(key=>{
       if (key == 'search'){
