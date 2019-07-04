@@ -72,12 +72,19 @@ class CatDistribution extends React.Component {
     })
     let taxon
     let accession
+    let score
+    let position
     if (this.state.hover && this.state.hover.meta){
       taxon = 'Taxon: ' + this.state.hover.meta.taxon
     }
     if (this.state.hover && this.state.hover.title){
       accession = 'Accession: ' + this.state.hover.meta.subject
       accession += ' [' + this.state.hover.title + ']'
+    }
+    if (this.state.hover && this.state.hover.meta){
+      score = 'Bitscore: ' + this.state.hover.meta.score.toLocaleString()
+      score += ' [' + this.state.hover.meta.start.toLocaleString()
+      score += '–' + this.state.hover.meta.end.toLocaleString() + ' bp]'
     }
     return (
       <div className={styles.modal_plot_outer}>
@@ -99,15 +106,24 @@ class CatDistribution extends React.Component {
           <g transform={'translate(75,0)'} >
             <CategoryLegend categories={this.props.data.labels} colors={this.props.colors} otherColor={this.props.data.otherColor}/>
           </g>
-          <g transform={'translate(74,30)'} className={styles.link_info}>
-            {(taxon || accession) && <rect width={902} height={21}/>}
-            {taxon && <g transform={'translate(430,5)'}>
+          {score && <g transform={'translate(624,0)'} className={styles.link_info} style={{fontSize:12}}>
+            <rect width={352} height={20}/>
+            {score && <g transform={'translate(330,5)'}>
+              <text style={{textAnchor:'end'}}>{score}</text>
+            </g>}
+            {position && <g transform={'translate(330,20)'}>
+              <text style={{textAnchor:'end'}}>{position}</text>
+            </g>}
+          </g>}
+          {taxon && <g transform={'translate(624,20)'} className={styles.link_info} style={{fontSize:12}}>
+            <rect width={352} height={30}/>
+            {accession && <g transform={'translate(330,0)'}>
+              <text style={{textAnchor:'end'}}>{accession}</text>
+            </g>}
+            {taxon && <g transform={'translate(330,15)'}>
               <text style={{textAnchor:'end'}}>{taxon}</text>
             </g>}
-            {accession && <g transform={'translate(470,5)'}>
-              <text style={{textAnchor:'start'}}>{accession}</text>
-            </g>}
-          </g>
+          </g>}
         </svg>
       </div>
     )
