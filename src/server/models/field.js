@@ -19,7 +19,7 @@ const loadDataAtIndex = async function(index) {
   let keys = false;
   let ret;
   if (data.hasOwnProperty('keys')){
-    keys = {};
+    keys = data.keys;
   }
   String(index).split(',').forEach((r) => {
     let indices = r.split('-');
@@ -47,7 +47,7 @@ const loadDataAtIndex = async function(index) {
       }
     }
   })
-  ret = ret || Promise.resolve({values})
+  ret = ret || Promise.resolve({values,keys})
   return ret;
 }
 

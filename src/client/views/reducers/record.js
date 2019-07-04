@@ -82,6 +82,7 @@ export const getCategoryDistributionForRecord = createSelector(
     let labels = {}
     let other = false
     let offsets = {}
+    let sets = {}
     let xLimit = lengths.values[data.id]
     let id = identifiers[data.id]
     let cat_i = data.category_slot
@@ -95,7 +96,7 @@ export const getCategoryDistributionForRecord = createSelector(
     let start_i = data.headers.indexOf('start')
     let end_i = data.headers.indexOf('end')
     let score_i = data.headers.indexOf('score')
-    let lines = data.values[0].map(hit=>{
+    let lines = data.values[0].map((hit,i)=>{
       let points = {}
       let center = (hit[start_i] + hit[end_i]) / 2
       let width = hit[end_i] - hit[start_i]
@@ -103,17 +104,24 @@ export const getCategoryDistributionForRecord = createSelector(
       points.x2 = points.x1
       let bin = Math.floor(hit[start_i]/binSize)*binSize
       let offset = offsets[bin] || 0
+      let previous = sets[bin]
+      sets[bin] = i
       offsets[bin] = hit[score_i] + offset
       if (offsets[bin] > yLimit) yLimit = offsets[bin]
       points.y1 = offsets[bin]
       points.y2 = offset
       points.width = width
       points.cat = hit[cat_i]
+      points.previous = previous
+      points.link = {}
+      let obj = {}
+      data.headers.forEach((header,i)=>{
+        obj[header] = hit[i]
+      })
+      if (data.keys){
+        obj.taxon = data.keys[hit[cat_i]]
+      }
       if (links.position){
-        let obj = {}
-        data.headers.forEach((header,i)=>{
-          obj[header] = hit[i]
-        })
         if (links.position[0]){
           if (obj.index !== undefined && links.position[obj.index] !== undefined){
             points.link = {title:links.position[obj.index].title, url:links.position[obj.index].func(obj), meta:obj}
@@ -122,6 +130,12 @@ export const getCategoryDistributionForRecord = createSelector(
             points.link = {title:links.position[0].title, url:links.position[0].func(obj), meta:obj}
           }
         }
+        else {
+          points.link = {title:links.position.title, url:links.position.func(obj), meta:obj}
+        }
+      }
+      else if (data.keys){
+        points.link = {meta: obj}
       }
       if (!labels[hit[cat_i]]){
         if (bins[hit[cat_i]]){
