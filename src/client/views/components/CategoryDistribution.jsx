@@ -57,8 +57,8 @@ class CatDistribution extends React.Component {
           <line
                 x1={xScale(line.x1)}
                 x2={xScale(line.x2)}
-                y1={yScale(line.y1)+1}
-                y2={yScale(line.y2)-1}
+                y1={yScale(line.y1)+0.5}
+                y2={yScale(line.y2)-0.5}
                 onMouseOver={line.link ? ()=>this.setState({hover:line.link}) : ()=>{}}
                 onMouseOut={line.link ? ()=>this.setState({hover:false}) : ()=>{}}
                 onClick={url ? ()=>window.open(url,'_blank') : null}
