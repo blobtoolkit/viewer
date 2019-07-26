@@ -216,11 +216,12 @@ const tabulate = term => {
       let pctHit = 100 - assembly.summaryStats.stats.noHit * 100
       let pctTarget = assembly.summaryStats.stats.target * 100
       let ratio = 1 / assembly.summaryStats.stats.spanOverN50
+      let id = assembly.id
       ratio = ratio ? ratio :  assembly.summaryStats.stats.n50OverSpan
-      let string = `${pctHit.toPrecision(3)}\t${pctTarget.toPrecision(3)}\t${ratio.toPrecision(2)}`
+      let string = `${id}\t${pctHit.toPrecision(3)}\t${pctTarget.toPrecision(3)}\t${ratio.toPrecision(2)}`
       byGCA += `${assembly.accession}\t${string}\n`
-      if (assembly.name.match(/[A-Z]{4,6}\d{2}/)){
-        byWGS += `${assembly.name}\t${string}\n`
+      if (id.match(/[A-Z]{4,6}\d{2}/)){
+        byWGS += `${id}\t${string}\n`
       }
     }
   })
