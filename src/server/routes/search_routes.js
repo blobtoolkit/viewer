@@ -207,6 +207,27 @@ const search = term => {
 }
 
 
+const tabulate = term => {
+  let json = search(term)
+  let byGCA = ''
+  let byWGS = ''
+  json.forEach(assembly => {
+    if (assembly.summaryStats){
+      let pctHit = 100 - assembly.summaryStats.stats.noHit * 100
+      let pctTarget = assembly.summaryStats.stats.target * 100
+      let ratio = 1 / assembly.summaryStats.stats.spanOverN50
+      ratio = ratio ? ratio :  assembly.summaryStats.stats.n50OverSpan
+      let string = `${pctHit.toPrecision(3)}\t${pctTarget.toPrecision(3)}\t${ratio.toPrecision(2)}`
+      byGCA += `${assembly.accession}\t${string}\n`
+      if (assembly.name.match(/[A-Z]{4,6}\d{2}/)){
+        byWGS += `${assembly.name}\t${string}\n`
+      }
+    }
+  })
+  return byGCA + byWGS
+}
+
+
 module.exports = function(app, db) {
   app.get('/api/v1/search/tree/target', async (req, res) => {
     res.sendFile(`${dataDirectory}/targets.json`)
@@ -220,7 +241,15 @@ module.exports = function(app, db) {
     res.json(autocomplete(req.params.term))
   });
   app.get('/api/v1/search/:term', async (req, res) => {
-    res.setHeader('content-type', 'application/json');
-    res.json(search(req.params.term))
+    if (req.query && req.query.display == 'tsv'){
+      res.setHeader('content-type', 'text/tab-separated-values');
+      today = new Date().toISOString().substring(0, 10).replace(/-/g,'')
+      res.setHeader('content-disposition', `attachment; filename=BlobToolKit_${today}.tsv`)
+      res.send(tabulate(req.params.term))
+    }
+    else {
+      res.setHeader('content-type', 'application/json');
+      res.json(search(req.params.term))
+    }
   });
 };
