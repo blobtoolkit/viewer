@@ -221,7 +221,7 @@ const tabulate = term => {
       let string = `${id}\t${pctHit.toPrecision(3)}\t${pctTarget.toPrecision(3)}\t${ratio.toPrecision(2)}`
       byGCA += `${assembly.accession}\t${string}\n`
       if (id.match(/[A-Z]{4,6}\d{2}/)){
-        byWGS += `${id}\t${string}\n`
+        byWGS += `${id}000000\t${string}\n`
       }
     }
   })
