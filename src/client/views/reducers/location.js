@@ -152,8 +152,18 @@ export const toggleStatic = (view, datasetId) => {
       dispatch(updatePathname({[view]:true,static:true}))
     }
     else {
+      let str = document.location.search.replace(/^\?/,'')
+      let values = qs.parse(str)
+      let staticThreshold = values.staticThreshold || qsDefault('staticThreshold')
+      let state = store.getState()
+      if (state.identifiers.list.length > staticThreshold){
+        dispatch(queryToStore({
+          values:{[state.plot.cat+'--Keys']:'0'},
+          action:'FILTER'
+        }))
+      }
       dispatch(updatePathname({},{static:true}))
-      dispatch(loadDataset(datasetId))
+      dispatch(loadDataset(datasetId,1))
     }
   }
 }
@@ -237,9 +247,11 @@ const createSelectorForQueryValue = byIdSelectorCreator();
 
 const _getQueryIdAsMemoKey = (queryId) => queryId
 
-export const getQueryValue = createSelectorForQueryValue(
-  _getQueryIdAsMemoKey,
-  _getQueryIdAsMemoKey,
+const getQueryId = (queryId) => queryId
+
+
+export const getQueryValue = createSelector(
+  getQueryId,
   parseQueryString,
   (id, parsed) => {
     return parsed[id] || ''

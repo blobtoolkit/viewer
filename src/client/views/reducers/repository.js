@@ -205,7 +205,7 @@ export const loadDataset = (id,clear) => {
     let threshold = getStaticThreshold(state)
     dispatch(setDatasetIsActive('loading'))
     // dispatch(refreshStore())
-    if (!window.firstLoad){
+    if (!window.firstLoad && !clear){
       dispatch(refreshStore())
       let values = {}
       if (threshold != STATIC_THRESHOLD) values.staticThreshold = threshold
@@ -247,7 +247,7 @@ export const loadDataset = (id,clear) => {
       dispatch(editPlot(plot))
       Promise.all(addAllFields(dispatch,meta.fields,1,meta,plot,false))
       .then(()=>{
-        if (window.firstLoad){
+        if (window.firstLoad || clear){
           dispatch(queryToStore({values:qs.parse(getQueryString(state))}))
           window.firstLoad = false
           dispatch(filterToList())

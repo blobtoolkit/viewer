@@ -1,6 +1,7 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import { getPlotShape,getPlotGraphics, getCircleLimit } from '../reducers/plotParameters'
+import { getStaticThreshold } from '../reducers/repository'
 import styles from './Plot.scss'
 import MainPlotBoundary from './MainPlotBoundary'
 import PlotBubblesCanvasLayers from './PlotBubblesCanvasLayers'
@@ -42,6 +43,7 @@ export default class MainPlot extends React.Component {
         let plotGraphics = getPlotGraphics(state)
         let datasetId = getDatasetID(state)
         let records = getRecordCount(state)
+        let staticThreshold = getStaticThreshold(state)
         if (plotShape == 'hex'){
           let binned = getScatterPlotDataByHexBin(state)
           if (!binned) return {}
@@ -51,7 +53,9 @@ export default class MainPlot extends React.Component {
             plotGraphics,
             bins: binned.hexes,
             radius: binned.radius,
-            data: getSelectedHexGrid(state).data
+            data: getSelectedHexGrid(state).data,
+            records,
+            staticThreshold
           }
         }
         else if (plotShape == 'square') {
@@ -63,7 +67,9 @@ export default class MainPlot extends React.Component {
             plotGraphics,
             bins: binned.squares,
             data: getSelectedSquareGrid(state).data,
-            grid: binned.grid
+            grid: binned.grid,
+            records,
+            staticThreshold
           }
         }
         if (!getScatterPlotDataBySquareBin(state)) return {}
@@ -72,7 +78,8 @@ export default class MainPlot extends React.Component {
           plotShape,
           plotGraphics,
           records,
-          circleLimit: getCircleLimit(state)
+          circleLimit: getCircleLimit(state),
+          staticThreshold
         }
       }
     }
@@ -250,97 +257,101 @@ class PlotBox extends React.Component {
             </svg>
             {exportButtons}
           </div>
-          { this.props.records > this.props.circleLimit && <NoHitWarning circleLimit={this.props.circleLimit}/> }
+          { this.props.records > Math.min(this.props.circleLimit,this.props.staticThreshold) && <NoHitWarning circleLimit={this.props.records > this.props.circleLimit ? this.props.circleLimit : 0} staticThreshold={this.props.staticThreshold}/> }
         </div>
       )
     }
     else {
       return (
         <div className={styles.outer}>
-          <svg id="main_plot"
-            ref={(elem) => { this.svg = elem; }}
-            className={styles.main_plot+' '+styles.fill_parent}
-            viewBox={viewbox}
-            style={{fontSize:'14px'}}
-            preserveAspectRatio="xMinYMin">
-            <g transform={'translate(100,320)'} >
-              <PlotTransformLines />
-              {plotContainer}
-              {plotGrid}
-              {xPlot}
-              {yPlot}
-              {legend}
-              <Pointable
-                tagName='g'
-                onPointerMove={(e)=>{
-                  e.preventDefault()
-                  if (this.state.mouseDown){
+          <div className={styles.fill_parent}>
+            <svg id="main_plot"
+              ref={(elem) => { this.svg = elem; }}
+              className={styles.main_plot+' '+styles.fill_parent}
+              viewBox={viewbox}
+              style={{fontSize:'14px'}}
+              preserveAspectRatio="xMinYMin">
+              <g transform={'translate(100,320)'} >
+                <PlotTransformLines />
+                {plotContainer}
+                {plotGrid}
+                {xPlot}
+                {yPlot}
+                {legend}
+                <Pointable
+                  tagName='g'
+                  onPointerMove={(e)=>{
+                    e.preventDefault()
+                    if (this.state.mouseDown){
+                      let coords = relativeCoords(e)
+                      if (Math.floor(coords.x) % 2 == 0){
+                        let bin
+                        if (this.props.plotShape == 'hex'){
+                          bin = this.getHexByPixel(coords.x,coords.y,this.props.radius)
+                        }
+                        else {
+                          bin = this.getBinByPixel(coords,this.props.grid)
+                        }
+                        if (!bins[bin.id] && this.state.addRecords){
+                          bins[bin.id] = true;
+                          this.setState({bins})
+                          this.toggleSelection(bin.ids)
+                        }
+                        else if (!this.state.addRecords) {
+                          delete bins[bin.id];
+                          this.setState({bins})
+                          this.toggleSelection(bin.ids)
+                        }
+                      }
+                    }
+                  }}
+                  onPointerLeave={(e)=>{
+                    e.preventDefault()
+                    //e.target.releasePointerCapture(e.pointerId)
+                    this.setMouseDown(false)
+                  }}
+                  onPointerDown={(e)=>{
+                    e.preventDefault()
                     let coords = relativeCoords(e)
-                    if (Math.floor(coords.x) % 2 == 0){
-                      let bin
-                      if (this.props.plotShape == 'hex'){
-                        bin = this.getHexByPixel(coords.x,coords.y,this.props.radius)
-                      }
-                      else {
-                        bin = this.getBinByPixel(coords,this.props.grid)
-                      }
-                      if (!bins[bin.id] && this.state.addRecords){
-                        bins[bin.id] = true;
-                        this.setState({bins})
-                        this.toggleSelection(bin.ids)
-                      }
-                      else if (!this.state.addRecords) {
-                        delete bins[bin.id];
-                        this.setState({bins})
-                        this.toggleSelection(bin.ids)
-                      }
+                    let bin
+                    if (this.props.plotShape == 'hex'){
+                      bin = this.getHexByPixel(coords.x,coords.y,this.props.radius)
                     }
-                  }
-                }}
-                onPointerLeave={(e)=>{
-                  e.preventDefault()
-                  //e.target.releasePointerCapture(e.pointerId)
-                  this.setMouseDown(false)
-                }}
-                onPointerDown={(e)=>{
-                  e.preventDefault()
-                  let coords = relativeCoords(e)
-                  let bin
-                  if (this.props.plotShape == 'hex'){
-                    bin = this.getHexByPixel(coords.x,coords.y,this.props.radius)
-                  }
-                  else {
-                    bin = this.getBinByPixel(coords,this.props.grid)
-                  }
-                  let index = this.props.data.findIndex(d => d.id == bin.id)
-                  if (this.props.data[index] && this.props.data[index].selected == 0){
-                    this.setAddRecords(true)
-                    bins[bin.id] = true;
-                    this.setState({bins})
-                    this.props.addRecords(bin.ids)
-                  }
-                  else {
-                    this.setAddRecords(false)
-                    if (bins[bin.id]){
-                      delete bins[bin.id]
+                    else {
+                      bin = this.getBinByPixel(coords,this.props.grid)
                     }
-                    this.setState({bins})
-                    this.props.removeRecords(bin.ids)
-                  }
-                  this.setMouseDown(true)
-                }}
-                onPointerUp={(e)=>{
-                  e.preventDefault()
-                  this.setMouseDown(false)
-                }}
-                >
-                <MainPlotBoundary/>
-              </Pointable>
-              <PlotAxisTitle axis='x' side={side}/>
-              <PlotAxisTitle axis='y' side={side}/>
-            </g>
-          </svg>
-          {exportButtons}
+                    let index = this.props.data.findIndex(d => d.id == bin.id)
+                    if (this.props.data[index] && this.props.data[index].selected == 0){
+                      this.setAddRecords(true)
+                      bins[bin.id] = true;
+                      this.setState({bins})
+                      this.props.addRecords(bin.ids)
+                    }
+                    else {
+                      this.setAddRecords(false)
+                      if (bins[bin.id]){
+                        delete bins[bin.id]
+                      }
+                      this.setState({bins})
+                      this.props.removeRecords(bin.ids)
+                    }
+                    this.setMouseDown(true)
+                  }}
+                  onPointerUp={(e)=>{
+                    e.preventDefault()
+                    this.setMouseDown(false)
+                  }}
+                  >
+                  <MainPlotBoundary/>
+                </Pointable>
+                <PlotAxisTitle axis='x' side={side}/>
+                <PlotAxisTitle axis='y' side={side}/>
+              </g>
+            </svg>
+            {exportButtons}
+
+          </div>
+          { this.props.records > this.props.staticThreshold && <NoHitWarning staticThreshold={this.props.staticThreshold}/> }
         </div>
 
       )
