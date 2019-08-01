@@ -65,7 +65,7 @@ export const getOccupiedHexGrid = createSelector(
   getHexGrid,
   getAllScatterPlotDataByHexBin,
   getZReducer,
-  (grid,binned,reducer = (a,b)=>{a+b}) => {
+  (grid,binned,reducer) => {
     if (!binned) return undefined
     let data = []
     let min = Number.POSITIVE_INFINITY
@@ -174,6 +174,10 @@ export const getScatterPlotDataByHexBinByCategory = createSelector(
       })
     })
     let byCat = []
+    let max = Number.NEGATIVE_INFINITY
+    let min = Number.POSITIVE_INFINITY
+
+    let hexArrays = []
     scatterData.data.forEach((hex)=>{
       let hexData = []
 
@@ -196,11 +200,23 @@ export const getScatterPlotDataByHexBinByCategory = createSelector(
       })
       let hexArray = hexData.filter(obj => obj.ids.length > 0);
       hexArray.forEach(h=>{
+        let value = reducer.func(h.zs)
+        max = Math.max(max,value)
+        min = Math.min(min,value)
+      })
+      hexArrays.push(hexArray)
+
+    })
+
+    zScale.domain([min,max])
+    hexArrays.forEach((hexArray)=>{
+      hexArray.forEach(h=>{
         h.z = zScale(reducer.func(h.zs)) * plotScale
         h.z = h.z > plotScale ? h.z : plotScale;
         h.points = drawPoints(h.x,h.y,grid.radius,grid.res,h.z/grid.radius)
       })
       data = data.concat(hexArray.sort((a,b)=>b.z - a.z))
+
     })
     return {data};
   }
