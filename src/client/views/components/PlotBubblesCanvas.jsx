@@ -36,7 +36,7 @@ class BubblesCanvas extends React.Component {
     super(props)
     let isChrome = /Chrome/.test(navigator.userAgent) && /Google Inc/.test(navigator.vendor)
     let isSafari = /Safari/.test(navigator.userAgent) && /Apple Computer/.test(navigator.vendor)
-    if (isChrome || isSafari){
+    if (isSafari){
       this.state = { webkit:true,height:900,width:900 }
     }
     else {
