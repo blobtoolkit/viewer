@@ -351,7 +351,6 @@ class PlotBox extends React.Component {
             {exportButtons}
 
           </div>
-          { this.props.records > this.props.staticThreshold && <NoHitWarning staticThreshold={this.props.staticThreshold}/> }
         </div>
 
       )

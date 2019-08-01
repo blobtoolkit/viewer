@@ -1,11 +1,12 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import styles from './Layout.scss'
-import { getDatasetIsActive } from '../reducers/repository'
-import { toggleHash, getView, getStatic, getDatasetID, getHashString } from '../reducers/location'
-import { getDatasetName } from '../reducers/dataset'
+import { toggleHash, getView, getStatic, getDatasetID, getQueryString, setQueryString, getHashString } from '../reducers/location'
+import { getDatasetName, getSelectedDatasetMeta } from '../reducers/dataset'
 import { getScatterPlotData } from '../reducers/plotData'
-import { getMainPlot } from '../reducers/plot'
+import { getMainPlot, getCatAxis } from '../reducers/plot'
+import { getDatasetIsActive, getStaticThreshold } from '../reducers/repository'
+import { getBinsForCat } from '../reducers/field'
 import GetStarted from './GetStarted'
 import FindDatasets from './FindDatasets'
 import MainPlot from './MainPlot'
@@ -19,12 +20,54 @@ import TreeMapPlot from './TreeMapPlot'
 import DatasetSpinner from './DatasetSpinner'
 import HomePage from './HomePage'
 import SelectWarning from './SelectWarning'
+import { queryToStore } from '../querySync'
+import qs from 'qs'
+import { NoHitWarning } from './NoHitWarning'
 
 const dataset_table = DATASET_TABLE || false
 
 class PlotsLayoutComponent extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {datasetId: this.props.datasetId, static: this.props.static, keys: false, cat: false, warn: false}
+  }
 
+  componentDidMount(){
+
+  }
+  componentDidUpdate(){
+    if (!this.props.static && this.state.static){
+      if (this.props.meta && this.props.meta.records > this.props.staticThreshold
+            && this.props.bins && this.props.cat){
+        this.setState({static: this.props.static})
+        let index = this.props.bins.findIndex(x=>x.id=='no-hit')
+        if (index > -1){
+          let keys = this.props.bins[index].keys
+          let cat = `${this.props.cat}--Keys`
+          let qstr = `${this.props.cat}--Keys=${keys.join(',')}`
+          this.setState({keys: keys.join(','), cat})
+          this.props.updateStore(qstr)
+        }
+      }
+    }
+    else if (this.props.static && !this.state.static){
+      this.setState({static: this.props.static})
+    }
+    else if (this.props.queryString) {
+      if (!this.state.warn && qs.parse(this.props.queryString)[this.state.cat] == this.state.keys){
+        this.setState({warn: true})
+      }
+      else if (this.state.warn && qs.parse(this.props.queryString)[this.state.cat] != this.state.keys){
+        this.setState({warn: false})
+      }
+    }
+    else if (this.state.warn){
+      this.setState({warn: false})
+    }
+
+  }
   render(){
+    let warning = this.state.warn && <NoHitWarning staticThreshold={this.props.staticThreshold}/>
     if (!this.props.datasetId ||
     dataset_table && this.props.activeTab == 'Datasets'){
       return <HomePage toggleHash={this.props.toggleHash}/>
@@ -95,6 +138,7 @@ class PlotsLayoutComponent extends React.Component {
       <div className={styles.fill_parent}>
         {view}
         <DatasetSpinner/>
+        {warning}
       </div>
     )
   }
@@ -126,12 +170,23 @@ class LayoutPlots extends React.Component {
         datasetName: getDatasetName(state),
         plot: getMainPlot(state),
         activeTab: getHashString(state),
-        view: getView(state)
+        view: getView(state),
+        bins: getBinsForCat(state),
+        cat: getCatAxis(state),
+        staticThreshold: getStaticThreshold(state),
+        meta: getSelectedDatasetMeta(state),
+        static: false,
+        queryString: getQueryString(state)
       }
     },
     this.mapDispatchToProps = dispatch => {
       return {
-        toggleHash: value => dispatch(toggleHash(value))
+        toggleHash: value => dispatch(toggleHash(value)),
+        updateStore: (str,currentSearch,action) => {
+          let values = qs.parse(str.replace('?',''))
+          dispatch(queryToStore({values,searchReplace:true,currentSearch,action}))
+        },
+        updateQueryString: (qStr) => dispatch(setQueryString(qStr))
       }
     }
   }

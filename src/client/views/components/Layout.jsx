@@ -3,8 +3,11 @@ import { connect } from 'react-redux'
 import CookieConsent from 'react-cookie-consent'
 import styles from './Layout.scss'
 import colors from './_colors'
-import { getDatasetIsActive, getReloading, setReloading } from '../reducers/repository'
-import { getQueryString, setQueryString, getDatasetID, getHashString } from '../reducers/location'
+import { getDatasetIsActive, getReloading, setReloading, getStaticThreshold } from '../reducers/repository'
+import { getQueryString, setQueryString, getDatasetID, getHashString, getStatic } from '../reducers/location'
+import { getBinsForCat } from '../reducers/field'
+import { getCatAxis } from '../reducers/plot'
+import { getSelectedDatasetMeta } from '../reducers/dataset'
 import LayoutControls from './LayoutControls'
 import LayoutHeader from './LayoutHeader'
 import LayoutPlots from './LayoutPlots'
@@ -93,7 +96,12 @@ class Layout extends React.Component {
         // active: getDatasetIsActive(state),
         //queryString: getQueryString(state),
         reloading: getReloading(state),
+        // bins: getBinsForCat(state),
+        // cat: getCatAxis(state),
+        // staticThreshold: getStaticThreshold(state),
+        // meta: getSelectedDatasetMeta(state),
         // datasetId: getDatasetID(state),
+        // isStatic: getStatic(state),
         //activeTab: getHashString(state)
       }
     }

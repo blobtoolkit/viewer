@@ -554,6 +554,7 @@ export const getBinsForFieldId = createBinSelectorForFieldId(
         }))
       }
     }
+    // set filter using this info
     return bins
   }
 );
