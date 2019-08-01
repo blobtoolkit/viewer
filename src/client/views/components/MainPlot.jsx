@@ -257,7 +257,7 @@ class PlotBox extends React.Component {
             </svg>
             {exportButtons}
           </div>
-          { this.props.records > Math.min(this.props.circleLimit,this.props.staticThreshold) && <NoHitWarning circleLimit={this.props.records > this.props.circleLimit ? this.props.circleLimit : 0} staticThreshold={this.props.staticThreshold}/> }
+          { this.props.records > this.props.circleLimit && this.props.staticThreshold > this.props.records && <NoHitWarning circleLimit={this.props.circleLimit}/> }
         </div>
       )
     }
