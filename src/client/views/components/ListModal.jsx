@@ -63,7 +63,7 @@ class ListModal extends React.Component {
                   className={styles.button}
                   onClick={()=>this._downloadJSONFile(this.props.dataset+'.'+this.props.name,noIdList)}>
                     List Stats
-                </a>
+                </a>&nbsp;
                 {loadList}
                 <h2>{this.props.name}</h2>
                 <p>{this.props.list.identifiers.length} {this.props.type}</p>

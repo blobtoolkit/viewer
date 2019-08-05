@@ -49,7 +49,7 @@ class ListsMenu extends React.Component {
   }
 
   loadNs() {
-    if (this.props.lists[0].list.length > 0 && 
+    if (this.props.lists[0].list.length > 0 &&
         (!this.props.buscoSets || this.state.called == this.props.buscoSets.length)){
       this.props.fetchBuscoData('ncount')
       this.setState({loading:false})
@@ -61,6 +61,9 @@ class ListsMenu extends React.Component {
   }
 
   shouldComponentUpdate(nextProps, nextState){
+    if (nextProps.lists.length != this.props.lists.length){
+      return true
+    }
     if (nextState.loading != this.state.loading){
       return true
     }
