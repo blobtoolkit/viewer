@@ -193,6 +193,9 @@ export const getScatterPlotDataBySquareBinByCategory = createSelector(
       })
     })
     let byCat = []
+    let max = Number.NEGATIVE_INFINITY
+    let min = Number.POSITIVE_INFINITY
+    let squareArrays = []
     scatterData.data.forEach((square)=>{
       let squareData = []
       bins.forEach((bin,i)=>{
@@ -217,6 +220,17 @@ export const getScatterPlotDataBySquareBinByCategory = createSelector(
         // }
       })
       let squareArray = squareData.filter(obj => obj.ids.length > 0);
+      squareArray.forEach(s=>{
+        let value = reducer.func(s.zs)
+        max = Math.max(max,value)
+        min = Math.min(min,value)
+      })
+      squareArrays.push(squareArray)
+    })
+
+    zScale.domain([min,max])
+    squareArrays.forEach((squareArray)=>{
+
       squareArray.forEach(s=>{
         s.z = zScale(reducer.func(s.zs)) * plotScale
         s.z = s.z > plotScale ? s.z : plotScale;
