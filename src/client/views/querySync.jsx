@@ -356,9 +356,12 @@ export const queryToStore = (options = {}) => {
     }
     else if (searchReplace){
       Object.keys(mapDispatchToQuery).forEach(key=>{
-        if (keyed(mapDispatchToQuery[key],'type')){
-          remove.push(key)
+        if (!keyed(values,key)){
+          if (keyed(mapDispatchToQuery[key],'type')){
+            remove.push(key)
+          }
         }
+
       })
     }
     Object.keys(values).forEach(key => {
@@ -390,9 +393,12 @@ export const queryToStore = (options = {}) => {
           let payload = action.payload(key,value)
           //dispatch({type,payload})
           batch.push({type,payload})
+          console.log(4)
+          console.log({type,payload})
         })
         if (keyed(obj,'params')){
           let params = obj.params(key,value)
+          console.log(params)
           Object.keys(params).forEach(k=>{parsed[k] = params[k]})
         }
         else {
@@ -424,6 +430,8 @@ export const queryToStore = (options = {}) => {
           let payload = action.payload(key,value)
           //dispatch({type,payload})
           batch.push({type,payload})
+          console.log(1)
+          console.log({type,payload})
         })
         if (keyed(obj,'params')){
           let params = obj.params(key,value)
@@ -461,6 +469,8 @@ export const queryToStore = (options = {}) => {
           let payload = action.default
           //dispatch({type,payload})
           batch.push({type,payload})
+          console.log(2)
+          console.log({type,payload})
         })
       }
       else if (keyed(mapDispatchToQuery,k)){
@@ -490,6 +500,8 @@ export const queryToStore = (options = {}) => {
           let payload = action.payload(key,value)
           //dispatch({type,payload})
           batch.push({type,payload})
+          console.log(3)
+          console.log({type,payload})
         })
         if (keyed(obj,'params')){
           let params = obj.params(key,value)

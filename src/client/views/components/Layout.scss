@@ -76,11 +76,12 @@
   color: $paleColor;
   display:inline-block;
   cursor:pointer;
-  border: solid 1px $darkColor;
+  // border: solid 1px $darkColor;
   box-sizing: border-box;
   margin-right: -1px;
-  border-top: none;
-  border-bottom: none;
+  // border-top: none;
+  // border-bottom: none;
+  border: none;
 }
 
 .main_header_tab:hover {

@@ -70,23 +70,30 @@ export const getLists = createSelector(
   }
 )
 
-
+//http://localhost:8080/view/Arthropoda/dataset/ACVV01/blob?
+//gc--Min=0.368&
+//SRR026696_cov--Min=0.01&
+//bestsumorder_phylum--Keys=4%2C6%2C3%2C7%2C13%2C5%2C8%2C9%2C11%2C10%2C12%2C16%2C17%2C14%2C15%2C18%2C19%2C20%2C21%2C0&
+//length--Min=1850&
+//color1=rgba%280%2C0%2C0%2C1%29&
+//color2=rgba%28248%2C231%2C28%2C1%29&
+//selection--Active=true#Lists
 export const updateSelectedList = createAction('UPDATE_SELECTED_LIST')
 export const chooseList = (id,select) => {
-  return function (dispatch) {
+  return async function (dispatch) {
     let state = store.getState()
     let list = getListById(state,id)
-    dispatch(selectNone())
-    if (select){
-      dispatch(addRecords(list.list))
-    }
+    await dispatch(selectNone())
     let values = Object.assign({},list.params)
-    dispatch(queryToStore({values,searchReplace:true})).then((v)=>{
-      let fields = getAllActiveFields(store.getState())
-      Object.keys(fields).forEach(field=>{
-        dispatch(fetchRawData(field))
-      })
+    await dispatch(queryToStore({values,searchReplace:true}))
+    let fields = getAllActiveFields(store.getState())
+    Object.keys(fields).forEach(async (field) =>{
+      await dispatch(fetchRawData(field))
     })
+    if (select){
+      await dispatch(addRecords(list.list))
+    }
+
   }
 }
 export const selectedList = handleAction(
