@@ -178,7 +178,6 @@ export function uploadedFileToList(acceptedFiles) {
               }
             }
             delete obj.identifiers
-            console.log(obj)
             dispatch(addList(obj))
           })
       };

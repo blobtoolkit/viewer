@@ -381,8 +381,8 @@ table {
 .dropzone_active {
   border-style: solid;
   border-color: $highlightColor;
-  background-color:$darkColor;
-  color: $darkColor;
+  background-color: $highlightColor;
+  color: $lightColor;
 }
 
 .dropzone_accept {
