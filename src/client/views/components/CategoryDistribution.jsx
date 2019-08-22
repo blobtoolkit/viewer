@@ -90,7 +90,7 @@ class CatDistribution extends React.Component {
     }
     let side = 1110
     let exportButtons = (
-      <span className={styles.download} style={{marginTop:'-1em'}} onClick={(e)=>{e.stopPropagation()}}>
+      <span className={styles.download} style={{marginTop:'-1.4em'}}>
         <ExportButton view='hits' element='record_plot' prefix={this.props.datasetId+'.'+this.props.data.id+'.hits.'} format='svg'/>
         <ExportButton view='hits' element='record_plot' prefix={this.props.datasetId+'.'+this.props.data.id+'.hits.'} format='png' size={side}/>
       </span>
