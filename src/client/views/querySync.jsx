@@ -32,6 +32,11 @@ const mapDispatchToQuery = (
       payload: (k,v) => v,
       default: STATIC_THRESHOLD
     },
+    nohitThreshold: {
+      type: 'SET_NOHIT_THRESHOLD',
+      payload: (k,v) => v,
+      default: NOHIT_THRESHOLD
+    },
     circleLimit: {
       type: 'SET_CIRCLE_LIMIT',
       payload: (k,v) => v,
@@ -325,6 +330,12 @@ export const queryToStore = (options = {}) => {
     let action = options.action || 'REPLACE'
     let arrays = {}
     let parsed = qs.parse(currentSearch.replace('?',''))
+    Object.keys(parsed).forEach(key=>{
+      if (parsed[key] == ''){
+        delete parsed[key]
+        remove.push(key)
+      }
+    })
     if (keyed(values,'colors')){
       let oldCols = values.colors.existing.colors
       let newCols = values.colors.colors[values.colors.colors.id]
@@ -393,12 +404,9 @@ export const queryToStore = (options = {}) => {
           let payload = action.payload(key,value)
           //dispatch({type,payload})
           batch.push({type,payload})
-          console.log(4)
-          console.log({type,payload})
         })
         if (keyed(obj,'params')){
           let params = obj.params(key,value)
-          console.log(params)
           Object.keys(params).forEach(k=>{parsed[k] = params[k]})
         }
         else {
@@ -430,8 +438,6 @@ export const queryToStore = (options = {}) => {
           let payload = action.payload(key,value)
           //dispatch({type,payload})
           batch.push({type,payload})
-          console.log(1)
-          console.log({type,payload})
         })
         if (keyed(obj,'params')){
           let params = obj.params(key,value)
@@ -469,8 +475,6 @@ export const queryToStore = (options = {}) => {
           let payload = action.default
           //dispatch({type,payload})
           batch.push({type,payload})
-          console.log(2)
-          console.log({type,payload})
         })
       }
       else if (keyed(mapDispatchToQuery,k)){
@@ -500,8 +504,6 @@ export const queryToStore = (options = {}) => {
           let payload = action.payload(key,value)
           //dispatch({type,payload})
           batch.push({type,payload})
-          console.log(3)
-          console.log({type,payload})
         })
         if (keyed(obj,'params')){
           let params = obj.params(key,value)

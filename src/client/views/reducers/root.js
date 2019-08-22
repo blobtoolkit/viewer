@@ -44,6 +44,7 @@ const rootReducer = (state, action) => {
     let availableDatasets = state.availableDatasets
     let datasetIsActive = state.datasetIsActive
     let staticThreshold = state.staticThreshold
+    let nohitThreshold = state.nohitThreshold
     let pathname = state.pathname
     let hashString = state.hashString
     let datasetPage = state.datasetPage
@@ -60,6 +61,7 @@ const rootReducer = (state, action) => {
       availableDatasets,
       datasetIsActive,
       staticThreshold,
+      nohitThreshold,
       pathname,
       hashString,
       datasetPage,

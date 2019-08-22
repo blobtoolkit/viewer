@@ -34,7 +34,9 @@ import { getPlotShape,
   chooseSnailOrigin } from '../reducers/plotParameters'
 import {
   getStaticThreshold,
-  chooseStaticThreshold } from '../reducers/repository'
+  chooseStaticThreshold,
+  getNohitThreshold,
+  chooseNohitThreshold } from '../reducers/repository'
 import { chooseView, toggleStatic, getView, getStatic, getDatasetID } from '../reducers/location'
 import styles from './Layout.scss'
 import MenuDisplaySet from './MenuDisplaySet'
@@ -81,7 +83,8 @@ const DisplayMenu = ({
   plotScale, onChangePlotScale,
   onSelectView, onToggleStatic,
   pngResolution, onChangePngResolution,
-  staticThreshold, onChangeStaticThreshold }) => {
+  staticThreshold, onChangeStaticThreshold,
+  nohitThreshold, onChangeNohitThreshold }) => {
   let context
   view = view || 'blob'
   let blob
@@ -251,6 +254,13 @@ const DisplayMenu = ({
             )
           }}/>
       </MenuDisplaySimple>
+      <MenuDisplaySimple name='nohit threshold'>
+        <NumericInput
+          initialValue={nohitThreshold}
+          onChange={(value)=>{
+            onChangeNohitThreshold(value)
+          }}/>
+      </MenuDisplaySimple>
 
       <ToolTips set='settingsMenu'/>
     </div>
@@ -323,6 +333,7 @@ class MenuDisplayMain extends React.Component {
         onChangeThreshold: threshold => dispatch(chooseSVGThreshold(threshold)),
         onChangePngResolution: resolution => dispatch(choosePngResolution(resolution)),
         onChangeStaticThreshold: threshold => dispatch(chooseStaticThreshold(threshold)),
+        onChangeNohitThreshold: threshold => dispatch(chooseNohitThreshold(threshold)),
         onChangeCircleLimit: limit => dispatch(chooseCircleLimit(limit)),
         onSelectReducer: reducer => dispatch(chooseZReducer(reducer)),
         onSelectScale: scale => dispatch(chooseZScale(scale)),
@@ -346,6 +357,7 @@ class MenuDisplayMain extends React.Component {
         threshold:getSVGThreshold(state),
         pngResolution:getPngResolution(state),
         staticThreshold:getStaticThreshold(state),
+        nohitThreshold:getNohitThreshold(state),
         circleLimit:getCircleLimit(state),
         reducer:getZReducer(state),
         scale:getZScale(state),

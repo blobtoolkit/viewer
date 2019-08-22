@@ -1,7 +1,7 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import { getPlotShape,getPlotGraphics, getCircleLimit } from '../reducers/plotParameters'
-import { getStaticThreshold } from '../reducers/repository'
+import { getStaticThreshold, getNohitThreshold } from '../reducers/repository'
 import styles from './Plot.scss'
 import MainPlotBoundary from './MainPlotBoundary'
 import PlotBubblesCanvasLayers from './PlotBubblesCanvasLayers'
@@ -44,6 +44,7 @@ export default class MainPlot extends React.Component {
         let datasetId = getDatasetID(state)
         let records = getRecordCount(state)
         let staticThreshold = getStaticThreshold(state)
+        let nohitThreshold = getNohitThreshold(state)
         if (plotShape == 'hex'){
           let binned = getScatterPlotDataByHexBin(state)
           if (!binned) return {}
@@ -55,7 +56,8 @@ export default class MainPlot extends React.Component {
             radius: binned.radius,
             data: getSelectedHexGrid(state).data,
             records,
-            staticThreshold
+            staticThreshold,
+            nohitThreshold
           }
         }
         else if (plotShape == 'square') {
@@ -69,7 +71,8 @@ export default class MainPlot extends React.Component {
             data: getSelectedSquareGrid(state).data,
             grid: binned.grid,
             records,
-            staticThreshold
+            staticThreshold,
+            nohitThreshold
           }
         }
         if (!getScatterPlotDataBySquareBin(state)) return {}
@@ -79,7 +82,8 @@ export default class MainPlot extends React.Component {
           plotGraphics,
           records,
           circleLimit: getCircleLimit(state),
-          staticThreshold
+          staticThreshold,
+          nohitThreshold
         }
       }
     }

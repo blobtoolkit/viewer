@@ -198,17 +198,35 @@ export const staticThreshold = handleAction(
 )
 export const getStaticThreshold = state => state.staticThreshold
 
+export const setNohitThreshold = createAction('SET_NOHIT_THRESHOLD')
+export const chooseNohitThreshold = (nohitThreshold) => {
+  return function (dispatch) {
+    let values = {nohitThreshold}
+    dispatch(queryToStore({values}))
+  }
+}
+export const nohitThreshold = handleAction(
+  'SET_NOHIT_THRESHOLD',
+  (state, action) => (
+    action.payload
+  ),
+  qs.parse((document.location.search || '').replace(/^\?/,'')).nohitThreshold || NOHIT_THRESHOLD
+)
+export const getNohitThreshold = state => state.nohitThreshold
+
 export const loadDataset = (id,clear) => {
   return function(dispatch){
     let state = store.getState()
     let isStatic = getStatic(state)
     let threshold = getStaticThreshold(state)
+    let nohit = getNohitThreshold(state)
     dispatch(setDatasetIsActive('loading'))
     // dispatch(refreshStore())
     if (!window.firstLoad && !clear){
       dispatch(refreshStore())
       let values = {}
       if (threshold != STATIC_THRESHOLD) values.staticThreshold = threshold
+      if (nohit != NOHIT_THRESHOLD) values.nohitThreshold = nohit
       dispatch(queryToStore({values,searchReplace:true}))
     }
     dispatch(fetchMeta(id)).then(() => {
@@ -308,5 +326,6 @@ export const repositoryReducers = {
   fetchRepository,
   datasetIsActive,
   reloading,
-  staticThreshold
+  staticThreshold,
+  nohitThreshold
 }

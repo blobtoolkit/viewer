@@ -50,6 +50,7 @@ const main = async (args) => {
   let protocol = args['--https'] ? 'https' : 'http'
   let loc = `${protocol}://${args['--host']}:${args['--port']}/${args['--prefix']}/dataset/${args.DATASET}`
   let qs = `staticThreshold=${Number.POSITIVE_INFINITY}`
+  qs += `&nohitThreshold=${Number.POSITIVE_INFINITY}`
   qs += `&plotGraphics=svg`
   if (args['--format'] == 'svg'){
     qs += `&svgThreshold=${Number.POSITIVE_INFINITY}`

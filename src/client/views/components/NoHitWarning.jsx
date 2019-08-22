@@ -25,11 +25,11 @@ export class NoHitWarning extends React.Component {
         </div>
       )
     }
-    else if (this.props.staticThreshold){
+    else if (this.props.nohitThreshold){
       return (
         <div className={styles.warning}>
           <h2>'no-hit' data are not shown</h2>
-          This dataset has over {Number(this.props.staticThreshold).toLocaleString()} records so "no-hit" records have been filtered out.
+          This dataset has over {Number(this.props.nohitThreshold).toLocaleString()} records so "no-hit" records have been filtered out.
           Use the Filters menu to restore the hidden category data.
           <span className={styles.dismiss} onClick={()=>this.toggleDismissed(true)}/>
         </div>

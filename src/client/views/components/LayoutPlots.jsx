@@ -5,7 +5,7 @@ import { toggleHash, getView, getStatic, getDatasetID, getQueryString, setQueryS
 import { getDatasetName, getSelectedDatasetMeta } from '../reducers/dataset'
 import { getScatterPlotData } from '../reducers/plotData'
 import { getMainPlot, getCatAxis } from '../reducers/plot'
-import { getDatasetIsActive, getStaticThreshold } from '../reducers/repository'
+import { getDatasetIsActive, getStaticThreshold, getNohitThreshold } from '../reducers/repository'
 import { getBinsForCat } from '../reducers/field'
 import GetStarted from './GetStarted'
 import FindDatasets from './FindDatasets'
@@ -37,24 +37,15 @@ class PlotsLayoutComponent extends React.Component {
   }
   componentDidUpdate(){
     if (!this.props.static && this.state.static){
-      if (this.props.meta && this.props.meta.records > this.props.staticThreshold
-            && this.props.bins && this.props.cat){
+      if (this.props.meta && this.props.meta.records > this.props.staticThreshold){
         this.setState({static: this.props.static})
-        let index = this.props.bins.findIndex(x=>x.id=='no-hit')
-        if (index > -1){
-          let keys = this.props.bins[index].keys
-          let cat = `${this.props.cat}--Keys`
-          let qstr = `${this.props.cat}--Keys=${keys.join(',')}`
-          this.setState({keys: keys.join(','), cat})
-          this.props.updateStore(qstr)
-        }
       }
     }
     else if (this.props.static && !this.state.static){
       this.setState({static: this.props.static})
     }
     else if (this.props.queryString) {
-      if (!this.state.warn && qs.parse(this.props.queryString)[this.state.cat] == this.state.keys){
+      if (this.state.keys && !this.state.warn && qs.parse(this.props.queryString)[this.state.cat] == this.state.keys){
         this.setState({warn: true})
       }
       else if (this.state.warn && qs.parse(this.props.queryString)[this.state.cat] != this.state.keys){
@@ -64,10 +55,32 @@ class PlotsLayoutComponent extends React.Component {
     else if (this.state.warn){
       this.setState({warn: false})
     }
+    if (!this.props.static){
+      if (this.props.meta && this.props.meta.records > this.props.nohitThreshold
+            && this.props.bins && this.props.cat
+            && !this.state.keys && !this.state.cat){
+        let index = this.props.bins.findIndex(x=>x.id=='no-hit')
+        if (index > -1){
+          let keys = this.props.bins[index].keys
+          let cat = `${this.props.cat}--Keys`
+          let qstr = `${this.props.cat}--Keys=${keys.join(',')}`
+          this.setState({keys: keys.join(','), cat})
+          this.props.updateStore(qstr)
+          this.setState({warn: true})
+        }
+      }
+      else if (this.props.meta && this.props.meta.records <= this.props.nohitThreshold
+                 && this.state.keys && this.state.cat && this.state.warn){
+        let qstr=`${this.props.cat}--Keys=&nohitThreshold=${this.props.nohitThreshold}`
+        this.props.updateStore(qstr)
+        this.setState({keys: false, cat: false, warn: false})
+      }
+    }
+
 
   }
   render(){
-    let warning = this.state.warn && <NoHitWarning staticThreshold={this.props.staticThreshold}/>
+    let warning = this.state.warn && <NoHitWarning nohitThreshold={this.props.nohitThreshold}/>
     if (!this.props.datasetId ||
     dataset_table && this.props.activeTab == 'Datasets'){
       return <HomePage toggleHash={this.props.toggleHash}/>
@@ -174,6 +187,7 @@ class LayoutPlots extends React.Component {
         bins: getBinsForCat(state),
         cat: getCatAxis(state),
         staticThreshold: getStaticThreshold(state),
+        nohitThreshold: getNohitThreshold(state),
         meta: getSelectedDatasetMeta(state),
         static: false,
         queryString: getQueryString(state)
@@ -182,9 +196,9 @@ class LayoutPlots extends React.Component {
     this.mapDispatchToProps = dispatch => {
       return {
         toggleHash: value => dispatch(toggleHash(value)),
-        updateStore: (str,currentSearch,action) => {
+        updateStore: (str,searchReplace) => {
           let values = qs.parse(str.replace('?',''))
-          dispatch(queryToStore({values,searchReplace:true,currentSearch,action}))
+          dispatch(queryToStore({values,searchReplace}))
         },
         updateQueryString: (qStr) => dispatch(setQueryString(qStr))
       }
