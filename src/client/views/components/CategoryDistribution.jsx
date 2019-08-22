@@ -6,6 +6,8 @@ import { getCategoryDistributionForRecord } from '../reducers/record'
 import { getBinnedColors } from '../reducers/summary'
 import CategoryPlotBoundary from './CategoryPlotBoundary'
 import CategoryLegend from './CategoryLegend'
+import { getDatasetID } from '../reducers/location'
+import { ExportButton } from './ExportButton'
 import { scaleLinear as d3scaleLinear } from 'd3-scale';
 import { scaleLog as d3scaleLog } from 'd3-scale';
 
@@ -86,6 +88,14 @@ class CatDistribution extends React.Component {
       score += ' [' + this.state.hover.meta.start.toLocaleString()
       score += '–' + this.state.hover.meta.end.toLocaleString() + ' bp]'
     }
+    let side = 1110
+    let exportButtons = (
+      <span className={styles.download} style={{marginTop:'-1em'}} onClick={(e)=>{e.stopPropagation()}}>
+        <ExportButton view='hits' element='record_plot' prefix={this.props.datasetId+'.'+this.props.data.id+'.hits.'} format='svg'/>
+        <ExportButton view='hits' element='record_plot' prefix={this.props.datasetId+'.'+this.props.data.id+'.hits.'} format='png' size={side}/>
+      </span>
+    )
+
     return (
       <div className={styles.modal_plot_outer}>
         <svg id="record_plot"
@@ -125,6 +135,7 @@ class CatDistribution extends React.Component {
             </g>}
           </g>}
         </svg>
+        {exportButtons}
       </div>
     )
   }
@@ -136,7 +147,8 @@ class CategoryDistribution extends React.Component {
     this.mapStateToProps = state => {
       return {
         data: getCategoryDistributionForRecord(state),
-        colors: getBinnedColors(state)
+        colors: getBinnedColors(state),
+        datasetId: getDatasetID(state)
       }
     }
   }
