@@ -128,6 +128,9 @@ const loadMeta = async function() {
     let defaultMeta = await io.readJSON(filePath+'/default.json');
     if (!defaultMeta && config.use_default) defaultMeta = defaultLinks
     this.meta = await io.readJSON(filePath+'/'+this.id+'/meta.json');
+    if (this.meta.record_type = 'record' && this.meta.assembly.level){
+      this.meta.record_type = this.meta.assembly.level
+    }
     if (defaultMeta){
       Object.keys(defaultMeta).forEach(key=>{
         if (!this.meta.hasOwnProperty(key)){
