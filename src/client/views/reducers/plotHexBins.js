@@ -121,7 +121,7 @@ export const getScatterPlotDataByHexBin = createSelector(
         }
       }
     }
-    return {data,hexes,radius:grid.radius};
+    return {data,hexes,radius:grid.radius,grid};
   }
 )
 
@@ -218,6 +218,11 @@ export const getScatterPlotDataByHexBinByCategory = createSelector(
       data = data.concat(hexArray.sort((a,b)=>b.z - a.z))
 
     })
-    return {data};
+    return {data, grid, zScale};
   }
+)
+
+export const getHexGridScale = createSelector(
+  getScatterPlotDataByHexBinByCategory,
+  (binnedData) => binnedData.zScale
 )

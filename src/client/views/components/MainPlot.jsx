@@ -17,13 +17,17 @@ import PlotParameters from './PlotParameters'
 import PlotTransformLines from './PlotTransformLines'
 import PlotSideBinsSVG from './PlotSideBinsSVG'
 import PlotLegend from './PlotLegend'
+import FigureCaption from './FigureCaption'
 import Pointable from 'react-pointable';
+import { getScatterPlotData } from '../reducers/plotData'
 import { getScatterPlotDataByHexBin,
-  getSelectedHexGrid } from '../reducers/plotHexBins'
+  getSelectedHexGrid,
+  getHexGridScale } from '../reducers/plotHexBins'
 import { getSquareGrid,
   setCoords,
   getScatterPlotDataBySquareBin,
-  getSelectedSquareGrid } from '../reducers/plotSquareBins'
+  getSelectedSquareGrid,
+  getSquareGridScale } from '../reducers/plotSquareBins'
 import { pixel_to_oddr } from '../reducers/hexFunctions'
 import { addRecords, removeRecords } from '../reducers/select'
 import { scaleLinear as d3scaleLinear } from 'd3-scale';
@@ -54,10 +58,12 @@ export default class MainPlot extends React.Component {
             plotGraphics,
             bins: binned.hexes,
             radius: binned.radius,
+            grid: binned.grid,
             data: getSelectedHexGrid(state).data,
             records,
             staticThreshold,
-            nohitThreshold
+            nohitThreshold,
+            zScale: getHexGridScale(state)
           }
         }
         else if (plotShape == 'square') {
@@ -72,7 +78,8 @@ export default class MainPlot extends React.Component {
             grid: binned.grid,
             records,
             staticThreshold,
-            nohitThreshold
+            nohitThreshold,
+            zScale: getSquareGridScale(state)
           }
         }
         if (!getScatterPlotDataBySquareBin(state)) return {}
@@ -83,7 +90,8 @@ export default class MainPlot extends React.Component {
           records,
           circleLimit: getCircleLimit(state),
           staticThreshold,
-          nohitThreshold
+          nohitThreshold,
+          range: getScatterPlotData(state).range
         }
       }
     }
@@ -261,6 +269,7 @@ class PlotBox extends React.Component {
             </svg>
             {exportButtons}
           </div>
+          <FigureCaption {...this.props}/>
           { this.props.records > this.props.circleLimit && this.props.staticThreshold > this.props.records && <NoHitWarning circleLimit={this.props.circleLimit}/> }
         </div>
       )
@@ -353,8 +362,8 @@ class PlotBox extends React.Component {
               </g>
             </svg>
             {exportButtons}
-
           </div>
+          <FigureCaption {...this.props}/>
         </div>
 
       )

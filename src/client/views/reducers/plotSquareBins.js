@@ -243,8 +243,13 @@ export const getScatterPlotDataBySquareBinByCategory = createSelector(
       })
       data = data.concat(squareArray.sort((a,b)=>b.z - a.z))
     })
-    return {data,grid};
+    return {data,grid,zScale};
   }
+)
+
+export const getSquareGridScale = createSelector(
+  getScatterPlotDataBySquareBinByCategory,
+  (binnedData) => binnedData.zScale
 )
 
 export const getBinnedDataByCategoryByAxis = createSelector(

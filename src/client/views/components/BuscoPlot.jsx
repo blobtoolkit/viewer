@@ -30,7 +30,7 @@ class BuscoSets extends React.Component {
       buscos.push(<Busco key={i} id={id}/>)
     })
     return (
-      <div className={styles.fill_parent}>
+      <div className={styles.busco_fill_parent}>
         <BuscoData {...this.props}/>
         {buscos}
       </div>

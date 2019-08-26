@@ -255,6 +255,59 @@ const getAllRawData = createSelector(
   }
 )
 
+export const getAllActiveFilters = createSelector(
+  getAllFilters,
+  getAllFields,
+  getAllRawData,
+  (filters, fields, data) => {
+    let active = []
+    filters.allIds.forEach(id=>{
+      let filter = filters.byId[id]
+      let field = fields[id]
+      let raw = data[id]
+      if (field.active){
+        if (filter.type == 'range' && (filter.range[0] > field.range[0] || filter.range[1] < field.range[1])){
+          if (filter.range[0] > field.range[0] && filter.range[1] < field.range[1]){
+            if (filter.invert){
+              active.push({id,type:'out',range:filter.range})
+            }
+            else {
+              active.push({id,type:'in',range:filter.range})
+            }
+          }
+          else if (filter.range[0] > field.range[0]){
+            if (filter.invert){
+              active.push({id,type:'lt',value:filter.range[0]})
+            }
+            else {
+              active.push({id,type:'gt',value:filter.range[0]})
+            }
+          }
+          else if (filter.range[1] < field.range[1]){
+            if (filter.invert){
+              active.push({id,type:'gt',value:filter.range[1]})
+            }
+            else {
+              active.push({id,type:'lt',value:filter.range[1]})
+            }
+          }
+        }
+        else if (filter.type == 'category' && filter.keys.length > 0){
+          let type = 'cat'
+          if (filter.invert){
+            type = 'nocat'
+          }
+          active.push({id,type,list:filter.keys.map(k=>raw.keys[k])})
+        }
+      }
+
+    })
+    return active
+  }
+)
+
+
+
 export const getActiveSelection = createSelector(
   getAllFields,
   getSelectedRecords,

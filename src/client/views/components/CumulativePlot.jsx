@@ -11,6 +11,7 @@ import AxisTitle from './AxisTitle'
 import { ExportButton } from './ExportButton'
 import { plotPaths, fillParent } from './PlotStyles'
 import { NoBlobWarning } from './NoBlobWarning'
+import FigureCaption from './FigureCaption'
 
 class Cumulative extends React.Component {
   render(){
@@ -58,26 +59,30 @@ class Cumulative extends React.Component {
     }
     return (
       <div className={styles.outer}>
-        <svg id="cumulative_plot"
-          ref={(elem) => { this.svg = elem; }}
-          style={{...fillParent, fontSize:'14px'}}
-          viewBox={viewbox}
-          preserveAspectRatio="xMinYMin">
-          <g transform={'translate(100,10)'} >
-            <CumulativePlotBoundary yValues={yValues} records={records} span={span}/>
-            <path style={plotPaths.axis}
-                  d={all}
-                  fill='none'
-                  stroke='#999'
-                  strokeLinecap='round'/>
-            {paths}
-            {legend}
-            <AxisTitle axis='y' title={yLabel} side={side}/>
-            <AxisTitle axis='x' title={xLabel} side={side}/>
-          </g>
-        </svg>
-        {exportButtons}
+        <div className={styles.fill_parent}>
+          <svg id="cumulative_plot"
+            ref={(elem) => { this.svg = elem; }}
+            className={styles.main_plot+' '+styles.fill_parent}
+            style={{fontSize:'14px'}}
+            viewBox={viewbox}
+            preserveAspectRatio="xMinYMin">
+            <g transform={'translate(100,10)'} >
+              <CumulativePlotBoundary yValues={yValues} records={records} span={span}/>
+              <path style={plotPaths.axis}
+                    d={all}
+                    fill='none'
+                    stroke='#999'
+                    strokeLinecap='round'/>
+              {paths}
+              {legend}
+              <AxisTitle axis='y' title={yLabel} side={side}/>
+              <AxisTitle axis='x' title={xLabel} side={side}/>
+            </g>
+          </svg>
+          {exportButtons}
+        </div>
         {warning}
+        <FigureCaption {...this.props}/>
       </div>
     )
   }

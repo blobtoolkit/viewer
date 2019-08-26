@@ -15,6 +15,7 @@ import { arc as d3Arc } from 'd3-shape';
 import { ExportButton } from './ExportButton'
 import { plotPaths, plotText, fillParent } from './PlotStyles'
 import { CircleAxis } from './CircleAxis'
+import FigureCaption from './FigureCaption'
 
 
 const xScale = d3scaleLinear().range([-425,425])
@@ -184,70 +185,6 @@ class Snail extends React.Component {
 
       let axis = this.props.circular.axes.inner
       let buscoAxis = <CircleAxis radius={200}/>
-      // buscoAxis.push(
-      //   <path style={plotPaths.bold}
-      //         d={axis.path}
-      //         key={'ring'}
-      //         fill='none'
-      //         stroke='black'
-      //         strokeLinecap='round'/>
-      // )
-      // if (axis.ticks){
-      //   axis.ticks.major.forEach((d,idx) => {
-      //     buscoAxis.push(
-      //       <path style={plotPaths.bold}
-      //             d={d}
-      //             key={'major_'+idx}
-      //             fill='none'
-      //             stroke='black'
-      //             strokeLinecap='round'/>
-      //     )
-      //   })
-      //   axis.ticks.minor.forEach((d,idx) => {
-      //     buscoAxis.push(
-      //       <path style={plotPaths.bold}
-      //             d={d}
-      //             key={'minor_'+idx}
-      //             fill='none'
-      //             stroke='black'
-      //             strokeLinecap='round'/>
-      //     )
-      //   })
-      //   if (axis.ticks.labels){
-      //     axis.ticks.labels.forEach((d,idx) => {
-      //       let textAnchor = 'middle'
-      //       let startOffset = '50%'
-      //       let fontSize = d.fontSize ? d.fontSize : '18px'
-      //       if (d.align == 'left'){
-      //         textAnchor = 'left'
-      //         startOffset = 0
-      //       }
-      //       if (d.align == 'right'){
-      //         textAnchor = 'end'
-      //         startOffset = '100%'
-      //       }
-      //       buscoAxis.push(
-      //         <path style={plotPaths.bold}
-      //               d={d.path}
-      //               key={'path_'+idx}
-      //               id={'path_'+idx}
-      //               fill='none'
-      //               stroke='none'/>
-      //       )
-      //       buscoAxis.push(
-      //         <text key={'text_'+idx}
-      //               style={Object.assign({}, plotText.axisLabel, {fontSize:'60px'})}>
-      //           <textPath
-      //               xlinkHref={'#path_'+idx}
-      //               textAnchor={textAnchor}
-      //               startOffset={startOffset}>
-      //             {d.text}
-      //           </textPath>
-      //         </text>
-      //       )
-      //     })
-      //   }
-      // }
 
       topRight = (
         <g transform='translate(10,0)'>
@@ -364,63 +301,67 @@ class Snail extends React.Component {
     )
     return (
       <div className={styles.outer}>
-        <svg id="snail_plot"
-          ref={(elem) => { this.svg = elem; }}
-          style={{...fillParent,fontSize:'14px'}}
-          viewBox={viewbox}
-          preserveAspectRatio="xMinYMin">
-          <g transform={'translate(10,1000)'} >
-            <text style={plotText.snailPlotTitle}>
-              Dataset: {this.props.meta.id}
-            </text>
-          </g>
-          <g transform={'translate(525,550)'} >
-            {paths}
-            {segment}
-          </g>
-          <Pointable
-            tagName='g'
-            onPointerMove={(e)=>{
-              e.preventDefault()
-              let coords = radialCoords(e)
-              this.setState({...coords,overlay:true})
-            }}
-            onPointerLeave={(e)=>{
-              e.preventDefault()
-              this.setState({overlay:false})
-            }}
-            onPointerDown={(e)=>{
-              e.preventDefault()
-              let coords = radialCoords(e)
-              this.setState({...coords,overlay:true})
-            }}
-            onPointerUp={(e)=>{
-              e.preventDefault()
-              this.setState({overlay:false})
-            }}
-            >
-            <circle
-            r={425}
-            cx={520}
-            cy={550}
-            fill='rgba(255,255,255,0)'
-            stroke='none'
-            style={{pointerEvents:'auto',stroke:'none'}} />
-          </Pointable>
-          <g transform={'translate(10,35)'} >
-            {topLeft}
-          </g>
-          <g transform={'translate(10,890)'} >
-            {bottomLeft}
-          </g>
-          <g transform={'translate(850,890)'} >
-            {bottomRight}
-          </g>
-          <g transform={'translate(850,35)'} >
-            {topRight}
-          </g>
-        </svg>
-        {exportButtons}
+        <div className={styles.fill_parent}>
+          <svg id="snail_plot"
+            ref={(elem) => { this.svg = elem; }}
+            className={styles.main_plot+' '+styles.fill_parent}
+            style={{fontSize:'14px'}}
+            viewBox={viewbox}
+            preserveAspectRatio="xMinYMin">
+            <g transform={'translate(10,1000)'} >
+              <text style={plotText.snailPlotTitle}>
+                Dataset: {this.props.meta.id}
+              </text>
+            </g>
+            <g transform={'translate(525,550)'} >
+              {paths}
+              {segment}
+            </g>
+            <Pointable
+              tagName='g'
+              onPointerMove={(e)=>{
+                e.preventDefault()
+                let coords = radialCoords(e)
+                this.setState({...coords,overlay:true})
+              }}
+              onPointerLeave={(e)=>{
+                e.preventDefault()
+                this.setState({overlay:false})
+              }}
+              onPointerDown={(e)=>{
+                e.preventDefault()
+                let coords = radialCoords(e)
+                this.setState({...coords,overlay:true})
+              }}
+              onPointerUp={(e)=>{
+                e.preventDefault()
+                this.setState({overlay:false})
+              }}
+              >
+              <circle
+              r={425}
+              cx={520}
+              cy={550}
+              fill='rgba(255,255,255,0)'
+              stroke='none'
+              style={{pointerEvents:'auto',stroke:'none'}} />
+            </Pointable>
+            <g transform={'translate(10,35)'} >
+              {topLeft}
+            </g>
+            <g transform={'translate(10,890)'} >
+              {bottomLeft}
+            </g>
+            <g transform={'translate(850,890)'} >
+              {bottomRight}
+            </g>
+            <g transform={'translate(850,35)'} >
+              {topRight}
+            </g>
+          </svg>
+          {exportButtons}
+        </div>
+        <FigureCaption {...this.props}/>
       </div>
     )
   }
