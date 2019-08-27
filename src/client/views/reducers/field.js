@@ -5,7 +5,7 @@ import immutableUpdate from 'immutable-update';
 import deep from 'deep-get-set'
 import store from '../store'
 import { getSelectedDatasetMeta } from './dataset'
-import { addFilter, editFilter } from './filter'
+import { addFilter, editFilter, getMetaDataForFilter } from './filter'
 import { getCatAxis } from './plot'
 import { getDimensionsbyDimensionId, setDimension, getPreviewDimensions } from './dimension'
 import * as d3 from 'd3'
@@ -202,14 +202,20 @@ export const clampDomain = (max, clamp, bins) => {
 export const getDetailsForFieldId = createSelectorForFieldId(
   _getFieldIdAsMemoKey,
   getMetaDataForField,
-  (meta = {}) => {
+  getMetaDataForFilter,
+  (meta = {}, filterMeta) => {
+    if (!filterMeta){
+      return {}
+    }
     let range = meta.range || [1,10];
+    let limit = filterMeta.limit || meta.range || [1,10];
+    meta.limit = limit
     let xScale = d3[meta.scale || 'scaleLinear']()
     let active = meta.hasOwnProperty('active') ? meta.active : meta.hasOwnProperty('preload') ? meta.preload : false
-    let domain = range
+    let domain = limit
     xScale.range([0,400])
-    if (meta.clamp){
-      domain = clampDomain(range[1], meta.clamp, 25)
+    if (meta.clamp && meta.clamp > limit[0]){
+      domain = clampDomain(limit[1], meta.clamp, 25)
       // domain = [meta.clamp, range[1]]
       xScale.clamp(true)
     }
@@ -501,7 +507,7 @@ export const getBinsForFieldId = createBinSelectorForFieldId(
         let x = details.xScale
         x.range([0,25])
         let thresh = Array.from(Array(24).keys()).map((n)=>{return x.invert((n+1))});
-        if (details.meta.clamp){
+        if (details.meta.clamp && details.meta.clamp > details.meta.limit[0]){
           bins = histogram(x, thresh.slice(0), data, details.meta.clamp)
         }
         else {

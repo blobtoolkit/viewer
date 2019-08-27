@@ -38,6 +38,8 @@ import {
   getNohitThreshold,
   chooseNohitThreshold } from '../reducers/repository'
 import { chooseView, toggleStatic, getView, getStatic, getDatasetID } from '../reducers/location'
+import { getMainPlotData }  from '../reducers/plotData'
+import { queryToStore } from '../querySync'
 import styles from './Layout.scss'
 import MenuDisplaySet from './MenuDisplaySet'
 import MenuDisplaySimple from './MenuDisplaySimple'
@@ -84,7 +86,8 @@ const DisplayMenu = ({
   onSelectView, onToggleStatic,
   pngResolution, onChangePngResolution,
   staticThreshold, onChangeStaticThreshold,
-  nohitThreshold, onChangeNohitThreshold }) => {
+  nohitThreshold, onChangeNohitThreshold,
+  xMeta, yMeta, onChangeAxisRange }) => {
   let context
   view = view || 'blob'
   let blob
@@ -147,6 +150,18 @@ const DisplayMenu = ({
             <span className={styles.middle}>2.0</span>
           </div>
 
+        </MenuDisplaySimple>
+        <MenuDisplaySimple name='x-axis range'>
+          <div className={styles.full_height}>
+            <NumericInput initialValue={xMeta.limit[0]} onChange={(value)=>onChangeAxisRange({[xMeta.id+'--LimitMin']:value,[xMeta.id+'--Min']:value})}/>
+            <NumericInput initialValue={xMeta.limit[1]} onChange={(value)=>onChangeAxisRange({[xMeta.id+'--LimitMax']:value,[xMeta.id+'--Max']:value})}/>
+          </div>
+        </MenuDisplaySimple>
+        <MenuDisplaySimple name='y-axis range'>
+          <div className={styles.full_height}>
+            <NumericInput initialValue={yMeta.limit[0]} onChange={(value)=>onChangeAxisRange({[yMeta.id+'--LimitMin']:value,[yMeta.id+'--Min']:value})}/>
+            <NumericInput initialValue={yMeta.limit[1]} onChange={(value)=>onChangeAxisRange({[yMeta.id+'--LimitMax']:value,[yMeta.id+'--Max']:value})}/>
+          </div>
         </MenuDisplaySimple>
         {shape == 'circle' && <MenuDisplaySimple name='plot graphics'>
           <div className={styles.full_height}>
@@ -343,11 +358,13 @@ class MenuDisplayMain extends React.Component {
         onSelectCurveOrigin: origin => dispatch(chooseCurveOrigin(origin)),
         onSelectScaleTo: origin => dispatch(chooseScaleTo(origin)),
         onSelectSnailOrigin: origin => dispatch(chooseSnailOrigin(origin)),
-        onChangeTransform: object => dispatch(setTransformFunction(object))
+        onChangeTransform: object => dispatch(setTransformFunction(object)),
+        onChangeAxisRange: (values,remove) => dispatch(queryToStore({values,remove,action:'FILTER'}))
       }
     }
 
     this.mapStateToProps = (state, props) => {
+      let data = getMainPlotData(state) || {}
       return {
         title:getAxisTitle(state,'z'),
         records:getRecordCount(state),
@@ -370,7 +387,9 @@ class MenuDisplayMain extends React.Component {
         isStatic: getStatic(state),
         datasetId: getDatasetID(state),
         hasStatic: getStaticFields(state),
-        busco: getBuscoSets(state)
+        busco: getBuscoSets(state),
+        xMeta: data.meta ? data.meta.x.meta : {limit:[0,1]},
+        yMeta: data.meta ? data.meta.y.meta : {limit:[0,1]}
       }
     }
   }

@@ -99,7 +99,7 @@ export const getFilteredBarsForFieldId = createFilteredBarSelectorForFieldId(
       if (details.meta.type == 'variable'){
         x.range([0,25])
         let thresh = Array.from(Array(24).keys()).map((n)=>{return x.invert((n+1))});
-        if (details.meta.clamp){
+        if (details.meta.clamp && details.meta.clamp > details.meta.limit[0]){
           bins = histogram(x, thresh.slice(0), data.values, details.meta.clamp)
         }
         else {

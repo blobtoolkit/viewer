@@ -47,7 +47,7 @@ class RangeDataPreview extends React.Component {
 
   render() {
     let divider
-    if (this.props.meta.clamp){
+    if (this.props.meta.clamp && this.props.meta.limit[0] < this.props.meta.clamp){
       divider = <line className={styles.clamped_divider}
                       x1={25} x2={25} y1={0} y2={106.67}/>
     }

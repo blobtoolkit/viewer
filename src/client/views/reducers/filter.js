@@ -31,6 +31,21 @@ export const filters = handleActions(
     EDIT_FILTER: (state, action) => {
       let id = action.payload.id
       let fields = Object.keys(action.payload).filter((key)=>{return key != 'id'})
+      let limit = []
+      if (state.byId[id] && action.payload.limit){
+        if (action.payload.limit.length == 1){
+          limit[0] = isNumeric(action.payload.limit[0]) ? action.payload.limit[0] : Number.NEGATIVE_INFINITY
+          limit[1] = state.byId[id] ? state.byId[id].limit[1] : Number.POSITIVE_INFINITY
+        }
+        else if (typeof action.payload.limit[0] == 'undefined'){
+          limit[0] = state.byId[id] ? state.byId[id].limit[0] : Number.NEGATIVE_INFINITY
+          limit[1] = isNumeric(action.payload.limit[1]) ? action.payload.limit[1] : Number.POSITIVE_INFINITY
+        }
+        else {
+          limit = action.payload.limit.slice()
+        }
+        action.payload.limit = limit
+      }
       if (state.byId[id] && action.payload.range){
         let range = []
         if (action.payload.range.length == 1){
@@ -45,11 +60,17 @@ export const filters = handleActions(
           range = action.payload.range.slice()
         }
         if (range.length > 0){
-          let limit = action.payload.limit || (state.byId[id] ? (state.byId[id].limit || state.byId[id].range) : range).slice()
+          if (limit.length == 0){
+            limit = (state.byId[id] ? (state.byId[id].limit || state.byId[id].range) : range).slice()
+            if (state.byId[id] && action.payload.limit){
+              action.payload.limit = limit
+            }
+          }
           action.payload.range[0] = Math.max(range[0],limit[0])
           action.payload.range[1] = Math.min(range[1],limit[1])
         }
       }
+
       return immutableUpdate(state, {
         byId: {
           [id]: Object.assign(...fields.map(f => ({[f]: action.payload[f]})))
@@ -241,6 +262,12 @@ const getAllFilters = createSelector(
   }
 )
 
+const createSelectorForFilterId = byIdSelectorCreator();
+
+const _getFilterIdAsMemoKey = (state, filterId) => filterId;
+export const getMetaDataForFilter = (state, filterId) => state.filters ? state.filters.byId[filterId] : {};
+
+
 const getAllFields = createSelector(
   (state) => state.fields ? state.fields.byId : {},
   fields => {
@@ -266,8 +293,8 @@ export const getAllActiveFilters = createSelector(
       let field = fields[id]
       let raw = data[id]
       if (field.active){
-        if (filter.type == 'range' && (filter.range[0] > field.range[0] || filter.range[1] < field.range[1])){
-          if (filter.range[0] > field.range[0] && filter.range[1] < field.range[1]){
+        if (filter.type == 'range' && (filter.range[0] > filter.limit[0] || filter.range[1] < filter.limit[1])){
+          if (filter.range[0] > filter.limit[0] && filter.range[1] < filter.limit[1]){
             if (filter.invert){
               active.push({id,type:'out',range:filter.range})
             }
@@ -275,7 +302,7 @@ export const getAllActiveFilters = createSelector(
               active.push({id,type:'in',range:filter.range})
             }
           }
-          else if (filter.range[0] > field.range[0]){
+          else if (filter.range[0] > filter.limit[0]){
             if (filter.invert){
               active.push({id,type:'lt',value:filter.range[0]})
             }
@@ -283,7 +310,7 @@ export const getAllActiveFilters = createSelector(
               active.push({id,type:'gt',value:filter.range[0]})
             }
           }
-          else if (filter.range[1] < field.range[1]){
+          else if (filter.range[1] < filter.limit[1]){
             if (filter.invert){
               active.push({id,type:'gt',value:filter.range[1]})
             }

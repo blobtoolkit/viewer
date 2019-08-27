@@ -17,7 +17,7 @@ class FilterControlRange extends React.Component {
   }
   render() {
     let clamp
-    if (this.props.meta.clamp && this.props.meta.clamp > 0){
+    if (this.props.meta.clamp && this.props.meta.clamp > 0 && this.props.meta.limit[0] < this.props.meta.clamp){
        clamp = (
          <input
            type='number'

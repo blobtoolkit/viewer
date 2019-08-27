@@ -172,8 +172,8 @@ export const getAllMainPlotData = createSelector(
     if (xmax){
       xDomain[1] = 1*xmax
     }
-    if (xMeta.meta.clamp){
-      xDomain = clampDomain(xMeta.range[1], xMeta.meta.clamp, 25)
+    if (xMeta.meta.clamp && xMeta.meta.clamp > xMeta.meta.limit[0]){
+      xDomain = clampDomain(xMeta.meta.limit[1], xMeta.meta.clamp, 25)
       xMeta.xScale.clamp(true)
     }
     xMeta.xScale.domain(xDomain)
@@ -189,8 +189,8 @@ export const getAllMainPlotData = createSelector(
     if (ymax){
       yDomain[1] = 1*ymax
     }
-    if (yMeta.meta.clamp){
-      yDomain = clampDomain(yMeta.range[1], yMeta.meta.clamp, 25)
+    if (yMeta.meta.clamp && yMeta.meta.clamp > yMeta.meta.limit[0]){
+      yDomain = clampDomain(yMeta.meta.limit[1], yMeta.meta.clamp, 25)
       // domain = [meta.clamp, range[1]]
       yMeta.xScale.clamp(true)
     }
@@ -229,9 +229,15 @@ export const getAllScatterPlotData = createSelector(
     })
     let len = plotData.axes.x.values.length
     let yClamp = plotData.meta.y.meta.clamp || Number.NEGATIVE_INFINITY
-    let yMin = plotData.meta.y.range[0]
+    let yMin = plotData.meta.y.meta.limit[0]
+    if (yClamp < yMin){
+      yClamp = Number.NEGATIVE_INFINITY
+    }
     let xClamp = plotData.meta.x.meta.clamp || Number.NEGATIVE_INFINITY
-    let xMin = plotData.meta.x.range[0]
+    let xMin = plotData.meta.x.meta.limit[0]
+    if (xClamp < xMin){
+      xClamp = Number.NEGATIVE_INFINITY
+    }
     for (let i = 0; i < len; i++){
       let y = plotData.axes.y.values[i]
       y = y < yClamp ? scales.y(yMin) : scales.y(y)
@@ -279,8 +285,14 @@ export const getScatterPlotData = createSelector(
               )
     let yClamp = plotData.meta.y.meta.clamp || Number.NEGATIVE_INFINITY
     let yMin = plotData.meta.y.range[0]
+    if (yClamp < yMin){
+      yClamp = Number.NEGATIVE_INFINITY
+    }
     let xClamp = plotData.meta.x.meta.clamp || Number.NEGATIVE_INFINITY
     let xMin = plotData.meta.x.range[0]
+    if (xClamp < xMin){
+      xClamp = Number.NEGATIVE_INFINITY
+    }
     for (let i = 0; i < len; i++){
       let y = plotData.axes.y.values[i]
       y = y < yClamp ? scales.y(yMin) : scales.y(y)

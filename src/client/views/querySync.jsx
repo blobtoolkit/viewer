@@ -170,7 +170,13 @@ const mapDispatchToQuery = (
             if (!keyed(byId[val.field],'range')){
               byId[val.field].range = []
             }
-            byId[val.field].range[val.index == 'min' ? 0 : 1] = val.value
+            byId[val.field].range[val.index == 'min' ? 0 : 1] = val.value*1
+          }
+          else if (val.index.match(/(lin|lax)/)){
+            if (!keyed(byId[val.field],'limit')){
+              byId[val.field].limit = []
+            }
+            byId[val.field].limit[val.index == 'lin' ? 0 : 1] = val.value*1
           }
           else {
             byId[val.field][val.index] = val.value
@@ -296,10 +302,10 @@ const mapDispatchToQuery = (
       array: (k,v) => ({key:'field',index:'clamp',...v})
     },
     LimitMax: {
-      array: (k,v) => ({key:'field',index:'max',...v}),
+      array: (k,v) => ({key:'filter',index:'lax',...v}),
     },
     LimitMin: {
-      array: (k,v) => ({key:'field',index:'min',...v}),
+      array: (k,v) => ({key:'filter',index:'lin',...v}),
     },
     Keys: {
       array: (k,v) => ({key:'filter',field:v.field,index:'keys',value:(v.value ? v.value.split(',').map(x=>x*1) : [])}),

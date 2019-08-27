@@ -66,7 +66,7 @@ const PlotOutline = (data) => {
   }
   xScale.range([50,950])
   let xBreak, xBreakAxis
-  if (data.meta.x.meta.clamp){
+  if (data.meta.x.meta.clamp && data.meta.x.meta.clamp > data.meta.x.meta.limit[0]){
     let scale = d3scaleLinear()
                 .range([50, 86])
                 .domain([0, data.meta.x.meta.clamp])
@@ -97,7 +97,7 @@ const PlotOutline = (data) => {
   }
   yScale.range([950,50])
   let yBreak, yBreakAxis
-  if (data.meta.y.meta.clamp){
+  if (data.meta.y.meta.clamp && data.meta.y.meta.clamp > data.meta.y.meta.limit[0]){
     let scale = d3scaleLinear()
                 .range([950, 914])
                 .domain([0, data.meta.y.meta.clamp])
