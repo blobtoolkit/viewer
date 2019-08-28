@@ -234,8 +234,12 @@
   }
 }
 
-.reset {
+span.reset {
   color: $lightColor;
   margin-left:0.5em;
   cursor:pointer;
+}
+div.reset {
+  position:absolute;
+  top:-2em;
 }

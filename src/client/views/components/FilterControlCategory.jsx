@@ -64,23 +64,62 @@ class FilterControlCategory extends React.Component {
 
 
 class ControlCategory extends React.Component {
-   render() {
-     let bins = this.props.bins.map((b,i) => {
-       let css = styles.category_toggle;
-       css += b.toggled == true ? ' '+styles.toggled : ''
-       return (
-         <span key={i}
-           className={css}
-           rel={this.props.plot.cat}
-           style={{backgroundColor:b.color}}
-           onClick={()=>this.props.onToggleBin(i,b.keys,this.props.filter)}>
-           &nbsp;
-         </span>
-       )
-     })
-     return (
+  resetInvert(){
+    let values = {}
+    values[this.props.filterId+'--Inv'] = false
+    let remove = [
+      this.props.filterId+'--Inv'
+    ]
+    remove.forEach(key=>{
+      delete this.props.parsed[key]
+    })
+    this.props.onChangeAxisRange(values, remove)
+    this.props.changeQueryParams(this.props.parsed)
+  }
+  resetToggled(){
+    let values = {}
+    values[this.props.filterId+'--Keys'] = ''
+    let remove = [
+      this.props.filterId+'--Keys'
+    ]
+    remove.forEach(key=>{
+      delete this.props.parsed[key]
+    })
+    this.props.onChangeAxisRange(values, remove)
+    this.props.changeQueryParams(this.props.parsed)
+  }
+
+  render() {
+    let bins = this.props.bins.map((b,i) => {
+      let css = styles.category_toggle;
+      css += b.toggled == true ? ' '+styles.toggled : ''
+      return (
+        <span key={i}
+          className={css}
+          rel={this.props.plot.cat}
+          style={{backgroundColor:b.color}}
+          onClick={()=>this.props.onToggleBin(i,b.keys,this.props.filter)}>
+          &nbsp;
+        </span>
+      )
+    })
+    let reset
+    if (this.props.invert ||
+        (this.props.toggled.length > 0 && this.props.toggled.includes(true))){
+      reset = (<div className={styles.reset}>
+                <span className={styles.reset}
+                  onClick={()=>{
+                    this.resetInvert()
+                    this.resetToggled()
+                  }}>
+                  reset
+                </span>
+              </div>)
+    }
+    return (
       <div className={styles.inside} data-tip data-for='category-toggle'>
         {bins}
+        {reset}
       </div>
     )
   }

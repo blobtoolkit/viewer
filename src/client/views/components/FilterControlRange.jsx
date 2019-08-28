@@ -48,19 +48,57 @@ class FilterControlRange extends React.Component {
     this.props.onUpdateRange(this.props.filterId,range,index)
   }
 
+  resetInvert(){
+    let values = {}
+    values[this.props.filterId+'--Inv'] = false
+    let remove = [
+      this.props.filterId+'--Inv'
+    ]
+    remove.forEach(key=>{
+      delete this.props.parsed[key]
+    })
+    this.props.onChangeAxisRange(values, remove)
+    this.props.changeQueryParams(this.props.parsed)
+  }
+
+  resetLimits() {
+    let values = {}
+    values[this.props.filterId+'--LimitMin'] = this.props.range[0]
+    values[this.props.filterId+'--Min'] = this.props.range[0]
+    values[this.props.filterId+'--LimitMax'] = this.props.range[1]
+    values[this.props.filterId+'--Max'] = this.props.range[1]
+    let remove = [
+      this.props.filterId+'--LimitMin',
+      this.props.filterId+'--Min',
+      this.props.filterId+'--LimitMax',
+      this.props.filterId+'--Max'
+    ]
+    remove.forEach(key=>{
+      delete this.props.parsed[key]
+    })
+    this.props.onChangeAxisRange(values, remove)
+    this.props.changeQueryParams(this.props.parsed)
+  }
+
   render() {
     let reset
-    if (this.props.filterRange[0] != this.props.fieldLimit[0] || this.props.filterRange[1] != this.props.fieldLimit[1]){
+    let resetBounds
+    if (this.props.filterRange[0] != this.props.fieldLimit[0]
+        || this.props.filterRange[1] != this.props.fieldLimit[1]
+        || this.props.invert){
       reset = (<span className={styles.reset}
-                onClick={()=>{this.updateRange(this.props.fieldLimit[0]*1-1,0); this.updateRange(this.props.fieldLimit[1]*1+1,1)}}>
+                onClick={()=>{
+                  this.updateRange(this.props.fieldLimit[0]*1-1,0);
+                  this.updateRange(this.props.fieldLimit[1]*1+1,1);
+                  this.resetInvert();
+                }}>
                  reset
                </span>)
     }
-    let resetBounds
-    if (this.props.filterRange[0] != this.props.fieldLimit[0] || this.props.filterRange[1] != this.props.fieldLimit[1]){
-      reset = (<span className={styles.reset}
-                onClick={()=>{this.updateRange(this.props.fieldLimit[0]*1-1,0); this.updateRange(this.props.fieldLimit[1]*1+1,1)}}>
-                 reset
+    else if (this.props.range[0] != this.props.fieldLimit[0] || this.props.range[1] != this.props.fieldLimit[1]){
+      resetBounds = (<span className={styles.reset}
+                onClick={()=>{this.resetLimits(this.props)}}>
+                 reset range
                </span>)
     }
     let clamp

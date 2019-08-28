@@ -5,7 +5,7 @@ import { connect } from 'react-redux'
 import { editFilter } from '../reducers/filter'
 import { getDetailsForFilterId } from '../reducers/preview'
 import { queryToStore } from '../querySync'
-import { getDatasetID } from '../reducers/location'
+import { getDatasetID, getParsedQueryString, setQueryString } from '../reducers/location'
 
 class Filter extends React.Component {
   constructor(props) {
@@ -14,6 +14,7 @@ class Filter extends React.Component {
       return (state, props) => {
         let details = getDetailsForFilterId(state, props.filterId)
         details.datasetId = getDatasetID(state)
+        details.parsed = getParsedQueryString(state)
         // return Object.assign({details}, ...{datasetId})
         return details
       }
@@ -42,7 +43,9 @@ class Filter extends React.Component {
           let remove = []
           values[id+'--Clamp'] = value
           dispatch(queryToStore({values,remove,action:'FIELD'}))
-        }
+        },
+        onChangeAxisRange: (values, remove) => dispatch(queryToStore({values,remove,action:'FILTER'})),
+        changeQueryParams: (obj) => dispatch(setQueryString(Object.keys(obj).map(k=>`${k}=${obj[k]}`).join('&')))
       }
     }
   }
