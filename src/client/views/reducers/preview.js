@@ -40,6 +40,7 @@ export const getDetailsForFilterId = createSelectorForFilterId(
       if (isNaN(obj.filterRange[0])) obj.filterRange[0] = 0
       if (isNaN(obj.filterRange[1])) obj.filterRange[1] = 10
       obj.filterLimit = range
+      obj.fieldLimit = fieldMeta.meta.limit || range
       obj.xScale = fieldMeta.xScale
     }
     if (fieldMeta.meta.type == 'category'){
