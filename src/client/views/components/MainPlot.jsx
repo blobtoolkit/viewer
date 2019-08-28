@@ -43,54 +43,43 @@ export default class MainPlot extends React.Component {
     super(props);
     this.mapStateToProps = () => {
       return (state, props) => {
+        if (!getScatterPlotDataBySquareBin(state)) return {}
         let plotShape = getPlotShape(state)
-        let plotGraphics = getPlotGraphics(state)
-        let datasetId = getDatasetID(state)
-        let records = getRecordCount(state)
-        let staticThreshold = getStaticThreshold(state)
-        let nohitThreshold = getNohitThreshold(state)
         if (plotShape == 'hex'){
-          let binned = getScatterPlotDataByHexBin(state)
-          if (!binned) return {}
+          if (!getScatterPlotDataByHexBin(state)) return {}
           return {
-            datasetId,
-            plotShape,
-            plotGraphics,
-            bins: binned.hexes,
-            radius: binned.radius,
-            grid: binned.grid,
+            datasetId: getDatasetID(state),
+            plotShape: getPlotShape(state),
+            plotGraphics: getPlotGraphics(state),
+            binned: getScatterPlotDataByHexBin(state),
             data: getSelectedHexGrid(state).data,
-            records,
-            staticThreshold,
-            nohitThreshold,
+            records: getRecordCount(state),
+            staticThreshold: getStaticThreshold(state),
+            nohitThreshold: getNohitThreshold(state),
             zScale: getHexGridScale(state)
           }
         }
         else if (plotShape == 'square') {
-          let binned = getScatterPlotDataBySquareBin(state)
-          if (!binned) return {}
           return {
-            datasetId,
-            plotShape,
-            plotGraphics,
-            bins: binned.squares,
+            datasetId: getDatasetID(state),
+            plotShape: getPlotShape(state),
+            plotGraphics: getPlotGraphics(state),
+            binned: getScatterPlotDataBySquareBin(state),
             data: getSelectedSquareGrid(state).data,
-            grid: binned.grid,
-            records,
-            staticThreshold,
-            nohitThreshold,
+            records: getRecordCount(state),
+            staticThreshold: getStaticThreshold(state),
+            nohitThreshold: getNohitThreshold(state),
             zScale: getSquareGridScale(state)
           }
         }
-        if (!getScatterPlotDataBySquareBin(state)) return {}
         return {
-          datasetId,
-          plotShape,
-          plotGraphics,
-          records,
+          datasetId: getDatasetID(state),
+          plotShape: getPlotShape(state),
+          plotGraphics: getPlotGraphics(state),
+          records: getRecordCount(state),
           circleLimit: getCircleLimit(state),
-          staticThreshold,
-          nohitThreshold,
+          staticThreshold: getStaticThreshold(state),
+          nohitThreshold: getNohitThreshold(state),
           range: getScatterPlotData(state).range
         }
       }
@@ -156,8 +145,8 @@ class PlotBox extends React.Component {
   getHexByPixel(x,y,radius){
     let oddr = pixel_to_oddr(x,y,radius)
     let hex
-    if (this.props.bins[oddr.i] && this.props.bins[oddr.i][oddr.j]){
-      hex = this.props.bins[oddr.i][oddr.j]
+    if (this.props.binned.bins[oddr.i] && this.props.binned.bins[oddr.i][oddr.j]){
+      hex = this.props.binned.bins[oddr.i][oddr.j]
     }
     else {
       hex = {id:null,ids:[]}
@@ -168,8 +157,8 @@ class PlotBox extends React.Component {
   getBinByPixel(xy,grid){
     let bin
     let coords = setCoords(xy,grid)
-    if (this.props.bins[coords[0]] && this.props.bins[coords[0]][coords[1]]){
-      bin = this.props.bins[coords[0]][coords[1]]
+    if (this.props.binned.bins[coords[0]] && this.props.binned.bins[coords[0]][coords[1]]){
+      bin = this.props.binned.bins[coords[0]][coords[1]]
     }
     else {
       bin = {id:null,ids:[]}
@@ -186,6 +175,9 @@ class PlotBox extends React.Component {
       return true
     }
     else if (this.props.circleLimit != nextProps.circleLimit){
+      return true
+    }
+    else if (this.props.binned.data.length == 0){
       return true
     }
     return false
@@ -300,10 +292,10 @@ class PlotBox extends React.Component {
                       if (Math.floor(coords.x) % 2 == 0){
                         let bin
                         if (this.props.plotShape == 'hex'){
-                          bin = this.getHexByPixel(coords.x,coords.y,this.props.radius)
+                          bin = this.getHexByPixel(coords.x,coords.y,this.props.binned.radius)
                         }
                         else {
-                          bin = this.getBinByPixel(coords,this.props.grid)
+                          bin = this.getBinByPixel(coords,this.props.binned.grid)
                         }
                         if (!bins[bin.id] && this.state.addRecords){
                           bins[bin.id] = true;
@@ -328,10 +320,10 @@ class PlotBox extends React.Component {
                     let coords = relativeCoords(e)
                     let bin
                     if (this.props.plotShape == 'hex'){
-                      bin = this.getHexByPixel(coords.x,coords.y,this.props.radius)
+                      bin = this.getHexByPixel(coords.x,coords.y,this.props.binned.radius)
                     }
                     else {
-                      bin = this.getBinByPixel(coords,this.props.grid)
+                      bin = this.getBinByPixel(coords,this.props.binned.grid)
                     }
                     let index = this.props.data.findIndex(d => d.id == bin.id)
                     if (this.props.data[index] && this.props.data[index].selected == 0){

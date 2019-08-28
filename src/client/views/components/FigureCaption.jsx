@@ -92,7 +92,7 @@ class Caption extends Component {
       title = `${plot} plot of ${yaxis} against ${xaxis} for ${record}s in assembly ${this.props.datasetName}. `
       caption = `${this.capitalise(record)}s are coloured by ${cat}`
       if (this.props.plotShape != 'circle'){
-        caption += ` and binned at a resolution of ${this.props.grid.res} divisions on each axis`
+        caption += ` and binned at a resolution of ${this.props.binned.grid.res} divisions on each axis`
         caption += `. Coloured ${shape}s within each bin are sized in proportion to the ${reducer} of individual ${record} ${z}s `
       }
       else {
@@ -100,7 +100,7 @@ class Caption extends Component {
       }
       caption += `on a ${scale} scale,
                   ranging from ${range[0]} to ${range[1]}. `
-      caption += `Histograms show the distribution of ${reducer} ${record} ${z}s along each axis. `
+      caption += `Histograms show the distribution of ${record} ${z} ${reducer} along each axis. `
 
     }
     else if (this.props.view == 'cumulative') {
@@ -182,7 +182,7 @@ class Caption extends Component {
         return name
       })
       if (filters.length > 1){
-        caption += `${filters.slice(0, -1).join('; ')} or ${filters.slice(-1)}. `
+        caption += `${filters.slice(0, -1).join('; ')}; or ${filters.slice(-1)}. `
       }
       else {
         caption += `${filters.join('; or ')}. `

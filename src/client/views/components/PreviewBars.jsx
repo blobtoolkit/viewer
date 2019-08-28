@@ -3,7 +3,6 @@ import PreviewBar from './PreviewBar'
 
 const PreviewBars = ({ bars, barcss }) => {
   if (bars) {
-    console.log(bars)
     return (
         <g>
           {bars.map(bar =>

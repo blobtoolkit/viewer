@@ -34,7 +34,11 @@ export const getDetailsForFilterId = createSelectorForFilterId(
       obj.filterType = 'range'
       let range = fieldMeta.range ? fieldMeta.range.slice(0) : [1,10]
       range = [1*getQueryValue('min'+filterMeta.id) || range[0],1*getQueryValue('max'+filterMeta.id) || range[1]]
+      if (isNaN(range[0])) range[0] = 0
+      if (isNaN(range[1])) range[1] = 10
       obj.filterRange = filterMeta.range ? filterMeta.range.slice(0) : range
+      if (isNaN(obj.filterRange[0])) obj.filterRange[0] = 0
+      if (isNaN(obj.filterRange[1])) obj.filterRange[1] = 10
       obj.filterLimit = range
       obj.xScale = fieldMeta.xScale
     }

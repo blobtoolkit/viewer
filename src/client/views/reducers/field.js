@@ -209,6 +209,8 @@ export const getDetailsForFieldId = createSelectorForFieldId(
     }
     let range = meta.range || [1,10];
     let limit = filterMeta.limit || meta.range || [1,10];
+    if (isNaN(limit[0])) limit[0] = range[0]
+    if (isNaN(limit[1])) limit[1] = range[1]
     meta.limit = limit
     let xScale = d3[meta.scale || 'scaleLinear']()
     let active = meta.hasOwnProperty('active') ? meta.active : meta.hasOwnProperty('preload') ? meta.preload : false

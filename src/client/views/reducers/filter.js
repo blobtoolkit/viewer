@@ -58,6 +58,8 @@ export const filters = handleActions(
         }
         else {
           range = action.payload.range.slice()
+          if (isNaN(range[0])) range[0] = state.byId[id] ? state.byId[id].range[0] : Number.NEGATIVE_INFINITY
+          if (isNaN(range[1])) range[1] = state.byId[id] ? state.byId[id].range[1] : Number.NEGATIVE_INFINITY
         }
         if (range.length > 0){
           if (limit.length == 0){
@@ -293,8 +295,8 @@ export const getAllActiveFilters = createSelector(
       let field = fields[id]
       let raw = data[id]
       if (field.active){
-        if (filter.type == 'range' && (filter.range[0] > filter.limit[0] || filter.range[1] < filter.limit[1])){
-          if (filter.range[0] > filter.limit[0] && filter.range[1] < filter.limit[1]){
+        if (filter.type == 'range' && (filter.range[0] > field.range[0] || filter.range[1] < field.range[1])){
+          if (filter.range[0] > field.range[0] && filter.range[1] < field.range[1]){
             if (filter.invert){
               active.push({id,type:'out',range:filter.range})
             }
@@ -302,7 +304,7 @@ export const getAllActiveFilters = createSelector(
               active.push({id,type:'in',range:filter.range})
             }
           }
-          else if (filter.range[0] > filter.limit[0]){
+          else if (filter.range[0] > field.range[0]){
             if (filter.invert){
               active.push({id,type:'lt',value:filter.range[0]})
             }
@@ -310,7 +312,7 @@ export const getAllActiveFilters = createSelector(
               active.push({id,type:'gt',value:filter.range[0]})
             }
           }
-          else if (filter.range[1] < filter.limit[1]){
+          else if (filter.range[1] < field.range[1]){
             if (filter.invert){
               active.push({id,type:'gt',value:filter.range[1]})
             }
@@ -391,6 +393,8 @@ export const getFilteredList = createSelector(
           if (filters.byId[id].type == 'range'){
             let range = filters.byId[id].range
             let limit = fields[id].range
+            if (isNaN(range[0])) range[0] = limit[0]
+            if (isNaN(range[1])) range[1] = limit[1]
             if (!shallow(range,limit)){
               list = filterRangeToList(range[0],range[1],data[id].values,list,filters.byId[id].invert)
             }

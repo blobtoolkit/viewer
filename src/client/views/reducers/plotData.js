@@ -240,18 +240,22 @@ export const getAllScatterPlotData = createSelector(
     }
     for (let i = 0; i < len; i++){
       let y = plotData.axes.y.values[i]
-      y = y < yClamp ? scales.y(yMin) : scales.y(y)
       let x = plotData.axes.x.values[i]
-      x = x < xClamp ? scales.x(xMin) : scales.x(x)
-      if (transform) [x,y] = transform([x,y])
-      data.push({
-        id:i,
-        x: x,
-        y: 900 - y,
-        z: plotData.axes.z.values[i]
-      })
+      if (x >= plotData.meta.x.meta.limit[0] && x <= plotData.meta.x.meta.limit[1]
+          && y >= plotData.meta.y.meta.limit[0] && y <= plotData.meta.y.meta.limit[1]){
+        y = y < yClamp ? scales.y(yMin) : scales.y(y)
+        x = x < xClamp ? scales.x(xMin) : scales.x(x)
+        if (transform) [x,y] = transform([x,y])
+        data.push({
+          id:i,
+          x: x,
+          y: 900 - y,
+          z: plotData.axes.z.values[i]
+        })
+      }
+
     }
-    return {data};
+    return {data}
   }
 )
 
@@ -284,12 +288,12 @@ export const getScatterPlotData = createSelector(
                 plotData.axes.z.values.length
               )
     let yClamp = plotData.meta.y.meta.clamp || Number.NEGATIVE_INFINITY
-    let yMin = plotData.meta.y.range[0]
+    let yMin = plotData.meta.y.meta.limit[0]
     if (yClamp < yMin){
       yClamp = Number.NEGATIVE_INFINITY
     }
     let xClamp = plotData.meta.x.meta.clamp || Number.NEGATIVE_INFINITY
-    let xMin = plotData.meta.x.range[0]
+    let xMin = plotData.meta.x.meta.limit[0]
     if (xClamp < xMin){
       xClamp = Number.NEGATIVE_INFINITY
     }
