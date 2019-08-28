@@ -266,7 +266,16 @@ export const loadDataset = (id,clear) => {
       Promise.all(addAllFields(dispatch,meta.fields,1,meta,plot,false))
       .then(()=>{
         if (window.firstLoad || clear){
-          dispatch(queryToStore({values:qs.parse(getQueryString(state))}))
+          let values = qs.parse(getQueryString(state))
+          Object.keys(values).forEach(key=>{
+            if (key.match('--LimitMax')){
+              let k = key.replace('--Limit','--')
+              if (!values.hasOwnProperty(k)){
+                values[k] = values[key]
+              }
+            }
+          })
+          dispatch(queryToStore({values}))
           window.firstLoad = false
           dispatch(filterToList())
         }

@@ -56,6 +56,13 @@ class FilterControlRange extends React.Component {
                  reset
                </span>)
     }
+    let resetBounds
+    if (this.props.filterRange[0] != this.props.fieldLimit[0] || this.props.filterRange[1] != this.props.fieldLimit[1]){
+      reset = (<span className={styles.reset}
+                onClick={()=>{this.updateRange(this.props.fieldLimit[0]*1-1,0); this.updateRange(this.props.fieldLimit[1]*1+1,1)}}>
+                 reset
+               </span>)
+    }
     let clamp
     if (this.props.meta.clamp && this.props.meta.clamp > 0 && this.props.meta.limit[0] < this.props.meta.clamp){
        clamp = (
@@ -161,6 +168,7 @@ class FilterControlRange extends React.Component {
             }
             data-tip data-for='range-input' />
           {reset}
+          {resetBounds}
         </div>
       </div>
     )
