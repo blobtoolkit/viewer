@@ -58,7 +58,10 @@ class TabbedFraction extends React.Component {
       <tr onDragEnter={(e)=>this.handleDragEnter(e,title)}
           onDragLeave={(e)=>this.handleDragLeave(e,title)}
           onDragOver={(e)=>{e.preventDefault()}}
-          onDrop={(e)=>{e.preventDefault()}}>
+          onDrop={(e)=>{e.preventDefault()}}
+          draggable={true}
+          onDrag={(e)=>this.props.handleDragStart(e,title)}
+          onDragEnd={(e)=>this.props.handleDragEnd(e)}>
         <td style={style}>
           <span
             className={css}
@@ -129,20 +132,31 @@ class MenuSummary extends React.Component {
     let values = {}
     let taxa = []
     let list
+    bins = bins.slice(0)
     let param = `${this.props.catAxis}--Order`
     let current = this.props.parsed[param]
     if (current){
       let arr = current.split(',')
+      let index = arr.indexOf(state.source)
+      if (index > -1){
+        arr.splice(index,1)
+      }
       if (arr.length >= state.target){
         arr.splice(state.target,0,state.source)
+        if (index > -1){
+          arr.splice(index,1)
+        }
         list = arr.join(',')
       }
     }
     if (!list) {
+      let index = bins.findIndex(o=>o.id==state.source)
       for (let i=0; i < state.target; i++){
-        taxa.push(bins[i].id)
-        list = `${taxa.join(',')},${state.source}`
+        if (i != index){
+          taxa.push(bins[i].id)
+        }
       }
+      list = `${taxa.join(',')},${state.source}`
     }
     values[param] = list
     this.props.onChangeOrder(values,[])
@@ -169,14 +183,25 @@ class MenuSummary extends React.Component {
         let total = values.counts.binned[i]
         if (total){
           counts[i] = <TabbedFraction handleDrop={i > 0 && this.handleDrop}
+                                      handleDragStart={(e,title)=>this.handleDragStart(e,title)}
+                                      handleDragEnd={(e)=>this.handleDragEnd(e)}
                                       setTarget={(t)=>this.setTarget(t, i)}
                                       removeTarget={(t)=>this.removeTarget(t, i)}
                                       padTop={this.state.source ? '1.5em' : '0.5em'}
+                                      index={i}
                                       key={i}
                                       {...{value,total,color,title,sel:values.reduced.sel}}/>
           value = values.reduced.selBinned[i]
           total = values.reduced.binned[i]
-          reduced[i] = <TabbedFraction key={i} {...{value,total,color,title,sel:values.counts.sel}}/>
+          reduced[i] = <TabbedFraction handleDrop={i > 0 && this.handleDrop}
+                                       handleDragStart={(e,title)=>this.handleDragStart(e,title)}
+                                       handleDragEnd={(e)=>this.handleDragEnd(e)}
+                                       setTarget={(t)=>this.setTarget(t, i)}
+                                       removeTarget={(t)=>this.removeTarget(t, i)}
+                                       padTop={this.state.source ? '1.5em' : '0.5em'}
+                                       index={i}
+                                       key={i}
+                                       {...{value,total,color,title,sel:values.counts.sel}}/>
         }
       })
       if (other && other.length){
@@ -204,6 +229,7 @@ class MenuSummary extends React.Component {
     return (
       <div>
         <div className={css}>
+          {reset}
           <h3>{zAxis}</h3>
           <table className={styles.right_align}>
             <tbody>
@@ -213,6 +239,7 @@ class MenuSummary extends React.Component {
           </table>
         </div>
         <div className={css}>
+          {reset}
           <h3>counts</h3>
           <table className={styles.right_align}>
             <tbody>
