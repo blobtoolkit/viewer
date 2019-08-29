@@ -499,7 +499,8 @@ export const getBinsForFieldId = createBinSelectorForFieldId(
   _getFieldIdAsMemoKey,
   getRawDataForFieldId,
   getDetailsForFieldId,
-  (rawData, details) => {
+  state=>getParsedQueryString(state),
+  (rawData, details, parsed) => {
     if (!rawData || !details) return undefined
     let data = rawData.values || []
     let keys = rawData.keys || {}
@@ -526,7 +527,7 @@ export const getBinsForFieldId = createBinSelectorForFieldId(
           .entries(data)
         let sorted = []
         if (!rawData.fixedOrder){
-          let order = getQueryValue(details.meta.id+'--Order') || ''
+          let order = getQueryValue(details.meta.id+'--Order') || parsed[details.meta.id+'--Order'] || ''
           order = order.split(',')
           let sortFunction = (a,b) => {
             let ia = order.indexOf(keys[a.key])

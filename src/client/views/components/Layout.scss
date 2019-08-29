@@ -264,6 +264,17 @@ table {
     font-weight: bold;
     color:$highlightColor;
   }
+
+  table {
+    border-collapse: collapse;
+    tr {
+
+    }
+    td {
+      padding: 0.5em 0.5em 0 0.5em;
+    }
+  }
+
 }
 .colored_tab {
   display:inline-block;
@@ -563,4 +574,24 @@ span.reset {
   margin-right: 0.5em;
   color: $lightColor;
   cursor: pointer;
+}
+
+div.reset {
+  float:right;
+  color: $lightColor;
+  cursor: pointer;
+}
+
+.floating {
+  position:absolute;
+  z-index: 100;
+}
+
+.hidden {
+  display:none;
+}
+
+.source {
+  background-color: $shadeColor;
+  color: $deepColor;
 }

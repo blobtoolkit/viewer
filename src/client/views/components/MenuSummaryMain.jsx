@@ -8,7 +8,8 @@ import { getSummary,
 } from '../reducers/summary'
 import MenuSummary from './MenuSummary'
 import MenuDataset from './MenuDataset'
-import { getDatasetID } from '../reducers/location'
+import { getDatasetID, getParsedQueryString, setQueryString } from '../reducers/location'
+import { queryToStore } from '../querySync'
 
 
 class SummaryMenu extends React.Component {
@@ -66,12 +67,15 @@ const mapStateToProps = state => {
   let fullSummary = getFullSummary(state) || {}
   let datasetId = getDatasetID(state)
   let buscoSets = getBuscoSets(state)
-  return {datasetId,...summary,fullSummary,buscoSets}
+  let parsed = getParsedQueryString(state)
+  return {datasetId,...summary,fullSummary,buscoSets,parsed}
 }
 
 const mapDispatchToProps = dispatch => {
   return {
-    fetchBuscoData: id => dispatch(fetchRawData(id))
+    fetchBuscoData: id => dispatch(fetchRawData(id)),
+    onChangeOrder: (values, remove) => dispatch(queryToStore({values,remove})),
+    changeQueryParams: (obj) => dispatch(setQueryString(Object.keys(obj).map(k=>`${k}=${obj[k]}`).join('&')))
   }
 }
 

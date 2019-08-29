@@ -11,7 +11,7 @@ import { getScatterPlotDataByCategory,
 } from './plotData';
 import { getDatasetIsActive, getAvailableDatasets, getAvailableDatasetIds } from './repository'
 import { getRawDataForFieldId, getDetailsForFieldId, getBinsForFieldId, getAllActiveFields, getBinsForCat } from './field'
-import { getMainPlot, getZAxis } from './plot';
+import { getMainPlot, getZAxis, getCatAxis } from './plot';
 import { getSelectedDatasetMeta } from './dataset';
 import { getFilteredList } from './filter';
 import { getFilteredDataForFieldId } from './preview';
@@ -77,7 +77,8 @@ export const getSummary = createSelector(
   getZReducer,
   getColorPalette,
   getRawDataForCat,
-  (all,selected,reducer,palette,raw) => {
+  getCatAxis,
+  (all,selected,reducer,palette,raw,catAxis) => {
     if (!all) return undefined
     let bins = selected.bins
     let zAxis = selected.zAxis
@@ -119,7 +120,7 @@ export const getSummary = createSelector(
         })
       }
     }
-    return { values,zAxis,bins,palette,other,reducer:reducer.id }
+    return { values,zAxis,catAxis,bins,palette,other,reducer:reducer.id }
   }
 )
 
