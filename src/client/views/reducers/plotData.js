@@ -118,7 +118,7 @@ export const getMainPlotData = createSelector(
     if (!dsId || !catData) return undefined
     let plotData = {id:'default',axes:{},meta:{}};
     plotData.axes.x = xData || {values:[]}
-    let xDomain = xMeta.xScale.domain().slice(0)
+    let xDomain = xMeta.xScale ? xMeta.xScale.domain().slice(0) : [0,10]
     let xmin = getQueryValue('xmin')
     if (xmin){
       xDomain[0] = 1*xmin
@@ -130,7 +130,7 @@ export const getMainPlotData = createSelector(
     xMeta.xScale.domain(xDomain)
     plotData.meta.x = xMeta
     plotData.axes.y = yData || {values:[]}
-    let yDomain = yMeta.xScale.domain().slice(0)
+    let yDomain = yMeta.xScale ? yMeta.xScale.domain().slice(0) : [0,10]
     let ymin = getQueryValue('ymin')
     if (ymin){
       yDomain[0] = 1*ymin
@@ -139,7 +139,7 @@ export const getMainPlotData = createSelector(
     if (ymax){
       yDomain[1] = 1*ymax
     }
-    yMeta.xScale.domain(yDomain)
+    if (yMeta.xScale) yMeta.xScale.domain(yDomain)
     plotData.meta.y = yMeta
     plotData.axes.z = zData || {values:[]}
     plotData.meta.z = zMeta
@@ -274,7 +274,7 @@ export const getScatterPlotData = createSelector(
       return {data:[]}
     }
     axes.forEach(axis=>{
-      scales[axis] = plotData.meta[axis].xScale.copy();
+      scales[axis] = plotData.meta[axis].xScale ? plotData.meta[axis].xScale.copy() : d3.scaleLinear().domain([0,10]);
       if (axis == 'z'){
         scales[axis] = d3.scaleSqrt().domain(scales[axis].domain())
       }
@@ -287,10 +287,13 @@ export const getScatterPlotData = createSelector(
                 plotData.axes.y.values.length,
                 plotData.axes.z.values.length
               )
-    let yClamp = plotData.meta.y.meta.clamp || Number.NEGATIVE_INFINITY
-    let yMin = plotData.meta.y.meta.limit[0]
-    if (yClamp < yMin){
-      yClamp = Number.NEGATIVE_INFINITY
+    let yClamp = Number.NEGATIVE_INFINITY
+    if (plotData.meta.y.meta){
+      let yClamp = plotData.meta.y.meta.clamp || Number.NEGATIVE_INFINITY
+      let yMin = plotData.meta.y.meta.limit[0]
+      if (yClamp < yMin){
+        yClamp = Number.NEGATIVE_INFINITY
+      }
     }
     let xClamp = plotData.meta.x.meta.clamp || Number.NEGATIVE_INFINITY
     let xMin = plotData.meta.x.meta.limit[0]

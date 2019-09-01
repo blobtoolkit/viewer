@@ -185,7 +185,7 @@ class DisplayMenu extends React.Component {
               <NumericInput initialValue={isNaN(xMeta.limit[1]) ? xMeta.range[1] : xMeta.limit[1]} onChange={(value)=>onChangeAxisRange({[xMeta.id+'--LimitMax']:value,[xMeta.id+'--Max']:value})}/>
             </div>
           </MenuDisplaySimple>
-          <MenuDisplaySimple name='y-axis range'>
+          {yMeta && <MenuDisplaySimple name='y-axis range'>
             <div className={styles.full_height}>
               { (yMeta.limit[0] != yMeta.range[0] || yMeta.limit[1] != yMeta.range[1])
                 && <span className={styles.reset} onClick={()=>resetLimits(yMeta)}>reset</span>
@@ -193,7 +193,7 @@ class DisplayMenu extends React.Component {
               <NumericInput initialValue={isNaN(yMeta.limit[0]) ? yMeta.range[0] : yMeta.limit[0]} onChange={(value)=>onChangeAxisRange({[yMeta.id+'--LimitMin']:value,[yMeta.id+'--Min']:value})}/>
               <NumericInput initialValue={isNaN(yMeta.limit[1]) ? yMeta.range[1] : yMeta.limit[1]} onChange={(value)=>onChangeAxisRange({[yMeta.id+'--LimitMax']:value,[yMeta.id+'--Max']:value})}/>
             </div>
-          </MenuDisplaySimple>
+          </MenuDisplaySimple> }
           {shape == 'circle' && <MenuDisplaySimple name='plot graphics'>
             <div className={styles.full_height}>
               <label className={styles.middle} htmlFor="#svgThreshold">Threshold</label>

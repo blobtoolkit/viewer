@@ -1085,7 +1085,7 @@ export const getTableDataForPage = createSelector(
   getTablePage,
   getTablePageSize,
   (plotData,tableData,order,fields,list,selected,keys,links,identifiers,page,perPage) => {
-    if (!tableData) return undefined
+    if (!tableData || !plotData) return undefined
     let data = tableData.data
     let plot = plotData.meta
     let values = []
