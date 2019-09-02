@@ -23,7 +23,7 @@ class BuscoSets extends React.Component {
     })
     // <BuscoData {...this.props}/>
     return (
-      <div className={styles.fill_parent}>
+      <div className={styles.busco_fill_parent} style={{overflow:'scroll'}}>
         <StaticBuscoData {...this.props}/>
         {buscos}
       </div>

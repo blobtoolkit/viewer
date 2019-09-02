@@ -257,7 +257,6 @@ class DisplayMenu extends React.Component {
     let showBlob
     if (data.axes && data.axes.y.values.length >0){
       showBlob = true
-      console.log(showBlob)
     }
     return (
       <div className={styles.menu_outer}>

@@ -139,10 +139,8 @@ class Static extends React.Component {
     )
     if (view == 'busco'){
       return (
-        <div className={styles.fill_parent+' '+styles.centered_content}>
-          <div className={styles.outer} style={{minWidth:'42em',overflow:'scroll'}}>
-            <StaticBuscoPlot/>
-          </div>
+        <div className={styles.fill_parent}>
+          <StaticBuscoPlot/>
           {warning}
         </div>
       )
