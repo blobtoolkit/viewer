@@ -254,6 +254,11 @@ class DisplayMenu extends React.Component {
       case 'treemap':
         break
     }
+    let showBlob
+    if (data.axes && data.axes.y.values.length >0){
+      showBlob = true
+      console.log(showBlob)
+    }
     return (
       <div className={styles.menu_outer}>
         <MenuDataset
@@ -268,7 +273,7 @@ class DisplayMenu extends React.Component {
           {hasStatic && <TextIcon title='static' active={isStatic} onIconClick={()=>onToggleStatic(view,datasetId)}/>}
         </MenuDisplaySimple>
         <MenuDisplaySimple invert={false}>
-          <TextIcon title='blob' active={view == 'blob'} onIconClick={()=>onSelectView('blob')}/>
+          {showBlob && <TextIcon title='blob' active={view == 'blob'} onIconClick={()=>onSelectView('blob')}/>}
           <TextIcon title='busco' active={view == 'busco'} onIconClick={()=>onSelectView('busco')}/>
           <TextIcon title='cumulative' active={view == 'cumulative'} onIconClick={()=>onSelectView('cumulative')}/>
           <TextIcon title='detail' active={view == 'detail'} onIconClick={()=>onSelectView('detail')}/>
