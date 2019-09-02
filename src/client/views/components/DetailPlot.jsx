@@ -79,7 +79,14 @@ class Detail extends React.Component {
       ]
     }]
     return (
-      <div className={plotStyles.outer} style={{top:'2em',maxWidth:'calc(100% - 2em)',maxHeight:'calc(100% - 4em)',overflow:'scroll'}}>
+      <div className={plotStyles.outer}
+           style={{ top:'2em',
+                    maxWidth:'calc(100% - 2em)',
+                    maxHeight:'calc(100% - 4em)',
+                    overflow:'scroll',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center'}}>
         <ReactTable
             data={data}
             page={this.state.page}

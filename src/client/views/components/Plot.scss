@@ -329,8 +329,8 @@ div.download_all {
 }
 
 .static_image {
-  max-height:100%;
-  max-width:100%;
+  max-height:calc(100vh - 7em);
+  max-width:calc(100vh - 7em);
   width:100%;
   object-fit: contain;
   object-position: center;

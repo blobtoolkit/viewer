@@ -176,7 +176,7 @@ class Table extends React.Component {
     let pages = this.props.data.pages
     let pageSize = this.props.pageSize
     return (
-      <div className={plotStyles.fill_parent}>
+      <div className={plotStyles.fill_parent} style={{display:'block'}}>
         <ReactTable
             data={data}
             page={0}

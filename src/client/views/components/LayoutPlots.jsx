@@ -135,7 +135,7 @@ class PlotsLayoutComponent extends React.Component {
               <div className={styles.quarter}>
                 <BuscoPlot {...this.props}/>
               </div>
-              <div>
+              <div className={styles.quarter}>
                 <DetailPlot {...this.props}/>
               </div>
             </div>
