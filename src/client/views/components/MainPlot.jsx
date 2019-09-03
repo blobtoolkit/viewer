@@ -177,7 +177,7 @@ class PlotBox extends React.Component {
     else if (this.props.circleLimit != nextProps.circleLimit){
       return true
     }
-    else if (this.props.binned.data.length == 0){
+    else if (this.props.binned && this.props.binned.data && this.props.binned.data.length == 0){
       return true
     }
     return false
