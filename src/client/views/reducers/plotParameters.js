@@ -373,6 +373,22 @@ export const pngResolution = handleAction(
 )
 export const getPngResolution = state => state.pngResolution
 
+export const setOtherLimit = createAction('SET_OTHER_LIMIT')
+export const chooseOtherLimit = (otherLimit) => {
+  return function (dispatch) {
+    let values = {otherLimit}
+    dispatch(queryToStore({values}))
+  }
+}
+export const otherLimit = handleAction(
+  'SET_OTHER_LIMIT',
+  (state, action) => (
+    action.payload
+  ),
+  qsDefault('otherLimit')
+)
+export const getOtherLimit = state => state.otherLimit
+
 export const plotParameterReducers = {
   plotShape,
   plotResolution,
@@ -392,5 +408,6 @@ export const plotParameterReducers = {
   tablePage,
   tablePageSize,
   tableSortField,
-  tableSortOrder
+  tableSortOrder,
+  otherLimit
 }

@@ -549,10 +549,14 @@ export const getBinsForFieldId = createBinSelectorForFieldId(
         else {
           sorted = nested.sort((a,b) => a.key - b.key);
         }
-        if (sorted.length > 10){
-          let count = sorted.slice(9).map(o=>o.value).reduce((a,b)=>a+b)
-          let index = sorted.slice(9).map(o=>o.key*1)
-          sorted = sorted.slice(0,9).concat({key:'other',value:count,index:index})
+        let otherLimit = 10
+        if (parsed.hasOwnProperty('otherLimit')){
+          otherLimit = parsed.otherLimit
+        }
+        if (sorted.length > otherLimit){
+          let count = sorted.slice(otherLimit-1).map(o=>o.value).reduce((a,b)=>a+b)
+          let index = sorted.slice(otherLimit-1).map(o=>o.key*1)
+          sorted = sorted.slice(0,otherLimit-1).concat({key:'other',value:count,index:index})
         }
         bins = sorted.map((d,i) => ({
           id:rawData.keys[d.key] || 'other',

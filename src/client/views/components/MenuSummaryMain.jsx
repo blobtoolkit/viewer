@@ -74,7 +74,9 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
   return {
     fetchBuscoData: id => dispatch(fetchRawData(id)),
-    onChangeOrder: (values, remove) => dispatch(queryToStore({values,remove})),
+    onChangeOrder: (values, remove) => {
+      dispatch(queryToStore({values,remove}))
+    },
     changeQueryParams: (obj) => dispatch(setQueryString(Object.keys(obj).map(k=>`${k}=${obj[k]}`).join('&')))
   }
 }

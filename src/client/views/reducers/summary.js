@@ -15,7 +15,7 @@ import { getMainPlot, getZAxis, getCatAxis } from './plot';
 import { getSelectedDatasetMeta } from './dataset';
 import { getFilteredList } from './filter';
 import { getFilteredDataForFieldId } from './preview';
-import { getZReducer, getZScale, zReducers, getCircumferenceScale, getRadiusScale, getSnailOrigin, getTablePage, getTablePageSize, getTableSortField, getTableSortOrder, getScaleTo } from './plotParameters';
+import { getZReducer, getZScale, zReducers, getCircumferenceScale, getRadiusScale, getSnailOrigin, getTablePage, getTablePageSize, getTableSortField, getTableSortOrder, getScaleTo, getOtherLimit } from './plotParameters';
 import { getColorPalette } from './color';
 import immutableUpdate from 'immutable-update';
 import { scaleLinear as d3scaleLinear } from 'd3-scale';
@@ -78,7 +78,8 @@ export const getSummary = createSelector(
   getColorPalette,
   getRawDataForCat,
   getCatAxis,
-  (all,selected,reducer,palette,raw,catAxis) => {
+  getOtherLimit,
+  (all,selected,reducer,palette,raw,catAxis,otherLimit) => {
     if (!all) return undefined
     let bins = selected.bins
     let zAxis = selected.zAxis
@@ -109,8 +110,8 @@ export const getSummary = createSelector(
         values.counts.binned[i] = selected.byCat[i].length
         values.counts.selBinned[i] = selected.selAll ? selected.selByCat[i].length : 0
       })
-      if (bins[9] && bins[9].id == 'other'){
-        bins[9].keys.forEach((index) => {
+      if (bins[otherLimit-1] && bins[otherLimit-1].id == 'other'){
+        bins[otherLimit-1].keys.forEach((index) => {
           other.push(raw.keys[index])
         })
         other = other.sort((a,b)=>{

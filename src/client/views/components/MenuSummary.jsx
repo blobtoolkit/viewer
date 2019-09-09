@@ -19,7 +19,7 @@ class TabbedFraction extends React.Component {
 
   handleDragEnter(e,title) {
     e.preventDefault()
-    if (this.props.setTarget && title != 'other'){
+    if (this.props.setTarget){
       if (!this.state.padTop){
         this.setState({padTop:true})
       }
@@ -159,6 +159,15 @@ class MenuSummary extends React.Component {
       list = `${taxa.join(',')},${state.source}`
     }
     values[param] = list
+    taxa = list.split(',')
+    let index = taxa.indexOf('other')
+    let other
+    if (index != -1){
+      other = index + 1
+      values.otherLimit = other
+      taxa = taxa.slice(0,index-1)
+      values[param] = taxa.join(',')
+    }
     this.props.onChangeOrder(values,[])
     // this.props.changeQueryParams(Object.assign({[param]: list},this.props.parsed))
   }
@@ -172,7 +181,7 @@ class MenuSummary extends React.Component {
     let reset
     if (parsed[`${catAxis}--Order`]){
       reset = (<div className={styles.reset}
-           onClick={()=>{this.props.onChangeOrder({},[`${catAxis}--Order`])}}
+           onClick={()=>{this.props.onChangeOrder({},[`${catAxis}--Order`,'otherLimit'])}}
            >reset</div>)
     }
     if (bins){
