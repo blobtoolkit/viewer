@@ -68,7 +68,7 @@ class Caption extends Component {
     }
     let title = ''
     let caption = ''
-    let record = this.props.meta.record_type
+    let record = this.props.meta.record_type || 'contig'
     let z = labels[this.props.plot.axes.z]
     let [taxrule, cat] = this.props.plot.axes.cat.split('_')
     if (this.props.view == 'blob'){
