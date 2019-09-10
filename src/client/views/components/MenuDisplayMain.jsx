@@ -187,7 +187,7 @@ class DisplayMenu extends React.Component {
           </MenuDisplaySimple>
           {yMeta && <MenuDisplaySimple name='y-axis range'>
             <div className={styles.full_height}>
-              { (yMeta.limit[0] != yMeta.range[0] || yMeta.limit[1] != yMeta.range[1])
+              { yMeta.limit && yMeta.range && (yMeta.limit[0] != yMeta.range[0] || yMeta.limit[1] != yMeta.range[1])
                 && <span className={styles.reset} onClick={()=>resetLimits(yMeta)}>reset</span>
               }
               <NumericInput initialValue={isNaN(yMeta.limit[0]) ? yMeta.range[0] : yMeta.limit[0]} onChange={(value)=>onChangeAxisRange({[yMeta.id+'--LimitMin']:value,[yMeta.id+'--Min']:value})}/>
