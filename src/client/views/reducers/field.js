@@ -203,10 +203,7 @@ export const getDetailsForFieldId = createSelectorForFieldId(
   _getFieldIdAsMemoKey,
   getMetaDataForField,
   getMetaDataForFilter,
-  (meta = {}, filterMeta) => {
-    if (!filterMeta){
-      return {}
-    }
+  (meta = {}, filterMeta = {}) => {
     let range = meta.range || [1,10];
     let limit = filterMeta.limit || meta.range || [1,10];
     if (isNaN(limit[0])) limit[0] = range[0]

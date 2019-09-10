@@ -23,11 +23,11 @@ export const chooseCurrentRecord = (id) => {
       let datasetId = getDatasetID(state)
       let cat = getCatAxis(state)
       let details = getDetailsForFieldId(state, cat + '_positions')
-      let headers = details.meta.headers
+      let headers = details.meta && details.meta.headers ? details.meta.headers : []
       let url = apiUrl + '/field/' + datasetId + '/' + cat + '_positions/' + id
       let response = await fetch(url);
       let json = await response.json();
-      if (details.meta.linked_field){
+      if (details.meta && details.meta.linked_field){
         let linked_url = apiUrl + '/field/' + datasetId + '/' + details.meta.linked_field + '/' + id
         let linked_response = await fetch(linked_url);
         let linked_json = await linked_response.json();
@@ -37,7 +37,8 @@ export const chooseCurrentRecord = (id) => {
           json.values[0][i] = arr.concat(linked_json.values[0][i])
         })
       }
-      dispatch(setCurrentRecord({id,...json,category_slot:details.meta.category_slot,headers}))
+      let category_slot = details.meta && details.meta.category_slot ? details.meta.category_slot : 0
+      dispatch(setCurrentRecord({id,...json,category_slot,headers}))
     }
     else {
       dispatch(setCurrentRecord({id}))
