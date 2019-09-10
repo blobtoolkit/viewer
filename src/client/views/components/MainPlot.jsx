@@ -145,8 +145,8 @@ class PlotBox extends React.Component {
   getHexByPixel(x,y,radius){
     let oddr = pixel_to_oddr(x,y,radius)
     let hex
-    if (this.props.binned.bins[oddr.i] && this.props.binned.bins[oddr.i][oddr.j]){
-      hex = this.props.binned.bins[oddr.i][oddr.j]
+    if (this.props.binned.hexes[oddr.i] && this.props.binned.hexes[oddr.i][oddr.j]){
+      hex = this.props.binned.hexes[oddr.i][oddr.j]
     }
     else {
       hex = {id:null,ids:[]}
@@ -157,8 +157,8 @@ class PlotBox extends React.Component {
   getBinByPixel(xy,grid){
     let bin
     let coords = setCoords(xy,grid)
-    if (this.props.binned.bins[coords[0]] && this.props.binned.bins[coords[0]][coords[1]]){
-      bin = this.props.binned.bins[coords[0]][coords[1]]
+    if (this.props.binned.squares[coords[0]] && this.props.binned.squares[coords[0]][coords[1]]){
+      bin = this.props.binned.squares[coords[0]][coords[1]]
     }
     else {
       bin = {id:null,ids:[]}
