@@ -15,6 +15,7 @@ import { getColorPalette } from './color'
 import { getMainPlot } from './plot'
 import * as d3 from 'd3'
 import { getQueryValue } from './location'
+import { getOtherLimit } from './plotParameters'
 
 
 const createSelectorForFilterId = byIdSelectorCreator();
@@ -96,7 +97,8 @@ export const getFilteredBarsForFieldId = createFilteredBarSelectorForFieldId(
   getBinsForFieldId,
   getDetailsForFieldId,
   getPreviewDimensions,
-  (data, fieldBins = [], details = {}, dimensions) => {
+  getOtherLimit,
+  (data, fieldBins = [], details = {}, dimensions, otherLimit) => {
     let bars = []
     if (data){
       let x = details.xScale
@@ -128,11 +130,11 @@ export const getFilteredBarsForFieldId = createFilteredBarSelectorForFieldId(
             bins[i] = {id:obj.id,x0:i,x1:i+1,length:0}
           }
         })
-        if (nested.length > 10){
+        if (nested.length > otherLimit){
           let sortedSum = bins.map(a=>a.length).reduce((a,b)=> a + b)
           let nestedSum = nested.map(a=>a.value).reduce((a,b)=> a + b)
           let other = nestedSum - sortedSum
-          bins[9].length = nestedSum - sortedSum
+          bins[otherLimit-1].length = nestedSum - sortedSum
         }
       }
 
