@@ -103,7 +103,7 @@ export const plotPaths = {
   sideBins: {
     strokeWidth: 2,
     strokeOpacity: 1,
-    fillOpacity: 0.5
+    fillOpacity: 0.75
     // fill: colors.clearColor
   },
   clampedDivider: {

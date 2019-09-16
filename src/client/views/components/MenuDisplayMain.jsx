@@ -31,7 +31,9 @@ import { getPlotShape,
   getScaleTo,
   chooseScaleTo,
   getSnailOrigin,
-  chooseSnailOrigin } from '../reducers/plotParameters'
+  chooseSnailOrigin,
+  getShowTotal,
+  chooseShowTotal } from '../reducers/plotParameters'
 import {
   getStaticThreshold,
   chooseStaticThreshold,
@@ -88,7 +90,8 @@ class DisplayMenu extends React.Component {
       pngResolution, onChangePngResolution,
       staticThreshold, onChangeStaticThreshold,
       nohitThreshold, onChangeNohitThreshold,
-      data={}, onChangeAxisRange, parsed, changeQueryParams } = this.props
+      data={}, onChangeAxisRange, parsed, changeQueryParams,
+      showTotal, onChangeShowTotal, } = this.props
     let context
     view = view || 'blob'
     let blob
@@ -116,6 +119,12 @@ class DisplayMenu extends React.Component {
       onChangeAxisRange(values, remove)
       changeQueryParams(parsed)
     }
+    let displayTotal = (<MenuDisplaySimple name='display total'>
+      <div className={styles.full_height}>
+        <TextIcon title={'show'} active={showTotal} onIconClick={()=>onChangeShowTotal('true')}/>
+        <TextIcon title={'hide'} active={!showTotal} onIconClick={()=>onChangeShowTotal('false')}/>
+      </div>
+    </MenuDisplaySimple>)
     if (isStatic){
       blob = (
         <MenuDisplaySimple name='shape'>
@@ -207,6 +216,7 @@ class DisplayMenu extends React.Component {
               <NumericInput initialValue={circleLimit} onChange={onChangeCircleLimit}/>
             </div>
           </MenuDisplaySimple>}
+          {displayTotal}
         </span>
       )
     }
@@ -218,6 +228,7 @@ class DisplayMenu extends React.Component {
           <SVGIcon sprite={yIcon} active={curveOrigin == 'y'} onIconClick={()=>onSelectCurveOrigin('y')}/>
           <SVGIcon sprite={scaleIcon} active={scaleTo == 'filtered'} onIconClick={()=>onSelectScaleTo(scaleTo == 'total' ? 'filtered' : 'total')}/>
         </MenuDisplaySimple>
+        {displayTotal}
       </span>
     )
     let snail = (
@@ -398,6 +409,7 @@ class MenuDisplayMain extends React.Component {
         onSelectScaleTo: origin => dispatch(chooseScaleTo(origin)),
         onSelectSnailOrigin: origin => dispatch(chooseSnailOrigin(origin)),
         onChangeTransform: object => dispatch(setTransformFunction(object)),
+        onChangeShowTotal: bool => dispatch(chooseShowTotal(bool)),
         onChangeAxisRange: (values,remove) => dispatch(queryToStore({values,remove,action:'FILTER'})),
         changeQueryParams: (obj) => dispatch(setQueryString(Object.keys(obj).map(k=>`${k}=${obj[k]}`).join('&')))
       }
@@ -428,8 +440,8 @@ class MenuDisplayMain extends React.Component {
         hasStatic: getStaticFields(state),
         busco: getBuscoSets(state),
         data: getMainPlotData(state),
-        parsed: getParsedQueryString(state)
-
+        parsed: getParsedQueryString(state),
+        showTotal: getShowTotal(state)
       }
     }
   }

@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 import { getSummary }  from '../reducers/summary'
 import { getDatasetID, getView } from '../reducers/location'
 import { getDatasetMeta } from '../reducers/repository'
-import { getPlotShape, getCircleLimit } from '../reducers/plotParameters'
+import { getPlotShape, getCircleLimit, getShowTotal } from '../reducers/plotParameters'
 import styles from './Plot.scss'
 import { format as d3format} from 'd3-format'
 import { plotText } from './PlotStyles'
@@ -19,7 +19,8 @@ export default class PlotLegend extends React.Component {
         let shape = getPlotShape(state)
         let view = getView(state)
         let circleLimit = getCircleLimit(state)
-        return {meta,...summary,shape,view,circleLimit}
+        let showTotal = getShowTotal(state)
+        return {meta,...summary,shape,view,circleLimit,showTotal}
       }
     }
   }
@@ -34,7 +35,7 @@ export default class PlotLegend extends React.Component {
   }
 }
 
-const Legend = ({values,zAxis,bins,palette,other,reducer,meta,shape,view,circleLimit}) => {
+const Legend = ({values,zAxis,bins,palette,other,reducer,meta,shape,view,circleLimit,showTotal}) => {
   let items = []
   let legendKey
   let ds
@@ -82,7 +83,7 @@ const Legend = ({values,zAxis,bins,palette,other,reducer,meta,shape,view,circleL
     if (zAxis == 'length'){
       numbers.push(format(values.n50.all))
     }
-    if (count){
+    if (count && showTotal){
       items.push(
         <g key='all' transform={'translate(0,'+offset+')'}>
           <rect x={0} y={0} width={w} height={h} style={{fill:color,stroke:'black'}} />

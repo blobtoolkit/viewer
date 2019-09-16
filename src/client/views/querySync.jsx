@@ -47,6 +47,11 @@ const mapDispatchToQuery = (
       payload: (k,v) => v,
       default: 10
     },
+    showTotal: {
+      type: 'SET_SHOW_TOTAL',
+      payload: (k,v) => v,
+      default: 'true'
+    },
     palette: {
       type: 'SELECT_PALETTE',
       payload: (k,v) => v,

@@ -2,7 +2,7 @@ import React from 'react'
 import { connect } from 'react-redux'
 import styles from './Plot.scss'
 import { cumulativeCurves } from '../reducers/summary'
-import { getCurveOrigin } from '../reducers/plotParameters'
+import { getCurveOrigin, getShowTotal } from '../reducers/plotParameters'
 import PlotLegend from './PlotLegend'
 import PlotAxisTitle from './PlotAxisTitle'
 import CumulativePlotBoundary from './CumulativePlotBoundary'
@@ -68,11 +68,11 @@ class Cumulative extends React.Component {
             preserveAspectRatio="xMinYMin">
             <g transform={'translate(100,10)'} >
               <CumulativePlotBoundary yValues={yValues} records={records} span={span}/>
-              <path style={plotPaths.axis}
+              { this.props.showTotal && <path style={plotPaths.axis}
                     d={all}
                     fill='none'
                     stroke='#999'
-                    strokeLinecap='round'/>
+                    strokeLinecap='round'/>}
               {paths}
               {legend}
               <AxisTitle axis='y' title={yLabel} side={side}/>
@@ -95,7 +95,8 @@ class CumulativePlot extends React.Component {
       return {
         cumulative: cumulativeCurves(state),
         meta: getSelectedDatasetMeta(state,this.props.datasetId),
-        origin: getCurveOrigin(state)
+        origin: getCurveOrigin(state),
+        showTotal: getShowTotal(state)
       }
     }
   }

@@ -389,6 +389,24 @@ export const otherLimit = handleAction(
 )
 export const getOtherLimit = state => state.otherLimit
 
+export const setShowTotal = createAction('SET_SHOW_TOTAL')
+export const chooseShowTotal = (showTotal) => {
+  return function (dispatch) {
+    showTotal = String(showTotal) == 'true' ? 'true' : 'false'
+    let values = {showTotal}
+    dispatch(queryToStore({values}))
+  }
+}
+export const showTotal = handleAction(
+  'SET_SHOW_TOTAL',
+  (state, action) => (
+    action.payload
+  ),
+  qsDefault('showTotal')
+)
+export const getShowTotal = state => state.showTotal == 'true' ? true : false
+
+
 export const plotParameterReducers = {
   plotShape,
   plotResolution,
@@ -409,5 +427,6 @@ export const plotParameterReducers = {
   tablePageSize,
   tableSortField,
   tableSortOrder,
-  otherLimit
+  otherLimit,
+  showTotal
 }
