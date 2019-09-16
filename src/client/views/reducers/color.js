@@ -101,6 +101,15 @@ export const getUserPalette = createSelector(
   }
 )
 
+export const getDefaultPalette = createSelector(
+  getAllPalettes,
+  (palettes) => {
+    let id = 'default'
+    let colors = palettes ? palettes.byId[id] : []
+    return {id,colors}
+  }
+)
+
 export const colorReducers = {
   palettes,
   selectedPalette

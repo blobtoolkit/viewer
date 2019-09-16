@@ -16,6 +16,7 @@ class Palettes extends React.Component {
             location={this.props.location}
             colors={this.props.byId[id]}
             selectPalette={this.props.selectPalette}
+            defaultColors={this.props.byId['default']}
             editPalette={(obj)=>this.props.editPalette(obj)}
             />
           )

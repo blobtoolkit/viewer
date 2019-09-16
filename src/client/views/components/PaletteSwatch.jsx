@@ -3,6 +3,7 @@ import styles from './Palette.scss'
 import { SketchPicker } from 'react-color'
 import { queryToStore } from '../querySync'
 
+
 class PaletteSwatch extends React.Component {
   constructor(props) {
     super(props);
@@ -44,6 +45,14 @@ class PaletteSwatch extends React.Component {
   };
 
   render(){
+    const presetColors = this.props.defaultColors.concat([
+      "rgb(255,255,0)",
+      "rgb(0,0,0)",
+      "rgb(63,63,63)",
+      "rgb(127,127,127)",
+      "rgb(191,191,191)",
+      "rgb(255,255,255)"
+    ])
     const handleChange = (color) => {
       this.setState({ color: color.rgb })
     };
@@ -61,7 +70,7 @@ class PaletteSwatch extends React.Component {
         </div>
         { this.state.displayColorPicker ? <div className={ styles.popover }>
           <div className={ styles.cover } onClick={ ()=>{this.handleClose()} }/>
-          <SketchPicker color={ this.state.color } onChange={ handleChange } onChangeComplete={ handleChangeComplete } />
+          <SketchPicker color={ this.state.color } presetColors={presetColors} onChange={ handleChange } onChangeComplete={ handleChangeComplete } />
         </div> : null }
 
       </div>

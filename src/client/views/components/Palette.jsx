@@ -15,6 +15,7 @@ class Palette extends React.Component {
             color={c}
             width={width+'%'}
             selectPalette={this.props.selectPalette}
+            defaultColors={this.props.defaultColors}
             editPalette={(color) => {
               let colors = this.props.colors.slice(0)
               colors[i] = color
