@@ -133,40 +133,75 @@ class MenuSummary extends React.Component {
     let taxa = []
     let list
     bins = bins.slice(0)
+    let counts = this.props.values.counts.binned
+    let target = state.target
     let param = `${this.props.catAxis}--Order`
+    let other = -1
     let current = this.props.parsed[param]
     if (current){
       let arr = current.split(',')
       let index = arr.indexOf(state.source)
+      other = arr.indexOf('other')
+      if (other > -1) other++
       if (index > -1){
         arr.splice(index,1)
       }
       if (arr.length >= state.target){
-        arr.splice(state.target,0,state.source)
-        if (index > -1){
-          arr.splice(index,1)
+        let target = state.target
+        while (target >= 0 && counts[target-1] == 0){
+          target--
+        }
+        arr.splice(target,0,state.source)
+        // if (index > -1){
+        //   arr.splice(index,1)
+        // }
+        if (state.source == 'other'){
+          other = target + 1
+        }
+        else {
+          other++
         }
         list = arr.join(',')
       }
     }
     if (!list) {
       let index = bins.findIndex(o=>o.id==state.source)
+      let target = index
+      let skip = {}
+      while (target >= 0 && counts[target-1] == 0){
+        skip[target-1] = true
+        target--
+      }
       for (let i=0; i < state.target; i++){
-        if (i != index){
+        if (i != index && !skip[i]){
           taxa.push(bins[i].id)
         }
       }
       list = `${taxa.join(',')},${state.source}`
+      if (state.source == 'other'){
+        other = state.target + 1
+      }
     }
     values[param] = list
     taxa = list.split(',')
-    let index = taxa.indexOf('other')
-    let other
-    if (index != -1){
-      other = index + 1
-      values.otherLimit = other
-      taxa = taxa.slice(0,index-1)
-      values[param] = taxa.join(',')
+    // let index = current.indexOf('other')
+    // console.log(index)
+    // let other
+    // if (index != -1){
+    //   other = index + 1
+    //   values.otherLimit = other
+    //   taxa = taxa.slice(0,index)
+    //   values[param] = taxa.join(',')
+    // }
+    if (other > 0){
+      if (other < 10){
+        values.otherLimit = other
+      }
+      else {
+        values.otherLimit = 10
+      }
+      // taxa = taxa.slice(0,other)
+      // values[param] = taxa.join(',')
     }
     this.props.onChangeOrder(values,[])
     // this.props.changeQueryParams(Object.assign({[param]: list},this.props.parsed))
