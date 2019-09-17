@@ -16,7 +16,7 @@ import { getSelectedDatasetMeta } from './dataset';
 import { getFilteredList } from './filter';
 import { getFilteredDataForFieldId } from './preview';
 import { getZReducer, getZScale, zReducers, getCircumferenceScale, getRadiusScale, getSnailOrigin, getTablePage, getTablePageSize, getTableSortField, getTableSortOrder, getScaleTo, getOtherLimit } from './plotParameters';
-import { getColorPalette } from './color';
+import { getColorPalette, getDefaultPalette } from './color';
 import immutableUpdate from 'immutable-update';
 import { scaleLinear as d3scaleLinear } from 'd3-scale';
 import { scaleSqrt as d3scaleSqrt } from 'd3-scale';
@@ -527,7 +527,7 @@ export const getCircular = createSelector(
 
 export const circularCurves = createSelector(
   getCircular,
-  getColorPalette,
+  getDefaultPalette,
   getCircumferenceScale,
   getRadiusScale,
   getSnailOrigin,
