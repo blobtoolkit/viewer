@@ -378,7 +378,6 @@ export const getFilteredList = createSelector(
   getUnfilteredList,
   (filters,fields,data,meta,list,active,all) => {
     let obj = {filters,fields,data,meta}
-
     let count = meta.records | 0
     if (!list || list.length == 0){
       list = all

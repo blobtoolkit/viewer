@@ -81,7 +81,7 @@ class ListsMenu extends React.Component {
           return true
         }
       }
-      return false
+      return false // return true
     }
     return true
   }

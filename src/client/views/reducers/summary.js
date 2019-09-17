@@ -289,9 +289,11 @@ export const getBuscoData = createSelectorForBuscoId(
           if (ids[busco[0]]){
             records.d[i] = 1
             if (selected[i]) selections.d[i] = 1
-            records.d[ids[busco[0]]] = 1
-            if (selected[ids[busco[0]]]) selections.d[ids[busco[0]]] = 1
-            scores.d++
+            ids[busco[0]].forEach(id=>{
+              records.d[id] = 1
+              if (selected[id]) selections.d[id] = 1
+              scores.d++
+            })
           }
           else {
             scores.c++
