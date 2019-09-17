@@ -78,6 +78,7 @@ class Caption extends Component {
       }
       let plot = 'Blob'
       let yaxis = this.axis(this.props.plot.axes.y)
+      if (!yaxis) return null
       let xaxis = this.axis(this.props.plot.axes.x)
       let scale = scales[this.props.scale]
       let range
