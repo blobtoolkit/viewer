@@ -32,6 +32,9 @@ class Caption extends Component {
   }
 
   axis(str){
+    if (!str){
+      return ''
+    }
     let parts = str.split('_')
     let label
     if (parts.length == 1){
@@ -72,13 +75,15 @@ class Caption extends Component {
     let z = labels[this.props.plot.axes.z]
     let [taxrule, cat] = this.props.plot.axes.cat.split('_')
     if (this.props.view == 'blob'){
+      if (!this.props.plot.axes.y){
+        return null
+      }
       let shape = this.props.plotShape
       if (shape == 'hex'){
         shape = 'hexagon'
       }
       let plot = 'Blob'
       let yaxis = this.axis(this.props.plot.axes.y)
-      if (!yaxis) return null
       let xaxis = this.axis(this.props.plot.axes.x)
       let scale = scales[this.props.scale]
       let range
