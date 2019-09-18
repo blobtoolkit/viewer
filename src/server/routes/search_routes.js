@@ -16,27 +16,36 @@ const parseMeta = (obj) => {
     })
   }
   if (obj.hasOwnProperty('taxon')){
-    let props = ['genus','name','taxid','phylum']
+    let props = ['genus','taxid','phylum']
     Object.keys(obj.taxon).forEach(prop=>{
       meta[prop] = obj.taxon[prop]
     })
+    meta.taxon_name = obj.taxon.name
   }
-  if (meta.hasOwnProperty('name')){
-    meta.taxon_name = meta.name
-    delete meta.name
-  }
-  if (meta.hasOwnProperty('prefix')){
-    meta.name = meta.prefix
-    delete meta.prefix
+  if (obj.hasOwnProperty('name')){
+    meta.name = obj.name
   }
   else {
     meta.name = obj.id
+  }
+  if (!meta.hasOwnProperty('prefix')){
+    meta.prefix = meta.name
+  }
+  if (obj.hasOwnProperty('version')){
+    meta.version = obj.version
   }
   return meta
 }
 
 const readMeta = (dir,md) => {
   md = md || []
+  versions = {}
+  md.forEach((o,i) => {
+    if (!versions[o.prefix]){
+      versions[o.prefix] = {}
+    }
+    versions[o.prefix][o.version] = i
+  })
   fs.readdirSync(dir).forEach(file => {
     let path = dir+'/'+file
     if (fs.statSync(path).isDirectory()){
@@ -45,6 +54,9 @@ const readMeta = (dir,md) => {
     else if (file == 'meta.json' && fs.statSync(path).isFile()){
       let dsMeta = parseMeta(read.sync(path))
       dsMeta.id = dir.replace(/^.+\//,'')
+      if (!dsMeta.hasOwnProperty('version')){
+        dsMeta.version = 1
+      }
       if (config.dataset_table){
         let sumpath = dir+'/summary.json'
         fileExists(sumpath).then((bool)=>{
@@ -56,7 +68,15 @@ const readMeta = (dir,md) => {
           }
         })
       }
+      if (!versions[dsMeta.prefix]){
+        versions[dsMeta.prefix] = {}
+      }
+      versions[dsMeta.prefix][dsMeta.version] = md.length
       md.push(dsMeta)
+      let latest = Math.max(...Object.keys(versions[dsMeta.prefix]))
+      Object.keys(versions[dsMeta.prefix]).forEach(version=>{
+        md[versions[dsMeta.prefix][version]].latest = latest
+      })
     }
   })
   return md
@@ -67,19 +87,21 @@ const generateIndex = meta => {
   let ctr = 0
   let terms = {}
   meta.forEach((m,i)=>{
-    Object.keys(m).forEach(k=>{
-      if (!fields.hasOwnProperty(k)){
-        fields[k] = ctr
-        ctr++
-      }
-      if (!terms.hasOwnProperty(m[k])){
-        terms[m[k]] = {}
-      }
-      if (!terms[m[k]].hasOwnProperty(fields[k])){
-        terms[m[k]][fields[k]] = []
-      }
-      terms[m[k]][fields[k]].push(i)
-    })
+    if (m.latest == m.version){
+      Object.keys(m).forEach(k=>{
+        if (!fields.hasOwnProperty(k)){
+          fields[k] = ctr
+          ctr++
+        }
+        if (!terms.hasOwnProperty(m[k])){
+          terms[m[k]] = {}
+        }
+        if (!terms[m[k]].hasOwnProperty(fields[k])){
+          terms[m[k]][fields[k]] = []
+        }
+        terms[m[k]][fields[k]].push(i)
+      })
+    }
   })
   let keys = Object.keys(fields).sort((a, b) => fields[a] - fields[b])
   let values = {}
@@ -171,7 +193,7 @@ const autocomplete = term => {
     results.push({
       term:'all',
       field:'all records',
-      names:meta.map(o=>o.name)
+      names:meta.filter(o=>o.latest==o.version).map(o=>o.name)
     })
   }
   else {
@@ -191,7 +213,7 @@ const autocomplete = term => {
 }
 
 const search = term => {
-  if (term.match(/^all$/i)) return meta
+  if (term.match(/^all$/i)) return meta.filter(o=>o.latest==o.version)
   if (!index.values[term]) return []
   let arr = []
   let ids = {}

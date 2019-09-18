@@ -132,6 +132,9 @@ const loadMeta = async function() {
     if (this.meta.record_type == 'record' && this.meta.assembly && this.meta.assembly.level){
       this.meta.record_type = this.meta.assembly.level
     }
+    if (!this.meta.hasOwnProperty('version')){
+      this.meta.version = 1
+    }
     if (defaultMeta){
       Object.keys(defaultMeta).forEach(key=>{
         if (!this.meta.hasOwnProperty(key)){

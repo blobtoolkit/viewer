@@ -73,11 +73,23 @@ export const availableDatasets = handleActions(
     REQUEST_META: (state, action) => (
       state
     ),
-    RECEIVE_META: (state, action) => (
-      immutableUpdate(state, {
+    RECEIVE_META: (state, action) => {
+      if(!state.byId[action.payload.id]){
+        let prefix, latest
+        if (action.payload.json.assembly.prefix && action.payload.json.assembly.prefix){
+          prefix = action.payload.json.assembly.prefix
+          latest = Object.keys(state.byId).filter(key => state.byId[key].prefix === action.payload.json.assembly.prefix)[0]
+          action.payload.json.latest = state.byId[latest].version
+          action.payload.json.prefix = state.byId[latest].prefix
+        }
+        else {
+          action.payload.json.latest = action.payload.json.version
+        }
+      }
+      return immutableUpdate(state, {
         byId: { [action.payload.id]: action.payload.json }
       })
-    )
+    }
   },
   defaultState()
 )

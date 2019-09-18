@@ -31,11 +31,18 @@ export class DatasetModal extends React.Component {
     keys.forEach(k=>
       meta[k] = this.props.meta[k]
     )
+    if (this.props.meta.hasOwnProperty('version')){
+      meta.version = this.props.meta.version
+    }
+    else {
+      meta.version = 1
+    }
     Object.keys(this.props.meta).forEach(k=>{
       if (k != 'fields' && k != 'plot'){
         full[k] = this.props.meta[k]
       }
     })
+    full.version = meta.version
     return (
       <div style={{position:'absolute', top:0, right:0, bottom:0, left:0}} onClick={()=>this.handleClick()}>
         {
