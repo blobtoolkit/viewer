@@ -8,6 +8,7 @@ import { getSummary,
 } from '../reducers/summary'
 import MenuSummary from './MenuSummary'
 import MenuDataset from './MenuDataset'
+import MenuSwitchView from './MenuSwitchView'
 import { getDatasetID, getParsedQueryString, setQueryString } from '../reducers/location'
 import { queryToStore } from '../querySync'
 
@@ -44,6 +45,7 @@ class SummaryMenu extends React.Component {
   render(){
     return (
       <div className={styles.menu_outer}>
+        <MenuSwitchView/>
         <MenuDataset
           key={this.props.datasetId}
           id={this.props.datasetId}

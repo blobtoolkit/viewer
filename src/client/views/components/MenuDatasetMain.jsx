@@ -9,6 +9,7 @@ import { getDatasetID,
   getSearchTerm } from '../reducers/location'
 import styles from './Layout.scss'
 import MenuDataset from './MenuDataset'
+import MenuSwitchView from './MenuSwitchView'
 import Spinner from './Spinner'
 import ToolTips from './ToolTips'
 import Search from './Search'
@@ -16,6 +17,7 @@ import Search from './Search'
 const DatasetMenu = ({ searchTerm, selectedDataset, isFetching, datasetIds, onDatasetMount, onDatasetClick }) => {
   return (
     <div className={styles.menu_outer}>
+      <MenuSwitchView/>
       <Search/>
       {isFetching ? <Spinner /> : null}
       { datasetIds.length > 0 ? (

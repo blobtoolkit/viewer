@@ -3,6 +3,7 @@ import { connect } from 'react-redux'
 import styles from './Layout.scss'
 import { getView } from '../reducers/location'
 import FAQs from './FAQs'
+import MenuSwitchView from './MenuSwitchView'
 
 const MenuHelp = ({match,datasetId,view}) => {
   switch (view || 'blob') {
@@ -23,7 +24,10 @@ const MenuHelp = ({match,datasetId,view}) => {
       break
   }
   return (
-    <FAQs/>
+    <div className={styles.menu_outer}>
+      <MenuSwitchView/>
+      <FAQs/>
+    </div>
   )
   return (
     <span>

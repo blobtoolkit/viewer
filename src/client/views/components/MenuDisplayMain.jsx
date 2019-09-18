@@ -45,6 +45,7 @@ import { queryToStore } from '../querySync'
 import styles from './Layout.scss'
 import MenuDisplaySet from './MenuDisplaySet'
 import MenuDisplaySimple from './MenuDisplaySimple'
+import MenuSwitchView from './MenuSwitchView'
 import SVGIcon from './SVGIcon'
 import TextIcon from './TextIcon'
 import squareIcon from './svg/squareShape.svg';
@@ -271,6 +272,7 @@ class DisplayMenu extends React.Component {
     }
     return (
       <div className={styles.menu_outer}>
+        <MenuSwitchView/>
         <MenuDataset
           key={datasetId}
           id={datasetId}

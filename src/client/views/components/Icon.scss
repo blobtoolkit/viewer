@@ -51,8 +51,25 @@ div.icon {
   background-color: $deepColor;
   color: $lightColor;
 }
+
 .text_icon:hover {
   background-color:$paleColor;
   color:$deepColor;
+  border-color: $paleColor;
+}
+
+// .text_icon.invert {
+//   background-color: $deepColor;
+//   color: $lightColor;
+// }
+
+.text_icon.active.invert {
+  background-color: $highlightColor;
+  color: $lightColor;
+}
+
+.text_icon.invert:hover {
+  background-color:$highlightColor;
+  color:$lightColor;
   border-color: $paleColor;
 }

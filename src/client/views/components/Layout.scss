@@ -443,8 +443,11 @@ table {
 }
 
 .simple.inv {
+  border-top: 0.25em solid $darkColor;
+  border-bottom: 0.25em solid $darkColor;
   background-color: $darkColor;
   color: $lightColor;
+  margin:0 0 -0.5em 0;
 
   .simple_buttons {
     color:$lightColor;

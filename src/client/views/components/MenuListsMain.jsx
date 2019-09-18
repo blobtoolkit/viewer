@@ -11,6 +11,7 @@ import {
 } from '../reducers/summary'
 import MenuList from './MenuList'
 import ListUpload from './MenuListUpload'
+import MenuSwitchView from './MenuSwitchView'
 import DatasetCreateList from './DatasetCreateList'
 import MenuDataset from './MenuDataset'
 import { getDatasetID, getHashString } from '../reducers/location'
@@ -96,6 +97,7 @@ class ListsMenu extends React.Component {
     if (this.state.loading){
       return (
         <div className={styles.menu_outer}>
+          <MenuSwitchView/>
           <MenuDataset
             key={this.props.datasetId}
             id={this.props.datasetId}
@@ -109,6 +111,7 @@ class ListsMenu extends React.Component {
     }
     return (
       <div className={styles.menu_outer}>
+        <MenuSwitchView/>
         <MenuDataset
           key={this.props.datasetId}
           id={this.props.datasetId}
