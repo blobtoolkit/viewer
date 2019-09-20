@@ -331,7 +331,7 @@ export const getBuscoData = createSelectorForBuscoId(
                 + '],F:' + pct(fractions.f)
                 + ',M:' + pct(fractions.m)
                 + ',n:' + total
-    return {total,scores,selections,records,fractions,string}
+    return {total,scores,selections,records,fractions,string,ids}
   }
 );
 

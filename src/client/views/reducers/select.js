@@ -21,6 +21,7 @@ export const getSelectionDisplay = state => state.selectionDisplay
 
 export const addRecords = createAction('ADD_RECORDS')
 export const removeRecords = createAction('REMOVE_RECORDS')
+export const replaceRecords = createAction('REPLACE_RECORDS')
 export const selectNone = createAction('SELECT_NONE')
 
 export const selectedRecords = handleActions(
@@ -82,6 +83,9 @@ export const selectedRecords = handleActions(
         i++
       }
       return arr
+    },
+    REPLACE_RECORDS: (state, action) => {
+      return action.payload
     },
     SELECT_NONE: (state, action) => {
       return []

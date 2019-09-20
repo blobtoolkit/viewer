@@ -141,7 +141,7 @@ module.exports = function(app, db) {
     //res.setHeader('Access-Control-Allow-Origin', 'http://localhost:8080');
     let field = new Field(req.params.field_id,{id:req.params.dataset_id});
     let data = await field.loadData();
-    if (data.hasOwnProperty('values')){
+    if (data && data.hasOwnProperty('values')){
       res.json(data)
     }
     else {

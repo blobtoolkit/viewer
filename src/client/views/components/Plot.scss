@@ -138,13 +138,7 @@ span.download {
   }
 }
 
-div.download, div.download_all {
-  position:absolute;
-  display:flex;
-  align-items: center;
-  justify-content: flex-end;
-  margin-top:-5em;
-  margin-left: 10em;
+div.download, div.download_all, div.list_download {
   .save_svg {
     position:relative;
     display:inline-block;
@@ -157,12 +151,25 @@ div.download, div.download_all {
   }
 }
 
+div.download, div.download_all {
+  position:absolute;
+  display:flex;
+  align-items: center;
+  justify-content: flex-end;
+  margin-top:-5em;
+  margin-left: 10em;
+}
+
 div.download_all {
   margin:0;
   justify-content: flex-start;
   .save_svg {
     left:0;
   }
+}
+
+div.list_download {
+  float:right;
 }
 
 
@@ -372,4 +379,18 @@ div.download_all {
   }
 
 
+}
+
+.id_list {
+  font-size: 0.75em;
+  color: $deepColor;
+  max-height: 10em;
+  font-family:monospace;
+  overflow:scroll;
+}
+
+.expand {
+  color: $deepColor;
+  cursor: pointer;
+  font-style: italic;
 }

@@ -8,7 +8,7 @@ import { ExportButton } from './ExportButton'
 import { format as d3Format } from 'd3-format'
 import ReactTable from 'react-table'
 import { getDatasetID } from '../reducers/location'
-import { addRecords, removeRecords } from '../reducers/select'
+import { addRecords, removeRecords, replaceRecords } from '../reducers/select'
 import { CircleAxis } from './CircleAxis'
 
 const RecordSelector = ({sel,val,records,id,toggleSelect}) => {
@@ -47,7 +47,9 @@ class BuscoData extends React.Component {
       pageSize:10,
       filter:[],
       sort:[],
-      size:[]
+      size:[],
+      _idList: 'EOG09150B43:EOG091502SD:EOG091504TW:EOG091505EO:EOG09150529',
+      more: false
     }
   }
 
@@ -61,17 +63,40 @@ class BuscoData extends React.Component {
     return {style:{display:'none'}}
   }
 
+  handleChange(e) {
+    e.preventDefault()
+    this.setState({idList: e.target.value});
+  }
+
+  toggleForm() {
+    this.setState({more: !this.state.more});
+  }
+
+  handleSubmit(e){
+    e.preventDefault()
+    if (!this.state.idList) return
+    let idList = this.state.idList.split(/\W+/)
+    let records = []
+    idList.forEach(busco=>{
+      if (this.props.data.ids.hasOwnProperty(busco)){
+        records.push(...this.props.data.ids[busco])
+      }
+    })
+    this.props.replaceRecords(records,true)
+  }
+
   render(){
     if (!this.props.data) return null
     let pct = d3Format(".1%")
     let data = []
     let raw = this.props.data
+    // console.log(this.props.data.ids)
     let toggleSelect = this.props.toggleSelect
     data.push({sel:this.props.data.selections.t,records:this.props.data.records.t,cat:'BUSCOs',val:raw.total})
     data.push({sel:this.props.data.selections.c,records:this.props.data.records.c,cat:'Complete',val:raw.scores.c,pct:pct(raw.fractions.c),col:'rgb(51, 160, 44)'})
     data.push({sel:this.props.data.selections.d,records:this.props.data.records.d,cat:'Duplicated',val:raw.scores.d,pct:pct(raw.fractions.d),col:'rgb(32, 100, 27)'})
     data.push({sel:this.props.data.selections.f,records:this.props.data.records.f,cat:'Fragmented',val:raw.scores.f,pct:pct(raw.fractions.f),col:'rgb(163, 226, 127)'})
-    data.push({cat:'Missing',val:raw.scores.m,pct:pct(raw.fractions.m)})
+    data.push({cat:'Missing',val:raw.scores.m,pct:pct(raw.fractions.m),col:'rgb(255, 255, 255)'})
     let columns = [{
       Header:this.props.id,
       columns:
@@ -89,7 +114,9 @@ class BuscoData extends React.Component {
           accessor: 'val',
           Cell: props => (<span>{props.original.val}{props.original.col && <span
                               className={layoutStyles.colored_tab}
-                              style={{backgroundColor:props.original.col,float:'left'}}>
+                              style={{backgroundColor:props.original.col,
+                                      float:'left',
+                                      border:props.original.cat == 'Missing' ? '0.5px solid #eee' : 'none'}}>
                           </span>}</span>),
 
         },
@@ -99,19 +126,46 @@ class BuscoData extends React.Component {
       ]
     }]
     let csv = data.map(o=>'"'+o.cat+'",'+o.val+','+(o.pct||'')).join('\n')
+    let fullList = Object.keys(this.props.data.ids).join(', ')
+    let exampleList = Object.keys(this.props.data.ids).slice(0,3).join(', ')
+    let exportButtons = (
+      <div className={styles.list_download}>
+        <ExportButton view={`${this.props.id}_busco`} data={fullList} format='txt' prefix={this.props.datasetId+'.'+this.props.id+'.busco'}/>
+      </div>
+    )
     return (
       <div style={{display:'flex',flexDirection:'row',minHeight:'14em'}}>
         <div style={{flex:'0 0 50%',display:'flex',alignItems:'center',justifyContent:'flex-end',textAlign:'right',padding:'1em'}}>
-          <ReactTable
-              data={data}
-              columns={columns}
-              showPagination={false}
-              defaultPageSize={data.length}
-              getTheadThProps={this.injectThProps}
-            />
+          <div style={{flexDirection:'column'}}>
+            <ReactTable
+                data={data}
+                columns={columns}
+                showPagination={false}
+                defaultPageSize={data.length}
+                getTheadThProps={this.injectThProps}
+              />
+            {fullList && <div style={{maxWidth:'25em'}}>
+              <span className={styles.expand}
+                    onClick={()=>this.toggleForm()}>{this.state.more ? '...Less' : 'More...'}</span>
+              <form className={this.state.more ? '' : layoutStyles.hidden} onSubmit={(e)=>this.handleSubmit(e)}>
+                <label>
+                  <textarea rows="6"
+                            cols="53"
+                            value={this.state.idList}
+                            placeholder={'Enter a list of BUSCO IDs to select, e.g.:\n'+exampleList}
+                            style={{display:'block'}}
+                            onChange={(e)=>this.handleChange(e)} />
+                </label>
+                <input type="submit" value="Select" />
+                <div style={{textAlign:'left'}}>
+                  {exportButtons}
+                  <div>List of BUSCOs in {this.props.datasetId}:</div>
+                  <div className={styles.id_list}>{fullList}</div></div>
+              </form>
+            </div>}
+          </div>
         </div>
         <BuscoPlot {...this.props} csv={csv}/>
-
       </div>
     )
   }
@@ -141,7 +195,7 @@ class BuscoPlot extends React.Component {
       return null
     }
     return (
-      <div style={{flex:'0 0 50%',display:'flex',alignItems:'center',justifyContent:'flex-start',padding:'1em'}}>
+      <div style={{flex:'0 0 50%',display:'flex',alignItems:'center',justifyContent:'flex-start',padding:'1em',height:'13em'}}>
         <svg id={'busco_plot'+this.props.id}
           ref={(elem) => { this.svg = elem; }}
           style={{width:'11em',height:'11em',fontSize:'14px'}}
@@ -187,6 +241,7 @@ class Busco extends React.Component {
             dispatch(removeRecords(id))
           }
         },
+        replaceRecords: arr => dispatch(replaceRecords(arr))
       }
     }
 
