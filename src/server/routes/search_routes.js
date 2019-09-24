@@ -31,8 +31,8 @@ const parseMeta = (obj) => {
   if (!meta.hasOwnProperty('prefix')){
     meta.prefix = meta.name
   }
-  if (obj.hasOwnProperty('version')){
-    meta.version = obj.version
+  if (obj.hasOwnProperty('revision')){
+    meta.revision = obj.revision
   }
   return meta
 }
@@ -44,7 +44,7 @@ const readMeta = (dir,md) => {
     if (!versions[o.prefix]){
       versions[o.prefix] = {}
     }
-    versions[o.prefix][o.version] = i
+    versions[o.prefix][o.revision] = i
   })
   fs.readdirSync(dir).forEach(file => {
     let path = dir+'/'+file
@@ -54,8 +54,8 @@ const readMeta = (dir,md) => {
     else if (file == 'meta.json' && fs.statSync(path).isFile()){
       let dsMeta = parseMeta(read.sync(path))
       dsMeta.id = dir.replace(/^.+\//,'')
-      if (!dsMeta.hasOwnProperty('version')){
-        dsMeta.version = 1
+      if (!dsMeta.hasOwnProperty('revision')){
+        dsMeta.revision = 0
       }
       if (config.dataset_table){
         let sumpath = dir+'/summary.json'
@@ -71,7 +71,7 @@ const readMeta = (dir,md) => {
       if (!versions[dsMeta.prefix]){
         versions[dsMeta.prefix] = {}
       }
-      versions[dsMeta.prefix][dsMeta.version] = md.length
+      versions[dsMeta.prefix][dsMeta.revision] = md.length
       md.push(dsMeta)
       let latest = Math.max(...Object.keys(versions[dsMeta.prefix]))
       Object.keys(versions[dsMeta.prefix]).forEach(version=>{
@@ -87,7 +87,7 @@ const generateIndex = meta => {
   let ctr = 0
   let terms = {}
   meta.forEach((m,i)=>{
-    if (m.latest == m.version){
+    if (m.latest == m.revison){
       Object.keys(m).forEach(k=>{
         if (!fields.hasOwnProperty(k)){
           fields[k] = ctr
@@ -193,7 +193,7 @@ const autocomplete = term => {
     results.push({
       term:'all',
       field:'all records',
-      names:meta.filter(o=>o.latest==o.version).map(o=>o.name)
+      names:meta.filter(o=>o.latest==o.revision).map(o=>o.name)
     })
   }
   else {
@@ -213,7 +213,7 @@ const autocomplete = term => {
 }
 
 const search = term => {
-  if (term.match(/^all$/i)) return meta.filter(o=>o.latest==o.version)
+  if (term.match(/^all$/i)) return meta.filter(o=>o.latest==o.revision)
   if (!index.values[term]) return []
   let arr = []
   let ids = {}

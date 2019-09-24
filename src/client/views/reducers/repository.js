@@ -79,11 +79,11 @@ export const availableDatasets = handleActions(
         if (action.payload.json.assembly.prefix && action.payload.json.assembly.prefix){
           prefix = action.payload.json.assembly.prefix
           latest = Object.keys(state.byId).filter(key => state.byId[key].prefix === action.payload.json.assembly.prefix)[0]
-          action.payload.json.latest = state.byId[latest].version
+          action.payload.json.latest = state.byId[latest].revision
           action.payload.json.prefix = state.byId[latest].prefix
         }
         else {
-          action.payload.json.latest = action.payload.json.version
+          action.payload.json.latest = action.payload.json.revision
         }
       }
       return immutableUpdate(state, {
