@@ -87,7 +87,7 @@ const generateIndex = meta => {
   let ctr = 0
   let terms = {}
   meta.forEach((m,i)=>{
-    if (m.latest == m.revison){
+    if (m.latest == m.revision){
       Object.keys(m).forEach(k=>{
         if (!fields.hasOwnProperty(k)){
           fields[k] = ctr
