@@ -4,6 +4,7 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const GitRevisionPlugin = require('git-revision-webpack-plugin');
 // const combineLoaders = require('webpack-combine-loaders');
 const main = require('./src/config/main');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 const devMode = process.env.NODE_ENV !== 'production';
@@ -88,7 +89,10 @@ const config = {
       title: 'BlobToolKit - Viewer',
       template: './src/client/index.html',
       // filename: BUILD_DIR + '/index.html'
-    })
+    }),
+    new CopyWebpackPlugin([
+      { from: './src/client/favicon' }
+    ])
   ],
   module: {
     rules: [

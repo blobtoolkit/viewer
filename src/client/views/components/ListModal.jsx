@@ -36,7 +36,11 @@ class ListModal extends React.Component {
     let inParams = this.props.list.params;
     let params = {};
     Object.keys(inParams).sort().forEach(function(key) {
-      params[key] = inParams[key];
+      let value = JSON.stringify(inParams[key]).replace(/\"/g,'')
+      if (value.length > 50){
+        value = value.slice(0,47)+'...'
+      }
+      params[key] = value;
     });
     let loadButton = (<a className={styles.button} onClick={()=>{this.props.chooseList(this.props.name,Boolean(params['selection--Active']));this.handleClose()}}>Load List</a>)
     let loadList = this.props.name == 'current' ? '' : loadButton
