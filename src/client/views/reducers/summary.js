@@ -1174,20 +1174,22 @@ export const getSelectedDatasetTable = createSelector(
       data.push({group:'BlobToolKit',key:'pipeline version',value:details.settings.commit,link,meta})
     }
     if (details.hasOwnProperty('revision')){
-      let link,meta
-      if (details.revision > 0 && details.revision == details.latest){
-        let previous = details.revision == 1 ? details.prefix : details.prefix+'.'+details.revision-1
-        link = {
+      let link = [], meta
+      if (details.revision > 0){
+        console.log(details)
+        let previous = details.revision == 1 ? details.prefix : `${details.prefix}.${(details.revision-1)}`
+        link.push({
           func:()=>'/view/all/dataset/'+previous+'/detail',
           title:'Previous'
-        }
-        data.push({group:'BlobToolKit',key:'dataset revision',value:details.revision,link,meta})
+        })
       }
-      else if (details.revision < details.latest){
-        link = {
+      if (details.revision < details.latest){
+        link.push({
           func:()=>'/view/all/dataset/'+details.prefix+'.'+details.latest+'/detail',
           title:'Latest'
-        }
+        })
+      }
+      if (link.length > 0){
         data.push({group:'BlobToolKit',key:'dataset revision',value:details.revision,link,meta})
       }
 

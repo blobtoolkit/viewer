@@ -47,9 +47,12 @@ class Detail extends React.Component {
           accessor: d => {
             let link
             if (d.link){
+              let links = Array.isArray(d.link) ? d.link : [d.link]
               link = (
                 <span className={styles.detail_link}>
-                  <ExternalLink title={d.link.title} target='_blank' url={d.link.func(d.meta)}/>
+                  {links.map((l,i)=>(
+                    <ExternalLink key={i} title={l.title} target='_blank' url={l.func(d.meta)}/>
+                  ))}
                 </span>
               )
             }
