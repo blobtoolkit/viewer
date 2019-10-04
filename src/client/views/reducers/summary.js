@@ -278,6 +278,7 @@ export const getBuscoData = createSelectorForBuscoId(
     let selections = {c:{},d:{},f:{},t:{}}
     let records = {c:{},d:{},f:{},t:{}}
     let ids = {}
+    let duplicates = {}
     data.values.forEach((record,index)=>{
       let i = list[index]
       record.forEach(busco=>{
@@ -287,12 +288,15 @@ export const getBuscoData = createSelectorForBuscoId(
           records.c[i] = 1
           if (selected[i]) selections.c[i] = 1
           if (ids[busco[0]]){
+            if (!duplicates[busco[0]]){
+              scores.d++
+            }
+            duplicates[busco[0]] = 1
             records.d[i] = 1
             if (selected[i]) selections.d[i] = 1
             ids[busco[0]].forEach(id=>{
               records.d[id] = 1
               if (selected[id]) selections.d[id] = 1
-              scores.d++
             })
           }
           else {
