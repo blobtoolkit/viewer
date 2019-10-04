@@ -353,6 +353,185 @@ export const getScatterPlotDataByCategory = createSelector(
   }
 )
 
+
+// const weighted_mean_sd = (values, weights, sumWeight, log) => {
+//   if (log){
+//     let sum = 0
+//     let len = values.length
+//     for (let i = 0; i < len; i++){
+//       sum += Math.log10(values[i])*weights[i]
+//     }
+//     let mean = sum/sumWeight
+//     let variance = 0
+//     for (let i = 0; i < len; i++){
+//       variance += weights[i] * ((Math.log10(values[i]) - mean) ** 2)
+//     }
+//     variance /= sumWeight
+//     let stDev = Math.sqrt(variance)
+//     let upper = 10 ** (mean + 2 * stDev)
+//     let lower = 10 ** (mean - 2 * stDev)
+//     mean = 10 ** mean
+//     return {mean, stDev, upper, lower}
+//   }
+//   else {
+//     let sum = 0
+//     let len = values.length
+//     for (let i = 0; i < len; i++){
+//       sum += values[i]*weights[i]
+//     }
+//     let mean = sum/sumWeight
+//     let variance = 0
+//     for (let i = 0; i < len; i++){
+//       variance += weights[i] * (values[i] - mean) ** 2
+//     }
+//     variance /= sumWeight
+//     let stDev = Math.sqrt(variance)
+//     let upper = mean + 2 * stDev
+//     let lower = mean - 2 * stDev
+//     return {mean, stDev, upper, lower}
+//   }
+// }
+
+const weightedMedian = (arr, total) => {
+  if (arr.length == 0) return undefined
+  let sum = 0
+  let mid = total / 2
+  let median
+  let sorted = arr.sort((a, b) => a.value - b.value)
+  for (let i = 0; i < arr.length; i++){
+    sum += sorted[i].weight
+    if (sum > mid){
+      return sorted[i].value
+    }
+  }
+};
+
+const weighted_mean_sd = (values, weights, sumWeight, log) => {
+  if (log){
+    let sum = 0
+    let len = values.length
+    let arr = []
+    for (let i = 0; i < len; i++){
+      sum += Math.log10(values[i])*weights[i]
+      arr.push({weight: weights[i], i, value: values[i]})
+    }
+    let median = weightedMedian(arr, sumWeight)
+    let mean = sum/sumWeight
+    let variance = 0
+    for (let i = 0; i < len; i++){
+      variance += weights[i] * ((Math.log10(values[i]) - mean) ** 2)
+    }
+    variance /= sumWeight
+    let stDev = Math.sqrt(variance)
+    let upper = 10 ** (mean + 2 * stDev)
+    let lower = 10 ** (mean - 2 * stDev)
+    mean = 10 ** mean
+    return {mean, median, stDev, upper, lower}
+  }
+  else {
+    let sum = 0
+    let len = values.length
+    let arr = []
+    for (let i = 0; i < len; i++){
+      sum += values[i]*weights[i]
+      arr.push({weight: weights[i], i, value: values[i]})
+    }
+    let median = weightedMedian(arr, sumWeight)
+    let mean = sum/sumWeight
+    let variance = 0
+    for (let i = 0; i < len; i++){
+      variance += weights[i] * (values[i] - mean) ** 2
+    }
+    variance /= sumWeight
+    let stDev = Math.sqrt(variance)
+    let upper = mean + 2 * stDev
+    let lower = mean - 2 * stDev
+    return {mean, median, stDev, upper, lower}
+  }
+}
+
+
+export const getKitePlotData = createSelector(
+  getMainPlotData,
+  getBinsForCat,
+  getColorPalette,
+  (plotData,bins,palette) => {
+    if (!plotData || !bins) return undefined
+    let data = [];
+    let keys = {}
+    if (plotData.axes.cat.values.length == 0){
+      return {data:[]}
+    }
+    bins.forEach((bin,i)=>{
+      data[i] = {x:[],y:[],xWeight:[],yWeight:[],xWeightSum:0,yWeightSum:0}
+      bin.keys.forEach(key=>{
+        keys[key] = i
+      })
+    })
+    let len = plotData.axes.x.values.length
+    for (let i = 0; i < len; i++){
+      let bin = keys[plotData.axes.cat.values[i]]
+      let x = plotData.axes.x.values[i]
+      let y = plotData.axes.y.values[i]
+      let z = plotData.axes.z.values[i]
+      if (!plotData.meta.x.meta.clamp || x >= plotData.meta.x.meta.clamp){
+        data[bin].x.push(x)
+        data[bin].xWeight.push(z)
+        data[bin].xWeightSum += z
+      }
+      if (!plotData.meta.y.meta.clamp || y >= plotData.meta.y.meta.clamp){
+        data[bin].y.push(y)
+        data[bin].yWeight.push(z)
+        data[bin].yWeightSum += z
+      }
+    }
+    let coords = []
+    let yScale = plotData.meta.y.xScale.copy()
+    let xScale = plotData.meta.x.xScale.copy()
+    yScale.range([900,0])
+    xScale.range([0,900])
+    data.forEach((bin,i)=>{
+      coords[i] = {}
+      bin.xWeighted = weighted_mean_sd(bin.x, bin.xWeight, bin.xWeightSum, plotData.meta.x.meta.scale == 'scaleLog')
+      bin.yWeighted = weighted_mean_sd(bin.y, bin.yWeight, bin.yWeightSum, plotData.meta.y.meta.scale == 'scaleLog')
+      // coords[i].x = [
+      //   [xScale(bin.xWeighted.lower),yScale(bin.yWeighted.mean)],
+      //   [xScale(bin.xWeighted.upper),yScale(bin.yWeighted.mean)]
+      // ]
+      // coords[i].y = [
+      //   [xScale(bin.xWeighted.mean),yScale(bin.yWeighted.lower)],
+      //   [xScale(bin.xWeighted.mean),yScale(bin.yWeighted.upper)]
+      // ]
+      // coords[i].poly = [
+      //   [xScale(bin.xWeighted.lower),yScale(bin.yWeighted.mean)],
+      //   [xScale(bin.xWeighted.mean),yScale(bin.yWeighted.lower)],
+      //   [xScale(bin.xWeighted.upper),yScale(bin.yWeighted.mean)],
+      //   [xScale(bin.xWeighted.mean),yScale(bin.yWeighted.upper)],
+      //   [xScale(bin.xWeighted.lower),yScale(bin.yWeighted.mean)]
+      // ]
+      if (bin.xWeighted.lower){
+        coords[i].x = [
+          [xScale(bin.xWeighted.lower),yScale(bin.yWeighted.median)],
+          [xScale(bin.xWeighted.upper),yScale(bin.yWeighted.median)]
+        ]
+        coords[i].y = [
+          [xScale(bin.xWeighted.median),yScale(bin.yWeighted.lower)],
+          [xScale(bin.xWeighted.median),yScale(bin.yWeighted.upper)]
+        ]
+        coords[i].poly = [
+          [xScale(bin.xWeighted.lower),yScale(bin.yWeighted.median)],
+          [xScale(bin.xWeighted.median),yScale(bin.yWeighted.lower)],
+          [xScale(bin.xWeighted.upper),yScale(bin.yWeighted.median)],
+          [xScale(bin.xWeighted.median),yScale(bin.yWeighted.upper)],
+          [xScale(bin.xWeighted.lower),yScale(bin.yWeighted.median)]
+        ]
+      }
+
+    })
+    return {coords,bins,colors:palette.colors};
+  }
+)
+
 const sliceObject = (obj,index) => {
   let slice = {};
   Object.keys(obj).forEach(key =>{

@@ -88,24 +88,34 @@ class Caption extends Component {
       let scale = scales[this.props.scale]
       let range
       let reducer = this.props.reducer.id
-      if (this.props.plotShape != 'circle'){
+      if (this.props.plotShape == 'circle') {
+        range = this.props.range.map(x=>Number(x).toLocaleString())
+      }
+      else if (this.props.plotShape == 'kite'){
+        plot = `Kite-shaped blob`
+      }
+      else {
         range = this.props.zScale.domain().map(x=>Number(x).toLocaleString())
         plot = `${this.capitalise(shape)}-binned blob`
       }
-      else {
-        range = this.props.range.map(x=>Number(x).toLocaleString())
-      }
       title = `${plot} plot of ${yaxis} against ${xaxis} for ${record}s in assembly ${this.props.datasetName}. `
       caption = `${this.capitalise(record)}s are coloured by ${cat}`
-      if (this.props.plotShape != 'circle'){
-        caption += ` and binned at a resolution of ${this.props.binned.grid.res} divisions on each axis`
-        caption += `. Coloured ${shape}s within each bin are sized in proportion to the ${reducer} of individual ${record} ${z}s `
+      if (this.props.plotShape != 'kite'){
+        if (this.props.plotShape == 'circle'){
+          caption += `. Circles are sized in proportion to ${record} ${z} `
+        }
+        else {
+          caption += ` and binned at a resolution of ${this.props.binned.grid.res} divisions on each axis`
+          caption += `. Coloured ${shape}s within each bin are sized in proportion to the ${reducer} of individual ${record} ${z}s `
+        }
+        caption += `on a ${scale} scale,
+                    ranging from ${range[0]} to ${range[1]}. `
       }
       else {
-        caption += `. Circles are sized in proportion to ${record} ${z} `
+        caption += `. Kite shapes summarise the core distribution of ${record}s. `
+        caption += `Horizontal and vertical lines represent a range spanning 2 standard deviations about the weighted mean value for each axis. `
+        caption += `The lines instersect at a point representing the weighted median value. `
       }
-      caption += `on a ${scale} scale,
-                  ranging from ${range[0]} to ${range[1]}. `
       caption += `Histograms show the distribution of ${record} ${z} ${reducer} along each axis. `
 
     }

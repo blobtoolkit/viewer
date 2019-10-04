@@ -40,6 +40,7 @@ const sets = (set) => {
   tips.squareShape = {name:'plot square bins',settingsMenu:1}
   tips.hexShape = {name:'plot hexagonal bins',settingsMenu:1}
   tips.circleShape = {name:'plot points as circles',settingsMenu:1}
+  tips.kiteShape = {name:'plot kite shapes',settingsMenu:1}
   tips.max = {name:'maximum z-value',settingsMenu:1}
   tips.min = {name:'minimum z-value',settingsMenu:1}
   tips.sum = {name:'sum of z-values',settingsMenu:1}

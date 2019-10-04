@@ -49,6 +49,7 @@ import MenuSwitchView from './MenuSwitchView'
 import SVGIcon from './SVGIcon'
 import TextIcon from './TextIcon'
 import squareIcon from './svg/squareShape.svg';
+import kiteIcon from './svg/kiteShape.svg';
 import hexIcon from './svg/hexShape.svg';
 import circleIcon from './svg/circleShape.svg';
 import svgIcon from './svg/svg.svg';
@@ -142,6 +143,8 @@ class DisplayMenu extends React.Component {
             <SVGIcon sprite={squareIcon} active={shape == 'square'} onIconClick={()=>onSelectShape('square')}/>
             <SVGIcon sprite={hexIcon} active={shape == 'hex'} onIconClick={()=>onSelectShape('hex')}/>
             <SVGIcon sprite={circleIcon} active={shape == 'circle'} onIconClick={()=>onSelectShape('circle')}/>
+            <SVGIcon sprite={kiteIcon} active={shape == 'kite'} onIconClick={()=>onSelectShape('kite')}/>
+
           </MenuDisplaySimple>
           <MenuDisplaySimple name={'resolution [ '+resolution+' ]'}>
             <div className={styles.full_height}>

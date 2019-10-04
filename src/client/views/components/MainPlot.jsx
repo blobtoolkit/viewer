@@ -10,6 +10,7 @@ import PlotBubblesSVGLayers from './PlotBubblesSVGLayers'
 import PlotSquareBinsSVG from './PlotSquareBinsSVG'
 import PlotSquareGridSVG from './PlotSquareGridSVG'
 //import PlotHexBinsCanvas from './PlotHexBinsCanvas'
+import PlotKitesSVG from './PlotKitesSVG'
 import PlotHexBinsSVG from './PlotHexBinsSVG'
 import PlotHexGridSVG from './PlotHexGridSVG'
 import PlotAxisTitle from './PlotAxisTitle'
@@ -19,7 +20,7 @@ import PlotSideBinsSVG from './PlotSideBinsSVG'
 import PlotLegend from './PlotLegend'
 import FigureCaption from './FigureCaption'
 import Pointable from 'react-pointable';
-import { getScatterPlotData } from '../reducers/plotData'
+import { getKitePlotData, getScatterPlotData } from '../reducers/plotData'
 import { getScatterPlotDataByHexBin,
   getSelectedHexGrid,
   getHexGridScale } from '../reducers/plotHexBins'
@@ -70,6 +71,17 @@ export default class MainPlot extends React.Component {
             staticThreshold: getStaticThreshold(state),
             nohitThreshold: getNohitThreshold(state),
             zScale: getSquareGridScale(state)
+          }
+        }
+        else if (plotShape == 'kite') {
+          return {
+            datasetId: getDatasetID(state),
+            plotShape: getPlotShape(state),
+            plotGraphics: getPlotGraphics(state),
+            binned: getKitePlotData(state),
+            records: getRecordCount(state),
+            staticThreshold: getStaticThreshold(state),
+            nohitThreshold: getNohitThreshold(state)
           }
         }
         return {
@@ -208,8 +220,11 @@ class PlotBox extends React.Component {
     )
     let bins = this.state.bins
     let viewbox = '0 0 '+side+' '+side
-    let xPlot = <PlotSideBinsSVG axis='x'/>
-    let yPlot = <PlotSideBinsSVG axis='y'/>
+    let xPlot, yPlot
+    // if (this.props.plotShape != 'kite'){
+      xPlot = <PlotSideBinsSVG axis='x'/>
+      yPlot = <PlotSideBinsSVG axis='y'/>
+    // }
     let legend = <g transform='translate(1010,-290)'><PlotLegend/></g>
     if (this.props.plotShape == 'circle'){
       if (this.props.plotGraphics != 'svg'){
@@ -227,6 +242,9 @@ class PlotBox extends React.Component {
       else {
         plotContainer = <PlotBubblesSVGLayers {...this.props}/>
       }
+    }
+    else if (this.props.plotShape == 'kite'){
+      plotContainer = <PlotKitesSVG />
     }
     else if (this.props.plotShape == 'square'){
       plotContainer = <PlotSquareBinsSVG />
@@ -263,6 +281,34 @@ class PlotBox extends React.Component {
           </div>
           <FigureCaption {...this.props}/>
           { this.props.records > this.props.circleLimit && this.props.staticThreshold > this.props.records && <NoHitWarning circleLimit={this.props.circleLimit}/> }
+        </div>
+      )
+    }
+    else if (this.props.plotShape == 'kite'){
+      return (
+        <div className={styles.outer}>
+          <div className={styles.fill_parent}>
+            <svg id="main_plot"
+              ref={(elem) => { this.svg = elem; }}
+              className={styles.main_plot+' '+styles.fill_parent}
+              viewBox={viewbox}
+              preserveAspectRatio="xMinYMin">
+              <g transform={'translate(100,320)'} >
+                <PlotTransformLines />
+                <g transform="translate(50,50)">
+                {plotContainer}
+                </g>
+                {xPlot}
+                {yPlot}
+                {legend}
+                <MainPlotBoundary/>
+                <PlotAxisTitle axis='x' side={side}/>
+                <PlotAxisTitle axis='y' side={side}/>
+              </g>
+            </svg>
+            {exportButtons}
+          </div>
+          <FigureCaption {...this.props}/>
         </div>
       )
     }
