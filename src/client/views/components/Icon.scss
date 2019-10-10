@@ -15,7 +15,7 @@ div.icon {
     color:inherit;
     height: 1.5em;
     width: 1.5em;
-    border: 0.25em solid;
+    border: 0.2em solid;
     margin-top: -0.3em;
     cursor: pointer;
 
@@ -26,6 +26,15 @@ div.icon {
     background-color:$deepColor;
     color:$lightColor;
     border-color: $deepColor;
+  }
+
+  svg.invert {
+    border-color: $darkColor;
+  }
+
+  svg.invert.active {
+    background-color:$highlightColor;
+    color:$lightColor;
   }
 
   svg:hover {
@@ -63,13 +72,14 @@ div.icon {
 //   color: $lightColor;
 // }
 
-.text_icon.active.invert {
+.text_icon.active.invert, .text_icon.invert.active {
   background-color: $highlightColor;
-  color: $lightColor;
+  border-color: $highlightColor;
+  color: inherit !important;
 }
 
-.text_icon.invert:hover {
-  background-color:$highlightColor;
-  color:$lightColor;
+.text_icon.invert:hover, .text_icon.active.invert:hover {
+  background-color:$paleColor;
+  color:inherit;
   border-color: $paleColor;
 }

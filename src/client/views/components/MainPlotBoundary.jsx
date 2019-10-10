@@ -1,6 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux'
-import { getMainPlotData }  from '../reducers/plotData'
+import { getMainPlotData } from '../reducers/plotData'
+import { getTransformFunctionParams } from '../reducers/plotParameters'
 import {Axis, axisPropsFromTickScale, LEFT, BOTTOM} from 'react-d3-axis';
 import { scaleLinear as d3scaleLinear } from 'd3-scale'
 import { format as d3Format } from 'd3-format'
@@ -11,7 +12,11 @@ export default class MainPlotBoundary extends React.Component {
     super(props);
     this.mapStateToProps = () => {
       return (state, props) => (
-        getMainPlotData(state)
+        {
+          data: getMainPlotData(state),
+          params: getTransformFunctionParams(state)
+        }
+
       )
     }
   }
@@ -38,7 +43,7 @@ const isPowerOfTen = d => {
   return d == 1
 }
 
-const PlotOutline = (data) => {
+const PlotOutline = ({data, params}) => {
   let fontSize = 16
   let f = d => {
     if (d < 1 && d > 0.0001 && String(d).match(/^[0\.1]+$/)){
@@ -113,7 +118,7 @@ const PlotOutline = (data) => {
       </g>
     )
     yBreak = (<line style={plotPaths.clampedDivider}
-                    x1={-50} x2={1300} y1={896} y2={896}/>)
+                    x1={-50} x2={1300} y1={896+50*params.factor-params.intercept} y2={896-1300*params.factor-params.intercept}/>)
     yScale.range([878, 50])
     yScale.domain([data.meta.y.meta.clamp, yScale.domain()[1]])
   }

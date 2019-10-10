@@ -146,15 +146,18 @@ export const zReducer = handleAction(
 export const getZReducer = state => state.zReducer
 
 
-const defaultTransform = { x:500, order:1, factor:0 }
+const defaultTransform = { x:0, order:1, factor:0, intercept: 0, origin: {x: 0, y:0}, index: -1 }
 export const setTransformFunction = createAction('EDIT_Y_TRANSFORM')
 export const transformFunction = handleAction(
   'EDIT_Y_TRANSFORM',
   (state, action) => {
     let obj = {}
-    obj.x = action.payload.x ? action.payload.x * 1 : defaultTransform.x
-    obj.order = action.payload.order ? action.payload.order * 1 : defaultTransform.order
-    obj.factor = action.payload.factor ? action.payload.factor * 1 : defaultTransform.factor
+    obj.intercept = action.payload.hasOwnProperty('intercept') ? action.payload.intercept * 1 : defaultTransform.intercept
+    obj.x = action.payload.hasOwnProperty('x') ? action.payload.x * 1 : defaultTransform.x
+    obj.order = action.payload.hasOwnProperty('order') ? action.payload.order * 1 : defaultTransform.order
+    obj.factor = action.payload.hasOwnProperty('factor') ? action.payload.factor * 1 : defaultTransform.factor
+    obj.index = action.payload.hasOwnProperty('index') ? action.payload.index * 1 : defaultTransform.index
+    obj.origin = action.payload.hasOwnProperty('origin') ? action.payload.origin : defaultTransform.origin
     return obj
   },
   defaultTransform
@@ -165,11 +168,18 @@ export const getTransformFunction = createSelector(
   getTransformFunctionParams,
   (props) => {
   let factor = props.factor / 900
+  let intercept = props.intercept
   return (([x,y]) => {
-    let newY = y + ((Math.abs(props.x-x)**props.order) * (props.factor / 900**(props.order-1)))
+    let newY = y + ((Math.abs(props.x-x)**props.order) * (props.factor / 900**(props.order-1))) + props.intercept
     return [x,newY]
   })
 })
+export const chooseTransformFunction = (curveOrigin) => {
+  return function (dispatch) {
+    let values = {curveOrigin}
+    dispatch(queryToStore({values}))
+  }
+}
 
 export const setCurveOrigin = createAction('SET_CURVE_ORIGIN')
 export const chooseCurveOrigin = (curveOrigin) => {

@@ -1,8 +1,9 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import styles from './Caption.scss';
-import {getZScale, getZReducer, getCurveOrigin, getScaleTo } from '../reducers/plotParameters'
+import {getZScale, getZReducer, getCurveOrigin, getScaleTo, getTransformFunctionParams } from '../reducers/plotParameters'
 import { getAllActiveFilters, getActiveSelection } from '../reducers/filter'
+import TransformEquation from './TransformEquation'
 
 const scales = {
   scaleSqrt: 'square-root',
@@ -71,6 +72,7 @@ class Caption extends Component {
     }
     let title = ''
     let caption = ''
+    let equation
     let record = this.props.meta.record_type || 'contig'
     let z = labels[this.props.plot.axes.z]
     let [taxrule, cat] = this.props.plot.axes.cat.split('_')
@@ -117,7 +119,12 @@ class Caption extends Component {
         caption += `The lines instersect at a point representing the weighted median value. `
       }
       caption += `Histograms show the distribution of ${record} ${z} ${reducer} along each axis. `
-
+      if (this.props.params.factor != 0 || this.props.params.intercept != 0){
+        equation = <span>
+          Values have been transformed using the equation
+          <TransformEquation/>
+        </span>
+      }
     }
     else if (this.props.view == 'cumulative') {
       title = `Cumulative ${record} ${z} for assembly ${this.props.datasetName}. `
@@ -222,6 +229,7 @@ class Caption extends Component {
       <div className={styles.outer}>
         <span className={styles.title}>{title}</span>
         {this.state.expand ? caption : more}
+        {this.state.expand && equation}
         {this.state.expand && less}
       </div>
     )
@@ -238,7 +246,8 @@ class FigureCaption extends React.Component {
         curveOrigin: getCurveOrigin(state),
         scaleTo: getScaleTo(state),
         filters: getAllActiveFilters(state),
-        selection: getActiveSelection(state)
+        selection: getActiveSelection(state),
+        params: getTransformFunctionParams(state)
       }
     }
     this.mapDispatchToProps = dispatch => {

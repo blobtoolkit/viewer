@@ -5,7 +5,7 @@ import { getMainPlot, getXAxis, getYAxis, getZAxis, getCatAxis } from './plot';
 import { getFilteredList } from './filter';
 import { clampDomain } from './field'
 import { getDatasetID } from './location';
-import { getZScale, getPlotResolution, getTransformFunction, getPlotScale } from './plotParameters';
+import { getZScale, getPlotResolution, getTransformFunction, getTransformFunctionParams, getPlotScale } from './plotParameters';
 import { getColorPalette } from './color';
 import { getFilteredDataForFieldId,
   getCategoryListForFieldId,
@@ -128,6 +128,7 @@ export const getMainPlotData = createSelector(
       xDomain[1] = 1*xmax
     }
     xMeta.xScale.domain(xDomain)
+    xMeta.xScale.type = xMeta.meta.scale
     plotData.meta.x = xMeta
     plotData.axes.y = yData || {values:[]}
     let yDomain = yMeta.xScale ? yMeta.xScale.domain().slice(0) : [0,10]
@@ -139,7 +140,10 @@ export const getMainPlotData = createSelector(
     if (ymax){
       yDomain[1] = 1*ymax
     }
-    if (yMeta.xScale) yMeta.xScale.domain(yDomain)
+    if (yMeta.xScale){
+      yMeta.xScale.domain(yDomain)
+      yMeta.xScale.type = yMeta.meta.scale
+    }
     plotData.meta.y = yMeta
     plotData.axes.z = zData || {values:[]}
     plotData.meta.z = zMeta
@@ -222,6 +226,9 @@ export const getAllScatterPlotData = createSelector(
     }
     axes.forEach(axis=>{
       scales[axis] = plotData.scale[axis].copy();
+      if (plotData.scale[axis].hasOwnProperty('type')){
+        scales[axis].type = plotData.scale[axis].type
+      }
       // if (axis == 'z'){
       //   scales[axis] = d3.scaleSqrt().domain(scales[axis].domain())
       // }
@@ -277,6 +284,13 @@ export const getScatterPlotData = createSelector(
       scales[axis] = plotData.meta[axis].xScale ? plotData.meta[axis].xScale.copy() : d3.scaleLinear().domain([0,10]);
       if (axis == 'z'){
         scales[axis] = d3.scaleSqrt().domain(scales[axis].domain())
+        scales[axis].type = 'scaleSqrt'
+      }
+      else {
+        if (plotData.meta[axis].xScale.hasOwnProperty('type')){
+          scales[axis].type = plotData.meta[axis].xScale.type
+        }
+
       }
       scales[axis].range([0,900])
     })
@@ -306,7 +320,7 @@ export const getScatterPlotData = createSelector(
       let x = plotData.axes.x.values[i]
       x = x < xClamp ? scales.x(xMin) : scales.x(x)
       let z = plotData.axes.z.values[i]
-      // if (transform) [x,y] = transform([x,y])
+      if (transform) [x,y] = transform([x,y])
       data.push({
         id:list[i],
         index:i,
@@ -354,7 +368,7 @@ export const getScatterPlotDataByCategory = createSelector(
 )
 
 
-// const weighted_mean_sd = (values, weights, sumWeight, log) => {
+// const weightedMeanSd = (values, weights, sumWeight, log) => {
 //   if (log){
 //     let sum = 0
 //     let len = values.length
@@ -406,7 +420,50 @@ const weightedMedian = (arr, total) => {
   }
 };
 
-const weighted_mean_sd = (values, weights, sumWeight, log) => {
+const calculateSlope = (xValues, yValues, zValues, xLog, yLog) => {
+  let sum = 0,
+      xSum = 0,
+      ySum = 0,
+      sumSq = 0
+  let n = xValues.length
+  for (let i = 0; i < n; i++){
+    let x = xValues[i]
+    let y = yValues[i]
+    sum += x * y
+    xSum += x
+    ySum += y
+    sumSq += x * x
+  }
+  let a = sum * n
+  let b = xSum * ySum
+  let c = sumSq * n
+  let d = xSum * xSum
+  let m = (a - b) / (c - d)
+  return m
+}
+
+
+function weightedLinearRegression(xValues, yValues, weights){
+    let sums = {w: 0, wx: 0, wx2: 0, wy: 0, wxy: 0};
+    let n = xValues.length
+    for (let i = 0; i < n; i++){
+      let x = xValues[i]
+      let y = yValues[i]
+      let w = weights[i]
+      sums.w += w
+      sums.wx += x * w
+      sums.wx2 += x * x * w
+      sums.wy += y * w
+      sums.wxy += x * y * w
+    }
+    let denominator = sums.w * sums.wx2 - sums.wx * sums.wx
+    let m = (sums.w * sums.wxy - sums.wx * sums.wy) / denominator
+    let c = (sums.wy * sums.wx2 - sums.wx * sums.wxy) / denominator
+    return {m, c}
+}
+
+const weightedMeanSd = (values, weights, sumWeight, log) => {
+  log = false
   if (log){
     let sum = 0
     let len = values.length
@@ -450,12 +507,48 @@ const weighted_mean_sd = (values, weights, sumWeight, log) => {
   }
 }
 
+export const scaleFactor = createSelector(
+  getMainPlotData,
+  (plotData) => {
+    let yScale = plotData.meta.y.xScale.copy().clamp(false)
+    let xScale = plotData.meta.x.xScale.copy().clamp(false)
+    yScale.range([0,900])
+    xScale.range([0,900])
+    if (plotData.meta.x.xScale.hasOwnProperty('type')){
+      xScale.type = plotData.meta.x.xScale.type
+    }
+    if (plotData.meta.y.xScale.hasOwnProperty('type')){
+      yScale.type = plotData.meta.y.xScale.type
+    }
+    let yRange = 900
+    let yDenom = yScale.domain()[1] - yScale.domain()[0]
+    if (yScale.type == 'scaleLog'){
+      yDenom = Math.log10(yDenom)
+    }
+    else if (yScale.type == 'scaleSqrt'){
+      yDenom = Math.sqrt(yDenom)
+    }
+    let yFactor = yRange / yDenom
+    let xRange = 900
+    let xDenom = xScale.domain()[1] - xScale.domain()[0]
+    if (xScale.type == 'scaleLog'){
+      xDenom = Math.log10(xDenom)
+    }
+    else if (xScale.type == 'scaleSqrt'){
+      xDenom = Math.sqrt(xDenom)
+    }
+    let xFactor = xRange / xDenom
+    let factor = xFactor / yFactor
+    return {factor, xScale, yScale}
+  }
+)
 
 export const getKitePlotData = createSelector(
   getMainPlotData,
   getBinsForCat,
+  getTransformFunction,
   getColorPalette,
-  (plotData,bins,palette) => {
+  (plotData,bins,transform,palette) => {
     if (!plotData || !bins) return undefined
     let data = [];
     let keys = {}
@@ -463,11 +556,21 @@ export const getKitePlotData = createSelector(
       return {data:[]}
     }
     bins.forEach((bin,i)=>{
-      data[i] = {x:[],y:[],xWeight:[],yWeight:[],xWeightSum:0,yWeightSum:0}
+      data[i] = {x:[],y:[],z:[],zSum:0}
       bin.keys.forEach(key=>{
         keys[key] = i
       })
     })
+    let yScale = plotData.meta.y.xScale.copy().clamp(false)
+    let xScale = plotData.meta.x.xScale.copy().clamp(false)
+    if (plotData.meta.y.xScale.hasOwnProperty('type')){
+      yScale.type = plotData.meta.y.xScale.type
+    }
+    if (plotData.meta.x.xScale.hasOwnProperty('type')){
+      xScale.type = plotData.meta.x.xScale.type
+    }
+    yScale.range([0,900])
+    xScale.range([0,900])
     let len = plotData.axes.x.values.length
     for (let i = 0; i < len; i++){
       let bin = keys[plotData.axes.cat.values[i]]
@@ -475,62 +578,151 @@ export const getKitePlotData = createSelector(
       let y = plotData.axes.y.values[i]
       let z = plotData.axes.z.values[i]
       if (!plotData.meta.x.meta.clamp || x >= plotData.meta.x.meta.clamp){
-        data[bin].x.push(x)
-        data[bin].xWeight.push(z)
-        data[bin].xWeightSum += z
-      }
-      if (!plotData.meta.y.meta.clamp || y >= plotData.meta.y.meta.clamp){
-        data[bin].y.push(y)
-        data[bin].yWeight.push(z)
-        data[bin].yWeightSum += z
+        if (!plotData.meta.y.meta.clamp || y >= plotData.meta.y.meta.clamp){
+          x = xScale(x)
+          y = yScale(y)
+          if (transform) [x,y] = transform([x,y])
+          data[bin].x.push(x)
+          data[bin].y.push(900 - y)
+          data[bin].z.push(z)
+          data[bin].zSum += z
+        }
       }
     }
-    let coords = []
-    let yScale = plotData.meta.y.xScale.copy()
-    let xScale = plotData.meta.x.xScale.copy()
-    yScale.range([900,0])
-    xScale.range([0,900])
+    let coords = [],
+        equations = []
     data.forEach((bin,i)=>{
       coords[i] = {}
-      bin.xWeighted = weighted_mean_sd(bin.x, bin.xWeight, bin.xWeightSum, plotData.meta.x.meta.scale == 'scaleLog')
-      bin.yWeighted = weighted_mean_sd(bin.y, bin.yWeight, bin.yWeightSum, plotData.meta.y.meta.scale == 'scaleLog')
-      // coords[i].x = [
-      //   [xScale(bin.xWeighted.lower),yScale(bin.yWeighted.mean)],
-      //   [xScale(bin.xWeighted.upper),yScale(bin.yWeighted.mean)]
-      // ]
-      // coords[i].y = [
-      //   [xScale(bin.xWeighted.mean),yScale(bin.yWeighted.lower)],
-      //   [xScale(bin.xWeighted.mean),yScale(bin.yWeighted.upper)]
-      // ]
-      // coords[i].poly = [
-      //   [xScale(bin.xWeighted.lower),yScale(bin.yWeighted.mean)],
-      //   [xScale(bin.xWeighted.mean),yScale(bin.yWeighted.lower)],
-      //   [xScale(bin.xWeighted.upper),yScale(bin.yWeighted.mean)],
-      //   [xScale(bin.xWeighted.mean),yScale(bin.yWeighted.upper)],
-      //   [xScale(bin.xWeighted.lower),yScale(bin.yWeighted.mean)]
-      // ]
+      equations[i] = {order: 1, x: 0}
+      bin.xWeighted = weightedMeanSd(bin.x, bin.z, bin.zSum, plotData.meta.x.meta.scale == 'scaleLog')
+      bin.yWeighted = weightedMeanSd(bin.y, bin.z, bin.zSum, plotData.meta.y.meta.scale == 'scaleLog')
       if (bin.xWeighted.lower){
         coords[i].x = [
-          [xScale(bin.xWeighted.lower),yScale(bin.yWeighted.median)],
-          [xScale(bin.xWeighted.upper),yScale(bin.yWeighted.median)]
+          [bin.xWeighted.lower,bin.yWeighted.median],
+          [bin.xWeighted.upper,bin.yWeighted.median]
         ]
         coords[i].y = [
-          [xScale(bin.xWeighted.median),yScale(bin.yWeighted.lower)],
-          [xScale(bin.xWeighted.median),yScale(bin.yWeighted.upper)]
+          [bin.xWeighted.median,bin.yWeighted.lower],
+          [bin.xWeighted.median,bin.yWeighted.upper]
         ]
         coords[i].poly = [
-          [xScale(bin.xWeighted.lower),yScale(bin.yWeighted.median)],
-          [xScale(bin.xWeighted.median),yScale(bin.yWeighted.lower)],
-          [xScale(bin.xWeighted.upper),yScale(bin.yWeighted.median)],
-          [xScale(bin.xWeighted.median),yScale(bin.yWeighted.upper)],
-          [xScale(bin.xWeighted.lower),yScale(bin.yWeighted.median)]
+          [bin.xWeighted.lower,bin.yWeighted.median],
+          [bin.xWeighted.median,bin.yWeighted.lower],
+          [bin.xWeighted.upper,bin.yWeighted.median],
+          [bin.xWeighted.median,bin.yWeighted.upper],
+          [bin.xWeighted.lower,bin.yWeighted.median]
         ]
+        if (bin.x.length >= 30){
+          let eqn = weightedLinearRegression(bin.x, bin.y, bin.z)
+          let angle = Math.tan(eqn.m)*180/Math.PI
+          coords[i].angle = angle
+          equations[i].factor = eqn.m
+          equations[i].intercept = -eqn.m * bin.xWeighted.median
+          equations[i].origin = {x: bin.xWeighted.median, y: bin.yWeighted.median}
+          equations[i].index = i
+        }
+        else {
+          coords[i].angle = 0
+        }
       }
-
     })
-    return {coords,bins,colors:palette.colors};
+
+    return {coords,equations,bins,xScale,yScale,colors:palette.colors};
   }
 )
+
+
+export const getTransformEquation = createSelector(
+  getTransformFunctionParams,
+  scaleFactor,
+  (params, scaleFactor) => {
+    let factor = params.factor * scaleFactor.factor
+    let intercept
+    if (params.intercept == 0){
+      intercept = 0
+    }
+    else if (scaleFactor.yScale.type == 'scaleLog') {
+      intercept = Math.log10(scaleFactor.yScale.invert(params.intercept))
+    }
+    else {
+      intercept = scaleFactor.yScale.invert(params.intercept)
+    }
+    let xType = scaleFactor.xScale.type
+    let yType = scaleFactor.yScale.type
+    return {factor, intercept, xType, yType}
+  }
+
+)
+// export const getKitePlotData = createSelector(
+//   getMainPlotData,
+//   getBinsForCat,
+//   getColorPalette,
+//   (plotData,bins,palette) => {
+//     if (!plotData || !bins) return undefined
+//     let data = [];
+//     let keys = {}
+//     if (plotData.axes.cat.values.length == 0){
+//       return {data:[]}
+//     }
+//     bins.forEach((bin,i)=>{
+//       data[i] = {x:[],y:[],z:[],zSum:0}
+//       bin.keys.forEach(key=>{
+//         keys[key] = i
+//       })
+//     })
+//     let len = plotData.axes.x.values.length
+//     for (let i = 0; i < len; i++){
+//       let bin = keys[plotData.axes.cat.values[i]]
+//       let x = plotData.axes.x.values[i]
+//       let y = plotData.axes.y.values[i]
+//       let z = plotData.axes.z.values[i]
+//       if (!plotData.meta.x.meta.clamp || x >= plotData.meta.x.meta.clamp){
+//         if (!plotData.meta.y.meta.clamp || y >= plotData.meta.y.meta.clamp){
+//           data[bin].x.push(x)
+//           data[bin].y.push(y)
+//           data[bin].z.push(z)
+//           data[bin].zSum += z
+//         }
+//       }
+//     }
+//     let coords = []
+//     let yScale = plotData.meta.y.xScale.copy()
+//     let xScale = plotData.meta.x.xScale.copy()
+//     yScale.range([900,0])
+//     xScale.range([0,900])
+//     data.forEach((bin,i)=>{
+//       coords[i] = {}
+//       bin.xWeighted = weightedMeanSd(bin.x, bin.z, bin.zSum, plotData.meta.x.meta.scale == 'scaleLog')
+//       bin.yWeighted = weightedMeanSd(bin.y, bin.z, bin.zSum, plotData.meta.y.meta.scale == 'scaleLog')
+//       if (bin.xWeighted.lower){
+//         coords[i].x = [
+//           [xScale(bin.xWeighted.lower),yScale(bin.yWeighted.median)],
+//           [xScale(bin.xWeighted.upper),yScale(bin.yWeighted.median)]
+//         ]
+//         coords[i].y = [
+//           [xScale(bin.xWeighted.median),yScale(bin.yWeighted.lower)],
+//           [xScale(bin.xWeighted.median),yScale(bin.yWeighted.upper)]
+//         ]
+//         coords[i].poly = [
+//           [xScale(bin.xWeighted.lower),yScale(bin.yWeighted.median)],
+//           [xScale(bin.xWeighted.median),yScale(bin.yWeighted.lower)],
+//           [xScale(bin.xWeighted.upper),yScale(bin.yWeighted.median)],
+//           [xScale(bin.xWeighted.median),yScale(bin.yWeighted.upper)],
+//           [xScale(bin.xWeighted.lower),yScale(bin.yWeighted.median)]
+//         ]
+//         if (bin.x.length >= 30){
+//           let m = calculateSlope(bin.x, bin.y, plotData.meta.x.meta.scale == 'scaleLog', plotData.meta.y.meta.scale == 'scaleLog')
+//
+//           coords[i].slope = m
+//         }
+//         else {
+//           coords[i].slope = 0
+//         }
+//       }
+//     })
+//     return {coords,bins,colors:palette.colors};
+//   }
+// )
 
 const sliceObject = (obj,index) => {
   let slice = {};

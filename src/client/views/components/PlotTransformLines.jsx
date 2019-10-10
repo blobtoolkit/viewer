@@ -23,14 +23,24 @@ export default class PlotTransformLines extends React.Component {
   }
 }
 
-const TransformLines = ({ lines = [], params}) => {
+const TransformLines = ({ lines = [], params, origins}) => {
   if (params.factor != 0){
-    return (
-      <g>
+    let origin
+    if (params.origin.x == 0){
+      origin = <g>
         {lines.map((line,i) =>
-          <path d={line} key={i} className={styles.transform_line} />
+          <path d={line} key={i} className={styles.transform_line}  clipPath="url(#plot-area)"/>
         )}
       </g>
+    }
+    else {
+      origin = <g>
+        <path d={origins[1]} key={'x_origin'} className={styles.bold_transform_line}  clipPath="url(#plot-area)"/>
+        <path d={origins[0]} key={'y_origin'} className={styles.bold_transform_line}  clipPath="url(#plot-area)"/>
+      </g>
+    }
+    return (
+      origin
     )
   }
   return null

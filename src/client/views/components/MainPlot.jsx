@@ -205,6 +205,13 @@ class PlotBox extends React.Component {
     let plotContainer
     let plotGrid
     let plotCanvas
+    let mask = (
+      <defs>
+        <clipPath id="plot-area">
+          <rect x="0" y="0" width="900" height="900" />
+        </clipPath>
+      </defs>
+    )
     let func = undefined
     if (this.props.plotShape == 'circle'){
       if (this.props.plotGraphics != 'svg'){
@@ -263,11 +270,12 @@ class PlotBox extends React.Component {
               className={styles.main_plot+' '+styles.fill_parent}
               viewBox={viewbox}
               preserveAspectRatio="xMinYMin">
+              {mask}
               <g transform={'translate(100,320)'} >
-                <PlotTransformLines />
                 <g transform="translate(50,50)">
-                {plotContainer}
-                {plotCanvas}
+                  <PlotTransformLines />
+                  {plotContainer}
+                  {plotCanvas}
                 </g>
                 {xPlot}
                 {yPlot}
@@ -293,10 +301,11 @@ class PlotBox extends React.Component {
               className={styles.main_plot+' '+styles.fill_parent}
               viewBox={viewbox}
               preserveAspectRatio="xMinYMin">
+              {mask}
               <g transform={'translate(100,320)'} >
-                <PlotTransformLines />
                 <g transform="translate(50,50)">
-                {plotContainer}
+                  <PlotTransformLines />
+                  {plotContainer}
                 </g>
                 {xPlot}
                 {yPlot}
@@ -322,8 +331,11 @@ class PlotBox extends React.Component {
               viewBox={viewbox}
               style={{fontSize:'14px'}}
               preserveAspectRatio="xMinYMin">
+              {mask}
               <g transform={'translate(100,320)'} >
-                <PlotTransformLines />
+                <g transform="translate(50,50)">
+                  <PlotTransformLines />
+                </g>
                 {plotContainer}
                 {plotGrid}
                 {xPlot}

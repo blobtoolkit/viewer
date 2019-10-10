@@ -43,9 +43,11 @@ import { chooseView, toggleStatic, getView, getStatic, getDatasetID, getParsedQu
 import { getMainPlotData }  from '../reducers/plotData'
 import { queryToStore } from '../querySync'
 import styles from './Layout.scss'
+import NumericInput from './NumericInput'
 import MenuDisplaySet from './MenuDisplaySet'
 import MenuDisplaySimple from './MenuDisplaySimple'
 import MenuSwitchView from './MenuSwitchView'
+import MenuDisplayKite from './MenuDisplayKite'
 import SVGIcon from './SVGIcon'
 import TextIcon from './TextIcon'
 import squareIcon from './svg/squareShape.svg';
@@ -146,6 +148,7 @@ class DisplayMenu extends React.Component {
             <SVGIcon sprite={kiteIcon} active={shape == 'kite'} onIconClick={()=>onSelectShape('kite')}/>
 
           </MenuDisplaySimple>
+          {shape == 'kite' && <MenuDisplayKite/>}
           <MenuDisplaySimple name={'resolution [ '+resolution+' ]'}>
             <div className={styles.full_height}>
               <span className={styles.middle}>50</span>
@@ -347,45 +350,6 @@ class DisplayMenu extends React.Component {
 // <input id='transform_factor' onChange={(e)=>onChangeTransform({factor:e.target.value})} type="range" value={transform.factor} min="-1" max="1" step="0.1"/>
 
 
-class NumericInput extends React.Component {
-  constructor(props) {
-    super(props);
-    let value = isNaN(this.props.initialValue) ? 0 : this.props.initialValue
-    this.state = {value}
-  }
-
-  componentDidUpdate(nextProps) {
-    let value = isNaN(this.props.initialValue) ? 0 : this.props.initialValue
-    let npvalue = isNaN(nextProps.initialValue) ? 0 : nextProps.initialValue
-    if (npvalue != value){
-      this.setState({value})
-    }
-  }
-  render(){
-    return (
-      <input
-        type='number'
-        className={styles.range_input}
-        value={this.state.value}
-        onChange={e=>{
-          this.setState({value:e.target.value})
-        }}
-        onKeyUp={
-          (e)=>{
-            if (e.key === 'Enter') {
-              e.target.blur()
-            }
-          }
-        }
-        onBlur={
-          (e)=>{
-            this.props.onChange(e.target.value)
-          }
-        }
-      />
-    )
-  }
-}
 
 class MenuDisplayMain extends React.Component {
   constructor(props) {

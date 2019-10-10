@@ -29,10 +29,11 @@ const KitesSVG = ({ coords, bins, colors }) => {
   let paths = []
   coords.forEach((group,i)=>{
     if (coords[i].x){
-      paths.push(<g key={i}
-                    stroke={colors[i]}
-                    strokeWidth="1px"
-                    fill="none">
+      paths.push( <g key={i}
+                     stroke={colors[i]}
+                     strokeWidth="1px"
+                     transform={`rotate(${coords[i].angle},${coords[i].y[0][0]},${coords[i].x[0][1]})`}
+                     fill="none">
                     <line key={`${i}_x`}
                           x1={coords[i].x[0][0]}
                           y1={coords[i].x[0][1]}
