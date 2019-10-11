@@ -612,6 +612,7 @@ export const getKitePlotData = createSelector(
           [bin.xWeighted.median,bin.yWeighted.upper],
           [bin.xWeighted.lower,bin.yWeighted.median]
         ]
+        coords[i].weight = Math.ceil(Math.log10(bin.x.length))
         if (bin.x.length >= 30){
           let eqn = weightedLinearRegression(bin.x, bin.y, bin.z)
           let angle = Math.tan(eqn.m)*180/Math.PI

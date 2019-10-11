@@ -23,6 +23,8 @@ export const colorToRGB = (color) => {
   return color
 }
 
+export const defaultTransform = { x:0, order:1, factor:0, intercept: 0, origin: {x: 0, y:0}, index: -1 }
+
 const keyed = (o,k) => Object.prototype.hasOwnProperty.call(o,k)
 
 const mapDispatchToQuery = (
@@ -131,6 +133,18 @@ const mapDispatchToQuery = (
             let user = []
             v.forEach(o=>{user[o.index] = colorToRGB(o.value)})
             return {id:'user',user}
+          }
+        }
+      ])
+    },
+    transform: {
+      actions: (k,v) => ([
+        {
+          type: 'EDIT_Y_TRANSFORM',
+          payload: (k,v) => {
+            let obj = {}
+            v.forEach(o=>(obj[o.index] = o.value))
+            return obj
           }
         }
       ])
@@ -324,7 +338,16 @@ const mapDispatchToQuery = (
     Order: {
       array: (k,v) => ({key:'field',field:v.field,index:'order',value:(v.value || '')}),
       default: []
+    },
+    transformIntercept: {
+      array: (k,v) => ({key:'transform',index:'intercept',value:v}),
+      default: 0
+    },
+    transformFactor: {
+      array: (k,v) => ({key:'transform',index:'factor',value:v}),
+      default: 0
     }
+
   }
 )
 

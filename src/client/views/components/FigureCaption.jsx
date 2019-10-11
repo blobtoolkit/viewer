@@ -72,6 +72,7 @@ class Caption extends Component {
     }
     let title = ''
     let caption = ''
+    let histograms
     let equation
     let record = this.props.meta.record_type || 'contig'
     let z = labels[this.props.plot.axes.z]
@@ -118,11 +119,11 @@ class Caption extends Component {
         caption += `Horizontal and vertical lines represent a range spanning 2 standard deviations about the weighted mean value for each axis. `
         caption += `The lines instersect at a point representing the weighted median value. `
       }
-      caption += `Histograms show the distribution of ${record} ${z} ${reducer} along each axis. `
+      histograms = ` Histograms show the distribution of ${record} ${z} ${reducer} along each axis. `
       if (this.props.params.factor != 0 || this.props.params.intercept != 0){
         equation = <span>
           Values have been transformed using the equation
-          <TransformEquation/>
+          <TransformEquation/>.
         </span>
       }
     }
@@ -230,6 +231,7 @@ class Caption extends Component {
         <span className={styles.title}>{title}</span>
         {this.state.expand ? caption : more}
         {this.state.expand && equation}
+        {this.state.expand && histograms}
         {this.state.expand && less}
       </div>
     )

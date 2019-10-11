@@ -6,7 +6,7 @@ import { getMainPlot } from './plot';
 import immutableUpdate from 'immutable-update';
 import store from '../store'
 import qs from 'qs'
-import { queryToStore, qsDefault } from '../querySync'
+import { queryToStore, qsDefault, defaultTransform } from '../querySync'
 import history from './history'
 import { urlViews, pathname, setPathname, viewsToPathname } from './repository'
 import { getDatasetID } from './location'
@@ -146,7 +146,6 @@ export const zReducer = handleAction(
 export const getZReducer = state => state.zReducer
 
 
-const defaultTransform = { x:0, order:1, factor:0, intercept: 0, origin: {x: 0, y:0}, index: -1 }
 export const setTransformFunction = createAction('EDIT_Y_TRANSFORM')
 export const transformFunction = handleAction(
   'EDIT_Y_TRANSFORM',
@@ -174,10 +173,23 @@ export const getTransformFunction = createSelector(
     return [x,newY]
   })
 })
-export const chooseTransformFunction = (curveOrigin) => {
+export const chooseTransformFunction = (obj) => {
   return function (dispatch) {
-    let values = {curveOrigin}
-    dispatch(queryToStore({values}))
+    let values = {}
+    let remove = []
+    let origin = {x:0,y:0}
+    Object.keys(obj).forEach(key=>{
+      if (key == 'intercept' || key == 'factor'){
+        let k = `transform${key[0].toUpperCase() + key.slice(1)}`
+        if (obj[key] != defaultTransform[key]){
+          values[k] = obj[key]
+        }
+        else {
+          remove.push(k)
+        }
+      }
+    })
+    dispatch(queryToStore({values, remove}))
   }
 }
 

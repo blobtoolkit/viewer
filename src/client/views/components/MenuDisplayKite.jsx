@@ -5,7 +5,7 @@ import paletteStyles from './Palette.scss'
 import MenuDisplaySimple from './MenuDisplaySimple'
 import TextIcon from './TextIcon'
 import { getTransformFunctionParams,
-  setTransformFunction } from '../reducers/plotParameters'
+  chooseTransformFunction } from '../reducers/plotParameters'
 import { getKitePlotData, scaleFactor } from '../reducers/plotData'
 import { getColorPalette } from '../reducers/color'
 import SVGIcon from './SVGIcon'
@@ -31,6 +31,8 @@ class KiteMenu extends React.Component {
       }
     }
     factor = factor == 0 ? 0 : factor /= this.props.scaleFactor.factor
+    intercept = d3Format(",.4r")(intercept)
+    factor = d3Format(",.4r")(factor)
     this.props.onSelectKite({factor, intercept, origin})
   }
 
@@ -117,7 +119,11 @@ class MenuDisplayKite extends React.Component {
     }
     this.mapDispatchToProps = dispatch => {
       return {
-        onSelectKite: obj => dispatch(setTransformFunction(obj))
+        onSelectKite: obj => {
+          obj.intercept = d3Format(",.3f")(obj.intercept)
+          obj.factor = d3Format(",.4r")(obj.factor)
+          dispatch(chooseTransformFunction(obj))
+        }
       }
     }
   }

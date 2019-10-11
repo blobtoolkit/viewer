@@ -31,7 +31,7 @@ const KitesSVG = ({ coords, bins, colors }) => {
     if (coords[i].x){
       paths.push( <g key={i}
                      stroke={colors[i]}
-                     strokeWidth="1px"
+                     style={{strokeWidth:"1px"}}
                      transform={`rotate(${coords[i].angle},${coords[i].y[0][0]},${coords[i].x[0][1]})`}
                      fill="none">
                     <line key={`${i}_x`}
@@ -45,7 +45,7 @@ const KitesSVG = ({ coords, bins, colors }) => {
                           x2={coords[i].y[1][0]}
                           y2={coords[i].y[1][1]}/>
                     <polygon key={`${i}_poly`}
-                             strokeWidth="5px"
+                             style={{strokeWidth:`3px`}}
                              points={coords[i].poly.map(c=>c[0]+','+c[1]).join(' ')}/>
                   </g>)
     }
