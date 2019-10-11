@@ -181,7 +181,7 @@ export const chooseTransformFunction = (obj) => {
     Object.keys(obj).forEach(key=>{
       if (key == 'intercept' || key == 'factor'){
         let k = `transform${key[0].toUpperCase() + key.slice(1)}`
-        if (obj[key] != defaultTransform[key]){
+        if (obj[key] != defaultTransform[key] && !isNaN(obj[key])){
           values[k] = obj[key]
         }
         else {
@@ -189,6 +189,15 @@ export const chooseTransformFunction = (obj) => {
         }
       }
     })
+    if (Object.keys(obj).length == 0){
+      Object.keys(defaultTransform).forEach(key=>{
+        if (key == 'intercept' || key == 'factor'){
+          let k = `transform${key[0].toUpperCase() + key.slice(1)}`
+          values[k] = defaultTransform[key]
+          remove.push(k)
+        }
+      })
+    }
     dispatch(queryToStore({values, remove}))
   }
 }

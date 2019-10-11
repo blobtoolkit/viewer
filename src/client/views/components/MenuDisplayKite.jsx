@@ -120,8 +120,8 @@ class MenuDisplayKite extends React.Component {
     this.mapDispatchToProps = dispatch => {
       return {
         onSelectKite: obj => {
-          obj.intercept = d3Format(",.3f")(obj.intercept)
-          obj.factor = d3Format(",.4r")(obj.factor)
+          if (obj.hasOwnProperty('intercept')) obj.intercept = d3Format(",.3f")(obj.intercept)
+          if (obj.hasOwnProperty('factor')) obj.factor = d3Format(",.4r")(obj.factor)
           dispatch(chooseTransformFunction(obj))
         }
       }
