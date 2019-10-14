@@ -117,7 +117,7 @@ class Caption extends Component {
       else {
         caption += `. Kite shapes summarise the core distribution of ${record}s. `
         caption += `Horizontal and vertical lines represent a range spanning 2 standard deviations about the weighted mean value for each axis. `
-        caption += `The lines instersect at a point representing the weighted median value. `
+        caption += `The lines intersect at a point representing the weighted median value. `
       }
       histograms = ` Histograms show the distribution of ${record} ${z} ${reducer} along each axis. `
       if (this.props.params.factor != 0 || this.props.params.intercept != 0){
