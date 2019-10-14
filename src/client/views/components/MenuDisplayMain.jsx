@@ -33,7 +33,9 @@ import { getPlotShape,
   getSnailOrigin,
   chooseSnailOrigin,
   getShowTotal,
-  chooseShowTotal } from '../reducers/plotParameters'
+  chooseShowTotal,
+  getSideMax,
+  chooseSideMax } from '../reducers/plotParameters'
 import {
   getStaticThreshold,
   chooseStaticThreshold,
@@ -94,6 +96,7 @@ class DisplayMenu extends React.Component {
       pngResolution, onChangePngResolution,
       staticThreshold, onChangeStaticThreshold,
       nohitThreshold, onChangeNohitThreshold,
+      sideMax, onChangeSideMax,
       data={}, onChangeAxisRange, parsed, changeQueryParams,
       showTotal, onChangeShowTotal, } = this.props
     let context
@@ -223,6 +226,11 @@ class DisplayMenu extends React.Component {
               <NumericInput initialValue={circleLimit} onChange={onChangeCircleLimit}/>
             </div>
           </MenuDisplaySimple>}
+          <MenuDisplaySimple name='histogram maximum'>
+            <div className={styles.full_height}>
+              <NumericInput initialValue={sideMax} onChange={onChangeSideMax}/>
+            </div>
+          </MenuDisplaySimple>
           {displayTotal}
         </span>
       )
@@ -379,6 +387,7 @@ class MenuDisplayMain extends React.Component {
         onSelectSnailOrigin: origin => dispatch(chooseSnailOrigin(origin)),
         onChangeTransform: object => dispatch(setTransformFunction(object)),
         onChangeShowTotal: bool => dispatch(chooseShowTotal(bool)),
+        onChangeSideMax: value => dispatch(chooseSideMax(value)),
         onChangeAxisRange: (values,remove) => dispatch(queryToStore({values,remove,action:'FILTER'})),
         changeQueryParams: (obj) => dispatch(setQueryString(Object.keys(obj).map(k=>`${k}=${obj[k]}`).join('&')))
       }
@@ -410,7 +419,8 @@ class MenuDisplayMain extends React.Component {
         busco: getBuscoSets(state),
         data: getMainPlotData(state),
         parsed: getParsedQueryString(state),
-        showTotal: getShowTotal(state)
+        showTotal: getShowTotal(state),
+        sideMax: getSideMax(state)
       }
     }
   }

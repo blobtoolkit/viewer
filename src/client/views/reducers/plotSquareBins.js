@@ -6,7 +6,7 @@ import { getFilteredDataForFieldId } from './preview'
 import { getMainPlot } from './plot';
 import { getSelectedRecordsAsObject } from './select';
 import { getScatterPlotData, getAllScatterPlotData, getFilteredDataForCat } from './plotData';
-import { getZReducer, getZScale, getPlotResolution, getPlotScale } from './plotParameters';
+import { getZReducer, getZScale, getPlotResolution, getPlotScale, getSideMax } from './plotParameters';
 import { getColorPalette } from './color';
 import * as d3 from 'd3'
 import immutableUpdate from 'immutable-update';
@@ -301,20 +301,26 @@ export const getBinnedLinesByCategoryForAxis = createSelector(
   getBinnedDataByCategoryByAxis,
   getFilteredDataForCat,
   getColorPalette,
+  getSideMax,
   getZReducer,
   getZScale,
-  (axis,binnedData,categories,palette,reducer,scale) => {
+  (axis,binnedData,categories,palette,side,reducer,scale) => {
     if (!binnedData) return undefined
-    let min = Number.POSITIVE_INFINITY
-    let max = Number.NEGATIVE_INFINITY
+    let min = 0
+    let max = side
+    if (side && side > 0){
+      max = side
+    }
+    else {
+      side = Number.NEGATIVE_INFINITY
+    }
     binnedData.data.forEach(d=>{
       let z = reducer.func(d.zs)
       max = Math.max(max,z)
-      min = Math.min(min,z)
     })
 
-    // let zScale = d3[scale]().domain(binnedData.grid.range).range([0,200])
     let zScale = d3.scaleLinear().domain([0,max]).range([0,300])
+    // zScale = d3.scaleSqrt().clamp(1).domain([1,max]).range([0,300])
     let paths = [{name:'all',color:'#999999',path:'M0 300'}]
     if (categories.values.length > 0){
       for (let i = 0; i < categories.keys.length; i++){

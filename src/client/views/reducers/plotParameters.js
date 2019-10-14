@@ -284,6 +284,22 @@ export const snailOrigin = handleAction(
 export const getSnailOrigin = state => state.snailOrigin
 
 
+export const setSideMax = createAction('SET_SIDE_SCALE')
+export const chooseSideMax = (sideMax) => {
+  return function (dispatch) {
+    let values = {sideMax}
+    dispatch(queryToStore({values}))
+  }
+}
+export const sideMax = handleAction(
+  'SET_SIDE_SCALE',
+  (state, action) => (
+    action.payload
+  ),
+  qsDefault('sideMax')
+)
+export const getSideMax = state => state.sideMax
+
 export const setSVGThreshold = createAction('SET_SVG_THRESHOLD')
 export const chooseSVGThreshold = (svgThreshold) => {
   return function (dispatch) {
@@ -453,6 +469,7 @@ export const plotParameterReducers = {
   circumferenceScale,
   radiusScale,
   snailOrigin,
+  sideMax,
   circleLimit,
   tablePage,
   tablePageSize,

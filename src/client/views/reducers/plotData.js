@@ -617,6 +617,7 @@ export const getKitePlotData = createSelector(
           let eqn = weightedLinearRegression(bin.x, bin.y, bin.z)
           let angle = Math.tan(eqn.m)*180/Math.PI
           coords[i].angle = angle
+          coords[i].radians = eqn.m
           equations[i].factor = eqn.m
           equations[i].intercept = -eqn.m * bin.xWeighted.median
           equations[i].origin = {x: bin.xWeighted.median, y: bin.yWeighted.median}
@@ -624,6 +625,7 @@ export const getKitePlotData = createSelector(
         }
         else {
           coords[i].angle = 0
+          coords[i].radians = 0
         }
       }
     })

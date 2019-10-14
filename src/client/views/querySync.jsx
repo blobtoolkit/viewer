@@ -85,6 +85,11 @@ const mapDispatchToQuery = (
       payload: (k,v) => v,
       default: 10000
     },
+    sideMax: {
+      type: 'SET_SIDE_SCALE',
+      payload: (k,v) => v,
+      default: false
+    },
     pngResolution: {
       type: 'SET_PNG_RESOLUTION',
       payload: (k,v) => v,
