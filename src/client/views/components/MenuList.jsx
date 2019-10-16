@@ -26,11 +26,13 @@ const ListItem = ({id,list,params,search,onClick,identifiers,active,onChooseList
     identifiers
   }
   if (id == 'current'){
-    if (!summaryStats.stats ||
-        !summaryStats.hits || !summaryStats.hits.total ||
-        Object.keys(summaryStats.busco).length != buscos ||
-        !summaryStats.taxonomy || !summaryStats.taxonomy.target){
+    if (!summaryStats.stats){
       return null
+    // } ||
+    //     !summaryStats.hits || !summaryStats.hits.total ||
+    //     Object.keys(summaryStats.busco).length != buscos ||
+    //     !summaryStats.taxonomy || !summaryStats.taxonomy.target){
+    //   return null
     }
     obj.summaryStats = summaryStats
   }

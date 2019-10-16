@@ -20,7 +20,7 @@ import { getDatasetID, getHashString } from '../reducers/location'
 class ListsMenu extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {called: -1, loading: true}
+    this.state = {called: -1, loading: false}
   }
 
   loadBusco() {
@@ -58,7 +58,7 @@ class ListsMenu extends React.Component {
   }
 
   componentDidMount(){
-    this.loadBusco()
+    // this.loadBusco()
   }
 
   shouldComponentUpdate(nextProps, nextState){
