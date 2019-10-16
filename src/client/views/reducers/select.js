@@ -1,6 +1,7 @@
 import { createAction, handleAction, handleActions } from 'redux-actions'
 import { createSelector } from 'reselect'
 import { byIdSelectorCreator } from './selectorCreators'
+import { getIdentifiers } from './identifiers';
 import immutableUpdate from 'immutable-update';
 import deep from 'deep-get-set'
 import store from '../store'
@@ -93,6 +94,22 @@ export const selectedRecords = handleActions(
   },
   []
 )
+
+export function recordsByName(names) {
+  return function (dispatch) {
+    let state = store.getState();
+    let existing = getIdentifiers(state)
+    let records = []
+    names.forEach(name=>{
+      let index = existing.indexOf(name)
+      if (index >= 0){
+        records.push(index)
+      }
+    })
+    dispatch(replaceRecords(records, true))
+  }
+}
+
 
 export const getSelectedRecords = state => state.selectedRecords
 

@@ -48,7 +48,6 @@ class BuscoData extends React.Component {
       filter:[],
       sort:[],
       size:[],
-      _idList: 'EOG09150B43:EOG091502SD:EOG091504TW:EOG091505EO:EOG09150529',
       more: false
     }
   }

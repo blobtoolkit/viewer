@@ -10,9 +10,10 @@ import {
   getTableSortOrder, setTableSortOrder
 } from '../reducers/plotParameters'
 import { getTableData,getBinnedColors,getTableDataForPage } from '../reducers/summary'
+import { getSelectedDatasetMeta } from '../reducers/dataset'
 import { getColorPalette } from '../reducers/color'
 import { chooseCurrentRecord, getCurrentRecord } from '../reducers/record'
-import { addRecords, removeRecords } from '../reducers/select'
+import { addRecords, removeRecords, recordsByName } from '../reducers/select'
 import CumulativePlotBoundary from './CumulativePlotBoundary'
 const saveSvgAsPng = require('save-svg-as-png/lib/saveSvgAsPng.js')
 import AxisTitle from './AxisTitle'
@@ -89,7 +90,8 @@ class Table extends React.Component {
       filter:[],
       sort:[],
       size:[],
-      show:false
+      show:false,
+      more:false
     }
     // onPageChange={(pageIndex) => {...}} // Called when the page index is changed by the user
     // onPageSizeChange={(pageSize, pageIndex) => {...}} // Called when the pageSize is changed by the user. The resolve page is also sent to maintain approximate position in the data
@@ -97,6 +99,22 @@ class Table extends React.Component {
     // onExpandedChange={(newExpanded, index, event) => {...}} // Called when an expander is clicked. Use this to manage `expanded`
     // onFilteredChange={(column, value) => {...}} // Called when a user enters a value into a filter input field or the value passed to the onFiltersChange handler by the Filter option.
     // onResizedChange={(newResized, event) => {...}} // Called when a user clicks on a resizing component (the right edge of a column header)
+  }
+
+  handleChange(e) {
+    e.preventDefault()
+    this.setState({idList: e.target.value});
+  }
+
+  toggleForm() {
+    this.setState({more: !this.state.more});
+  }
+
+  handleSubmit(e){
+    e.preventDefault()
+    if (!this.state.idList) return
+    let idList = this.state.idList.split(/[\s,;]+/)
+    this.props.recordsByName(idList)
   }
 
   generateColumns(fields,keys,plotCategory,binnedColors){
@@ -137,6 +155,8 @@ class Table extends React.Component {
     let data = this.props.data.values
     let links = this.props.data.links
     let ids = data.map(o=>o._id)
+    let names = data.map(o=>o.id)
+    let exampleList = names.slice(0,3).join(', ')
     let toggleSelect = this.props.toggleSelect
     let columns = [{
       Header:'',
@@ -174,6 +194,7 @@ class Table extends React.Component {
     columns = columns.concat(this.generateColumns(this.props.data.fields,this.props.data.keys,this.props.data.plot.cat.meta.id,this.props.binnedColors))
     let page = this.props.page
     let pages = this.props.data.pages
+    let record = this.props.meta.record_type || 'contig'
     let pageSize = this.props.pageSize
     return (
       <div className={plotStyles.fill_parent} style={{display:'block'}}>
@@ -197,6 +218,21 @@ class Table extends React.Component {
           />
         <CSVWrapper />
         <RecordModal dismiss={this.props.chooseRecord} currentRecord={this.props.currentRecord.id}/>
+        {exampleList && <div style={{maxWidth:'50em'}}>
+          <span className={plotStyles.expand}
+                onClick={()=>this.toggleForm()}>{this.state.more ? '...Less' : 'More...'}</span>
+          <form className={this.state.more ? '' : styles.hidden} onSubmit={(e)=>this.handleSubmit(e)}>
+            <label>
+              <textarea rows="6"
+                        cols="100"
+                        value={this.state.idList}
+                        placeholder={'Enter a list of '+record+' IDs to select, e.g.:\n'+exampleList}
+                        style={{display:'block'}}
+                        onChange={(e)=>this.handleChange(e)} />
+            </label>
+            <input type="submit" value="Select" />
+          </form>
+        </div>}
       </div>
     )
   }
@@ -217,6 +253,7 @@ class TablePlot extends React.Component {
         pageSize: getTablePageSize(state),
         binnedColors: getBinnedColors(state),
         currentRecord: getCurrentRecord(state),
+        meta: getSelectedDatasetMeta(state),
         positions: true,
         selectAll
       }
@@ -247,7 +284,8 @@ class TablePlot extends React.Component {
           }
           dispatch(setTablePage(0))
         },
-        chooseRecord: recordId => dispatch(chooseCurrentRecord(recordId))
+        chooseRecord: recordId => dispatch(chooseCurrentRecord(recordId)),
+        recordsByName: arr => dispatch(recordsByName(arr))
       }
     }
   }
