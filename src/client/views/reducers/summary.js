@@ -1130,7 +1130,7 @@ export const getCSVdata = createSelector(
       let row = {sel:Boolean(selected[list[index]]),_id:list[index]}
       fieldList.forEach(field =>{
         row[field] = data[field] ? (data[field].values[index] || 0) : 0
-        if (keys[field]) row[field] = keys[field][row[field]]
+        if (keys[field] && keys[field].length > 0) row[field] = keys[field][row[field]]
       })
       if(identifiers[index]){
          row['id'] = identifiers[index]
