@@ -14,7 +14,8 @@ const loadData = async function(useAPI) {
 
 const loadDataAtIndex = async function(index) {
   let data = await this.loadData();
-  let lastIndex = data.values.length-1;
+  if (!data) return undefined
+  let lastIndex = data.values.length-1
   let values = [];
   let keys = false;
   let ret;
@@ -33,7 +34,7 @@ const loadDataAtIndex = async function(index) {
     }
     else {
       for (var i = indices[0]; i <= indices[1]; i++){
-        if (keys){
+        if (keys && keys.length > 0){
           if (typeof(data.values[i]) == 'object'){
             values.push(data.values[i]);
           }
@@ -47,7 +48,12 @@ const loadDataAtIndex = async function(index) {
       }
     }
   })
-  ret = ret || Promise.resolve({values,keys})
+  if (keys && keys.length > 0){
+    ret = ret || Promise.resolve({values,keys})
+  }
+  else {
+    ret = ret || Promise.resolve(values)
+  }
   return ret;
 }
 

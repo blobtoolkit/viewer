@@ -87,6 +87,7 @@
     "svgo": "^1.2.2",
     "svgo-loader": "^2.2.0",
     "swagger-jsdoc": "^1.10.3",
+    "swagger-ui-express": "^4.1.2",
     "tar": "^4.4.8",
     "testdouble": "^3.11.0",
     "webpack": "^4.31.0",

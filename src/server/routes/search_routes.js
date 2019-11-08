@@ -250,19 +250,146 @@ const tabulate = term => {
   return byGCA + byWGS
 }
 
+/**
+  * @swagger
+  * definition:
+  *   Tree:
+  *     properties:
+  *       n:
+  *         type: integer
+  *         description: node ID
+  *       r:
+  *         type: string
+  *         description: rank
+  *       a:
+  *         type: integer
+  *         description: number of assemblies analysed
+  *       s:
+  *         type: integer
+  *         description: number of species with at least one assembly analysed
+  *       ta:
+  *         type: integer
+  *         description: total number of publicly available assemblies
+  *       ts:
+  *         type: integer
+  *         description: number of species with at least one publicly available assembly
+  *       d:
+  *         type: object
+  *         description: descendant nodes
+  */
+//[{"term":"Diptera","field":"order","names":["ACVV01.1"]}]
+/**
+  * @swagger
+  * definition:
+  *   Term:
+  *     properties:
+  *       term:
+  *         type: string
+  *         description: search term
+  *       field:
+  *         type: string
+  *         description: search field
+  *       names:
+  *         type: array
+  *         description: matching dataset identifiers
+  *         items:
+  *           type: string
+  */
+/**
+ * @swagger
+ * parameter:
+ *   term:
+ *     in: path
+ *     name: term
+ *     type: string
+ *     required: true
+ *     description: search term (e.g. Nematoda)
+ */
 
 module.exports = function(app, db) {
+  /**
+   * @swagger
+   * /api/v1/search/tree/target:
+   *   get:
+   *     tags:
+   *       - Search
+   *     description: Returns tree of all publicly available Eukaryotic genome assemblies
+   *     produces:
+   *       - application/json
+   *     responses:
+   *       200:
+   *         description: A tree object
+   *         schema:
+   *           $ref: '#/definitions/Tree'
+   */
+
   app.get('/api/v1/search/tree/target', async (req, res) => {
     res.sendFile(`${dataDirectory}/targets.json`)
   });
+  /**
+   * @swagger
+   * /api/v1/search/tree/available:
+   *   get:
+   *     tags:
+   *       - Search
+   *     description: Returns tree of all analysed genome assemblies
+   *     produces:
+   *       - application/json
+   *     responses:
+   *       200:
+   *         description: A tree object
+   *         schema:
+   *           $ref: '#/definitions/Tree'
+   */
+
   app.get('/api/v1/search/tree/available', async (req, res) => {
     res.setHeader('content-type', 'application/json');
     res.json(tree)
   });
+  /**
+   * @swagger
+   * /api/v1/search/autocomplete/{term}:
+   *   get:
+   *     tags:
+   *       - Search
+   *     description: Returns an array of available search terms
+   *     produces:
+   *       - application/json
+   *     responses:
+   *       200:
+   *         description: A tree object
+   *         schema:
+   *           type: array
+   *           items:
+   *             $ref: '#/definitions/Tree'
+   *     parameters:
+   *       - $ref: "#/parameters/term"
+   */
+
   app.get('/api/v1/search/autocomplete/:term', async (req, res) => {
     res.setHeader('content-type', 'application/json');
     res.json(autocomplete(req.params.term))
   });
+  /**
+   * @swagger
+   * /api/v1/search/{term}:
+   *   get:
+   *     tags:
+   *       - Search
+   *     description: Returns an array of datasets matching a search term
+   *     produces:
+   *       - application/json
+   *     responses:
+   *       200:
+   *         description: An array of Datasets
+   *         schema:
+   *           type: array
+   *           items:
+   *             $ref: '#/definitions/Dataset'
+   *     parameters:
+   *       - $ref: "#/parameters/term"
+   */
+
   app.get('/api/v1/search/:term', async (req, res) => {
     if (req.query && req.query.display == 'tsv'){
       res.setHeader('content-type', 'text/tab-separated-values');

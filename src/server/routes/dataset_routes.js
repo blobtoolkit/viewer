@@ -6,45 +6,55 @@ const utils = require('../../shared/functions/utils');
 module.exports = function(app, db) {
   const datasetRoutes = express.Router();
 /**
- * @swagger
- * definition:
- *   Dataset:
- *     properties:
- *       id:
- *         type: string
- *       name:
- *         type: string
- *       description:
- *         type: string
- *       records:
- *         type: integer
- *       record_type:
- *         type: string
- *       fields:
- *         type: array
- *         items:
- *           $ref: '#/definitions/Field'
- */
+  * @swagger
+  * definition:
+  *   Dataset:
+  *     properties:
+  *       id:
+  *         type: string
+  *       name:
+  *         type: string
+  *       description:
+  *         type: string
+  *       records:
+  *         type: integer
+  *       record_type:
+  *         type: string
+  *       fields:
+  *         type: array
+  *         items:
+  *           $ref: '#/definitions/Field'
+  */
 /**
- * @swagger
- * parameter:
- *   dataset_id:
- *     in: path
- *     name: dataset_id
- *     type: string
- *     required: true
- *     description: Unique identifier of the requested dataset
- */
+  * @swagger
+  * parameter:
+  *   dataset_id:
+  *     in: path
+  *     name: dataset_id
+  *     type: string
+  *     required: true
+  *     description: Unique identifier of the requested dataset (e.g. ACVV01)
+  */
 /**
- * @swagger
- * parameter:
- *   key:
- *     in: path
- *     name: key
- *     type: string
- *     required: true
- *     description: Object key
- */
+  * @swagger
+  * parameter:
+  *   key:
+  *     in: path
+  *     name: key
+  *     type: string
+  *     required: true
+  *     description: Dataset object key (e.g. assembly)
+  */
+/**
+  * @swagger
+  * parameter:
+  *   subkey:
+  *     in: path
+  *     name: subkey
+  *     type: string
+  *     required: true
+  *     description: Key object subkey (e.g. accession)
+  */
 /**
  * @swagger
  * /api/v1/dataset/all:
@@ -130,6 +140,23 @@ module.exports = function(app, db) {
     }
   });
 
+/**
+ * @swagger
+ * /api/v1/dataset/id/{dataset_id}/{key}/{subkey}:
+ *   get:
+ *     tags:
+ *       - Datasets
+ *     description: Returns the dataset parameter specified by dataset_id, key and subkey
+ *     produces:
+ *       - application/json
+ *     responses:
+ *       200:
+ *         description: A dataset parameter
+ *     parameters:
+ *       - $ref: "#/parameters/dataset_id"
+ *       - $ref: "#/parameters/key"
+ *       - $ref: "#/parameters/subkey"
+ */
   datasetRoutes.get('/dataset/id/:dataset_id/:key/:subkey', async (req, res) => {
     res.setHeader('content-type', 'application/json');
     let dataset = new Dataset(req.params.dataset_id);

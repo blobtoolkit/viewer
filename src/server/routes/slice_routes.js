@@ -1,3 +1,9 @@
+const appRoot = require('app-root-path');
+const Dataset = require('../models/dataset');
+const Field = require('../models/field');
+const utils = require('../../shared/functions/utils');
+
+
 module.exports = function(app, db) {
   var directory = app.locals.directory;
 
@@ -26,24 +32,33 @@ module.exports = function(app, db) {
     return obj;
   }
 
-  app.get('/api/:dataset_id/slice/:index', function(req, res) {
-    // index can be single value, comma separated, or range
-    // open-ended ranges will be expanded to end of dataset
-    var path = directory+'/'+req.params.dataset_id+'/';
-    var meta = require(path+'meta.json');
-    var index = req.params.index;
-    var types = ['variable'];//,'category','label'];
-    var ret = [];
-    index.split(',').forEach(function(r){
-      range = r.split('-');
-      range[0] = range[0] ? range[0]*1 : 0;
-      range[1] = range[1] ? range[1]*1 : r.match('-') ? meta.records-1 : range[0];
-      // TODO: replace with pagination
-      if (ret.length + range[1] - range[0] > 1000) res.send(JSON.stringify('range to large'))
-      for (var i = range[0]; i <= range[1]; i++){
-        ret.push(slice(i,types,meta,path));
+  function list_fields(arr, dataset_id, index, ret){
+    arr.forEach(async field_meta => {
+      let field = new Field(field_meta.id,{id:dataset_id});
+      if (field){
+        let data = await field.loadDataAtIndex(index);
+        if (data){
+          ret[field_meta.id] = data
+        }
+        if (field_meta.children){
+          ret = Object.assign(ret,list_fields(field_meta.children, dataset_id, index, ret))
+        }
+        if (field_meta.data){
+          ret = Object.assign(ret,list_fields(field_meta.data, dataset_id, index, ret))
+        }
       }
     })
-    res.send(JSON.stringify(ret))
+    return ret
+  }
+
+  app.get('/api/v1/:dataset_id/slice/:index', async (req, res) => {
+    // index can be single value, comma separated, or range
+    // open-ended ranges will be expanded to end of dataset
+    let dataset = new Dataset(req.params.dataset_id);
+    let meta = await dataset.loadMeta();
+    let ret = list_fields(meta.fields, req.params.dataset_id, req.params.index, {})
+
+    console.log(ret)
+    res.json(ret)
   });
 };

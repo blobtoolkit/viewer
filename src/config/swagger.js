@@ -8,7 +8,8 @@ const swaggerDefinition = {
     version: main.version,
     description: 'A RESTful API for BlobToolKit',
   },
-  host: (main.https ? 'https' : 'http') + '://' + main.hostname + (main.hostname == 'localhost' ? ':' + main.client_port : ''),
+  _host: (main.https ? 'https' : 'http') + '://' + main.hostname + (main.hostname == 'localhost' ? ':' + main.client_port : ''),
+  host: main.hostname + (main.hostname == 'localhost' ? ':' + main.api_port : ''),
   basePath: '/',
 };
 
