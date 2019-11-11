@@ -109,9 +109,6 @@ export const getCategoryDistributionForRecord = createSelector(
       let bin = Math.floor(hit[start_i]/binSize)*binSize
       let offset = offsets[bin] || 0
       let previous = sets[bin]
-      console.log(bin)
-      console.log(i)
-      console.log(previous)
       sets[bin] = i
       offsets[bin] = hit[score_i] + offset
       if (offsets[bin] > yLimit) yLimit = offsets[bin]

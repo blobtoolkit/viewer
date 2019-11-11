@@ -143,7 +143,6 @@ module.exports = function(app, db) {
  */
   app.get('/api/v1/field/:dataset_id/:field_id', async (req, res) => {
     res.setHeader('content-type', 'application/json');
-    console.log(req.params.field_id)
     //res.setHeader('Access-Control-Allow-Origin', 'http://localhost:8080');
     let field = new Field(req.params.field_id,{id:req.params.dataset_id});
     let data = await field.loadData();
@@ -175,7 +174,6 @@ module.exports = function(app, db) {
  */
   app.get('/api/v1/field/:dataset_id/:field_id/:index', async (req, res) => {
     res.setHeader('content-type', 'application/json');
-    console.log(req.params.field_id)
     let field = new Field(req.params.field_id,{id:req.params.dataset_id});
     let data = await field.loadDataAtIndex(req.params.index);
     if (data){
