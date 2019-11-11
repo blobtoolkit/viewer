@@ -42,7 +42,7 @@ class CatDistribution extends React.Component {
         url = line.link.url
       }
       let connector
-      if (line.previous){
+      if (line.previous || line.previous === 0){
         connector = <line
               x1={xScale(points[line.previous].x1)}
               x2={xScale(line.x2)}

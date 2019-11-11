@@ -31,10 +31,13 @@ export const chooseCurrentRecord = (id) => {
         let linked_url = apiUrl + '/field/' + datasetId + '/' + details.meta.linked_field + '/' + id
         let linked_response = await fetch(linked_url);
         let linked_json = await linked_response.json();
+        if (linked_json.hasOwnProperty('values')){
+          linked_json = linked_json.values
+        }
         let linked_details = getDetailsForFieldId(state, details.meta.linked_field)
         headers = headers.concat(linked_details.meta.headers)
         json.values[0].forEach((arr,i)=>{
-          json.values[0][i] = arr.concat(linked_json.values[0][i])
+          json.values[0][i] = arr.concat(linked_json[0][i])
         })
       }
       let category_slot = details.meta && details.meta.category_slot ? details.meta.category_slot : 0
@@ -106,6 +109,9 @@ export const getCategoryDistributionForRecord = createSelector(
       let bin = Math.floor(hit[start_i]/binSize)*binSize
       let offset = offsets[bin] || 0
       let previous = sets[bin]
+      console.log(bin)
+      console.log(i)
+      console.log(previous)
       sets[bin] = i
       offsets[bin] = hit[score_i] + offset
       if (offsets[bin] > yLimit) yLimit = offsets[bin]
