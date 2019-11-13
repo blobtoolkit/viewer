@@ -19,7 +19,8 @@ import { queryToStore } from '../querySync'
 import qs from 'qs'
 
 const branch = BRANCH || ''
-const version = GIT_VERSION || ''
+const version = VERSION || ''
+const git_version = GIT_VERSION || ''
 const hash = COMMIT_HASH || ''
 const gdpr_url = GDPR_URL || ''
 
@@ -35,8 +36,7 @@ class LayoutComponent extends React.Component {
 
   render(){
     let message = 'We use browser cookies to analyse traffic to this site. To use this site you must agree to our ';
-    let text = version
-    let url = 'https://github.com/blobtoolkit/viewer/tree/'+hash
+    let url = 'https://github.com/blobtoolkit/viewer'
     // {this.props.datasetId ? this.props.active ? <LayoutPlots/> : <Spinner/> : <LayoutPlots/> }
     let notice = (
       <CookieConsent
@@ -76,10 +76,9 @@ class LayoutComponent extends React.Component {
           </div>
         </div>
         <div className={styles.main_footer}>
-          <span>
-            BlobToolKit Viewer, version <a href={url} target={text}>{text}</a>
+          <span style={{float:'left'}}>
+            BlobToolKit Viewer <a style={{color:'white'}} href={url} target={git_version}>{version}</a>
           </span>
-          <DOIBadge/>
           <BTKLogos/>
           {notice}
         </div>
