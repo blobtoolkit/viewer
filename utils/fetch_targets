@@ -94,6 +94,7 @@ const main = async (args) => {
   let taxids = {}
   let taxdump = JSON.parse(fs.readFileSync(`${__dirname}/taxdump.json`))
   let targets = {n,r:'root',ta:0,ts:0,d:{}}
+  let accessions = {}
   while (offset < count){
     process.stderr.write(`${offset}\r`)
     step = Math.min(count-offset,step)
@@ -101,13 +102,19 @@ const main = async (args) => {
     assemblies.forEach(asm=>{
       let taxid = asm.TAXON.TAXON_ID
       let acc
-      if (asm.WGS_SET){
+      if (asm.WGS_SET && asm.WGS_SET.VERSION){
         acc = asm.WGS_SET.PREFIX + (asm.WGS_SET.VERSION < 10 ? '0'+ asm.WGS_SET.VERSION : asm.WGS_SET.VERSION)
       }
-      else {
-        acc = asm.NAME
+      else if (asm.ALIAS && asm.ALIAS.indexOf(' ') < 0) {
+        acc = asm.ALIAS.replace('.','_')
       }
-      addAssemblyToTree(taxid,acc,taxdump,targets,n)
+      else {
+        acc = asm.ACCESSION
+      }
+      if (!accessions[acc]){
+        addAssemblyToTree(taxid,acc,taxdump,targets,n)
+      }
+      accessions[acc] = 1
     })
     offset += step
   }
