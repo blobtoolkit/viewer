@@ -109,7 +109,7 @@ const main = async (args) => {
         acc = asm.ALIAS.replace('.','_')
       }
       else {
-        acc = asm.ACCESSION
+        acc = asm.ACCESSION.replace('.','_')
       }
       if (!accessions[acc]){
         addAssemblyToTree(taxid,acc,taxdump,targets,n)
