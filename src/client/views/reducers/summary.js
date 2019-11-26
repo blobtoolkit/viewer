@@ -1180,7 +1180,6 @@ export const getSelectedDatasetTable = createSelector(
     if (details.hasOwnProperty('revision')){
       let link = [], meta
       if (details.revision > 0){
-        console.log(details)
         let previous = details.revision == 1 ? details.prefix : `${details.prefix}.${(details.revision-1)}`
         link.push({
           func:()=>'/view/all/dataset/'+previous+'/detail',

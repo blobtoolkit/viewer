@@ -15,7 +15,7 @@ const resize = async (file, width, height) => {
 
 /**
  * @swagger
- * parameter:
+ * parameters:
  *   view:
  *     in: path
  *     name: view
@@ -30,7 +30,7 @@ const resize = async (file, width, height) => {
  */
 /**
    * @swagger
-   * parameter:
+   * parameters:
    *   type:
    *     in: path
    *     name: type
@@ -44,7 +44,7 @@ const resize = async (file, width, height) => {
    */
  /**
   * @swagger
-  * parameter:
+  * parameters:
   *   format:
   *     in: query
   *     name: format
@@ -58,7 +58,7 @@ const resize = async (file, width, height) => {
   */
 /**
  * @swagger
- * parameter:
+ * parameters:
  *   width:
  *     in: query
  *     name: width

@@ -7,7 +7,7 @@ module.exports = function(app, db) {
   const datasetRoutes = express.Router();
 /**
   * @swagger
-  * definition:
+  * definitions:
   *   Dataset:
   *     properties:
   *       id:
@@ -27,7 +27,7 @@ module.exports = function(app, db) {
   */
 /**
   * @swagger
-  * parameter:
+  * parameters:
   *   dataset_id:
   *     in: path
   *     name: dataset_id
@@ -37,7 +37,7 @@ module.exports = function(app, db) {
   */
 /**
   * @swagger
-  * parameter:
+  * parameters:
   *   key:
   *     in: path
   *     name: key
@@ -47,7 +47,7 @@ module.exports = function(app, db) {
   */
 /**
   * @swagger
-  * parameter:
+  * parameters:
   *   subkey:
   *     in: path
   *     name: subkey

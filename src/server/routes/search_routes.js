@@ -141,8 +141,13 @@ const generateTree = (meta) => {
       else {
         let taxon = ds[rank]
         if (!taxon){
-          let parent = nodes[parent_node.n]
-          taxon = parent.endsWith('undef') ? parent : `${parent}-undef`
+          let parent = String(nodes[parent_node.n])
+          if (parent){
+            taxon = parent.endsWith('undef') ? parent : `${parent}-undef`
+          }
+          else {
+            parent = 'undef'
+          }
         }
         if (!parent_node.d[taxon]){
           if (rank == 'taxon_name' && taxon == nodes[parent_node.n]){
@@ -252,7 +257,7 @@ const tabulate = term => {
 
 /**
   * @swagger
-  * definition:
+  * definitions:
   *   Tree:
   *     properties:
   *       n:
@@ -280,7 +285,7 @@ const tabulate = term => {
 //[{"term":"Diptera","field":"order","names":["ACVV01.1"]}]
 /**
   * @swagger
-  * definition:
+  * definitions:
   *   Term:
   *     properties:
   *       term:
@@ -297,7 +302,7 @@ const tabulate = term => {
   */
 /**
  * @swagger
- * parameter:
+ * parameters:
  *   term:
  *     in: path
  *     name: term

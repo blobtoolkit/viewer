@@ -79,6 +79,9 @@ class LayoutComponent extends React.Component {
           <span style={{float:'left'}}>
             BlobToolKit Viewer <a style={{color:'white'}} href={url} target={git_version}>{version}</a>
           </span>
+          <span style={{float:'left', marginLeft:'1em'}}>
+            <a style={{color:'white'}} href='https://doi.org/10.1101/844852' target='_blank'>Challis <i>et al.</i> 2019</a>
+          </span>
           <BTKLogos/>
           {notice}
         </div>
