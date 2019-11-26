@@ -29,6 +29,7 @@ const countAssemblies = async (root) => {
 const listAssemblies = async (root, offset, count) => {
   let baseUrl = 'https://www.ebi.ac.uk/ena/data/warehouse'
   let url = `${baseUrl}/search?query="tax_tree(${root})"&result=assembly&display=xml&offset=${offset}&length=${count}`
+  process.stderr.write(`${url}\n`)
   let xmlData = await fetchAsyncText(url)
   let jsonObj = parser.parse(xmlData)
   let assemblies = jsonObj.ROOT.ASSEMBLY
@@ -48,6 +49,7 @@ const hierarchy = [
 
 let n = 0
 let species = {}
+let accessions = {}
 
 const addAssemblyToTree = (taxid,acc,taxdump,tree) => {
   let ancestors = taxdump.ancestors[taxid]
@@ -74,6 +76,7 @@ const addAssemblyToTree = (taxid,acc,taxdump,tree) => {
   })
   species[spid] = true
   let taxon_name = taxdump.names[taxid]
+  process.stderr.write(`${acc} :: ${spid} :: ${taxon_name}\n`)
   if (taxon_name != taxdump.names[spid]){
     if (!node.d[taxon_name]){
       n++
@@ -94,27 +97,30 @@ const main = async (args) => {
   let taxids = {}
   let taxdump = JSON.parse(fs.readFileSync(`${__dirname}/taxdump.json`))
   let targets = {n,r:'root',ta:0,ts:0,d:{}}
-  let accessions = {}
-  while (offset < count){
+  let ids = {}
+  let processed = 0
+  while (processed < count){
     process.stderr.write(`${offset}\r`)
-    step = Math.min(count-offset,step)
+    // step = Math.min(count-offset,step)
     let assemblies = await listAssemblies(args.TAXID,offset,step)
     assemblies.forEach(asm=>{
       let taxid = asm.TAXON.TAXON_ID
       let acc
-      if (asm.WGS_SET && asm.WGS_SET.VERSION){
-        acc = asm.WGS_SET.PREFIX + (asm.WGS_SET.VERSION < 10 ? '0'+ asm.WGS_SET.VERSION : asm.WGS_SET.VERSION)
-      }
-      else if (asm.ALIAS && asm.ALIAS.indexOf(' ') < 0) {
-        acc = asm.ALIAS.replace('.','_')
-      }
-      else {
-        acc = asm.ACCESSION
-      }
-      if (!accessions[acc]){
+      let id = asm.IDENTIFIERS.PRIMARY_ID.replace('.','_')
+      if (!ids[id]){
+        ids[id] = true
+        processed += 1
+        if (asm.WGS_SET && asm.WGS_SET.VERSION){
+          acc = asm.WGS_SET.PREFIX + (asm.WGS_SET.VERSION < 10 ? '0'+ asm.WGS_SET.VERSION : asm.WGS_SET.VERSION)
+        }
+        else if (asm.ALIAS && asm.ALIAS.indexOf(' ') < 0) {
+          acc = asm.ALIAS.replace('.','_')
+        }
+        else {
+          acc = id
+        }
         addAssemblyToTree(taxid,acc,taxdump,targets,n)
       }
-      accessions[acc] = 1
     })
     offset += step
   }
