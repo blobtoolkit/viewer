@@ -18,7 +18,7 @@ class ListModal extends React.Component {
   }
 
   _downloadJSONFile(name,content){
-    console.log(name)
+    // console.log(name)
     var element = document.createElement('a');
     var file = new Blob([JSON.stringify(content, null, (content.identifiers ? null : 2))], {type: 'text/plain'});
     element.href = URL.createObjectURL(file);

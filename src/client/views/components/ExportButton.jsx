@@ -31,7 +31,7 @@ const arrayBufferToBase64 = buffer => {
 const fetchImage = async url => {
   let response = await fetch(url)
   if (!response.ok){
-    console.log(response)
+    // console.log(response)
     return
   }
   let buffer = await response.arrayBuffer()

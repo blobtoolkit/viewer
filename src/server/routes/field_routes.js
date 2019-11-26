@@ -5,7 +5,7 @@ const utils = require('../../shared/functions/utils');
 module.exports = function(app, db) {
 /**
  * @swagger
- * definition:
+ * definitions:
  *   Field:
  *     properties:
  *       id:
@@ -88,7 +88,7 @@ module.exports = function(app, db) {
  */
 /**
  * @swagger
- * definition:
+ * definitions:
  *   Value:
  *     properties:
  *       values:
@@ -104,7 +104,7 @@ module.exports = function(app, db) {
  */
 /**
  * @swagger
- * parameter:
+ * parameters:
  *   field_id:
  *     in: path
  *     name: field_id
@@ -114,7 +114,7 @@ module.exports = function(app, db) {
  */
 /**
  * @swagger
- * parameter:
+ * parameters:
  *   index:
  *     in: path
  *     name: index

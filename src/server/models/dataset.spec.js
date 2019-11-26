@@ -97,10 +97,10 @@ describe("Dataset model:", () => {
           success.should.be.true();
         }
         catch(err) {
-          console.log('!' + err);
+          console.log(err);
         }
       }).catch((err) => {
-        console.log('?' + err)
+        console.log(err)
       });
     });
   });

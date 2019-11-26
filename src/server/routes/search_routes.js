@@ -252,7 +252,7 @@ const tabulate = term => {
 
 /**
   * @swagger
-  * definition:
+  * definitions:
   *   Tree:
   *     properties:
   *       n:
@@ -280,7 +280,7 @@ const tabulate = term => {
 //[{"term":"Diptera","field":"order","names":["ACVV01.1"]}]
 /**
   * @swagger
-  * definition:
+  * definitions:
   *   Term:
   *     properties:
   *       term:
@@ -297,7 +297,7 @@ const tabulate = term => {
   */
 /**
  * @swagger
- * parameter:
+ * parameters:
  *   term:
  *     in: path
  *     name: term

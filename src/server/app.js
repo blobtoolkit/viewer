@@ -23,7 +23,6 @@ require('./routes')(app, {});
 if (config.https){
   const https = require('https');
   const fs = require('fs');
-  console.log(config.keyFile)
   var options = {
     key: fs.readFileSync(config.keyFile),
     cert: fs.readFileSync(config.certFile)
