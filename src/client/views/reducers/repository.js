@@ -226,6 +226,8 @@ export const nohitThreshold = handleAction(
 )
 export const getNohitThreshold = state => state.nohitThreshold
 
+export const setMaxSpan = createAction('SET_MAX_SPAN')
+export const setMaxCount = createAction('SET_MAX_COUNT')
 export const loadDataset = (id,clear) => {
   return function(dispatch){
     let state = store.getState()
@@ -243,6 +245,8 @@ export const loadDataset = (id,clear) => {
     }
     dispatch(fetchMeta(id)).then(() => {
       let meta = deep(store.getState(),['availableDatasets','byId',id])
+      dispatch(setMaxCount(meta.assembly['scaffold-count']))
+      dispatch(setMaxSpan(meta.assembly.span))
       let plot = {}
       Object.keys(meta.plot).forEach(key=>{
         plot[key] = meta.plot[key]

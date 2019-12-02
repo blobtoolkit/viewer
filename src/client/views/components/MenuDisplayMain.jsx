@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 //import styles from './Plot.scss'
 import { getAxisTitle } from '../reducers/plotData'
 import { getRecordCount, getBuscoSets } from '../reducers/summary'
-import { getStaticFields } from '../reducers/dataset'
+import { getStaticFields, getSelectedDatasetMeta } from '../reducers/dataset'
 import { getFields } from '../reducers/field'
 import { getPlotShape,
   choosePlotShape,
@@ -35,7 +35,11 @@ import { getPlotShape,
   getShowTotal,
   chooseShowTotal,
   getSideMax,
-  chooseSideMax } from '../reducers/plotParameters'
+  chooseSideMax,
+  getMaxSpan,
+  chooseMaxSpan,
+  getMaxCount,
+  chooseMaxCount } from '../reducers/plotParameters'
 import {
   getStaticThreshold,
   chooseStaticThreshold,
@@ -79,7 +83,7 @@ import Palettes from '../containers/Palettes'
 
 class DisplayMenu extends React.Component {
   render(){
-    let { datasetId, title, view, busco, records, isStatic, hasStatic,
+    let { datasetId, title, view, busco, records, isStatic, hasStatic, meta,
       shape, onSelectShape,
       resolution, onChangeResolution,
       graphics, onChangeGraphics,
@@ -98,7 +102,9 @@ class DisplayMenu extends React.Component {
       nohitThreshold, onChangeNohitThreshold,
       sideMax, onChangeSideMax,
       data={}, onChangeAxisRange, parsed, changeQueryParams,
-      showTotal, onChangeShowTotal, } = this.props
+      showTotal, onChangeShowTotal,
+      maxSpan, onChangeMaxSpan,
+      maxCount, onChangeMaxCount } = this.props
     let context
     view = view || 'blob'
     let blob
@@ -242,6 +248,22 @@ class DisplayMenu extends React.Component {
           <SVGIcon sprite={xIcon} active={curveOrigin == 'x'} onIconClick={()=>onSelectCurveOrigin('x')}/>
           <SVGIcon sprite={yIcon} active={curveOrigin == 'y'} onIconClick={()=>onSelectCurveOrigin('y')}/>
           <SVGIcon sprite={scaleIcon} active={scaleTo == 'filtered'} onIconClick={()=>onSelectScaleTo(scaleTo == 'total' ? 'filtered' : 'total')}/>
+        </MenuDisplaySimple>
+        <MenuDisplaySimple name='maximum span'>
+          <div className={styles.full_height}>
+            { meta && meta.assembly && meta.assembly.span < maxSpan
+              && <span className={styles.reset} onClick={()=>onChangeMaxSpan(meta.assembly.span)}>reset</span>
+            }
+            <NumericInput initialValue={maxSpan} minValue={meta.assembly ? meta.assembly.span : 0} onChange={onChangeMaxSpan}/>
+          </div>
+        </MenuDisplaySimple>
+        <MenuDisplaySimple name='maximum count'>
+          <div className={styles.full_height}>
+            { records < maxCount
+              && <span className={styles.reset} onClick={()=>onChangeMaxCount(records)}>reset</span>
+            }
+            <NumericInput initialValue={maxCount}  minValue={records ? records : 0} onChange={onChangeMaxCount}/>
+          </div>
         </MenuDisplaySimple>
         {displayTotal}
       </span>
@@ -388,6 +410,8 @@ class MenuDisplayMain extends React.Component {
         onChangeTransform: object => dispatch(setTransformFunction(object)),
         onChangeShowTotal: bool => dispatch(chooseShowTotal(bool)),
         onChangeSideMax: value => dispatch(chooseSideMax(value)),
+        onChangeMaxSpan: (value, minValue) => {if (minValue){value = Math.max(value, minValue)} dispatch(chooseMaxSpan(value))},
+        onChangeMaxCount: (value, minValue) => {if (minValue){value = Math.max(value, minValue)} dispatch(chooseMaxCount(value))},
         onChangeAxisRange: (values,remove) => dispatch(queryToStore({values,remove,action:'FILTER'})),
         changeQueryParams: (obj) => dispatch(setQueryString(Object.keys(obj).map(k=>`${k}=${obj[k]}`).join('&')))
       }
@@ -397,6 +421,7 @@ class MenuDisplayMain extends React.Component {
       return {
         title:getAxisTitle(state,'z'),
         records:getRecordCount(state),
+        meta:getSelectedDatasetMeta(state),
         shape:getPlotShape(state),
         resolution:getPlotResolution(state),
         graphics:getPlotGraphics(state),
@@ -420,7 +445,9 @@ class MenuDisplayMain extends React.Component {
         data: getMainPlotData(state),
         parsed: getParsedQueryString(state),
         showTotal: getShowTotal(state),
-        sideMax: getSideMax(state)
+        sideMax: getSideMax(state),
+        maxSpan: getMaxSpan(state),
+        maxCount: getMaxCount(state)
       }
     }
   }

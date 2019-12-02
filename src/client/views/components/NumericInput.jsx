@@ -17,6 +17,7 @@ class NumericInput extends React.Component {
     }
   }
   render(){
+    let minValue = this.props.minValue || 0
     return (
       <input
         type='number'
@@ -34,7 +35,7 @@ class NumericInput extends React.Component {
         }
         onBlur={
           (e)=>{
-            this.props.onChange(e.target.value)
+            this.props.onChange(e.target.value, minValue)
           }
         }
       />

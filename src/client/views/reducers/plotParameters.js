@@ -300,6 +300,39 @@ export const sideMax = handleAction(
 )
 export const getSideMax = state => state.sideMax
 
+
+export const chooseMaxSpan = (maxSpan) => {
+  return function (dispatch) {
+    let values = {maxSpan}
+    dispatch(queryToStore({values}))
+  }
+}
+export const maxSpan = handleAction(
+  'SET_MAX_SPAN',
+  (state, action) => (
+    action.payload
+  ),
+  qsDefault('maxSpan')
+)
+export const getMaxSpan = state => state.maxSpan
+
+
+export const chooseMaxCount = (maxCount) => {
+  return function (dispatch) {
+    let values = {maxCount}
+    dispatch(queryToStore({values}))
+  }
+}
+export const maxCount = handleAction(
+  'SET_MAX_COUNT',
+  (state, action) => (
+    action.payload
+  ),
+  qsDefault('maxCount')
+)
+export const getMaxCount = state => state.maxCount
+
+
 export const setSVGThreshold = createAction('SET_SVG_THRESHOLD')
 export const chooseSVGThreshold = (svgThreshold) => {
   return function (dispatch) {
@@ -470,6 +503,8 @@ export const plotParameterReducers = {
   radiusScale,
   snailOrigin,
   sideMax,
+  maxCount,
+  maxSpan,
   circleLimit,
   tablePage,
   tablePageSize,

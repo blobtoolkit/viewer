@@ -90,6 +90,16 @@ const mapDispatchToQuery = (
       payload: (k,v) => v,
       default: false
     },
+    maxCount: {
+      type: 'SET_MAX_COUNT',
+      payload: (k,v) => v,
+      default: false
+    },
+    maxSpan: {
+      type: 'SET_MAX_SPAN',
+      payload: (k,v) => v,
+      default: false
+    },
     pngResolution: {
       type: 'SET_PNG_RESOLUTION',
       payload: (k,v) => v,

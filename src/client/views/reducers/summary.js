@@ -15,7 +15,7 @@ import { getMainPlot, getZAxis, getCatAxis } from './plot';
 import { getSelectedDatasetMeta } from './dataset';
 import { getFilteredList } from './filter';
 import { getFilteredDataForFieldId } from './preview';
-import { getZReducer, getZScale, zReducers, getCircumferenceScale, getRadiusScale, getSnailOrigin, getTablePage, getTablePageSize, getTableSortField, getTableSortOrder, getScaleTo, getOtherLimit } from './plotParameters';
+import { getZReducer, getZScale, zReducers, getCircumferenceScale, getRadiusScale, getSnailOrigin, getTablePage, getTablePageSize, getTableSortField, getTableSortOrder, getScaleTo, getOtherLimit, getMaxCount, getMaxSpan } from './plotParameters';
 import { getColorPalette, getDefaultPalette } from './color';
 import immutableUpdate from 'immutable-update';
 import { scaleLinear as d3scaleLinear } from 'd3-scale';
@@ -188,7 +188,9 @@ export const cumulativeCurves = createSelector(
   getSpan,
   getSummary,
   getScaleTo,
-  (cumulative,palette,records,span,summary,scaleTo) => {
+  getMaxCount,
+  getMaxSpan,
+  (cumulative,palette,records,span,summary,scaleTo,maxCount,maxSpan) => {
     if (!cumulative) return false
     let values = cumulative.values
     let all = values.all
@@ -197,15 +199,15 @@ export const cumulativeCurves = createSelector(
     span = span || all[all.length - 1]
     let xScale, yScale
     if (scaleTo == 'total'){
-      xScale = d3scaleLinear().range([50,950]).domain([0,records])
-      yScale = d3scaleLinear().range([950,50]).domain([0,span])
+      records = maxCount
+      span = maxSpan
     }
     else {
       records = summary.values.counts.all
       span = summary.values.reduced.all
-      xScale = d3scaleLinear().range([50,950]).domain([0,summary.values.counts.all])
-      yScale = d3scaleLinear().range([950,50]).domain([0,summary.values.reduced.all])
     }
+    xScale = d3scaleLinear().range([50,950]).domain([0,records])
+    yScale = d3scaleLinear().range([950,50]).domain([0,span])
     let f = d3Format(".3f");
     let line = d3Line().x(d=>f(d.x)).y(d=>f(d.y))
     let xyScale = arr => [0].concat(arr).map((y,x)=>({x:xScale(x),y:yScale(y)}))
