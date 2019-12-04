@@ -14,11 +14,46 @@ export const colorToRGB = (color) => {
     color = color.replace('hsl(','').replace(')','').split(',')
     color = convert.hsl.rgb(color)
   }
+  else if (color.match('#')){
+    color = color.replace('#','')
+    color = convert.hex.rgb(color)
+  }
+  else if (color.match('hex')){
+    color = color.replace('hex','')
+    color = convert.hex.rgb(color)
+  }
   else {
     color = convert.keyword.rgb(color)
   }
   if (color){
     color = 'rgb('+color.join()+')'
+  }
+  return color
+}
+
+export const colorToHex = (color) => {
+  if (color.match('#')){
+    return color.replace('#','hex')
+  }
+  else if (color.match('hsl')){
+    color = color.replace('hsl(','').replace(')','').split(',')
+    color = convert.hsl.hex(color)
+  }
+  else if (color.match('rgba')){
+    color = color.replace('rgba(','').replace(')','').split(',')
+    // let alpha = Math.round(color[3]*255).toString(16)
+    color = convert.rgb.hex(color.slice(0,3))
+    // color += alpha
+  }
+  else if (color.match('rgb')){
+    color = color.replace('rgb(','').replace(')','').split(',')
+    color = convert.rgb.hex(color)
+  }
+  else {
+    color = convert.keyword.hex(color)
+  }
+  if (color){
+    color = 'hex'+color
   }
   return color
 }
@@ -394,8 +429,9 @@ export const queryToStore = (options = {}) => {
       let oldCols = values.colors.existing.colors
       let newCols = values.colors.colors[values.colors.colors.id]
       newCols.forEach((col,i) => {
-        if (newCols[i] != oldCols[i]){
-          values['color'+i] = newCols[i]
+        let hex = colorToHex(newCols[i])
+        if (hex != colorToHex(oldCols[i])){
+          values['color'+i] = hex
         }
       })
       delete values.colors
