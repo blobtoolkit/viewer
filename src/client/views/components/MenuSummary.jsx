@@ -60,6 +60,7 @@ class TabbedFraction extends React.Component {
           onDragOver={(e)=>{e.preventDefault()}}
           onDrop={(e)=>{e.preventDefault()}}
           draggable={true}
+          onDragStart={(e)=>e.dataTransfer.setData('text','')}
           onDrag={(e)=>this.props.handleDragStart(e,title)}
           onDragEnd={(e)=>this.props.handleDragEnd(e)}>
         <td style={style}>
@@ -257,6 +258,7 @@ class MenuSummary extends React.Component {
                 <span draggable={true}
                       className={css}
                       style={{cursor:'pointer'}}
+                      onDragStart={(e)=>e.dataTransfer.setData('text','')}
                       onDrag={(e)=>this.handleDragStart(e,id)}
                       onDragEnd={(e)=>this.handleDragEnd(e)}>
                   {id}
