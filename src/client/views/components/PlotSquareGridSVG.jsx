@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux'
 import styles from './Plot.scss'
 import { getSelectedSquareGrid } from '../reducers/plotSquareBins'
-import { addRecords, removeRecords } from '../reducers/select'
+import { addRecords, removeRecords, setSelectSource } from '../reducers/select'
 import {
   grid as gridStyle,
   gridShape,
@@ -23,9 +23,13 @@ export default class PlotSquareGridSVG extends React.Component {
       return {
         onClickCell:(arr) => {
           if (this.state.addRecords){
-            return dispatch(addRecords(arr))
+            dispatch(setSelectSource('square'))
+            dispatch(addRecords(arr))
           }
-          return dispatch(removeRecords(arr))
+          else {
+            dispatch(setSelectSource('square'))
+            dispatch(removeRecords(arr))
+          }
         }
       }
     }

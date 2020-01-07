@@ -10,8 +10,8 @@ import qs from 'qs'
 import { filterToList, getFilteredList, getUnfilteredList } from './filter'
 import { fetchRawData, getAllActiveFields } from './field'
 import queryToStore from '../querySync'
-import { selectNone, addRecords } from './select'
-import { getQueryString } from './location'
+import { selectNone, addRecords, setSelectSource, changeSelectPolygon } from './select'
+import { getQueryString, setHashString } from './location'
 import { getSelectedDatasetMeta } from './dataset'
 
 export const addList = createAction('ADD_LIST')
@@ -83,6 +83,16 @@ export const chooseList = (id,select) => {
   return async function (dispatch) {
     let state = store.getState()
     let list = getListById(state,id)
+    if (list.hasOwnProperty('polygon')){
+      await dispatch(changeSelectPolygon(list.polygon))
+      if (list.hasOwnProperty('identifiers')){
+        await dispatch(setSelectSource('circle'))
+      }
+      else {
+        await dispatch(setSelectSource('list'))
+      }
+
+    }
     await dispatch(selectNone())
     let values = Object.assign({},list.params)
     await dispatch(queryToStore({values,searchReplace:true}))
@@ -93,6 +103,8 @@ export const chooseList = (id,select) => {
     if (select){
       await dispatch(addRecords(list.list))
     }
+    dispatch(setHashString('Filters'))
+
 
   }
 }
@@ -176,15 +188,21 @@ export function uploadedFileToList(acceptedFiles) {
             obj.id = 'user_'+obj.id
             if (ids.payload) ids = ids.payload
             let set = {}
-            obj.identifiers.forEach(id=>{
-              set[id]=true
-            })
-            for (let i = 0,id; id = ids[i]; i++){
-              if (set[id]){
-                obj.list.push(i)
+            if (obj.hasOwnProperty('identifiers')){
+              obj.identifiers.forEach(id=>{
+                set[id]=true
+              })
+              for (let i = 0,id; id = ids[i]; i++){
+                if (set[id]){
+                  obj.list.push(i)
+                }
               }
+              delete obj.identifiers
             }
-            delete obj.identifiers
+            else {
+              obj.list = ids
+              obj.params['selection--Active'] = false
+            }
             dispatch(addList(obj))
           })
       };

@@ -13,7 +13,7 @@ import { getTableData,getBinnedColors,getTableDataForPage } from '../reducers/su
 import { getSelectedDatasetMeta } from '../reducers/dataset'
 import { getColorPalette } from '../reducers/color'
 import { chooseCurrentRecord, getCurrentRecord } from '../reducers/record'
-import { addRecords, removeRecords, recordsByName } from '../reducers/select'
+import { addRecords, removeRecords, recordsByName, setSelectSource } from '../reducers/select'
 import CumulativePlotBoundary from './CumulativePlotBoundary'
 const saveSvgAsPng = require('save-svg-as-png/lib/saveSvgAsPng.js')
 import AxisTitle from './AxisTitle'
@@ -263,9 +263,11 @@ class TablePlot extends React.Component {
       return {
         toggleSelect: (id,add) => {
           if (add){
+            dispatch(setSelectSource('table'))
             dispatch(addRecords(id))
           }
           else {
+            dispatch(setSelectSource('table'))
             dispatch(removeRecords(id))
           }
         },
@@ -285,7 +287,10 @@ class TablePlot extends React.Component {
           dispatch(setTablePage(0))
         },
         chooseRecord: recordId => dispatch(chooseCurrentRecord(recordId)),
-        recordsByName: arr => dispatch(recordsByName(arr))
+        recordsByName: arr => {
+          dispatch(setSelectSource('table'))
+          dispatch(recordsByName(arr))
+        }
       }
     }
   }

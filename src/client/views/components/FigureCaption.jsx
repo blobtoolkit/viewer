@@ -91,7 +91,7 @@ class Caption extends Component {
       let scale = scales[this.props.scale]
       let range
       let reducer = this.props.reducer.id
-      if (this.props.plotShape == 'circle') {
+      if (this.props.plotShape == 'circle' && this.props.range) {
         range = this.props.range.map(x=>Number(x).toLocaleString())
       }
       else if (this.props.plotShape == 'kite'){

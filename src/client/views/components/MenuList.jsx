@@ -8,10 +8,11 @@ import { createSelector } from 'reselect'
 import { fetchIdentifiers } from '../reducers/identifiers'
 import { getSelectedDatasetMeta } from '../reducers/dataset'
 import { getSearchTerm } from '../reducers/location'
+import { getSelectSource, getSelectPolygon } from '../reducers/select'
 import { getSelectedList, updateSelectedList, getIdentifiersForList, chooseList } from '../reducers/list'
 import ListModal from './ListModal';
 
-const ListItem = ({id,list,params,search,onClick,identifiers,active,onChooseList,meta,summaryStats,buscos}) => {
+const ListItem = ({id,list,params,search,onClick,identifiers,active,onChooseList,meta,summaryStats,buscos,selectSource,selectPolygon}) => {
   let css = styles.menu_item
   if (active) css += ' '+styles.active
   let taxon = meta.taxon_name
@@ -24,6 +25,9 @@ const ListItem = ({id,list,params,search,onClick,identifiers,active,onChooseList
     search,
     params,
     identifiers
+  }
+  if (selectSource == 'circle'){
+    obj.polygon = selectPolygon
   }
   if (id == 'current'){
     if (!summaryStats.stats){
@@ -53,7 +57,9 @@ class MenuList extends React.Component {
         identifiers: getIdentifiersForList(state,this.props.id),
         active: getSelectedList(state) == this.props.id,
         meta: getSelectedDatasetMeta(state),
-        search: getSearchTerm(state)
+        search: getSearchTerm(state),
+        selectSource: getSelectSource(state),
+        selectPolygon: getSelectPolygon(state)
       }
     }
     this.mapDispatchToProps = dispatch => {

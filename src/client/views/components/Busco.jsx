@@ -8,7 +8,7 @@ import { ExportButton } from './ExportButton'
 import { format as d3Format } from 'd3-format'
 import ReactTable from 'react-table'
 import { getDatasetID } from '../reducers/location'
-import { addRecords, removeRecords, replaceRecords } from '../reducers/select'
+import { addRecords, removeRecords, replaceRecords, setSelectSource } from '../reducers/select'
 import { CircleAxis } from './CircleAxis'
 
 const RecordSelector = ({sel,val,records,id,toggleSelect}) => {
@@ -234,13 +234,18 @@ class Busco extends React.Component {
         fetchData: (id) => dispatch(fetchRawData(id)),
         toggleSelect: (id,add) => {
           if (add){
+            dispatch(setSelectSource('busco'))
             dispatch(addRecords(id))
           }
           else {
+            dispatch(setSelectSource('busco'))
             dispatch(removeRecords(id))
           }
         },
-        replaceRecords: arr => dispatch(replaceRecords(arr))
+        replaceRecords: arr => {
+          dispatch(setSelectSource('busco'))
+          dispatch(replaceRecords(arr))
+        }
       }
     }
 

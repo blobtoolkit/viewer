@@ -30,12 +30,13 @@ import { getSquareGrid,
   getSelectedSquareGrid,
   getSquareGridScale } from '../reducers/plotSquareBins'
 import { pixel_to_oddr } from '../reducers/hexFunctions'
-import { addRecords, removeRecords } from '../reducers/select'
+import { addRecords, removeRecords, setSelectSource } from '../reducers/select'
 import { scaleLinear as d3scaleLinear } from 'd3-scale';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { ExportButton } from './ExportButton'
 import { NoBlobWarning } from './NoBlobWarning'
 import { NoHitWarning } from './NoHitWarning'
+import LassoSelect from './LassoSelect'
 import { getDatasetID } from '../reducers/location'
 import { getRecordCount } from '../reducers/summary'
 
@@ -98,8 +99,14 @@ export default class MainPlot extends React.Component {
     }
     this.mapDispatchToProps = dispatch => {
       return {
-        addRecords:(arr) => dispatch(addRecords(arr)),
-        removeRecords:(arr) => dispatch(removeRecords(arr))
+        addRecords:(arr) => {
+          dispatch(setSelectSource('blob'))
+          dispatch(addRecords(arr))
+        },
+        removeRecords:(arr) => {
+          dispatch(setSelectSource('blob'))
+          dispatch(removeRecords(arr))
+        }
       }
     }
   }
@@ -235,15 +242,6 @@ class PlotBox extends React.Component {
     let legend = <g transform='translate(1010,-290)'><PlotLegend/></g>
     if (this.props.plotShape == 'circle'){
       if (this.props.plotGraphics != 'svg'){
-        plotCanvas = (
-          <g>
-            <foreignObject width={900} height={900}>
-              <div xmlns="http://www.w3.org/1999/xhtml" className={styles.fill_parent}>
-                <PlotBubblesCanvasLayers {...this.props}/>
-              </div>
-            </foreignObject>
-          </g>
-        )
         plotContainer = ''
       }
       else {
@@ -262,30 +260,57 @@ class PlotBox extends React.Component {
       plotGrid = <PlotHexGridSVG />
     }
     if (this.props.plotShape == 'circle'){
+      if (this.props.plotGraphics != 'svg'){
+        plotCanvas = (
+
+          <svg id="main_plot"
+            ref={(elem) => { this.svg = elem; }}
+            className={styles.main_plot+' '+styles.fill_parent}
+            viewBox={viewbox}
+            preserveAspectRatio="xMinYMin">
+            {mask}
+            <g transform={'translate(100,320)'} >
+              <g transform="translate(50,50)">
+                <g>
+                  <foreignObject width={900} height={900}>
+                    <div xmlns="http://www.w3.org/1999/xhtml" className={styles.fill_parent}>
+                      <PlotBubblesCanvasLayers {...this.props}/>
+                    </div>
+                  </foreignObject>
+                </g>
+              </g>
+            </g>
+          </svg>
+        )
+      }
       return (
         <div className={styles.outer}>
-          <div className={styles.fill_parent}>
-            <svg id="main_plot"
-              ref={(elem) => { this.svg = elem; }}
-              className={styles.main_plot+' '+styles.fill_parent}
-              viewBox={viewbox}
-              preserveAspectRatio="xMinYMin">
-              {mask}
-              <g transform={'translate(100,320)'} >
-                <g transform="translate(50,50)">
-                  <PlotTransformLines />
-                  {plotContainer}
-                  {plotCanvas}
+          <div className={styles.fill_parent} style={{display:'block',position:'relative'}}>
+            <div style={{height:'100%',width:'100%',position:'absolute'}}>
+              {plotCanvas}
+            </div>
+            <div style={{height:'100%',width:'100%',position:'absolute'}}>
+              <svg id="main_plot"
+                ref={(elem) => { this.svg = elem; }}
+                className={styles.main_plot+' '+styles.fill_parent}
+                viewBox={viewbox}
+                preserveAspectRatio="xMinYMin">
+                {mask}
+                <g transform={'translate(100,320)'} >
+                  <g transform="translate(50,50)">
+                    <PlotTransformLines />
+                    {plotContainer}
+                  </g>
+                  {xPlot}
+                  {yPlot}
+                  {legend}
+                  <LassoSelect/>
+                  <PlotAxisTitle axis='x' side={side}/>
+                  <PlotAxisTitle axis='y' side={side}/>
                 </g>
-                {xPlot}
-                {yPlot}
-                {legend}
-                <MainPlotBoundary/>
-                <PlotAxisTitle axis='x' side={side}/>
-                <PlotAxisTitle axis='y' side={side}/>
-              </g>
-            </svg>
-            {exportButtons}
+              </svg>
+              {exportButtons}
+            </div>
           </div>
           <FigureCaption {...this.props}/>
           { this.props.records > this.props.circleLimit && this.props.staticThreshold > this.props.records && <NoHitWarning circleLimit={this.props.circleLimit}/> }
@@ -310,7 +335,7 @@ class PlotBox extends React.Component {
                 {xPlot}
                 {yPlot}
                 {legend}
-                <MainPlotBoundary/>
+                <LassoSelect/>
                 <PlotAxisTitle axis='x' side={side}/>
                 <PlotAxisTitle axis='y' side={side}/>
               </g>

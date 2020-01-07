@@ -84,12 +84,12 @@ export const getFilteredDataForNCount = createSelector(
 )
 
 
-const getDetailsForX = createSelector(
+export const getDetailsForX = createSelector(
   (state) => getDetailsForFieldId(state,getXAxis(state)),
   data => data
 )
 
-const getDetailsForY = createSelector(
+export const getDetailsForY = createSelector(
   (state) => getDetailsForFieldId(state,getYAxis(state)),
   data => data
 )

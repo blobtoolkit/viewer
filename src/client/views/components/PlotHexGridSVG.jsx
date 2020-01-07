@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux'
 import styles from './Plot.scss'
 import { getSelectedHexGrid } from '../reducers/plotHexBins'
-import { addRecords, removeRecords } from '../reducers/select'
+import { addRecords, removeRecords, setSelectSource } from '../reducers/select'
 import Pointable from 'react-pointable';
 import {
   grid as gridStyle,
@@ -24,9 +24,13 @@ export default class PlotHexGridSVG extends React.Component {
       return {
         onClickCell:(arr) => {
           if (this.state.addRecords){
-            return dispatch(addRecords(arr))
+            dispatch(setSelectSource('hex'))
+            dispatch(addRecords(arr))
           }
-          return dispatch(removeRecords(arr))
+          else {
+            dispatch(setSelectSource('hex'))
+            dispatch(removeRecords(arr))
+          }
         }
       }
     }

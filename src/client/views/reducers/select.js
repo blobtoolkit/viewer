@@ -126,7 +126,31 @@ export const getSelectedRecordsAsObject = createSelector(
   }
 )
 
+export const changeSelectPolygon = createAction('CHANGE_SELECT_POLYGON')
+export const selectPolygon = handleAction(
+  'CHANGE_SELECT_POLYGON',
+  (state, action) => (
+    action.payload
+  ),
+  []
+)
+export const getSelectPolygon = state => state.selectPolygon
+
+export const setSelectSource = createAction('SET_SELECT_SOURCE')
+export const selectSource = handleAction(
+  'SET_SELECT_SOURCE',
+  (state, action) => (
+    action.payload
+  ),
+  'unknown'
+)
+export const getSelectSource = state => state.selectSource
+
+
+
 export const selectReducers = {
   selectedRecords,
-  selectionDisplay
+  selectionDisplay,
+  selectPolygon,
+  selectSource
 }

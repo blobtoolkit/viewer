@@ -7,6 +7,7 @@ const colors = {
   shadeColor: 'rgb(89, 101, 111)',
   deepColor: 'rgb(65,74,81)',
   highlightColor: 'rgb(156, 82, 139)',
+  halfHighlightColor: 'rgba(156, 82, 139, 0.5)',
   paleColor: 'rgb(215, 205, 204)',
   brightColor: 'rgb(255,255,30)',
   clearColor: 'rgba(255,255,255,0)'

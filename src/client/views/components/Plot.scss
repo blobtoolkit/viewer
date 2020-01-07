@@ -334,6 +334,12 @@ div.list_download {
   fill:none;
 }
 
+.lasso {
+  stroke: $highlightColor;
+  stroke-width: 3px;
+  fill: rgba($highlightColor,0.5);
+}
+
 .centered_content {
   display:flex;
   align-items: center;
