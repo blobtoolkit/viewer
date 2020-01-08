@@ -189,6 +189,10 @@ class Lasso extends React.Component {
         if (this.state.hover == 0){
           active = false
           complete = true
+          if (this.state.clear){
+            clearTimeout(this.state.clear)
+            this.setState({clear:false})
+          }
           // points.push(arr)
           this.updateSelection(points, this.props.data.data)
         }
@@ -242,6 +246,29 @@ class Lasso extends React.Component {
     }
   }
 
+  clearIncomplete(){
+    if (this.state.clear){
+      clearTimeout(this.state.clear)
+    }
+    if (this.state.complete){
+      return
+    }
+
+    let clear = setTimeout(()=>{
+      this.setState({
+        mouseDown:false,
+        points: [],
+        current:[],
+        last: {},
+        active: false,
+        complete: false,
+        internodes: []
+      })
+    },5000)
+    this.setState({clear})
+
+  }
+
   drawNode(coords, key, fill=-1){
     let nodeWidth = 20
     return (
@@ -265,6 +292,34 @@ class Lasso extends React.Component {
             height={nodeWidth}
             width={nodeWidth}/>
     )
+  }
+
+  detectNodes(coords, thresh){
+    let hover = -1
+    let ihover = -1
+    let current = [coords.x,coords.y]
+    this.state.points.forEach((point,i)=>{
+      let deltaX = (coords.x - point[0])
+      let deltaY = (coords.y - point[1])
+      if (Math.abs(deltaX) <= thresh && Math.abs(deltaY) <= thresh){
+        current = [point[0],point[1]]
+        hover = i
+      }
+    })
+    this.state.internodes.forEach((point,i)=>{
+      let deltaX = (coords.x - point[0])
+      let deltaY = (coords.y - point[1])
+      if (Math.abs(deltaX) <= thresh && Math.abs(deltaY) <= thresh){
+        ihover = i
+      }
+    })
+    let state = {
+      current,
+      hover,
+      ihover
+    }
+    this.setState(state)
+    return state
   }
 
   render(){
@@ -370,42 +425,10 @@ class Lasso extends React.Component {
               })
             }
             else {
-              let hover = -1
-              let ihover = -1
-              this.state.points.forEach((point,i)=>{
-                let deltaX = (coords.x - point[0])
-                let deltaY = (coords.y - point[1])
-                if (Math.abs(deltaX) <= thresh && Math.abs(deltaY) <= thresh){
-                  current = [point[0],point[1]]
-                  hover = i
-                }
-              })
-              this.state.internodes.forEach((point,i)=>{
-                let deltaX = (coords.x - point[0])
-                let deltaY = (coords.y - point[1])
-                if (Math.abs(deltaX) <= thresh && Math.abs(deltaY) <= thresh){
-                  ihover = i
-                }
-              })
-              this.setState({
-                current,
-                hover,
-                ihover
-              })
+              this.detectNodes(coords, thresh)
+              this.clearIncomplete()
             }
-            // else {
-            //   let hover = -1
-            //   this.state.points.forEach((point,i)=>{
-            //     let deltaX = (coords.x - point[0])
-            //     let deltaY = (coords.y - point[1])
-            //     if (Math.abs(deltaX) <= thresh && Math.abs(deltaY) <= thresh){
-            //       hover = i
-            //     }
-            //   })
-            //   this.setState({
-            //     hover
-            //   })
-            // }
+
           }}
           onPointerLeave={(e)=>{
             e.preventDefault()
@@ -414,23 +437,38 @@ class Lasso extends React.Component {
           onPointerDown={(e)=>{
             e.preventDefault()
             let coords = relativeCoords(e)
-            if (this.state.hover >= 0 && this.state.complete){
-              this.setState({moveNode:this.state.hover})
+            let state = this.detectNodes(coords, thresh)
+            if (this.state.hover >= 0 || state.hover >=0 ){
+              let hover = Math.max(this.state.hover, state.hover)
+              if (this.state.complete){
+                this.setState({
+                  hover,
+                  moveNode:hover
+                })
+                return
+              }
+              else {
+                this.setState({
+                  hover
+                })
+              }
             }
-            else if (this.state.ihover >= 0 && this.state.complete){
-              let hover = this.state.ihover
-              let moveNode = hover
-              let ihover = -1
-              points.splice(this.state.ihover,0,this.state.internodes[this.state.ihover])
-              this.setState({
-                points,
-                hover,
-                moveNode,
-                ihover})
+            else if (this.state.complete &&
+                      (this.state.ihover >= 0 || state.ihover >=0) ){
+                let ihover = Math.max(this.state.ihover, state.ihover)
+                let hover = this.state.ihover
+                let moveNode = hover
+                ihover = -1
+                points.splice(this.state.ihover,0,this.state.internodes[this.state.ihover])
+                this.setState({
+                  points,
+                  hover,
+                  moveNode,
+                  ihover})
+                return
             }
-            else {
-              this.setMouseDown(true,coords)
-            }
+            this.setMouseDown(true,coords)
+            this.clearIncomplete()
           }}
           onPointerUp={(e)=>{
             e.preventDefault()
@@ -448,8 +486,6 @@ class Lasso extends React.Component {
               }
               this.setMouseDown(false,coords)
             }
-
-
           }}
           >
           <MainPlotBoundary/>
