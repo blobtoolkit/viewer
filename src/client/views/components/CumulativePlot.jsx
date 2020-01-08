@@ -25,6 +25,8 @@ class Cumulative extends React.Component {
     let records = this.props.cumulative.records
     let span = this.props.cumulative.span
     let byCat = this.props.cumulative.paths.byCat
+    let reference = this.props.cumulative.paths.reference
+    let referenceIds = this.props.cumulative.referenceIds
     let transform = 'translate(0,0)'
     let yLabel = 'cumulative ' + this.props.cumulative.zAxis
     let xLabel = (this.props.meta.record_type || '') + ' number'
@@ -45,6 +47,28 @@ class Cumulative extends React.Component {
               stroke={colors[i]}
               transform={transform}
               strokeLinecap='round'/>
+      )
+    })
+    let refPaths = reference.map((d,i)=>{
+      return (
+        <path d={d}
+              key={i}
+              fill='none'
+              stroke='#999'
+              strokeWidth={1.5}
+              strokeDasharray={'3 6'}
+              strokeLinecap='round'/>
+      )
+    })
+    let refText = referenceIds.map((obj,i)=>{
+      return (
+        <text key={i}
+              fill='#999'
+              fontSize={16}
+              textAnchor='end'
+              transform={'translate('+obj.offset.x+','+obj.offset.y+')'}>
+          {obj.id}
+        </text>
       )
     })
     let exportButtons = (
@@ -68,6 +92,8 @@ class Cumulative extends React.Component {
             preserveAspectRatio="xMinYMin">
             <g transform={'translate(100,10)'} >
               <CumulativePlotBoundary yValues={yValues} records={records} span={span}/>
+              {refPaths}
+              {refText}
               { this.props.showTotal && <path style={plotPaths.axis}
                     d={all}
                     fill='none'

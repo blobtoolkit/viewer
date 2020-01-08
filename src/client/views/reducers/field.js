@@ -10,6 +10,7 @@ import { getCatAxis } from './plot'
 import { getDimensionsbyDimensionId, setDimension, getPreviewDimensions } from './dimension'
 import * as d3 from 'd3'
 import { getParsedQueryString, getQueryValue, getDatasetID, getView, getStatic } from './location'
+import { fetchReferenceValues } from './reference'
 
 const apiUrl = API_URL || '/api/v1'
 
@@ -316,6 +317,11 @@ export const addAllFields = (dispatch,fields,flag,meta,plot,promises) => {
           fields[index].active = true
           fields[index].preload = true
         }
+      }
+    }
+    if (parts.length == 3){
+      if (parts[2] == 'Active' && params[p] == 'true'){
+        dispatch(fetchReferenceValues(parts[1],parts[0]))
       }
     }
   })

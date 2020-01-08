@@ -14,6 +14,7 @@ import { getRawDataForFieldId, getDetailsForFieldId, getBinsForFieldId, getAllAc
 import { getMainPlot, getZAxis, getCatAxis } from './plot';
 import { getSelectedDatasetMeta } from './dataset';
 import { getFilteredList } from './filter';
+import { getReferenceValues } from './reference';
 import { getFilteredDataForFieldId } from './preview';
 import { getZReducer, getZScale, zReducers, getCircumferenceScale, getRadiusScale, getSnailOrigin, getTablePage, getTablePageSize, getTableSortField, getTableSortOrder, getScaleTo, getOtherLimit, getMaxCount, getMaxSpan } from './plotParameters';
 import { getColorPalette, getDefaultPalette } from './color';
@@ -181,6 +182,36 @@ export const getCumulative = createSelector(
   }
 )
 
+export const getReferenceLengths = createSelector(
+  getReferenceValues,
+  (refs) => {
+    if (refs.allIds.length == 0){
+      return false
+    }
+    let datasets = {}
+    let maxCount = 0, maxSpan = 0
+    refs.allIds.forEach(id=>{
+      let [datasetId,fieldId] = id.split('--')
+      if (fieldId == 'length'){
+        let values = refs.byId[id].slice(0)
+        let count = values.length
+        maxCount = Math.max(maxCount, count)
+        let span = values.reduce((a,b)=>a+b)
+        maxSpan = Math.max(maxSpan, span)
+        values.sort((a,b)=>b-a)
+        let tot = 0
+        values.forEach((z,i)=>{values[i] += tot; tot += z})
+        datasets[datasetId] = {
+          count,
+          span,
+          values
+        }
+      }
+    })
+    return {datasets, maxCount, maxSpan}
+  }
+)
+
 export const cumulativeCurves = createSelector(
   getCumulative,
   getColorPalette,
@@ -190,28 +221,38 @@ export const cumulativeCurves = createSelector(
   getScaleTo,
   getMaxCount,
   getMaxSpan,
-  (cumulative,palette,records,span,summary,scaleTo,maxCount,maxSpan) => {
+  getReferenceLengths,
+  (cumulative,palette,records,span,summary,scaleTo,maxCount,maxSpan,refs) => {
     if (!cumulative) return false
     let values = cumulative.values
     let all = values.all
     let byCat = values.byCat
     let zAxis = cumulative.zAxis
+    let referenceIds = []
     span = span || all[all.length - 1]
     let xScale, yScale
     if (scaleTo == 'total'){
       records = maxCount
       span = maxSpan
+      if (refs){
+        records = Math.max(records,refs.maxCount)
+        span = Math.max(span,refs.maxSpan)
+      }
     }
     else {
       records = summary.values.counts.all
       span = summary.values.reduced.all
+      if (refs){
+        records = Math.max(records,refs.maxCount)
+        span = Math.max(span,refs.maxSpan)
+      }
     }
     xScale = d3scaleLinear().range([50,950]).domain([0,records])
     yScale = d3scaleLinear().range([950,50]).domain([0,span])
     let f = d3Format(".3f");
     let line = d3Line().x(d=>f(d.x)).y(d=>f(d.y))
     let xyScale = arr => [0].concat(arr).map((y,x)=>({x:xScale(x),y:yScale(y)}))
-    let paths = {all:'',scaled:[],byCat:[],offsets:[],count_offsets:[]}
+    let paths = {all:'',scaled:[],byCat:[],offsets:[],count_offsets:[],reference:[]}
     // values.all = Simplify(scaled)
     let counts = byCat.map((arr,i)=>({i,l:arr.length}))
     let spans = byCat.map((arr,i)=>({i,l:arr[arr.length-1]}))
@@ -232,10 +273,23 @@ export const cumulativeCurves = createSelector(
       offset.y += 950 - scaled[scaled.length-1].y
     })
     paths.all = line(Simplify(xyScale(all),0.5))
+    if (refs){
+      Object.keys(refs.datasets).forEach((id,i)=>{
+        let scaled = xyScale(refs.datasets[id].values)
+        paths.reference.push(line(Simplify(scaled,0.5)))
+        referenceIds.push({
+          id,
+          offset:{
+            x:scaled[scaled.length-1].x,
+            y:scaled[scaled.length-1].y - 5
+          }
+        })
+      })
+    }
     // byCat.forEach((arr,i)=>{
     //   paths.byCat[i] = line(Simplify(xyScale(arr),0.5))
     // })
-    return { values,paths,zAxis,palette,records,span }
+    return { values,paths,zAxis,palette,records,span,referenceIds }
   }
 )
 

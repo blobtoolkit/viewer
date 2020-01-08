@@ -50,6 +50,7 @@ import { getMainPlotData }  from '../reducers/plotData'
 import { queryToStore } from '../querySync'
 import styles from './Layout.scss'
 import NumericInput from './NumericInput'
+import ReferenceAssembliesList from './ReferenceAssembliesList'
 import MenuDisplaySet from './MenuDisplaySet'
 import MenuDisplaySimple from './MenuDisplaySimple'
 import MenuSwitchView from './MenuSwitchView'
@@ -265,6 +266,7 @@ class DisplayMenu extends React.Component {
             <NumericInput initialValue={maxCount}  minValue={records ? records : 0} onChange={onChangeMaxCount}/>
           </div>
         </MenuDisplaySimple>
+        <ReferenceAssembliesList/>
         {displayTotal}
       </span>
     )

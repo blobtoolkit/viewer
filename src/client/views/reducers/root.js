@@ -12,6 +12,7 @@ import { plotReducers } from './plot'
 import { selectReducers } from './select'
 import { plotParameterReducers } from './plotParameters'
 import { recordReducers } from './record'
+import { referenceReducers } from './reference'
 import { trackingReducers } from './tracking'
 import { datasetTableReducers } from './datasetTable'
 import { datasetTreeReducers } from './datasetTree'
@@ -30,6 +31,7 @@ const allReducers = Object.assign(
   selectReducers,
   plotParameterReducers,
   recordReducers,
+  referenceReducers,
   trackingReducers,
   datasetTableReducers,
   datasetTreeReducers

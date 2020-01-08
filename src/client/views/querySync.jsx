@@ -439,16 +439,18 @@ export const queryToStore = (options = {}) => {
     if (Object.keys(parsed).length > 0 && searchReplace){
       Object.keys(parsed).forEach(key => {
         if (!keyed(values,key)){
-          let [f,k] = key.split('--')
-          k = k || key
-          if (keyed(mapDispatchToQuery,k)){
-            let obj = mapDispatchToQuery[k]
-            if (keyed(obj,'default')){
-              values[key] = obj.default
-              remove.push(key)
-            }
-            else {
-              // console.log(key)
+          let [f,k,x] = key.split('--')
+          if (!x){
+            k = k || key
+            if (keyed(mapDispatchToQuery,k)){
+              let obj = mapDispatchToQuery[k]
+              if (keyed(obj,'default')){
+                values[key] = obj.default
+                remove.push(key)
+              }
+              else {
+                // console.log(key)
+              }
             }
           }
         }
@@ -467,49 +469,51 @@ export const queryToStore = (options = {}) => {
     }
     Object.keys(values).forEach(key => {
       let value = values[key]
-      let [field,k] = key.split('--')
-      let fullKey = key
-      if (k){
-        key = k
-        value = {value,field}
-      }
-      if (keyed(mapDispatchToQuery,key)){
-        let obj = mapDispatchToQuery[key]
-        let actions = []
-        if (keyed(obj,'array')){
-          let entry = obj.array(key,value)
-          if (!keyed(arrays,entry.key)){
-            arrays[entry.key] = []
+      let [field,k,x] = key.split('--')
+      if (!x){
+        let fullKey = key
+        if (k){
+          key = k
+          value = {value,field}
+        }
+        if (keyed(mapDispatchToQuery,key)){
+          let obj = mapDispatchToQuery[key]
+          let actions = []
+          if (keyed(obj,'array')){
+            let entry = obj.array(key,value)
+            if (!keyed(arrays,entry.key)){
+              arrays[entry.key] = []
+            }
+            arrays[entry.key].push(entry)
           }
-          arrays[entry.key].push(entry)
-        }
-        else if (keyed(obj,'actions')){
-          actions = obj.actions(key,value)
-        }
-        else {
-          actions = [{...obj}]
-        }
-        actions.forEach(action=>{
-          let type = action.type
-          let payload = action.payload(key,value)
-          //dispatch({type,payload})
-          batch.push({type,payload})
-        })
-        if (keyed(obj,'params')){
-          let params = obj.params(key,value)
-          Object.keys(params).forEach(k=>{parsed[k] = params[k]})
-        }
-        else {
-          if (k){
-            parsed[fullKey] = values[fullKey]
+          else if (keyed(obj,'actions')){
+            actions = obj.actions(key,value)
           }
           else {
-            parsed[key] = value
+            actions = [{...obj}]
+          }
+          actions.forEach(action=>{
+            let type = action.type
+            let payload = action.payload(key,value)
+            //dispatch({type,payload})
+            batch.push({type,payload})
+          })
+          if (keyed(obj,'params')){
+            let params = obj.params(key,value)
+            Object.keys(params).forEach(k=>{parsed[k] = params[k]})
+          }
+          else {
+            if (k){
+              parsed[fullKey] = values[fullKey]
+            }
+            else {
+              parsed[key] = value
+            }
           }
         }
-      }
-      else {
-        parsed[key] = value
+        else {
+          parsed[key] = value
+        }
       }
     })
     Object.keys(arrays).forEach(key => {

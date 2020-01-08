@@ -600,3 +600,35 @@ div.reset {
   background-color: $shadeColor;
   color: $deepColor;
 }
+
+.menuTextarea {
+  font-family: monospace;
+  font-size: 1em;
+  min-width: 80%;
+  max-width: 80%;
+  padding: 2px;
+  border: solid 2px $lightColor;
+  background-color: $deepColor;
+  color: $lightColor;
+}
+
+.menuButton {
+  margin-top: 1.125em;
+  margin-right: 0.5em;
+  float: right;
+  background-color: $deepColor;
+  border-radius: 0;
+  border: 2px solid $highlightColor;
+  color: $lightColor;
+  padding: 0.25em;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 1em;
+  cursor:pointer;
+  box-sizing:border-box;
+}
+
+.menuButton:hover {
+  background-color: $highlightColor;
+}

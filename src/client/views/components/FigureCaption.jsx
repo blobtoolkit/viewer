@@ -4,6 +4,7 @@ import styles from './Caption.scss';
 import {getZScale, getZReducer, getCurveOrigin, getScaleTo, getTransformFunctionParams } from '../reducers/plotParameters'
 import { getAllActiveFilters, getActiveSelection } from '../reducers/filter'
 import TransformEquation from './TransformEquation'
+import { getReferenceValues } from '../reducers/reference'
 
 const scales = {
   scaleSqrt: 'square-root',
@@ -137,6 +138,18 @@ class Caption extends Component {
       else {
         caption += '. '
       }
+      let refs = Object.keys(this.props.refs.byId).map(x=>x.replace(/--.+/,''))
+      if (refs.length > 0){
+        refs.sort((a,b)=>a-b)
+        if (refs.length == 1){
+          caption += `The dashed line shows the cumulative curve for assembly ${refs[0]}. `
+        }
+        else {
+          caption += 'Dashed lines show cumulative curves for assemblies '
+          caption += refs.slice(0, -1).join(', ')+' and '+refs.slice(-1)
+          caption += '. '
+        }
+      }
     }
     else if (this.props.view == 'snail'){
       let longest = this.props.data.values.nXnum[0] == 1 ? this.props.data.values.nXlen[0] : false
@@ -249,7 +262,8 @@ class FigureCaption extends React.Component {
         scaleTo: getScaleTo(state),
         filters: getAllActiveFilters(state),
         selection: getActiveSelection(state),
-        params: getTransformFunctionParams(state)
+        params: getTransformFunctionParams(state),
+        refs: getReferenceValues(state)
       }
     }
     this.mapDispatchToProps = dispatch => {
