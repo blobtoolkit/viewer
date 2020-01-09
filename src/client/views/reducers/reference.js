@@ -134,14 +134,16 @@ export const addReferenceFields = () => {
         }
       }
     })
-    let i = 0;
-    let loader = setInterval(() => {
-      refs[i]()
-      i++
-      if (i == refs.length){
-        clearInterval(loader);
-      }
-    },250)
+    if (ref.length > 0){
+      let i = 0;
+      let loader = setInterval(() => {
+        refs[i]()
+        i++
+        if (i == refs.length){
+          clearInterval(loader);
+        }
+      },250)
+    }
   }
 }
 
