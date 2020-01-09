@@ -65,9 +65,14 @@ class Cumulative extends React.Component {
         <text key={i}
               fill='#999'
               fontSize={16}
+              style={{cursor:'default',pointerEvents:'auto'}}
               textAnchor='end'
               transform={'translate('+obj.offset.x+','+obj.offset.y+')'}>
-          {obj.id}
+          <a href={`/view/${obj.id}/dataset/${obj.id}/cumulative#Settings`}
+            target="blank"
+            style={{fill:'#999'}}>
+            {obj.id}
+          </a>
         </text>
       )
     })

@@ -23,7 +23,7 @@ export const CumulativePlotBoundary = ({yValues,yLabel,records,span}) => {
       <g  transform={'translate(0,1000)'} >
         <Axis {...axisPropsFromTickScale(xScale, 10)} format={f} style={{orient: BOTTOM, tickFontSize: fontSize}}/>
       </g>
-      <rect style={plotPaths.boundary} x={0} y={0} width={1000} height={1000} fill='none'/>
+      <rect style={{...plotPaths.boundary,cursor:'default'}} x={0} y={0} width={1000} height={1000} fill='none'/>
     </g>
   )
 }
