@@ -72,6 +72,21 @@ const getCatBinIndices = createSelector(
   }
 )
 
+const generateLink = (link, obj) => {
+  let title, url, meta
+  if (link.title == 'patterns'){
+    let ret = link.func(obj)
+    title = ret.title
+    url = ret.url
+  }
+  else {
+    title = obj.title
+    url = link.func(obj)
+  }
+  return {title, url, meta: obj}
+
+}
+
 export const getCategoryDistributionForRecord = createSelector(
   getCurrentRecord,
   getRawDataForLength,
@@ -128,14 +143,14 @@ export const getCategoryDistributionForRecord = createSelector(
       if (links.position){
         if (links.position[0]){
           if (obj.index !== undefined && links.position[obj.index] !== undefined){
-            points.link = {title:links.position[obj.index].title, url:links.position[obj.index].func(obj), meta:obj}
+            points.link = generateLink(links.position[obj.index], obj)
           }
           else {
-            points.link = {title:links.position[0].title, url:links.position[0].func(obj), meta:obj}
+            points.link = generateLink(links.position[0], obj)
           }
         }
         else {
-          points.link = {title:links.position.title, url:links.position.func(obj), meta:obj}
+          points.link = generateLink(links.position, obj)
         }
       }
       else if (data.keys){

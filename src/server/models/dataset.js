@@ -95,7 +95,7 @@ const defaultLinks = {
   "links": {
     "taxon": {
       "taxid" : {
-        "ENA": "https://www.ebi.ac.uk/ena/data/view/Taxon:{taxid}"
+        "ENA": "https://www.ebi.ac.uk/ena/browser/view/Taxon:{taxid}"
       },
       "species" : {
         "Wikipedia": "https://wikipedia.org/{species}"
@@ -108,15 +108,25 @@ const defaultLinks = {
     },
     "assembly": {
       "biosample": {
-        "ENA": "https://www.ebi.ac.uk/ena/data/view/{biosample}"
+        "ENA": "https://www.ebi.ac.uk/ena/browser/view/{biosample}"
       },
       "bioproject": {
-        "ENA": "https://www.ebi.ac.uk/ena/data/view/{bioproject}"
+        "ENA": "https://www.ebi.ac.uk/ena/browser/view/{bioproject}"
       }
     },
     "position": [
-      {"NCBI": "https://www.ncbi.nlm.nih.gov/nuccore/{subject}"},
-      {"UniProt": "https://www.uniprot.org/uniprot/{subject}"}
+      {"patterns": [
+        {
+          "title": "NCBI RefSeq",
+          "template": "https://www.ncbi.nlm.nih.gov/nuccore/{subject}",
+          "regex": "^[NXW][A-Z]_.+"
+        },
+        {
+          "title": "ENA",
+          "template": "https://www.ebi.ac.uk/ena/browser/view/{subject}",
+          "regex": "^.+$"
+        }
+      ]}
     ]
   }
 }

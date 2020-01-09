@@ -945,12 +945,33 @@ export const circularCurves = createSelector(
 )
 
 const funcFromPattern = pattern => {
-  return (def) => {
+  return (def,re='.') => {
+    if (typeof(pattern) != 'string'){
+      let ret = ''
+      for (let i = 0; i < pattern.length; i++){
+        let obj = pattern[i]
+        let re = new RegExp(obj.regex);
+        let url = funcFromPattern(obj.template)(def,re)
+        if (url){
+          ret = {url, title: obj.title}
+          break
+        }
+      }
+      return ret
+    }
     let url = ''
     let parts = pattern.split(/[\{\}]/)
     for (let i = 0; i < parts.length; i++){
       if (parts[i]){
-        url += i % 2 == 0 ? parts[i] : def[parts[i]]
+        if (i % 2 == 0){
+          url += parts[i]
+        }
+        else if (String(def[parts[i]]).match(re)){
+          url += def[parts[i]]
+        }
+        else {
+          return false
+        }
       }
     }
     return url
@@ -965,6 +986,7 @@ export const getLinks = createSelector(
       Object.keys(meta.links).forEach(key=>{
         links.dataset[key] = links.dataset[key] || {}
         Object.keys(meta.links[key]).forEach(title=>{
+          console.log(meta.links[key][title])
           if (key == 'record'){
             let func = funcFromPattern(meta.links[key][title])
             links.record.push({title,func})
