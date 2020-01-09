@@ -115,18 +115,23 @@ const defaultLinks = {
       }
     },
     "position": [
-      {"patterns": [
-        {
-          "title": "NCBI RefSeq",
-          "template": "https://www.ncbi.nlm.nih.gov/nuccore/{subject}",
-          "regex": "^[NXW][A-Z]_.+"
-        },
-        {
-          "title": "ENA",
-          "template": "https://www.ebi.ac.uk/ena/browser/view/{subject}",
-          "regex": "^.+$"
-        }
-      ]}
+      {
+        "patterns": [
+          {
+            "title": "NCBI RefSeq",
+            "template": "https://www.ncbi.nlm.nih.gov/nuccore/{subject}",
+            "regex": "^[NXW][A-Z]_.+"
+          },
+          {
+            "title": "ENA",
+            "template": "https://www.ebi.ac.uk/ena/browser/view/{subject}",
+            "regex": "^.+$"
+          }
+        ]
+      },
+      {
+        "UniProt": "https://www.uniprot.org/uniprot/{subject}"
+      }
     ]
   }
 }

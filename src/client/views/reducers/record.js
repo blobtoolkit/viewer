@@ -74,14 +74,14 @@ const getCatBinIndices = createSelector(
 
 const generateLink = (link, obj) => {
   let title, url, meta
-  if (link.title == 'patterns'){
-    let ret = link.func(obj)
+  let ret = link.func(obj)
+  if (ret.hasOwnProperty('title')){
     title = ret.title
     url = ret.url
   }
   else {
-    title = obj.title
-    url = link.func(obj)
+    title = link.title
+    url = ret
   }
   return {title, url, meta: obj}
 
