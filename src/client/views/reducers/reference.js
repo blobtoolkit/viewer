@@ -121,6 +121,29 @@ export function fetchReferenceValues(fieldId, datasetId, last) {
    }
 }
 
+export const addReferenceFields = () => {
+  return dispatch => {
+    let state = store.getState()
+    let params = getParsedQueryString(state)
+    let refs = []
+    Object.keys(params).forEach(p=>{
+      let parts = p.split('--')
+      if (parts.length == 3){
+        if (parts[2] == 'Active' && params[p] == 'true'){
+          refs.push(()=>dispatch(fetchReferenceValues(parts[1],parts[0],true)))
+        }
+      }
+    })
+    let i = 0;
+    let loader = setInterval(() => {
+      refs[i]()
+      i++
+      if (i == refs.length){
+        clearInterval(loader);
+      }
+    },250)
+  }
+}
 
 export const referenceReducers = {
   referenceValues

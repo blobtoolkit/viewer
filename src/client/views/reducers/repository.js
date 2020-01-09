@@ -5,6 +5,7 @@ import deep from 'deep-get-set'
 import shallow from 'shallowequal'
 import store from '../store'
 import { addAllFields, editField } from './field'
+import { addReferenceFields } from './reference'
 import { filterToList } from './filter'
 import { editPlot } from './plot'
 import qs from 'qs'
@@ -304,6 +305,7 @@ export const loadDataset = (id,clear) => {
       .then(()=>{
         dispatch(setDatasetIsActive(true))
         dispatch(fetchIdentifiers())
+        dispatch(addReferenceFields())
       })
 
     })

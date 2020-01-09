@@ -319,11 +319,11 @@ export const addAllFields = (dispatch,fields,flag,meta,plot,promises) => {
         }
       }
     }
-    if (parts.length == 3){
-      if (parts[2] == 'Active' && params[p] == 'true'){
-        dispatch(fetchReferenceValues(parts[1],parts[0]))
-      }
-    }
+    // if (parts.length == 3){
+    //   if (parts[2] == 'Active' && params[p] == 'true'){
+    //     dispatch(fetchReferenceValues(parts[1],parts[0]))
+    //   }
+    // }
   })
   Object.values(plot).forEach(f_id=>{
     let index = fields.findIndex(field=>field.id==f_id)

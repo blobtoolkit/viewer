@@ -3,6 +3,7 @@ import { connect } from 'react-redux'
 import { getReferenceValues,
   resetReferenceValues,
   fetchReferenceValues } from '../reducers/reference'
+import {getReferenceLengths } from '../reducers/summary'
 import styles from './Layout.scss'
 import SVGIcon from './SVGIcon'
 import ellipsisIcon from './svg/ellipsis.svg'
@@ -12,7 +13,8 @@ export default class ReferenceAssembliesList extends React.Component {
     super(props);
     this.mapStateToProps = () => {
       return (state, props) => ({
-        current: getReferenceValues(state)
+        current: getReferenceValues(state),
+        referenceLengths: getReferenceLengths(state)
       })
     },
     this.mapDispatchToProps = () => {
@@ -50,6 +52,16 @@ class ReferenceList extends React.Component {
 
   toggleForm() {
     this.setState({expand: !this.state.expand});
+  }
+
+  componentWillUpdate(nextProps){
+    let ids = Object.keys((this.props.referenceLengths.datasets || {}))
+    let newIds = Object.keys((nextProps.referenceLengths.datasets || {}))
+    if (ids.join('') != newIds.join('')){
+      let expand = newIds.length > 0
+      ids = (newIds.map(id=>id.split('--')[0]) || []).join(', ')
+      this.setState({ids, expand})
+    }
   }
 
   handleSubmit(e){
