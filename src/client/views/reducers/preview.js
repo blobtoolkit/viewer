@@ -15,11 +15,13 @@ import { getColorPalette } from './color'
 import { getMainPlot } from './plot'
 import * as d3 from 'd3'
 import { getQueryValue } from './location'
-import { getOtherLimit } from './plotParameters'
+import { getOtherLimit, getAdjustCoverage } from './plotParameters'
 
+
+const _getFieldIdAsMemoKey = (state, fieldId) => fieldId;
+const _getFilterIdAsMemoKey = (state, filterId) => filterId
 
 const createSelectorForFilterId = byIdSelectorCreator();
-const _getFilterIdAsMemoKey = (state, filterId) => filterId
 const getMetaDataForFilter = (state, filterId) => state.filters ? state.filters.byId[filterId] : {};
 
 export const getDetailsForFilterId = createSelectorForFilterId(
@@ -68,13 +70,56 @@ export const getDetailsForFilterId = createSelectorForFilterId(
   }
 );
 
+
+export const getRawDataForLength = createSelector(
+  (state) => getRawDataForFieldId(state,'length'),
+  data => data
+)
+
+export const getRawDataForNCount = createSelector(
+  (state) => getRawDataForFieldId(state,'ncount'),
+  data => data
+)
+
+const createAdjustedDataSelectorForFieldId = byIdSelectorCreator();
+
+export const getAdjustedDataForFieldId = createAdjustedDataSelectorForFieldId(
+  _getFieldIdAsMemoKey,
+  _getFieldIdAsMemoKey,
+  getRawDataForFieldId,
+  getRawDataForLength,
+  getRawDataForNCount,
+  getAdjustCoverage,
+  (fieldId, rawData, length, ncount, adjustCoverage) => {
+    if (!rawData) return undefined
+    if (!adjustCoverage) return rawData
+    if (!length || !ncount) return rawData
+    if (fieldId.match(/_cov$/)){
+      let values = []
+      if (rawData.values){
+        let raw = rawData.values
+        let lengths = length.values
+        let counts = ncount.values
+        let len = raw.length
+        for (var i = 0; i < len; i++){
+          values.push(raw[i]/(1-(counts[i]/lengths[i])));
+        }
+      }
+      return {values,keys:rawData.keys}
+    }
+    else {
+      return rawData
+    }
+  }
+);
+
+
 const createFilteredDataSelectorForFieldId = byIdSelectorCreator();
-const _getFieldIdAsMemoKey = (state, fieldId) => fieldId;
 
 export const getFilteredDataForFieldId = createFilteredDataSelectorForFieldId(
   _getFieldIdAsMemoKey,
   getFilteredList,
-  getRawDataForFieldId,
+  getAdjustedDataForFieldId,
   (list = [], rawData) => {
     if (!rawData) return undefined
     let values = []

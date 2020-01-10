@@ -134,7 +134,7 @@ export const addReferenceFields = () => {
         }
       }
     })
-    if (ref.length > 0){
+    if (refs.length > 0){
       let i = 0;
       let loader = setInterval(() => {
         refs[i]()

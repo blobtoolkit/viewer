@@ -39,7 +39,9 @@ import { getPlotShape,
   getMaxSpan,
   chooseMaxSpan,
   getMaxCount,
-  chooseMaxCount } from '../reducers/plotParameters'
+  chooseMaxCount,
+  getAdjustCoverage,
+  chooseAdjustCoverage } from '../reducers/plotParameters'
 import {
   getStaticThreshold,
   chooseStaticThreshold,
@@ -75,6 +77,7 @@ import yIcon from './svg/yLetter.svg';
 import zeroIcon from './svg/zero.svg';
 import invertIcon from './svg/invert.svg';
 import scaleIcon from './svg/scale.svg';
+import adjustIcon from './svg/adjust.svg';
 import MenuItem from './MenuItem'
 import ToolTips from './ToolTips'
 import Timeout from './Timeout'
@@ -105,7 +108,8 @@ class DisplayMenu extends React.Component {
       data={}, onChangeAxisRange, parsed, changeQueryParams,
       showTotal, onChangeShowTotal,
       maxSpan, onChangeMaxSpan,
-      maxCount, onChangeMaxCount } = this.props
+      maxCount, onChangeMaxCount,
+      adjustCoverage, onToggleAdjustCoverage } = this.props
     let context
     view = view || 'blob'
     let blob
@@ -185,6 +189,9 @@ class DisplayMenu extends React.Component {
             <SVGIcon sprite={logIcon} active={scale == 'scaleLog'} onIconClick={()=>onSelectScale('scaleLog')}/>
             <SVGIcon sprite={linearIcon} active={scale == 'scaleLinear'} onIconClick={()=>onSelectScale('scaleLinear')}/>
             <SVGIcon sprite={sqrtIcon} active={scale == 'scaleSqrt'} onIconClick={()=>onSelectScale('scaleSqrt')}/>
+          </MenuDisplaySimple>
+          <MenuDisplaySimple name='adjust coverage'>
+            <SVGIcon sprite={adjustIcon} active={adjustCoverage} onIconClick={()=>onToggleAdjustCoverage(!adjustCoverage)}/>
           </MenuDisplaySimple>
           <MenuDisplaySimple name={'scale factor [ '+d3Format(",.1f")(plotScale)+' ]'}>
             <div className={styles.full_height}>
@@ -406,6 +413,7 @@ class MenuDisplayMain extends React.Component {
         onChangePlotScale: plotScale => dispatch(choosePlotScale(plotScale)),
         onSelectView: view => dispatch(chooseView(view)),
         onToggleStatic: (view,datasetId) => dispatch(toggleStatic(view,datasetId)),
+        onToggleAdjustCoverage: (bool) => dispatch(chooseAdjustCoverage(bool)),
         onSelectCurveOrigin: origin => dispatch(chooseCurveOrigin(origin)),
         onSelectScaleTo: origin => dispatch(chooseScaleTo(origin)),
         onSelectSnailOrigin: origin => dispatch(chooseSnailOrigin(origin)),
@@ -449,7 +457,8 @@ class MenuDisplayMain extends React.Component {
         showTotal: getShowTotal(state),
         sideMax: getSideMax(state),
         maxSpan: getMaxSpan(state),
-        maxCount: getMaxCount(state)
+        maxCount: getMaxCount(state),
+        adjustCoverage: getAdjustCoverage(state)
       }
     }
   }

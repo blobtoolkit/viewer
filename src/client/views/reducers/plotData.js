@@ -9,7 +9,8 @@ import { getZScale, getPlotResolution, getTransformFunction, getTransformFunctio
 import { getColorPalette } from './color';
 import { getFilteredDataForFieldId,
   getCategoryListForFieldId,
-  getPlainCategoryListForFieldId } from './preview'
+  getPlainCategoryListForFieldId,
+  getAdjustedDataForFieldId } from './preview'
 import { getRawDataForFieldId, getDetailsForFieldId, getBinsForFieldId, getMetaDataForField, getBinsForCat } from './field'
 import store from '../store'
 import * as d3 from 'd3'
@@ -27,22 +28,22 @@ export const getAxisTitle = createSelector(
 )
 
 const getRawDataForX = createSelector(
-  (state) => getRawDataForFieldId(state,getXAxis(state)),
+  (state) => getAdjustedDataForFieldId(state,getXAxis(state)),
   data => data
 )
 
 const getRawDataForY = createSelector(
-  (state) => getRawDataForFieldId(state,getYAxis(state)),
+  (state) => getAdjustedDataForFieldId(state,getYAxis(state)),
   data => data
 )
 
 const getRawDataForZ = createSelector(
-  (state) => getRawDataForFieldId(state,getZAxis(state)),
+  (state) => getAdjustedDataForFieldId(state,getZAxis(state)),
   data => data
 )
 
 export const getRawDataForCat = createSelector(
-  (state) => getRawDataForFieldId(state,getCatAxis(state)),
+  (state) => getAdjustedDataForFieldId(state,getCatAxis(state)),
   data => data
 )
 

@@ -10,6 +10,7 @@ import { queryToStore, qsDefault, defaultTransform } from '../querySync'
 import history from './history'
 import { urlViews, pathname, setPathname, viewsToPathname } from './repository'
 import { getDatasetID } from './location'
+import { fetchRawData, getRawDataForFieldId } from './field'
 
 export const setPlotShape = createAction('SET_PLOT_SHAPE')
 export const choosePlotShape = (plotShape) => {
@@ -486,6 +487,31 @@ export const showTotal = handleAction(
 )
 export const getShowTotal = state => state.showTotal == 'true' ? true : false
 
+export const setAdjustCoverage = createAction('SET_ADJUST_COVERAGE')
+export const chooseAdjustCoverage = (adjust) => {
+  return function (dispatch) {
+    adjust = String(adjust) == 'true' ? 'true' : 'false'
+    let values = {adjustCoverage: adjust}
+    if (adjust == 'true'){
+      let state = store.getState()
+      let ncount = getRawDataForFieldId(state, 'ncount')
+      if (!ncount){
+        dispatch(fetchRawData('ncount'))
+      }
+      values['ncount--Active'] = true
+    }
+    dispatch(queryToStore({values}))
+  }
+}
+export const adjustCoverage = handleAction(
+  'SET_ADJUST_COVERAGE',
+  (state, action) => (
+    action.payload
+  ),
+  qsDefault('adjustCoverage')
+)
+export const getAdjustCoverage = state => state.adjustCoverage == 'true' ? true : false
+
 
 export const plotParameterReducers = {
   plotShape,
@@ -511,5 +537,6 @@ export const plotParameterReducers = {
   tableSortField,
   tableSortOrder,
   otherLimit,
-  showTotal
+  showTotal,
+  adjustCoverage
 }
