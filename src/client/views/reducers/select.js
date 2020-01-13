@@ -29,18 +29,20 @@ export const selectedRecords = handleActions(
   {
     ADD_RECORDS: (state, action) => {
       let current = state || []
+      let update = action.payload.slice(0)
+      update.sort((a,b)=>a-b)
       let iLen = current.length
-      let jLen = action.payload.length
+      let jLen = update.length
       let combined = []
       let i = 0
       let j = 0
       while (i < iLen && j < jLen) {
-        if (current[i] < action.payload[j]){
+        if (current[i] < update[j]){
           combined.push(current[i])
           i++
         }
-        else if (action.payload[j] < current[i]){
-          combined.push(action.payload[j])
+        else if (update[j] < current[i]){
+          combined.push(update[j])
           j++
         }
         else {
@@ -54,24 +56,26 @@ export const selectedRecords = handleActions(
         i++
       }
       while (j < jLen){
-        combined.push(action.payload[j])
+        combined.push(update[j])
         j++
       }
       return  combined
     },
     REMOVE_RECORDS: (state, action) => {
       let current = state
+      let update = action.payload.slice(0)
+      update.sort((a,b)=>a-b)
       let arr = []
       let iLen = current.length
-      let jLen = action.payload.length
+      let jLen = update.length
       let i = 0
       let j = 0
       while (i < iLen && j < jLen) {
-        if (current[i] < action.payload[j]){
+        if (current[i] < update[j]){
           arr.push(current[i])
           i++
         }
-        else if (action.payload[j] < current[i]){
+        else if (update[j] < current[i]){
           j++
         }
         else {
@@ -86,7 +90,7 @@ export const selectedRecords = handleActions(
       return arr
     },
     REPLACE_RECORDS: (state, action) => {
-      return action.payload
+      return action.payload.sort((a,b)=>a-b)
     },
     SELECT_NONE: (state, action) => {
       return []

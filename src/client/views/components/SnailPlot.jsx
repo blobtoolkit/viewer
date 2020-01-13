@@ -2,7 +2,7 @@ import React from 'react'
 import { connect } from 'react-redux'
 import styles from './Plot.scss'
 import { cumulativeCurves } from '../reducers/summary'
-import { getCircular, circularCurves, getBuscoSets, getBuscoData, getBuscoPaths } from '../reducers/summary'
+import { getCircular, circularCurves, getBuscoSets, getBuscoData, getBuscoPaths, circularSelection } from '../reducers/summary'
 import { getCurveOrigin, chooseCircumferenceScale, chooseRadiusScale } from '../reducers/plotParameters'
 import { getSelectedDatasetMeta } from '../reducers/dataset'
 import { getRawDataForFieldId, getDetailsForFieldId, fetchRawData } from '../reducers/field'
@@ -16,6 +16,8 @@ import { ExportButton } from './ExportButton'
 import { plotPaths, plotText, fillParent } from './PlotStyles'
 import { CircleAxis } from './CircleAxis'
 import FigureCaption from './FigureCaption'
+import { addRecords, removeRecords, setSelectSource } from '../reducers/select'
+import colors from './_colors'
 
 
 const xScale = d3scaleLinear().range([-425,425])
@@ -32,12 +34,12 @@ const radialCoords = event => {
   return {theta,h}
 }
 
-const SegmentStats = ({theta,h,ratio,overlay,sums,nXlens,nXnums,gcs,ns}) => {
+const SegmentStats = ({theta,h,ratio,overlay,sums,nXlens,nXnums,gcs,ns,index}) => {
   if (!overlay) return {}
   let cScale = d3scaleLinear().domain([0,2*Math.PI*ratio]).range([0,100])
   let start = Math.floor(cScale(theta))
   let end = start + 1
-  let gc = {}, allGC = [], allN = [], nX = {}, path, N = {}
+  let gc = {}, allGC = [], allN = [], nX = {}, path, N = {}, indices = []
   if (start < 100){
     let innerRadius = 0
     let outerRadius = 350
@@ -47,6 +49,7 @@ const SegmentStats = ({theta,h,ratio,overlay,sums,nXlens,nXnums,gcs,ns}) => {
       for (let i = start*10; i < end*10; i++){
         allGC = allGC.concat(gcs[i].gc)
         allN = allN.concat(ns[i].n)
+        indices = indices.concat(index[i])
       }
       N.min = Math.min(...allN)
       N.max = Math.max(...allN)
@@ -69,7 +72,7 @@ const SegmentStats = ({theta,h,ratio,overlay,sums,nXlens,nXnums,gcs,ns}) => {
       outerRadius
     })
   }
-  return ({pct:end,path,gc,N,nX})
+  return ({pct:end,path,gc,N,nX,indices})
 }
 
 const SnailSegment = ({path}) => (
@@ -81,14 +84,49 @@ const SnailSegment = ({path}) => (
 class Snail extends React.Component {
   constructor(props) {
     super(props);
-    if (this.props.data){
-      let ratio = this.props.data.values.sum[999] / this.props.circular.scale.circumference
-      this.state = {
-        theta:3.14,
-        h:320,
-        ratio,
-        overlay:false
+    // let ratio = 1
+    if (!props.data){
+      return null
+    }
+    let ratio = props.selection.ratio
+
+    this.state = {
+      theta:3.14,
+      h:320,
+      ratio,
+      overlay:false,
+      mouseDown:false,
+      last:-1,
+      action:false
+    }
+  }
+
+  toggleSelect(theta,h){
+    let ratio = this.state.ratio
+    let cScale = d3scaleLinear().domain([0,(2*Math.PI)*ratio]).range([0,100])
+    let cell = Math.floor(cScale(theta))
+    let action = this.state.action
+    if (cell >= 0 && cell < 100 && cell != this.state.last){
+      if (h <= 450){
+        let indices = []
+        let i = h < 350 ? 0 : cell*10
+        for (i; i < (cell+1)*10; i++){
+          indices = indices.concat(this.props.data.values.index[i])
+          indices = [...new Set(indices)]
+        }
+        if (!action){
+          action = this.props.selection.segments[cell].selected ? 'remove' : 'add'
+        }
+        if (action == 'remove'){
+          this.props.removeRecords(indices)
+          this.props.setSelectSource()
+        }
+        else if (action == 'add') {
+          this.props.addRecords(indices)
+          this.props.setSelectSource()
+        }
       }
+      this.setState({last:cell, action})
     }
   }
 
@@ -127,7 +165,8 @@ class Snail extends React.Component {
     let nXnums = this.props.data.values.nXnum
     let gcs = this.props.data.values.gc
     let ns = this.props.data.values.n
-    let stats = SegmentStats({...this.state,sums,gcs,ns,nXlens,nXnums})
+    let index = this.props.data.values.index
+    let stats = SegmentStats({...this.state,sums,gcs,ns,nXlens,nXnums,index})
     let topLeft, bottomRight, topRight
     if (legend.composition){
       bottomRight = <SnailPlotLegend title={'Composition'} list={legend.composition}/>
@@ -293,6 +332,17 @@ class Snail extends React.Component {
         }
       }
     })
+    this.props.selection.paths.forEach((path,i)=>{
+      paths.push(
+        <path d={path.path}
+              key={`selection_${i}`}
+              fill={path.partial ? 'none' : colors.halfHighlightColor}
+              stroke={colors.highlightColor}
+              strokeWidth={3}
+              strokeLinecap='round'/>
+      )
+    })
+
     let exportButtons = (
       <span className={styles.download}>
         <ExportButton view='snail' element='snail_plot' prefix={this.props.datasetId+'.snail'} format='svg'/>
@@ -322,29 +372,33 @@ class Snail extends React.Component {
               onPointerMove={(e)=>{
                 e.preventDefault()
                 let coords = radialCoords(e)
+                if (this.state.mouseDown){
+                  this.toggleSelect(coords.theta, coords.h)
+                }
                 this.setState({...coords,overlay:true})
               }}
               onPointerLeave={(e)=>{
                 e.preventDefault()
-                this.setState({overlay:false})
+                this.setState({overlay:false,mouseDown:false,last:-1,action:false})
               }}
               onPointerDown={(e)=>{
                 e.preventDefault()
                 let coords = radialCoords(e)
-                this.setState({...coords,overlay:true})
+                this.toggleSelect(coords.theta, coords.h)
+                this.setState({...coords,overlay:true,mouseDown:true})
               }}
               onPointerUp={(e)=>{
                 e.preventDefault()
-                this.setState({overlay:false})
+                this.setState({overlay:false,mouseDown:false,last:-1,action:false})
               }}
               >
               <circle
-              r={425}
+              r={450}
               cx={520}
               cy={550}
               fill='rgba(255,255,255,0)'
               stroke='none'
-              style={{pointerEvents:'auto',stroke:'none'}} />
+              style={{pointerEvents:'auto',stroke:'none',cursor:'pointer'}} />
             </Pointable>
             <g transform={'translate(10,35)'} >
               {topLeft}
@@ -385,6 +439,7 @@ class SnailPlot extends React.Component {
         ncount: getRawDataForFieldId(state,'ncount'),
         circular: circularCurves(state),
         meta: getSelectedDatasetMeta(state),
+        selection: circularSelection(state),
         buscoSets,
         buscoData,
         buscoPaths,
@@ -397,7 +452,10 @@ class SnailPlot extends React.Component {
         onChangeRadius: (value)=>dispatch(chooseRadiusScale(value)),
         activate: (id) => {
           dispatch(fetchRawData(id))
-        }
+        },
+        addRecords: (arr) => dispatch(addRecords(arr)),
+        removeRecords: (arr) => dispatch(removeRecords(arr)),
+        setSelectSource: () => dispatch(setSelectSource('snail')),
       }
     }
   }

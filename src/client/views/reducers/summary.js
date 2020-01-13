@@ -286,9 +286,6 @@ export const cumulativeCurves = createSelector(
         })
       })
     }
-    // byCat.forEach((arr,i)=>{
-    //   paths.byCat[i] = line(Simplify(xyScale(arr),0.5))
-    // })
     return { values,paths,zAxis,palette,records,span,referenceIds }
   }
 )
@@ -545,15 +542,16 @@ export const getCircular = createSelector(
   getFilteredDataForGC,
   getFilteredDataForLength,
   getFilteredDataForNCount,
-  (gc,length,ncount) => {
+  getFilteredList,
+  (gc,length,ncount,list=[]) => {
     if (!gc || !length) return undefined
-    let values = {nXlen:[],nXnum:[],gc:[],sum:[],n:[]}
+    let values = {nXlen:[],nXnum:[],gc:[],sum:[],n:[],index:[]}
     let xAxis = 'gc'
     let zAxis = 'length'
     if (gc.values.length == 0 || length.values.length == 0) return false
     let arr = []
     gc.values.forEach((x,i)=>{
-      arr[i] = {x,z:length.values[i],n:ncount ? ncount.values[i]/length.values[i] : 0}
+      arr[i] = {x,z:length.values[i],index:list[i],n:ncount ? ncount.values[i]/length.values[i] : 0}
     })
     arr.sort((a,b)=>b.z-a.z)
     let sum = []
@@ -568,16 +566,19 @@ export const getCircular = createSelector(
       let l = Math.ceil(tot * x / 1000)
       let gc = [arr[i].x]
       let n = [arr[i].n]
+      let index = [arr[i].index]
       while (sum[i] < l){
         i++
         gc.push(arr[i].x)
         n.push(arr[i].n)
+        index.push(arr[i].index)
       }
       values.sum[x-1] = sum[i]
       values.nXlen[x-1] = arr[i].z
       values.nXnum[x-1] = i+1
       values.gc[x-1] = {gc,min:Math.min(...gc),max:Math.max(...gc),mean:mean(gc)}
       values.n[x-1] = {n,min:Math.min(...n),max:Math.max(...n),mean:mean(n)}
+      values.index[x-1] = index
     }
     let meanN = mean(values.n.map(o=>o.mean))
     let meanGC = mean(values.gc.map(o=>o.mean))
@@ -608,7 +609,7 @@ export const circularCurves = createSelector(
     let nXlen = values.nXlen
     let nXnum = values.nXnum
     let sum = values.sum
-    let tenth = span / 10
+    let tenth = sum[999] / 10
     let rRange = [350,0]
     let lRange = [0,250]
     if (invert){
@@ -944,6 +945,55 @@ export const circularCurves = createSelector(
   }
 )
 
+export const circularSelection = createSelector(
+  getCircular,
+  circularCurves,
+  getSelectedRecordsAsObject,
+  (circular,curves,selected) => {
+    if (!circular) return false
+    if (!curves) return false
+    if (!selected) return false
+    let indices = circular.values.index
+    let segments = []
+    for (let i = 0; i < indices.length; i++){
+      let cell = Math.floor(i/10)
+      if (!segments[cell]){
+        segments[cell] = {selected:false, partial:false}
+      }
+      for (let j = 0; j < indices[i].length; j++){
+        if (selected[indices[i][j]]){
+          segments[cell].selected = true
+        }
+        else {
+          segments[cell].partial = true
+          if (segments[cell].selected){
+            break
+          }
+        }
+      }
+      if (segments[cell].selected && segments[cell].partial){
+        i = (cell + 1) * 10 -1
+      }
+    }
+    let innerRadius = 425
+    let outerRadius = 450
+    let paths = []
+    let ratio = circular.values.sum[999] / curves.scale.circumference
+    segments.forEach((segment,i)=>{
+      if (segment.selected){
+        let path = d3Arc()({
+          startAngle: Math.PI * ratio * i / 50,
+          endAngle: Math.PI * ratio * (i+1) / 50,
+          innerRadius,
+          outerRadius
+        })
+        paths.push({path, partial: segment.partial})
+      }
+    })
+    return {paths, segments, ratio}
+  }
+)
+
 const funcFromPattern = pattern => {
   return (def,re='.') => {
     if (typeof(pattern) != 'string'){
@@ -986,7 +1036,6 @@ export const getLinks = createSelector(
       Object.keys(meta.links).forEach(key=>{
         links.dataset[key] = links.dataset[key] || {}
         Object.keys(meta.links[key]).forEach(title=>{
-          console.log(meta.links[key][title])
           if (key == 'record'){
             let func = funcFromPattern(meta.links[key][title])
             links.record.push({title,func})
