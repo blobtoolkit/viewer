@@ -76,6 +76,15 @@ const updateQueryString = (params, hash, dispatch) => {
   dispatch(setQueryString(search))
 }
 
+export const setShowReference = createAction('SET_SHOW_REFERENCE')
+export const showReference = handleAction(
+  'SET_SHOW_REFERENCE',
+  (state, action) => (
+    action.payload
+  ),
+  'false'
+)
+export const getShowReference = state => state.showReference == 'true' ? true : false
 
 export function fetchReferenceValues(fieldId, datasetId, last) {
   return dispatch => {
@@ -89,34 +98,50 @@ export function fetchReferenceValues(fieldId, datasetId, last) {
     let values = deep(state,['referenceValues','byId',id]);
     if (values){
       dispatch(useStoredReferenceValues(values))
+      if (fieldId != 'summary'){
+        dispatch(fetchReferenceValues('summary',datasetId))
+      }
       if (last){
         Object.keys(last).forEach(key=>{
           params[key] = true
         })
         updateQueryString(params, hash, dispatch)
+        dispatch(setShowReference('true'))
       }
       return Promise.resolve(useStoredReferenceValues(values));
     }
-    return fetch(`${apiUrl}/field/${datasetId}/${fieldId}`)
+    let url = `${apiUrl}/field/${datasetId}/${fieldId}`
+    if (fieldId == 'summary'){
+      url = `${apiUrl}/summary/${datasetId}`
+    }
+    return fetch(url)
       .then(
         response => response.json(),
         // error => console.log('An error occured.', error)
       )
       .then(json => {
         let values
-        if (!json.keys || json.keys.length == 0){
-          values = json.values
+        if (fieldId == 'summary'){
+          dispatch(receiveReferenceValues({id,values:json.summaryStats}))
         }
         else {
-          values = json.values.map(v=>json.keys[v])
+          if (!json.keys || json.keys.length == 0){
+            values = json.values
+          }
+          else {
+            values = json.values.map(v=>json.keys[v])
+          }
+          dispatch(receiveReferenceValues({id,values}))
+          dispatch(fetchReferenceValues('summary',datasetId))
+          if (last){
+            Object.keys(last).forEach(key=>{
+              params[key] = true
+            })
+            updateQueryString(params, hash, dispatch)
+            dispatch(setShowReference('true'))
+          }
         }
-        dispatch(receiveReferenceValues({id,values}))
-        if (last){
-          Object.keys(last).forEach(key=>{
-            params[key] = true
-          })
-          updateQueryString(params, hash, dispatch)
-        }
+
       })
    }
 }
@@ -148,5 +173,6 @@ export const addReferenceFields = () => {
 }
 
 export const referenceReducers = {
-  referenceValues
+  referenceValues,
+  showReference
 }

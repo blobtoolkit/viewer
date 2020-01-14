@@ -2,12 +2,14 @@ import React from 'react'
 import { connect } from 'react-redux'
 import styles from './Plot.scss'
 import { cumulativeCurves } from '../reducers/summary'
+import { getSearchTerm } from '../reducers/location'
 import { getCurveOrigin, getShowTotal } from '../reducers/plotParameters'
 import PlotLegend from './PlotLegend'
 import PlotAxisTitle from './PlotAxisTitle'
 import CumulativePlotBoundary from './CumulativePlotBoundary'
 import { getSelectedDatasetMeta } from '../reducers/dataset'
 import AxisTitle from './AxisTitle'
+import { getShowReference} from '../reducers/reference'
 import { ExportButton } from './ExportButton'
 import { plotPaths, fillParent } from './PlotStyles'
 import { NoBlobWarning } from './NoBlobWarning'
@@ -26,6 +28,7 @@ class Cumulative extends React.Component {
     let span = this.props.cumulative.span
     let byCat = this.props.cumulative.paths.byCat
     let reference = this.props.cumulative.paths.reference
+    let searchTerm = this.props.searchTerm
     let referenceIds = this.props.cumulative.referenceIds
     let transform = 'translate(0,0)'
     let yLabel = 'cumulative ' + this.props.cumulative.zAxis
@@ -49,33 +52,38 @@ class Cumulative extends React.Component {
               strokeLinecap='round'/>
       )
     })
-    let refPaths = reference.map((d,i)=>{
-      return (
-        <path d={d}
-              key={i}
-              fill='none'
-              stroke='#999'
-              strokeWidth={1.5}
-              strokeDasharray={'3 6'}
-              strokeLinecap='round'/>
-      )
-    })
-    let refText = referenceIds.map((obj,i)=>{
-      return (
-        <text key={i}
-              fill='#999'
-              fontSize={16}
-              style={{cursor:'default',pointerEvents:'auto'}}
-              textAnchor='end'
-              transform={'translate('+obj.offset.x+','+obj.offset.y+')'}>
-          <a href={`/view/${obj.id}/dataset/${obj.id}/cumulative#Settings`}
-            target="blank"
-            style={{fill:'#999'}}>
-            {obj.id}
-          </a>
-        </text>
-      )
-    })
+    let refPaths
+    let refText
+    if (this.props.showReference){
+      refPaths = reference.map((d,i)=>{
+        return (
+          <path d={d}
+                key={i}
+                fill='none'
+                stroke='#999'
+                strokeWidth={1.5}
+                strokeDasharray={'3 6'}
+                strokeLinecap='round'/>
+        )
+      })
+      refText = referenceIds.map((obj,i)=>{
+        return (
+          <text key={i}
+                fill='#999'
+                fontSize={16}
+                style={{cursor:'default',pointerEvents:'auto'}}
+                textAnchor='end'
+                transform={'translate('+obj.offset.x+','+obj.offset.y+')'}>
+            <a href={`/view/${searchTerm}/dataset/${obj.id}/cumulative#Settings`}
+              target="blank"
+              style={{fill:'#999'}}>
+              {obj.id}
+            </a>
+          </text>
+        )
+      })
+    }
+
     let exportButtons = (
       <span className={styles.download}>
         <ExportButton view='cumulative' element='cumulative_plot' prefix={this.props.datasetId+'.cumulative'} format='svg'/>
@@ -127,7 +135,9 @@ class CumulativePlot extends React.Component {
         cumulative: cumulativeCurves(state),
         meta: getSelectedDatasetMeta(state,this.props.datasetId),
         origin: getCurveOrigin(state),
-        showTotal: getShowTotal(state)
+        showTotal: getShowTotal(state),
+        searchTerm: getSearchTerm(state),
+        showReference: getShowReference(state)
       }
     }
   }

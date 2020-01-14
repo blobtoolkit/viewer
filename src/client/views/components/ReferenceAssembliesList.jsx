@@ -2,8 +2,12 @@ import React from 'react'
 import { connect } from 'react-redux'
 import { getReferenceValues,
   resetReferenceValues,
-  fetchReferenceValues } from '../reducers/reference'
-import {getReferenceLengths } from '../reducers/summary'
+  fetchReferenceValues,
+  getShowReference,
+  setShowReference } from '../reducers/reference'
+import { getAvailableDatasetIds, getAvailableDatasets } from '../reducers/repository'
+import { getSearchTerm } from '../reducers/location'
+import { getReferenceLengths } from '../reducers/summary'
 import styles from './Layout.scss'
 import SVGIcon from './SVGIcon'
 import ellipsisIcon from './svg/ellipsis.svg'
@@ -14,12 +18,17 @@ export default class ReferenceAssembliesList extends React.Component {
     this.mapStateToProps = () => {
       return (state, props) => ({
         current: getReferenceValues(state),
-        referenceLengths: getReferenceLengths(state)
+        referenceLengths: getReferenceLengths(state),
+        datasetIds: getAvailableDatasetIds(state),
+        datasets: getAvailableDatasets(state),
+        searchTerm: getSearchTerm(state),
+        showReference: getShowReference(state)
       })
     },
     this.mapDispatchToProps = () => {
       return (dispatch) => ({
         reset: (field) => dispatch(resetReferenceValues(field)),
+        toggleReference: (value) => dispatch(setShowReference(value)),
         fetchValues: (field, id, last) => dispatch(fetchReferenceValues(field, id, last))
       })
     }
@@ -51,6 +60,7 @@ class ReferenceList extends React.Component {
   }
 
   toggleForm() {
+    this.props.toggleReference(String(!this.state.expand))
     this.setState({expand: !this.state.expand});
   }
 
@@ -59,36 +69,58 @@ class ReferenceList extends React.Component {
     let newIds = Object.keys((nextProps.referenceLengths.datasets || {}))
     if (ids.join('') != newIds.join('')){
       let expand = newIds.length > 0
+      if (expand){
+
+      }
       ids = (newIds.map(id=>id.split('--')[0]) || []).join(', ')
       this.setState({ids, expand})
     }
   }
 
-  handleSubmit(e){
+  handleSubmit(e, list){
     e.preventDefault()
-    if (!this.state.ids){
-      this.props.reset('length')
-      return
+    let ids = []
+    if (list){
+      ids = list.slice(0)
     }
-    let ids = this.state.ids.trim().split(/[\W+\.-]/)
-    this.updateReferenceList(ids)
+    else {
+        if (!this.state.ids){
+        this.props.reset('length')
+        this.props.toggleReference('false')
+        return
+      }
+      ids = this.state.ids.trim().split(/[\W+\.-]/)
+    }
+    this.updateReferenceList(ids, 'length')
+    this.props.toggleReference('true')
   }
 
-  updateReferenceList(ids){
-    this.props.reset('length')
+  updateReferenceList(ids, field){
+    this.props.reset(field)
     let list = ids.filter(x=>(x && x.length > 0))
     let params = {}
     list.forEach((id,i)=>{
       let last
-      params[`${id}--length--Active`] = true
+      params[`${id}--${field}--Active`] = true
       if (i == list.length - 1){
         last = params
       }
-      this.props.fetchValues('length', id, last)
+      this.props.fetchValues(field, id, last)
     })
   }
 
   render(){
+    let loadAll
+    let list
+    let count = this.props.datasetIds.length
+    if (count > 1){
+      loadAll = `Load all (${this.props.datasetIds.length}) `
+      if (this.props.searchTerm != 'all'){
+        loadAll += `${this.props.searchTerm} `
+      }
+      loadAll += 'datasets as reference assemblies'
+      list = this.props.datasetIds
+    }
     return (
       <div>
         <div className={styles.simple}>
@@ -108,6 +140,12 @@ class ReferenceList extends React.Component {
                         onChange={(e)=>this.handleChange(e)} />
             </label>
           </form>
+          {loadAll &&<div className={this.state.expand ? '' : styles.hidden}>
+            <span onClick={(e)=>this.handleSubmit(e,list)}
+                  style={{margin:'0.5em',cursor:'pointer',textDecoration:'underline'}}>
+              {loadAll}
+            </span>
+          </div>}
         </div>
       </div>
 

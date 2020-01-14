@@ -11,6 +11,7 @@ import PlotSquareBinsSVG from './PlotSquareBinsSVG'
 import PlotSquareGridSVG from './PlotSquareGridSVG'
 //import PlotHexBinsCanvas from './PlotHexBinsCanvas'
 import PlotKitesSVG from './PlotKitesSVG'
+import PlotRefKitesSVG from './PlotRefKitesSVG'
 import PlotHexBinsSVG from './PlotHexBinsSVG'
 import PlotHexGridSVG from './PlotHexGridSVG'
 import PlotAxisTitle from './PlotAxisTitle'
@@ -277,6 +278,7 @@ class PlotBox extends React.Component {
                       <PlotBubblesCanvasLayers {...this.props}/>
                     </div>
                   </foreignObject>
+                  <PlotRefKitesSVG/>
                 </g>
               </g>
             </g>
@@ -300,6 +302,7 @@ class PlotBox extends React.Component {
                   <g transform="translate(50,50)">
                     <PlotTransformLines />
                     {plotContainer}
+                    <PlotRefKitesSVG/>
                   </g>
                   {xPlot}
                   {yPlot}
@@ -331,6 +334,7 @@ class PlotBox extends React.Component {
                 <g transform="translate(50,50)">
                   <PlotTransformLines />
                   {plotContainer}
+                  <PlotRefKitesSVG/>
                 </g>
                 {xPlot}
                 {yPlot}
@@ -362,6 +366,9 @@ class PlotBox extends React.Component {
                   <PlotTransformLines />
                 </g>
                 {plotContainer}
+                <g transform="translate(50,50)">
+                  <PlotRefKitesSVG/>
+                </g>
                 {plotGrid}
                 {xPlot}
                 {yPlot}

@@ -7,14 +7,15 @@ import { getScatterPlotDataByCategory,
   getRawDataForCat,
   getFilteredDataForGC,
   getFilteredDataForLength,
-  getFilteredDataForNCount
+  getFilteredDataForNCount,
+  getKitePlotData
 } from './plotData';
 import { getDatasetIsActive, getAvailableDatasets, getAvailableDatasetIds } from './repository'
 import { getRawDataForFieldId, getDetailsForFieldId, getBinsForFieldId, getAllActiveFields, getBinsForCat } from './field'
 import { getMainPlot, getZAxis, getCatAxis } from './plot';
 import { getSelectedDatasetMeta } from './dataset';
 import { getFilteredList } from './filter';
-import { getReferenceValues } from './reference';
+import { getReferenceValues, getShowReference } from './reference';
 import { getFilteredDataForFieldId } from './preview';
 import { getZReducer, getZScale, zReducers, getCircumferenceScale, getRadiusScale, getSnailOrigin, getTablePage, getTablePageSize, getTableSortField, getTableSortOrder, getScaleTo, getOtherLimit, getMaxCount, getMaxSpan } from './plotParameters';
 import { getColorPalette, getDefaultPalette } from './color';
@@ -156,6 +157,67 @@ const getGreatestX = createSelector(
   }
 )
 
+export const getReferenceSummaries = createSelector(
+  getReferenceValues,
+  (refs) => {
+    if (refs.allIds.length == 0){
+      return false
+    }
+    let datasets = {}
+    let maxCount = 0, maxSpan = 0
+    refs.allIds.forEach(id=>{
+      let [datasetId,fieldId] = id.split('--')
+      if (fieldId == 'summary'){
+        datasets[datasetId] = refs.byId[id]
+      }
+    })
+    return datasets
+  }
+)
+
+export const getReferenceKites = createSelector(
+  getReferenceSummaries,
+  getKitePlotData,
+  (datasets, kites) => {
+    let all = Object.keys(datasets)
+    let xScale = kites.xScale
+    let yScale = kites.yScale
+    let coords = []
+    let ids = []
+    let i = 0
+    all.forEach((id,j)=>{
+      let dataset = datasets[id]
+      if (dataset.hits && dataset.hits.total && dataset.hits.total.gc && dataset.hits.total.cov){
+        coords[i] = {id}
+        let medianGC = xScale(dataset.hits.total.gc[1])
+        let lowerGC = xScale(dataset.hits.total.gc[2])
+        let upperGC = xScale(dataset.hits.total.gc[3])
+        let minGC = xScale(dataset.hits.total.gc[4])
+        let maxGC = xScale(dataset.hits.total.gc[5])
+        let medianCov = 900 - yScale(dataset.hits.total.cov[1])
+        coords[i].x = [[lowerGC,medianCov],[upperGC,medianCov],[minGC,medianCov],[maxGC,medianCov]]
+        let lowerCov = 900 - yScale(dataset.hits.total.cov[2])
+        let upperCov = 900 - yScale(dataset.hits.total.cov[3])
+        let minCov = 900 - yScale(dataset.hits.total.cov[4])
+        let maxCov = 900 - yScale(dataset.hits.total.cov[5])
+        coords[i].y = [[medianGC,lowerCov],[medianGC,upperCov],[medianGC,minCov],[medianGC,maxCov]]
+        coords[i].poly = [
+          coords[i].y[1].slice(0,2),
+          coords[i].x[1].slice(0,2),
+          coords[i].y[0].slice(0,2),
+          coords[i].x[0].slice(0,2),
+          coords[i].y[1].slice(0,2)
+        ]
+        i++
+        console.log(id)
+        ids.push(id)
+      }
+    })
+    return {ids,coords}
+  }
+)
+
+
 export const getCumulative = createSelector(
   getScatterPlotData,
   getSelectedScatterPlotDataByCategory,
@@ -222,7 +284,8 @@ export const cumulativeCurves = createSelector(
   getMaxCount,
   getMaxSpan,
   getReferenceLengths,
-  (cumulative,palette,records,span,summary,scaleTo,maxCount,maxSpan,refs) => {
+  getShowReference,
+  (cumulative,palette,records,span,summary,scaleTo,maxCount,maxSpan,refs,showReference) => {
     if (!cumulative) return false
     let values = cumulative.values
     let all = values.all
@@ -234,7 +297,7 @@ export const cumulativeCurves = createSelector(
     if (scaleTo == 'total'){
       records = maxCount
       span = maxSpan
-      if (refs){
+      if (refs && showReference){
         records = Math.max(records,refs.maxCount)
         span = Math.max(span,refs.maxSpan)
       }
@@ -242,7 +305,7 @@ export const cumulativeCurves = createSelector(
     else {
       records = summary.values.counts.all
       span = summary.values.reduced.all
-      if (refs){
+      if (refs && showReference){
         records = Math.max(records,refs.maxCount)
         span = Math.max(span,refs.maxSpan)
       }

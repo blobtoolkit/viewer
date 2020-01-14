@@ -227,6 +227,7 @@ class DisplayMenu extends React.Component {
               <NumericInput initialValue={isNaN(yMeta.limit[1]) ? yMeta.range[1] : yMeta.limit[1]} onChange={(value)=>onChangeAxisRange({[yMeta.id+'--LimitMax']:value,[yMeta.id+'--Max']:value})}/>
             </div>
           </MenuDisplaySimple> }
+          <ReferenceAssembliesList/>
           {shape == 'circle' && <MenuDisplaySimple name='plot graphics'>
             <div className={styles.full_height}>
               <label className={styles.middle} htmlFor="#svgThreshold">Threshold</label>
