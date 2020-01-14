@@ -26,7 +26,7 @@ class FieldBoxHeader extends React.Component {
   render(){
     let buttons
     let active = this.props.active && !this.props.isStatic
-    if (active){
+    if (active || this.props.type == 'selection'){
       let icons
       if (this.props.type == 'variable'){
         icons = (
@@ -62,7 +62,7 @@ class FieldBoxHeader extends React.Component {
         )
       }
       buttons = (
-        <div className={styles.header_buttons}>
+        <div className={active ? styles.header_buttons : styles.alt_header_buttons}>
           {icons}
           <FieldBoxHeaderFilterButtons {...this.props}/>
         </div>

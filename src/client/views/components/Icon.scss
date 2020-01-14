@@ -19,13 +19,15 @@ div.icon {
     margin-top: -0.3em;
     cursor: pointer;
 
-    border-color:$highlightColor;
+    border-color: #0000;
+    
   }
 
   svg.active {
     background-color:$deepColor;
     color:$lightColor;
-    border-color: $deepColor;
+    border-color: #0000;
+
   }
 
   svg.invert {
@@ -74,7 +76,7 @@ div.icon {
 
 .text_icon.active.invert, .text_icon.invert.active {
   background-color: $highlightColor;
-  border-color: $highlightColor;
+  border-color: #0000;
   color: inherit !important;
 }
 

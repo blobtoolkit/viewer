@@ -13,7 +13,7 @@ import { editPlot } from '../reducers/plot'
 import { getDatasetID, getStatic } from '../reducers/location'
 import { getSelectionDisplay,
   selectNone,
-  toggleSelection } from '../reducers/select'
+  toggleSelection, setSelectSource } from '../reducers/select'
 import { selectAll,
   invertSelection } from '../reducers/selectTools'
 import { queryToStore } from '../querySync'
@@ -53,9 +53,18 @@ class Field extends React.Component {
         sumField: (id) => {dispatch(sumField({id}))},
         showData: (id) => dispatch(fetchRawData(id)),
         toggleSelection: (visible) => dispatch(toggleSelection(visible)),
-        selectAll: () => dispatch(selectAll()),
-        selectNone: () => dispatch(selectNone()),
-        invertSelection: () => dispatch(invertSelection())
+        selectAll: () => {
+          dispatch(setSelectSource('filter'))
+          dispatch(selectAll())
+        },
+        selectNone: () => {
+        dispatch(setSelectSource('filter'))
+          dispatch(selectNone())
+        },
+        invertSelection: () => {
+        dispatch(setSelectSource('filter'))
+          dispatch(invertSelection())
+        }
       }
     }
   }

@@ -209,7 +209,6 @@ export const getReferenceKites = createSelector(
           coords[i].y[1].slice(0,2)
         ]
         i++
-        console.log(id)
         ids.push(id)
       }
     })

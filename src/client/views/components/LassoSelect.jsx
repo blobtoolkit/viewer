@@ -89,30 +89,39 @@ const relativeCoords = event => {
 class Lasso extends React.Component {
   constructor(props) {
     super(props);
-    let polygon = props.polygon
-    if (props.selectSource != 'circle' && props.selectSource != 'list'){
-      let len = props.selectedRecords.length
+
+    let {polygon,internodes,complete} = this.make_polygon()
+    this.state = {active:false,mouseDown:false,points:polygon,internodes,last:{},current:[],complete,moveNode:-1}
+  }
+
+  make_polygon(){
+    let polygon = this.props.polygon
+    let internodes = []
+    let complete = false
+    if (this.props.selectSource != 'circle' && this.props.selectSource != 'list'){
+      let len = this.props.selectedRecords.length
       if (len > 2){
         let points = []
         for (let i = 0; i < len; i++){
-          let point = props.data.data.find(obj => {
-            return obj.id === props.selectedRecords[i]
+          let point = this.props.data.data.find(obj => {
+            return obj.id === this.props.selectedRecords[i]
           })
           if (point) points.push([point.x,point.y])
         }
         polygon = d3polygonHull(points)
       }
+      else {
+        polygon = []
+      }
     }
-    let internodes = []
-    let complete = false
     if (polygon && polygon.length > 2){
-      if (props.selectSource == 'circle' || props.selectSource == 'list' ){
-        let xConvert = props.xMeta.xScale.copy().range([0,900])
-        let yConvert = props.yMeta.xScale.copy().range([900,0])
+      if (this.props.selectSource == 'circle' || this.props.selectSource == 'list' ){
+        let xConvert = this.props.xMeta.xScale.copy().range([0,900])
+        let yConvert = this.props.yMeta.xScale.copy().range([900,0])
         polygon = polygon.map(arr=>[xConvert(arr[0]),yConvert(arr[1])])
       }
-      if (props.selectSource == 'list' ){
-        this.updateSelection(polygon, props.data.data)
+      if (this.props.selectSource == 'list' ){
+        this.updateSelection(polygon, this.props.data.data)
       }
       complete = true
       polygon.forEach((x,i)=>{
@@ -128,7 +137,7 @@ class Lasso extends React.Component {
         }
       })
     }
-    this.state = {active:false,mouseDown:false,points:polygon,internodes,last:{},current:[],complete,moveNode:-1}
+    return {polygon,internodes,complete}
   }
 
   updateSelection(points, data){
@@ -269,6 +278,14 @@ class Lasso extends React.Component {
 
   }
 
+  componentWillUpdate(nextProps){
+    if (nextProps.selectSource != 'circle'
+        && nextProps.selectedRecords != this.props.selectedRecords){
+      let {polygon,internodes,complete} = this.make_polygon()
+      this.setState({points:polygon,internodes,complete})
+    }
+  }
+
   drawNode(coords, key, fill=-1){
     let nodeWidth = 20
     return (
@@ -323,6 +340,7 @@ class Lasso extends React.Component {
   }
 
   render(){
+
     let points = this.state.points
     let thresh = 15
     let latest
@@ -485,6 +503,7 @@ class Lasso extends React.Component {
                 }
               }
               this.setMouseDown(false,coords)
+              this.clearIncomplete()
             }
           }}
           >
