@@ -206,6 +206,7 @@ export const treeData = createSelector(
                   avail.d[taxon].d[key] = subsets[key]
                   avail.d[taxon].a += subsets[key].a
                   avail.d[taxon].s += subsets[key].s
+                  delete avail.d[undef].d[key]
                 }
               })
             }
