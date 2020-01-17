@@ -118,7 +118,6 @@ const filterCategoriesToList = (keys,arr,list,invert) => {
         ret.push(list[i]);
       }
     }
-
   }
   return ret
 }
@@ -228,12 +227,20 @@ export function filterToList(readQueryString) {
         }
         else if (filters[id].type == 'list' || filters[id].type == 'category'){
           if (data[id]){
-            list = filterCategoriesToList(filters[id].keys,data[id].values,list,filters[id].invert)
+            let keys = []
+            filters[id].keys.forEach(key=>{
+              if (isNaN(key)){
+                key = data[id].keys.indexOf(key)
+              }
+              if (key > -1){
+                keys.push(key)
+              }
+            })
+            list = filterCategoriesToList(keys,data[id].values,list,filters[id].invert)
             let keystr = id+'--Keys'
             let invstr = id+'--Inv'
-            if (filters[id].keys.length > 0){
-              let values = {}
-              values[keystr] = filters[id].keys.join()
+            if (keys.length > 0){
+              values[keystr] = keys.join()
               if (filters[id].invert){
                 values[invstr] = true
               }

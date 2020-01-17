@@ -362,7 +362,7 @@ const mapDispatchToQuery = (
       default: window.plot ? window.plot.cat : null
     },
     Inv: {
-      array: (k,v) => ({key:'filter',index:'invert',...v}),
+      array: (k,v) => {v.value = String(v.value) == 'true' ? true : false; return {key:'filter',index:'invert',...v}},
       default: false
     },
     Active: {
@@ -387,7 +387,7 @@ const mapDispatchToQuery = (
       array: (k,v) => ({key:'filter',index:'lin',...v}),
     },
     Keys: {
-      array: (k,v) => ({key:'filter',field:v.field,index:'keys',value:(v.value ? v.value.split(',').map(x=>x*1) : [])}),
+      array: (k,v) => ({key:'filter',field:v.field,index:'keys',value:(v.value ? v.value.split(',').map(x=>isNaN(x) ? x : x*1) : [])}),
       default: ''
     },
     Order: {
