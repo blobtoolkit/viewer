@@ -13,6 +13,7 @@ import { getScatterPlotDataByCategory,
 import { getDatasetIsActive, getAvailableDatasets, getAvailableDatasetIds } from './repository'
 import { getRawDataForFieldId, getDetailsForFieldId, getBinsForFieldId, getAllActiveFields, getBinsForCat } from './field'
 import { getMainPlot, getZAxis, getCatAxis } from './plot';
+import { plotText } from './plotStyles';
 import { getSelectedDatasetMeta } from './dataset';
 import { getFilteredList } from './filter';
 import { getReferenceValues, getShowReference } from './reference';
@@ -661,7 +662,8 @@ export const circularCurves = createSelector(
   getBuscoData,
   getSummary,
   getScaleTo,
-  (circular,palette,circumference,radius,origin,span,longest,busco,summary,scaleTo) => {
+  plotText,
+  (circular,palette,circumference,radius,origin,span,longest,busco,summary,scaleTo,plotText) => {
     if (!circular) return false
     let invert = origin == 'center'
     let values = circular.values
@@ -832,7 +834,8 @@ export const circularCurves = createSelector(
               [cScale(a-10),oScale(0.4)],
               [cScale(a+10),oScale(0.4)]
             ]),
-            text: pct
+            text: pct,
+            fontSize: plotText.snailAxisLarge.fontSize
           }
         )
         let b = a > 0 ? a : 1000
@@ -845,7 +848,7 @@ export const circularCurves = createSelector(
               ))
             ),
             text: si(tenth * b / 100),
-            fontSize: '1em',
+            fontSize: plotText.snailAxisSmall.fontSize,
             align:'right'
           }
         )
@@ -901,7 +904,8 @@ export const circularCurves = createSelector(
               [cScale(0)-2*len-5,-rScale(value)]
             ]),
             text: si(value),
-            align: 'right'
+            align: 'right',
+            fontSize: plotText.snailAxisLarge.fontSize
           }
         )
         let points = []

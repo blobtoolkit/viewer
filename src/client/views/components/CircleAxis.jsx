@@ -72,7 +72,7 @@ export const CircleAxisComponent = ({domain=[0, 100], range=[0, 360], unit='%', 
           ))
         ),
         text: text,
-        fontSize: rScale(16)
+        fontSize: rScale(plotText.axisTick.fontSize.replace('px',''))
       }
     )
   }

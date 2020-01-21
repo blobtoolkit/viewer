@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 import styles from './Plot.scss'
 import { cumulativeCurves } from '../reducers/summary'
 import { getCircular, circularCurves, getBuscoSets, getBuscoData, getBuscoPaths, circularSelection } from '../reducers/summary'
-import { getCurveOrigin, chooseCircumferenceScale, chooseRadiusScale } from '../reducers/plotParameters'
+import { getCurveOrigin, chooseCircumferenceScale, chooseRadiusScale, getLargeFonts } from '../reducers/plotParameters'
 import { getSelectedDatasetMeta } from '../reducers/dataset'
 import { getRawDataForFieldId, getDetailsForFieldId, fetchRawData } from '../reducers/field'
 import SnailPlotLegend from './SnailPlotLegend'
@@ -166,6 +166,7 @@ class Snail extends React.Component {
     let gcs = this.props.data.values.gc
     let ns = this.props.data.values.n
     let index = this.props.data.values.index
+    let largeFonts = this.props.largeFonts
     let stats = SegmentStats({...this.state,sums,gcs,ns,nXlens,nXnums,index})
     let topLeft, bottomRight, topRight
     if (legend.composition){
@@ -211,15 +212,15 @@ class Snail extends React.Component {
       let buscoListA = []
       let buscoListB = []
       let subtitle = []
-      buscoListA.push({label:'Complete', value:pctFormat(this.props.buscoData.fractions.c), color:'rgb(51, 160, 44)'})
-      buscoListA.push({label:'Duplicated', value:pctFormat(this.props.buscoData.fractions.d), color:'rgb(32, 100, 27)'})
+      buscoListA.push({label:largeFonts ? 'Comp.' : 'Complete', value:pctFormat(this.props.buscoData.fractions.c), color:'rgb(51, 160, 44)'})
+      buscoListA.push({label:largeFonts ? 'Dupl.' : 'Duplicated', value:pctFormat(this.props.buscoData.fractions.d), color:'rgb(32, 100, 27)'})
       if (this.props.buscoMeta.meta.set){
         subtitle.push({label:this.props.buscoMeta.meta.set, value:this.props.buscoData.total})
       }
       else{
         subtitle.push({label:'Total: '+this.props.buscoData.total})
       }
-      buscoListB.push({label:'Fragmented', value:pctFormat(this.props.buscoData.fractions.f), color:'rgb(163, 226, 127)'})
+      buscoListB.push({label:largeFonts ? 'Frag.' : 'Fragmented', value:pctFormat(this.props.buscoData.fractions.f), color:'rgb(163, 226, 127)'})
       buscoListB.push({label:'Missing', value:pctFormat(this.props.buscoData.fractions.m), color:'white'})
 
       let axis = this.props.circular.axes.inner
@@ -443,6 +444,7 @@ class SnailPlot extends React.Component {
         colors: getColorScheme(state),
         plotPaths: plotPaths(state),
         plotText: plotText(state),
+        largeFonts: getLargeFonts(state),
         buscoSets,
         buscoData,
         buscoPaths,

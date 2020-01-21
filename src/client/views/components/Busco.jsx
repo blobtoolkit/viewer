@@ -181,7 +181,7 @@ class BuscoPlot extends React.Component {
     }
   }
   render(){
-    let side = 480
+    let side = 500
     let exportButtons = (
       <div className={styles.download}>
         <ExportButton view={`${this.props.id}_busco`} element={'busco_plot'+this.props.id} prefix={this.props.datasetId+'.'+this.props.id+'.busco'} format='svg'/>
@@ -200,7 +200,7 @@ class BuscoPlot extends React.Component {
           style={{width:'11em',height:'11em',fontSize:'14px'}}
           viewBox={viewbox}
           preserveAspectRatio="xMinYMin">
-          <g transform='translate(240,240)'>
+          <g transform='translate(250,250)'>
             <path d={this.props.paths.c}
                   fill={'rgb(51, 160, 44)'}
                   stroke={'none'}/>
