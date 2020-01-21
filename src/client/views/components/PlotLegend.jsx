@@ -134,7 +134,7 @@ const Legend = ({values,zAxis,bins,palette,other,reducer,meta,shape,view,circleL
           <g key={i} transform={'translate('+(largeFonts ? 101 : 0)+','+offset+')'}>
             {largeFonts && (
               <g>
-                <rect x={-155} y={-gap} width={150} height={h+gap} style={{fill:'white',stroke:'none'}} />
+                <rect x={-155} y={-gap} width={325} height={h+gap} style={{fill:'white',stroke:'none'}} />
                 <text style={Object.assign({}, plotText.legend, {textAnchor:'end'})} transform={'translate('+(-gap*2)+','+(h-gap)+')'}>{title}</text>
                 <text style={plotText.legend} transform={'translate('+(w+gap*2)+','+(h-gap)+')'}>[{numbers.join('; ')}]</text>
               </g>) || (<g>

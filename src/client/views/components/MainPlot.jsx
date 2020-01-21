@@ -1,6 +1,6 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import { getPlotShape,getPlotGraphics, getCircleLimit } from '../reducers/plotParameters'
+import { getPlotShape,getPlotGraphics, getCircleLimit, getLargeFonts } from '../reducers/plotParameters'
 import { getStaticThreshold, getNohitThreshold } from '../reducers/repository'
 import styles from './Plot.scss'
 import MainPlotBoundary from './MainPlotBoundary'
@@ -59,7 +59,8 @@ export default class MainPlot extends React.Component {
             records: getRecordCount(state),
             staticThreshold: getStaticThreshold(state),
             nohitThreshold: getNohitThreshold(state),
-            zScale: getHexGridScale(state)
+            zScale: getHexGridScale(state),
+            largeFonts: getLargeFonts(state)
           }
         }
         else if (plotShape == 'square') {
@@ -72,7 +73,8 @@ export default class MainPlot extends React.Component {
             records: getRecordCount(state),
             staticThreshold: getStaticThreshold(state),
             nohitThreshold: getNohitThreshold(state),
-            zScale: getSquareGridScale(state)
+            zScale: getSquareGridScale(state),
+            largeFonts: getLargeFonts(state)
           }
         }
         else if (plotShape == 'kite') {
@@ -83,7 +85,8 @@ export default class MainPlot extends React.Component {
             binned: getKitePlotData(state),
             records: getRecordCount(state),
             staticThreshold: getStaticThreshold(state),
-            nohitThreshold: getNohitThreshold(state)
+            nohitThreshold: getNohitThreshold(state),
+            largeFonts: getLargeFonts(state)
           }
         }
         return {
@@ -94,7 +97,8 @@ export default class MainPlot extends React.Component {
           circleLimit: getCircleLimit(state),
           staticThreshold: getStaticThreshold(state),
           nohitThreshold: getNohitThreshold(state),
-          range: getScatterPlotData(state).range
+          range: getScatterPlotData(state).range,
+          largeFonts: getLargeFonts(state)
         }
       }
     }
@@ -240,7 +244,13 @@ class PlotBox extends React.Component {
       xPlot = <PlotSideBinsSVG axis='x'/>
       yPlot = <PlotSideBinsSVG axis='y'/>
     // }
-    let legend = <g transform='translate(1010,-290)'><PlotLegend/></g>
+    let legend
+    if (this.props.largeFonts){
+      legend = <g transform='translate(995,-290),scale(1.1)'><PlotLegend/></g>
+    }
+    else {
+      legend = <g transform='translate(1010,-290)'><PlotLegend/></g>
+    }
     if (this.props.plotShape == 'circle'){
       if (this.props.plotGraphics != 'svg'){
         plotContainer = ''
