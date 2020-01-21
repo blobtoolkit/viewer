@@ -5,7 +5,7 @@ const Timeout = Composition => class _Timeout extends Component {
       super(props);
     }
 
-    componentWillMount () {
+    componentDidMount () {
       this.timeouts = [];
     }
 

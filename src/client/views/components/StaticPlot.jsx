@@ -49,7 +49,7 @@ class Static extends React.Component {
       this.fetchImage(view, shape, this.getResolution())
     }
   }
-  componentWillUpdate(nextProps){
+  componentDidUpdate(nextProps){
     if (this.refs.static_image
       && this.props.hasStatic
       && nextProps.shape != this.props.shape

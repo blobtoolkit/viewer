@@ -7,7 +7,6 @@ import FilterPreview from './FilterPreview'
 import Filter from './Filter'
 import { scaleLinear as d3scaleLinear } from 'd3-scale';
 import { scaleSqrt as d3scaleSqrt } from 'd3-scale';
-import { CSSTransitionGroup } from 'react-transition-group'
 import PreviewPlotBoundary from './PreviewPlotBoundary'
 
 class FieldBox extends React.Component {
@@ -63,20 +62,8 @@ class FieldBox extends React.Component {
          onAxisButtonClick={(axis,id)=>{this.props.setAxes(axis,id)}}
          onSumButtonClick={(id)=>{this.props.sumField(id)}}
          onInvertButtonClick={(id)=>{this.props.toggleInvert(id)}}/>
-        <CSSTransitionGroup
-          transitionName={{
-            enter: styles.preview_enter,
-            enterActive: styles.preview_enter_active,
-            leave: styles.preview_leave,
-            leaveActive: styles.preview_leave_active,
-            appear: styles.preview_appear,
-            appearActive: styles.preview_appear_active
-          }}
-          transitionEnterTimeout={500}
-          transitionLeaveTimeout={500}>
-          {fieldContent}
-          {filterContent}
-        </CSSTransitionGroup>
+        {fieldContent}
+        {filterContent}
       </div>
     );
   }

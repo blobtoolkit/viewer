@@ -40,17 +40,6 @@ class DatasetTreeComponent extends Component {
     // }
   }
 
-  // componentWillUpdate(nextProps){
-  //   console.log(nextProps)
-  //   if (nextProps.searchTerm != this.props.searchTerm){
-  //     this.props.expandSearchTerm()
-  //   }
-  // }
-  // shouldComponentUpdate(nextProps){
-  //   console.log(nextProps)
-  //   return true
-  // }
-
   drawNested(obj){
     let widths = this.props.treeData.widths
     let nested = obj.map((child,i) => {

@@ -121,7 +121,7 @@ const config = {
         use: [
           {
             loader: 'style-loader',
-            options: { singleton: true }
+            options: { injectType: 'singletonStyleTag' }
           },
           {
             loader: 'css-loader',
@@ -146,10 +146,11 @@ const config = {
           {
             loader: 'css-loader',
             query: {
-              modules: true,
-              sourceMap: true,
-              importLoaders: 2,
-              localIdentName: '[name]__[local]___[hash:base64:5]'
+              modules: {
+	              localIdentName: "[name]__[local]___[hash:base64:5]",
+	            },
+	            sourceMap: true,
+              importLoaders: 2
             }
           },
           'postcss-loader',

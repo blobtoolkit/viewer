@@ -279,7 +279,7 @@ class Lasso extends React.Component {
 
   }
 
-  componentWillUpdate(nextProps){
+  componentDidUpdate(nextProps){
     if (nextProps.selectSource != 'circle'
         && nextProps.selectedRecords != this.props.selectedRecords){
       let {polygon,internodes,complete} = this.make_polygon()

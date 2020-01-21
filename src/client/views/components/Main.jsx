@@ -41,9 +41,6 @@ class MainDiv extends React.Component {
     }
   }
 
-  componentWillUpdate(){
-  }
-
   render(){
     if (!this.props.initialised){
        return null

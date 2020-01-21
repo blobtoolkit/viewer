@@ -7,7 +7,7 @@ class FilterControlRange extends React.Component {
     super(props);
     this.state = {low:props.filterRange[0],high:props.filterRange[1],clamp:props.meta.clamp}
   }
-  componentWillUpdate(nextProps) {
+  componentDidUpdate(nextProps) {
     if (nextProps.filterRange[0] != this.props.filterRange[0] || nextProps.filterRange[1] != this.props.filterRange[1]){
       this.setState({low:nextProps.filterRange[0],high:nextProps.filterRange[1]})
     }

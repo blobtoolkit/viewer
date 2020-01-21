@@ -103,7 +103,8 @@ export const gridShapePartSelected = createSelector(
       gridShape,
       {
         stroke: colors.highlightColor,
-        strokeWidth: 4
+        strokeWidth: 4,
+        fill: 'none'
       }
     )
   )
@@ -117,6 +118,8 @@ export const gridShapeSelected = createSelector(
       {},
       gridShapePartSelected,
       {
+        stroke: colors.highlightColor,
+        strokeWidth: 4,
         fill: colors.highlightColor,
         fillOpacity: 0.75
       }

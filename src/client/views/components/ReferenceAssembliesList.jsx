@@ -64,7 +64,7 @@ class ReferenceList extends React.Component {
     this.setState({expand: !this.state.expand});
   }
 
-  componentWillUpdate(nextProps){
+  componentDidUpdate(nextProps){
     let ids = Object.keys((this.props.referenceLengths.datasets || {}))
     let newIds = Object.keys((nextProps.referenceLengths.datasets || {}))
     if (ids.join('') != newIds.join('')){

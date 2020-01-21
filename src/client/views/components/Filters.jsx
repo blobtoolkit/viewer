@@ -77,8 +77,6 @@ class FilterBox extends React.Component {
 }
 
 const withLogProps = MyComponent => class extends MyComponent {
-  componentWillMount() {
-  }
   render() {
     // Wraps the input component in a container, without mutating it. Good!
     return <MyComponent {...this.props} />;

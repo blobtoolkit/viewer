@@ -14,10 +14,7 @@ class Spinner extends React.Component {
     }
   }
 
-  componentDidMount(){
-  }
-
-  componentWillUpdate() {
+  componentDidUpdate() {
     if (this.props.active && this.props.active != 'loading' && this.state.spinner == true){
       this.setState({spinner: false})
     }
