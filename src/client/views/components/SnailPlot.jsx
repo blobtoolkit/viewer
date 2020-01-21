@@ -13,11 +13,11 @@ import Pointable from 'react-pointable';
 import { scaleLinear as d3scaleLinear } from 'd3-scale';
 import { arc as d3Arc } from 'd3-shape';
 import { ExportButton } from './ExportButton'
-import { plotPaths, plotText, fillParent } from './PlotStyles'
+import { plotPaths, plotText, fillParent } from '../reducers/plotStyles'
 import { CircleAxis } from './CircleAxis'
 import FigureCaption from './FigureCaption'
 import { addRecords, removeRecords, setSelectSource } from '../reducers/select'
-import colors from './_colors'
+import { getColorScheme } from '../reducers/color'
 
 
 const xScale = d3scaleLinear().range([-425,425])
@@ -268,7 +268,7 @@ class Snail extends React.Component {
     Object.keys(axes).forEach((k,i)=>{
       let axis = axes[k]
       paths.push(
-        <path style={plotPaths.axis}
+        <path style={this.props.plotPaths.axis}
               d={axis.path}
               key={k}
               fill='none'
@@ -278,7 +278,7 @@ class Snail extends React.Component {
       if (axis.ticks){
         axis.ticks.major.forEach((d,idx) => {
           paths.push(
-            <path style={plotPaths.axis}
+            <path style={this.props.plotPaths.axis}
                   d={d}
                   key={k+'_major_'+idx}
                   fill='none'
@@ -288,7 +288,7 @@ class Snail extends React.Component {
         })
         axis.ticks.minor.forEach((d,idx) => {
           paths.push(
-            <path style={plotPaths.fine}
+            <path style={this.props.plotPaths.fine}
                   d={d}
                   key={k+'_minor_'+idx}
                   fill='none'
@@ -310,7 +310,7 @@ class Snail extends React.Component {
               startOffset = '100%'
             }
             paths.push(
-              <path style={plotPaths.axis}
+              <path style={this.props.plotPaths.axis}
                     d={d.path}
                     key={k+'_path_'+idx}
                     id={k+'_path_'+idx}
@@ -319,7 +319,7 @@ class Snail extends React.Component {
             )
             paths.push(
               <text key={k+'_text_'+idx}
-                    style={Object.assign({}, plotText.axisLabel, {fontSize})}>
+                    style={Object.assign({}, this.props.plotText.axisLabel, {fontSize})}>
                 <textPath
                     xlinkHref={'#'+k+'_path_'+idx}
                     textAnchor={textAnchor}
@@ -336,8 +336,8 @@ class Snail extends React.Component {
       paths.push(
         <path d={path.path}
               key={`selection_${i}`}
-              fill={path.partial ? 'none' : colors.halfHighlightColor}
-              stroke={colors.highlightColor}
+              fill={path.partial ? 'none' : this.props.colors.halfHighlightColor}
+              stroke={this.props.colors.highlightColor}
               strokeWidth={3}
               strokeLinecap='round'/>
       )
@@ -359,7 +359,7 @@ class Snail extends React.Component {
             viewBox={viewbox}
             preserveAspectRatio="xMinYMin">
             <g transform={'translate(10,1000)'} >
-              <text style={plotText.snailPlotTitle}>
+              <text style={this.props.plotText.snailPlotTitle}>
                 Dataset: {this.props.meta.id}
               </text>
             </g>
@@ -440,6 +440,9 @@ class SnailPlot extends React.Component {
         circular: circularCurves(state),
         meta: getSelectedDatasetMeta(state),
         selection: circularSelection(state),
+        colors: getColorScheme(state),
+        plotPaths: plotPaths(state),
+        plotText: plotText(state),
         buscoSets,
         buscoData,
         buscoPaths,

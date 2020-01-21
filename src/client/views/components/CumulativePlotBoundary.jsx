@@ -5,13 +5,36 @@ import styles from './Plot.scss'
 import {Axis, axisPropsFromTickScale, LEFT, BOTTOM} from 'react-d3-axis';
 import { scaleLinear as d3scaleLinear } from 'd3-scale';
 import { format as d3Format } from 'd3-format'
-import { plotPaths, fillParent } from './PlotStyles'
+import { plotPaths, plotText, fillParent } from '../reducers/plotStyles'
 
-export const CumulativePlotBoundary = ({yValues,yLabel,records,span}) => {
+export default class CumulativePlotBoundary extends React.Component {
+  constructor(props) {
+    super(props);
+    this.mapStateToProps = () => {
+      return (state, props) => (
+        {
+          plotPaths: plotPaths(state),
+          plotText: plotText(state)
+        }
+      )
+    }
+  }
+
+  render(){
+    const ConnectedCumulativePlotBoundary = connect(
+      this.mapStateToProps
+    )(CumulativePlotBoundaryComponent)
+    return (
+      <ConnectedCumulativePlotBoundary {...this.props}/>
+    )
+  }
+}
+
+const CumulativePlotBoundaryComponent = ({yValues,yLabel,records,span, plotPaths, plotText}) => {
   yValues = yValues
   let xScale = d3scaleLinear().range([50,950]).domain([0,records])
   let yScale = d3scaleLinear().range([950,50]).domain([0,span])
-  let fontSize = 16
+  let fontSize = plotText.axisTick.fontSize
   let f = d3Format(".2s");
   return (
     <g>
@@ -27,5 +50,3 @@ export const CumulativePlotBoundary = ({yValues,yLabel,records,span}) => {
     </g>
   )
 }
-
-export default CumulativePlotBoundary

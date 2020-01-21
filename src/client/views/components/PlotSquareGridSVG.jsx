@@ -4,20 +4,26 @@ import styles from './Plot.scss'
 import { getSelectedSquareGrid } from '../reducers/plotSquareBins'
 import { addRecords, removeRecords, setSelectSource } from '../reducers/select'
 import {
-  grid as gridStyle,
+  grid,
   gridShape,
   gridShapeSelected,
   gridShapePartSelected
-} from './PlotStyles'
+} from '../reducers/plotStyles'
 
 export default class PlotSquareGridSVG extends React.Component {
   constructor(props) {
     super(props);
     this.state = {mouseDown:false,addRecords:true}
     this.mapStateToProps = () => {
-      return (state, props) => {
-        return getSelectedSquareGrid(state)
-      }
+      return (state, props) => (
+        {
+          squareGrid: getSelectedSquareGrid(state),
+          gridStyle: grid(state),
+          gridShape: gridShape(state),
+          gridShapeSelected: gridShapeSelected(state),
+          gridShapePartSelected: gridShapePartSelected(state)
+        }
+      )
     }
     this.mapDispatchToProps = dispatch => {
       return {
@@ -56,8 +62,17 @@ export default class PlotSquareGridSVG extends React.Component {
     )
   }
 }
-const SquareGridSVG = ({ data, onClickCell, mouseDown, setMouseDown, setAddRecords }) => {
+const SquareGridSVG = ({ squareGrid,
+                      onClickCell,
+                      mouseDown,
+                      setMouseDown,
+                      setAddRecords,
+                      gridStyle,
+                      gridShape,
+                      gridShapeSelected,
+                      gridShapePartSelected }) => {
   let squares = []
+  let data = squareGrid.data
   data.forEach((datum,i)=>{
     let style = gridShape
     if (datum.selected){

@@ -26,7 +26,7 @@ export default class PlotBubblesCanvas extends React.Component {
       this.mapStateToProps
     )(BubblesCanvas)
     return (
-      <ConnectedBubblesCanvas />
+      <ConnectedBubblesCanvas {...this.props}/>
     )
   }
 }

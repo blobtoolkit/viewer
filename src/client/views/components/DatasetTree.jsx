@@ -16,7 +16,7 @@ import {
   expandSearchTerm } from '../reducers/datasetTree'
 import { getSearchTerm } from '../reducers/location'
 import { fetchRepository } from '../reducers/repository'
-import colors from './_colors'
+import { getColorScheme } from '../reducers/color'
 import Spinner from './Spinner'
 
 
@@ -219,7 +219,8 @@ class DatasetTree extends React.Component {
         treeData: treeData(state),
         datasetCounter: getDatasetCounter(state),
         targetNodes: getTargetNodes(state),
-        scale: 0.75
+        scale: 0.75,
+        colors: getColorScheme(state)
       }
     }
     this.mapDispatchToProps = dispatch => {

@@ -19,7 +19,7 @@ export default class PlotRefKitesSVG extends React.Component {
       this.mapStateToProps
     )(RefKitesSVG)
     return (
-      <ConnectedRefKites />
+      <ConnectedRefKites {...this.props}/>
     )
   }
 }

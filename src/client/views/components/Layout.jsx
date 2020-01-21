@@ -2,7 +2,7 @@ import React from 'react'
 import { connect } from 'react-redux'
 import CookieConsent from 'react-cookie-consent'
 import styles from './Layout.scss'
-import colors from './_colors'
+import { getColorScheme } from '../reducers/color'
 import { getDatasetIsActive, getReloading, setReloading, getStaticThreshold } from '../reducers/repository'
 import { getQueryString, setQueryString, getDatasetID, getHashString, getStatic } from '../reducers/location'
 import { getBinsForCat } from '../reducers/field'
@@ -40,25 +40,25 @@ class LayoutComponent extends React.Component {
     // {this.props.datasetId ? this.props.active ? <LayoutPlots/> : <Spinner/> : <LayoutPlots/> }
     let notice = (
       <CookieConsent
-          style={{ background: colors.darkColor}}
+          style={{ background: this.props.colors.darkColor}}
           contentStyle= {{ margin:'15px' }}
           buttonText='Accept'
           declineButtonText='Decline'
           enableDeclineButton={true}
           cookieValue={true}
           declineCookieValue={false}
-          buttonStyle={{ backgroundColor: colors.highlightColor,
-            color: colors.lightColor,
-            border: `${colors.lightColor} solid 1px`,
+          buttonStyle={{ backgroundColor: this.props.colors.highlightColor,
+            color: this.props.colors.lightColor,
+            border: `${this.props.colors.lightColor} solid 1px`,
             fontSize: "13px" }}
-          declineButtonStyle={{ backgroundColor: colors.lightColor,
-            color: colors.highlightColor,
-            border: `${colors.highlightColor} solid 1px`,
+          declineButtonStyle={{ backgroundColor: this.props.colors.lightColor,
+            color: this.props.colors.highlightColor,
+            border: `${this.props.colors.highlightColor} solid 1px`,
             fontSize: "13px" }}
           flipButtons={true}
         >
         This website uses cookies to help us monitor usage.
-        To allow us to do this, please accept the terms of our <a style={{textDecoration:'underline', color:colors.highlightColor, fontWeight:'bold'}}
+        To allow us to do this, please accept the terms of our <a style={{textDecoration:'underline', color:this.props.colors.highlightColor, fontWeight:'bold'}}
            href={gdpr_url} target='_blank'>
            Privacy Policy
          </a>.
@@ -98,6 +98,7 @@ class Layout extends React.Component {
         // active: getDatasetIsActive(state),
         //queryString: getQueryString(state),
         reloading: getReloading(state),
+        colors: getColorScheme(state)
         // bins: getBinsForCat(state),
         // cat: getCatAxis(state),
         // staticThreshold: getStaticThreshold(state),

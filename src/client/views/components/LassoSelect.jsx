@@ -1,7 +1,6 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import styles from './Plot.scss'
-import colors from './_colors'
 import PlotParameters from './PlotParameters'
 import MainPlotBoundary from './MainPlotBoundary'
 import Pointable from 'react-pointable';
@@ -17,6 +16,7 @@ import { addRecords,
   getSelectionDisplay,
   getSelectSource,
   setSelectSource } from '../reducers/select'
+import { getColorScheme } from '../reducers/color'
 import { scaleLinear as d3scaleLinear } from 'd3-scale';
 import { polygonContains as d3polygonContains } from 'd3-polygon';
 import { polygonHull as d3polygonHull } from 'd3-polygon';
@@ -33,7 +33,8 @@ export default class LassoSelect extends React.Component {
           selectionDisplay: getSelectionDisplay(state),
           xMeta: getDetailsForX(state),
           yMeta: getDetailsForY(state),
-          selectSource: getSelectSource(state)
+          selectSource: getSelectSource(state),
+          colors: getColorScheme(state)
         }
       }
     }
@@ -289,7 +290,7 @@ class Lasso extends React.Component {
   drawNode(coords, key, fill=-1){
     let nodeWidth = 20
     return (
-      <rect fill={fill ? colors.highlightColor : colors.lightColor}
+      <rect fill={fill ? this.props.colors.highlightColor : this.props.colors.lightColor}
             key={key}
             x={coords[0]-nodeWidth/2}
             y={coords[1]-nodeWidth/2}
@@ -301,7 +302,7 @@ class Lasso extends React.Component {
   drawInterNode(coords, key, fill=-1){
     let nodeWidth = 14
     return (
-      <rect fill={fill ? colors.highlightColor : colors.lightColor}
+      <rect fill={fill ? this.props.colors.highlightColor : this.props.colors.lightColor}
             key={key}
             x={coords[0]-nodeWidth/2}
             y={coords[1]-nodeWidth/2}
@@ -359,7 +360,7 @@ class Lasso extends React.Component {
 
           latest = (
             <g fill='none'
-               stroke={colors.highlightColor}
+               stroke={this.props.colors.highlightColor}
                strokeWidth={5}
                opacity={0.5}>
               {line}
@@ -381,7 +382,7 @@ class Lasso extends React.Component {
         if (points.length > 1){
           let complete = this.state.complete ? 'Z' : ''
           path = (
-            <path stroke={colors.highlightColor}
+            <path stroke={this.props.colors.highlightColor}
                   strokeWidth={5}
                   d={`M${(points[0]||[]).join(' ')} ${(points.slice(1)||[]).map(x=>'L'+(x||[]).join(' ')).join('')}${complete}`}/>
           )
@@ -391,12 +392,12 @@ class Lasso extends React.Component {
 
     }
     let dasharray = this.props.selectSource == 'circle' ? undefined : '10'
-    let fill = this.state.complete ? this.props.selectSource == 'circle' ? colors.halfHighlightColor : 'url(#pattern-checkers)' : 'none'
+    let fill = this.state.complete ? this.props.selectSource == 'circle' ? this.props.colors.halfHighlightColor : 'url(#pattern-checkers)' : 'none'
     return (
       <g>
         <pattern id="pattern-checkers" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse" >
-          <rect x="0" width="10" height="10" y="0" fill={colors.halfHighlightColor}/>
-          <rect x="10" width="10" height="10" y="10" fill={colors.halfHighlightColor}/>
+          <rect x="0" width="10" height="10" y="0" fill={this.props.colors.halfHighlightColor}/>
+          <rect x="10" width="10" height="10" y="10" fill={this.props.colors.halfHighlightColor}/>
         </pattern>
         {this.props.selectionDisplay && (
           <g transform='translate(50,50)'>
@@ -407,8 +408,8 @@ class Lasso extends React.Component {
                 {path}
               </g>)}
             {points && points.length > 0 && (
-              <g fill={colors.lightColor}
-                 stroke={colors.highlightColor}
+              <g fill={this.props.colors.lightColor}
+                 stroke={this.props.colors.highlightColor}
                  strokeWidth={5}>
                 {nodes}
                 {internodes}

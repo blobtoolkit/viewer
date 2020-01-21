@@ -45,7 +45,7 @@ export default class PlotParameters extends React.Component {
       this.mapDispatchToProps
     )(Parameters)
     return (
-      <ConnectedPlotParameters/>
+      <ConnectedPlotParameters {...this.props}/>
     )
   }
 }

@@ -18,7 +18,7 @@ export default class PlotSquareBinsSVG extends React.Component {
       this.mapStateToProps
     )(SquareBinsSVG)
     return (
-      <ConnectedSquareBins />
+      <ConnectedSquareBins {...this.props}/>
     )
   }
 }

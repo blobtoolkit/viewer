@@ -1,8 +1,8 @@
 import React from 'react';
-import { plotShapes } from './PlotStyles'
+import { connect } from 'react-redux'
 
-const PlotBubbleSVG = ({ x, y, r }) => (
-  <circle cx={x} cy={y} r={r} style={plotShapes.circle}/>
+const PlotBubbleSVG = ({ x, y, r, plotShape }) => (
+  <circle cx={x} cy={y} r={r} style={plotShape.circle}/>
 );
 
-export default PlotBubbleSVG;
+export default PlotBubbleSVG

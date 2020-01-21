@@ -1,6 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux'
 import { getMainPlotData }  from '../reducers/plotData'
+import { plotText }  from '../reducers/plotStyles'
 import styles from './Plot.scss'
 import {Axis, axisPropsFromTickScale, LEFT, RIGHT, TOP, BOTTOM} from 'react-d3-axis';
 import { getPreviewDataForFieldId } from '../reducers/field'
@@ -9,9 +10,13 @@ import { format as d3format} from 'd3-format'
 export default class PreviewPlotBoundary extends React.Component {
   constructor(props) {
     super(props);
-    this.mapStateToProps = () => {
+    this.mapStateToProps = (state) => {
+      let preview = getPreviewDataForFieldId(state,props.xLabel) || {}
       return (state, props) => (
-        getPreviewDataForFieldId(state,props.xLabel) || {}
+        {
+          ...preview,
+          plotText: plotText(state)
+        }
       )
     }
   }
@@ -34,7 +39,7 @@ class PlotOutline extends React.Component {
     let width = this.props.dimensions.width
     yScale.range([height,0])
     yScale.domain([0,this.props.max])
-    let fontSize = 16/2.5
+    let fontSize = this.props.plotText.axisTick.fontSize.replace('px','')/2.5
     let format = d3format(".2s")
     let altFormat = d3format(".2f")
     let xScale = this.props.details.xScale.copy()

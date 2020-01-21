@@ -5,7 +5,7 @@ import { getTransformFunctionParams } from '../reducers/plotParameters'
 import {Axis, axisPropsFromTickScale, LEFT, BOTTOM} from 'react-d3-axis';
 import { scaleLinear as d3scaleLinear } from 'd3-scale'
 import { format as d3Format } from 'd3-format'
-import { plotPaths } from './PlotStyles'
+import { plotPaths, plotText } from '../reducers/plotStyles'
 
 export default class MainPlotBoundary extends React.Component {
   constructor(props) {
@@ -14,7 +14,9 @@ export default class MainPlotBoundary extends React.Component {
       return (state, props) => (
         {
           data: getMainPlotData(state),
-          params: getTransformFunctionParams(state)
+          params: getTransformFunctionParams(state),
+          plotPaths: plotPaths(state),
+          plotText: plotText(state)
         }
 
       )
@@ -43,8 +45,8 @@ const isPowerOfTen = d => {
   return d == 1
 }
 
-const PlotOutline = ({data, params}) => {
-  let fontSize = 16
+const PlotOutline = ({data, params, plotPaths, plotText}) => {
+  let fontSize = plotText.axisTick.fontSize
   let f = d => {
     if (d < 1 && d > 0.0001 && String(d).match(/^[0\.1]+$/)){
       return d

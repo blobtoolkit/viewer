@@ -30,7 +30,7 @@ class RepositoryDataset extends React.Component {
     return (
       <Link to={'/view/'+this.props.id}>
         <div className={styles.dataset} onClick={()=>{this.props.onMount(this.props.id)}}>
-          <ConnectedDataset/>
+          <ConnectedDataset {...this.props}/>
         </div>
       </Link>
     )

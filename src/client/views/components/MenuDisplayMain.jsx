@@ -41,7 +41,9 @@ import { getPlotShape,
   getMaxCount,
   chooseMaxCount,
   getAdjustCoverage,
-  chooseAdjustCoverage } from '../reducers/plotParameters'
+  chooseAdjustCoverage,
+  getLargeFonts,
+  chooseLargeFonts } from '../reducers/plotParameters'
 import {
   getStaticThreshold,
   chooseStaticThreshold,
@@ -78,6 +80,7 @@ import zeroIcon from './svg/zero.svg';
 import invertIcon from './svg/invert.svg';
 import scaleIcon from './svg/scale.svg';
 import adjustIcon from './svg/adjust.svg';
+import fontSizeIcon from './svg/fontSize.svg';
 import MenuItem from './MenuItem'
 import ToolTips from './ToolTips'
 import Timeout from './Timeout'
@@ -109,7 +112,8 @@ class DisplayMenu extends React.Component {
       showTotal, onChangeShowTotal,
       maxSpan, onChangeMaxSpan,
       maxCount, onChangeMaxCount,
-      adjustCoverage, onToggleAdjustCoverage } = this.props
+      adjustCoverage, onToggleAdjustCoverage,
+      largeFonts, onToggleLargeFonts } = this.props
     let context
     view = view || 'blob'
     let blob
@@ -370,6 +374,9 @@ class DisplayMenu extends React.Component {
               onChangeNohitThreshold(value)
             }}/>
         </MenuDisplaySimple>
+        <MenuDisplaySimple name='use larger fonts'>
+          <SVGIcon sprite={fontSizeIcon} active={largeFonts} onIconClick={()=>onToggleLargeFonts(!largeFonts)}/>
+        </MenuDisplaySimple>
 
         <ToolTips set='settingsMenu'/>
       </div>
@@ -415,6 +422,7 @@ class MenuDisplayMain extends React.Component {
         onSelectView: view => dispatch(chooseView(view)),
         onToggleStatic: (view,datasetId) => dispatch(toggleStatic(view,datasetId)),
         onToggleAdjustCoverage: (bool) => dispatch(chooseAdjustCoverage(bool)),
+        onToggleLargeFonts: (bool) => dispatch(chooseLargeFonts(bool)),
         onSelectCurveOrigin: origin => dispatch(chooseCurveOrigin(origin)),
         onSelectScaleTo: origin => dispatch(chooseScaleTo(origin)),
         onSelectSnailOrigin: origin => dispatch(chooseSnailOrigin(origin)),
@@ -459,7 +467,8 @@ class MenuDisplayMain extends React.Component {
         sideMax: getSideMax(state),
         maxSpan: getMaxSpan(state),
         maxCount: getMaxCount(state),
-        adjustCoverage: getAdjustCoverage(state)
+        adjustCoverage: getAdjustCoverage(state),
+        largeFonts: getLargeFonts(state)
       }
     }
   }

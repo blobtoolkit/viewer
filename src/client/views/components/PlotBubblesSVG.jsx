@@ -4,6 +4,7 @@ import styles from './Plot.scss'
 import PlotBubbleSVG from './PlotBubbleSVG'
 import { getCirclePlotDataForCategoryIndex }  from '../reducers/plotData'
 import { getPlotResolution, getZScale }  from '../reducers/plotParameters'
+import { plotShapes } from '../reducers/plotStyles'
 
 export default class PlotBubblesSVG extends React.Component {
   constructor(props) {
@@ -16,6 +17,7 @@ export default class PlotBubblesSVG extends React.Component {
         obj.bubbles = val.data
         obj.scale = getZScale(state)
         obj.res = getPlotResolution(state)
+        obj.plotShape = plotShapes(state)
         return obj
       }
     }
@@ -26,15 +28,15 @@ export default class PlotBubblesSVG extends React.Component {
       this.mapStateToProps
     )(BubblesSVG)
     return (
-      <ConnectedBubblesSVG/>
+      <ConnectedBubblesSVG {...this.props}/>
     )
   }
 }
 
-const BubblesSVG = ({ bubbles, color }) => (
+const BubblesSVG = ({ bubbles, color, plotShape }) => (
   <g fill={color}>
     {bubbles.map(bubble =>
-      <PlotBubbleSVG key={bubble.id} {...bubble} />
+      <PlotBubbleSVG key={bubble.id} {...bubble} plotShape={plotShape} />
     )}
   </g>
 );

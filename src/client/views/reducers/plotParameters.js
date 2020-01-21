@@ -487,6 +487,23 @@ export const showTotal = handleAction(
 )
 export const getShowTotal = state => state.showTotal == 'true' ? true : false
 
+export const setLargeFonts = createAction('SET_LARGE_FONTS')
+export const chooseLargeFonts = (largeFonts) => {
+  return function (dispatch) {
+    largeFonts = String(largeFonts) == 'true' ? 'true' : 'false'
+    let values = {largeFonts}
+    dispatch(queryToStore({values}))
+  }
+}
+export const largeFonts = handleAction(
+  'SET_LARGE_FONTS',
+  (state, action) => (
+    action.payload
+  ),
+  qsDefault('largeFonts')
+)
+export const getLargeFonts = state => state.largeFonts == 'true' ? true : false
+
 export const setAdjustCoverage = createAction('SET_ADJUST_COVERAGE')
 export const chooseAdjustCoverage = (adjust) => {
   return function (dispatch) {
@@ -538,5 +555,6 @@ export const plotParameterReducers = {
   tableSortOrder,
   otherLimit,
   showTotal,
-  adjustCoverage
+  adjustCoverage,
+  largeFonts
 }

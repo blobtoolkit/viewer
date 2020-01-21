@@ -5,20 +5,26 @@ import { getSelectedHexGrid } from '../reducers/plotHexBins'
 import { addRecords, removeRecords, setSelectSource } from '../reducers/select'
 import Pointable from 'react-pointable';
 import {
-  grid as gridStyle,
+  grid,
   gridShape,
   gridShapeSelected,
   gridShapePartSelected
-} from './PlotStyles'
+} from '../reducers/plotStyles'
 
 export default class PlotHexGridSVG extends React.Component {
   constructor(props) {
     super(props);
     this.state = {mouseDown:false,addRecords:true}
     this.mapStateToProps = () => {
-      return (state, props) => {
-        return getSelectedHexGrid(state)
-      }
+      return (state, props) => (
+        {
+          hexGrid: getSelectedHexGrid(state),
+          gridStyle: grid(state),
+          gridShape: gridShape(state),
+          gridShapeSelected: gridShapeSelected(state),
+          gridShapePartSelected: gridShapePartSelected(state)
+        }
+      )
     }
     this.mapDispatchToProps = dispatch => {
       return {
@@ -58,8 +64,17 @@ export default class PlotHexGridSVG extends React.Component {
   }
 }
 
-const HexGridSVG = ({ data, onClickCell, mouseDown, setMouseDown, setAddRecords }) => {
+const HexGridSVG = ({ hexGrid,
+                      onClickCell,
+                      mouseDown,
+                      setMouseDown,
+                      setAddRecords,
+                      gridStyle,
+                      gridShape,
+                      gridShapeSelected,
+                      gridShapePartSelected }) => {
   let hexes = []
+  let data = hexGrid.data
   data.forEach((datum,i)=>{
     let style = gridShape
     if (datum.selected){

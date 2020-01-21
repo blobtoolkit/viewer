@@ -3,10 +3,10 @@ import { connect } from 'react-redux'
 import { getSummary }  from '../reducers/summary'
 import { getDatasetID, getView } from '../reducers/location'
 import { getDatasetMeta } from '../reducers/repository'
-import { getPlotShape, getCircleLimit, getShowTotal } from '../reducers/plotParameters'
+import { getPlotShape, getCircleLimit, getShowTotal, getLargeFonts } from '../reducers/plotParameters'
 import styles from './Plot.scss'
 import { format as d3format} from 'd3-format'
-import { plotText } from './PlotStyles'
+import { plotText } from '../reducers/plotStyles'
 
 export default class PlotLegend extends React.Component {
   constructor(props) {
@@ -20,7 +20,8 @@ export default class PlotLegend extends React.Component {
         let view = getView(state)
         let circleLimit = getCircleLimit(state)
         let showTotal = getShowTotal(state)
-        return {meta,...summary,shape,view,circleLimit,showTotal}
+        let largeFonts = getLargeFonts(state)
+        return {meta,...summary,shape,view,circleLimit,showTotal,largeFonts,plotText:plotText(state)}
       }
     }
   }
@@ -30,12 +31,12 @@ export default class PlotLegend extends React.Component {
       this.mapStateToProps
     )(Legend)
     return (
-      <ConnectedLegend />
+      <ConnectedLegend {...this.props}/>
     )
   }
 }
 
-const Legend = ({values,zAxis,bins,palette,other,reducer,meta,shape,view,circleLimit,showTotal}) => {
+const Legend = ({values,zAxis,bins,palette,other,reducer,meta,shape,view,circleLimit,showTotal,largeFonts,plotText}) => {
   let items = []
   let legendKey
   let ds
@@ -51,6 +52,16 @@ const Legend = ({values,zAxis,bins,palette,other,reducer,meta,shape,view,circleL
     let w = 19
     let h = 19
     let gap = 5
+    let title_x = w + gap
+    let title_y = offset - gap
+    if (largeFonts){
+      offset = 0
+      w = 21
+      h = 21
+      title_x = w + gap + 73
+      title_y = offset - 10
+    }
+
     ds = (
       <g transform={'translate('+0+','+0+')'}>
         <text style={plotText.legendTitle}>{meta.name}</text>
@@ -64,9 +75,9 @@ const Legend = ({values,zAxis,bins,palette,other,reducer,meta,shape,view,circleL
       headers.push('n50')
     }
     legendKey = (
-      <g transform={'translate('+(w+gap)+','+(offset-gap)+')'}>
-        <text transform={'translate(260)'}
-              style={Object.assign({}, plotText.legend, {textAnchor:'end',fontWeight:'normal'})}>
+      <g transform={'translate('+(title_x)+','+(title_y)+')'}>
+        <text transform={'translate('+(largeFonts ? 0 : 260)+')'}
+              style={Object.assign({}, plotText.legend, {textAnchor:largeFonts ? 'start' : 'end',fontWeight:'normal'})}>
           [{headers.join('; ')}]
         </text>
       </g>
@@ -85,10 +96,19 @@ const Legend = ({values,zAxis,bins,palette,other,reducer,meta,shape,view,circleL
     }
     if (count && showTotal){
       items.push(
-        <g key='all' transform={'translate(0,'+offset+')'}>
+        <g key='all' transform={'translate('+(largeFonts ? 101 : 0)+','+offset+')'}>
+          {largeFonts && (
+            <g>
+              <rect x={-155} y={-gap} width={150} height={h+gap} style={{fill:'white',stroke:'none'}} />
+              <text style={Object.assign({}, plotText.legend, {textAnchor:'end'})} transform={'translate('+(-gap*2)+','+(h-gap)+')'}>{title}</text>
+              <text style={plotText.legend} transform={'translate('+(w+gap*2)+','+(h-gap)+')'}>[{numbers.join('; ')}]</text>
+            </g>) || (<g>
+              <text style={plotText.legend} transform={'translate('+(w+gap)+','+(h-gap)+')'}>{title}</text>
+              <text style={Object.assign({}, plotText.legend, {textAnchor:'end'})} transform={'translate('+(w+gap+260)+','+(h-gap)+')'}>[{numbers.join('; ')}]</text>
+            </g>)
+          }
           <rect x={0} y={0} width={w} height={h} style={{fill:color,stroke:'black'}} />
-          <text style={plotText.legend} transform={'translate('+(w+gap)+','+(h-gap)+')'}>{title}</text>
-          <text style={Object.assign({}, plotText.legend, {textAnchor:'end'})} transform={'translate('+(w+gap+260)+','+(h-gap)+')'}>[{numbers.join('; ')}]</text>
+
         </g>
       )
       offset += h + gap
@@ -111,10 +131,18 @@ const Legend = ({values,zAxis,bins,palette,other,reducer,meta,shape,view,circleL
       }
       if (count){
         items.push(
-          <g key={i} transform={'translate(0,'+offset+')'}>
+          <g key={i} transform={'translate('+(largeFonts ? 101 : 0)+','+offset+')'}>
+            {largeFonts && (
+              <g>
+                <rect x={-155} y={-gap} width={150} height={h+gap} style={{fill:'white',stroke:'none'}} />
+                <text style={Object.assign({}, plotText.legend, {textAnchor:'end'})} transform={'translate('+(-gap*2)+','+(h-gap)+')'}>{title}</text>
+                <text style={plotText.legend} transform={'translate('+(w+gap*2)+','+(h-gap)+')'}>[{numbers.join('; ')}]</text>
+              </g>) || (<g>
+                <text style={plotText.legend} transform={'translate('+(w+gap)+','+(h-gap)+')'}>{title}</text>
+                <text style={Object.assign({}, plotText.legend, {textAnchor:'end'})} transform={'translate('+(w+gap+260)+','+(h-gap)+')'}>[{numbers.join('; ')}]</text>
+              </g>)
+            }
             <rect x={0} y={0} width={w} height={h} style={{fill:color,stroke:'black'}} />
-            <text style={plotText.legend} transform={'translate('+(w+gap)+','+(h-gap)+')'}>{title}</text>
-            <text style={Object.assign({}, plotText.legend, {textAnchor:'end'})} transform={'translate('+(w+gap+260)+','+(h-gap)+')'}>[{numbers.join('; ')}]</text>
           </g>
         )
         offset += h + gap
@@ -123,7 +151,7 @@ const Legend = ({values,zAxis,bins,palette,other,reducer,meta,shape,view,circleL
   }
   return (
     <g>
-      {ds}
+      {largeFonts || ds}
       {legendKey}
       {items}
     </g>

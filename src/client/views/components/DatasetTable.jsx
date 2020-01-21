@@ -14,7 +14,7 @@ import {
   setDatasetPageSize,
   getDatasetSorted,
   setDatasetSorted} from '../reducers/datasetTable'
-import colors from './_colors'
+import { getColorScheme } from '../reducers/color'
 import figure1 from './img/figure1.jpg'
 import CustomiseDatasetTable from './CustomiseDatasetTable'
 import DatasetTableCSV from './DatasetTableCSV'
@@ -147,7 +147,8 @@ class DatasetTable extends React.Component {
         columns: listingColumns(state),
         page: getDatasetPage(state),
         pageSize: getDatasetPageSize(state),
-        sorted: getDatasetSorted(state)
+        sorted: getDatasetSorted(state),
+        colors: getColorScheme(state)
       }
     }
     this.mapDispatchToProps = dispatch => {

@@ -20,7 +20,7 @@ export default class PlotHexBinsSVG extends React.Component {
       this.mapStateToProps
     )(HexBinsSVG)
     return (
-      <ConnectedHexBins />
+      <ConnectedHexBins {...this.props}/>
     )
   }
 }

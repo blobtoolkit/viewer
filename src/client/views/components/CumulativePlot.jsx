@@ -11,7 +11,7 @@ import { getSelectedDatasetMeta } from '../reducers/dataset'
 import AxisTitle from './AxisTitle'
 import { getShowReference} from '../reducers/reference'
 import { ExportButton } from './ExportButton'
-import { plotPaths, fillParent } from './PlotStyles'
+import { plotPaths, fillParent } from '../reducers/plotStyles'
 import { NoBlobWarning } from './NoBlobWarning'
 import FigureCaption from './FigureCaption'
 
@@ -20,7 +20,7 @@ class Cumulative extends React.Component {
     if (!this.props.cumulative || !this.props.cumulative.zAxis || this.props.cumulative.paths.byCat.length == 0) return null
     let side = 1110
     let viewbox = '0 0 '+side+' '+side
-    let legend = <g transform='translate(700,705)'><PlotLegend/></g>
+    let legend = <g transform='translate(685,705)'><PlotLegend/></g>
     let colors = this.props.cumulative.palette.colors
     let all = this.props.cumulative.paths.all
     let yValues = this.props.cumulative.values.all
@@ -43,7 +43,7 @@ class Cumulative extends React.Component {
         transform = 'translate('+offsets[i].x+','+-offsets[i].y+')'
       }
       return (
-        <path style={plotPaths.bold}
+        <path style={this.props.plotPaths.bold}
               d={d}
               key={i}
               fill='none'
@@ -107,7 +107,7 @@ class Cumulative extends React.Component {
               <CumulativePlotBoundary yValues={yValues} records={records} span={span}/>
               {refPaths}
               {refText}
-              { this.props.showTotal && <path style={plotPaths.axis}
+              { this.props.showTotal && <path style={this.props.plotPaths.axis}
                     d={all}
                     fill='none'
                     stroke='#999'
@@ -137,7 +137,8 @@ class CumulativePlot extends React.Component {
         origin: getCurveOrigin(state),
         showTotal: getShowTotal(state),
         searchTerm: getSearchTerm(state),
-        showReference: getShowReference(state)
+        showReference: getShowReference(state),
+        plotPaths: plotPaths(state)
       }
     }
   }

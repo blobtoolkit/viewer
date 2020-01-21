@@ -89,6 +89,11 @@ const mapDispatchToQuery = (
       payload: (k,v) => v,
       default: 'true'
     },
+    largeFonts: {
+      type: 'SET_LARGE_FONTS',
+      payload: (k,v) => v,
+      default: 'false'
+    },
     adjustCoverage: {
       type: 'SET_ADJUST_COVERAGE',
       payload: (k,v) => v,

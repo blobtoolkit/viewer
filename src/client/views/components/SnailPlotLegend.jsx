@@ -1,7 +1,30 @@
 import React from 'react'
-import { plotText } from './PlotStyles'
+import { connect } from 'react-redux'
+import { plotText } from '../reducers/plotStyles'
 
-const SnailPlotLegend = ({title,list=[]}) => {
+export default class SnailPlotLegend extends React.Component {
+  constructor(props) {
+    super(props);
+    this.mapStateToProps = () => {
+      return (state, props) => (
+        {
+          plotText: plotText(state)
+        }
+      )
+    }
+  }
+
+  render(){
+    const ConnectedSnailPlotLegend = connect(
+      this.mapStateToProps
+    )(SnailPlotLegendComponent)
+    return (
+      <ConnectedSnailPlotLegend {...this.props}/>
+    )
+  }
+}
+
+const SnailPlotLegendComponent = ({title,list=[],plotText}) => {
   let items = []
   let offset = 20
   let w = 25
@@ -33,5 +56,3 @@ const SnailPlotLegend = ({title,list=[]}) => {
     </g>
   )
 }
-
-export default SnailPlotLegend

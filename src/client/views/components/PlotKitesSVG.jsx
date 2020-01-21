@@ -17,7 +17,7 @@ export default class PlotKitesSVG extends React.Component {
       this.mapStateToProps
     )(KitesSVG)
     return (
-      <ConnectedKites />
+      <ConnectedKites {...this.props}/>
     )
   }
 }

@@ -50,6 +50,7 @@ const sets = (set) => {
   tips.linear = {name:'linear scale',settingsMenu:1}
   tips.adjust = {name:'exclude Ns from coverage',settingsMenu:1}
   tips.ellipsis = {name:'list reference assemblies',settingsMenu:1}
+  tips.fontSize = {name:'toggle larger fonts',settingsMenu:1}
   tips.sqrt = {name:'squre-root scale',settingsMenu:1}
   tips['size-slider'] = {name:'scale factor for bin size',filterMenu:1}
   tips['scale-slider'] = {name:'scale factor for size within bin',filterMenu:1}
