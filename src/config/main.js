@@ -48,5 +48,5 @@ module.exports = {
   'gdpr_url': process.env.BTK_GDPR_URL || '',
   'dataset_table': process.env.BTK_DATASET_TABLE || false,
   'use_default': process.env.BTK_USE_DEFAULT_LINKS || false,
-  'disableHostCheck': process.env.BTK_DISABLE_HOST_CHECK || false
+  'disableHostCheck': (String(process.env.BTK_DISABLE_HOST_CHECK) === 'true')
 }
