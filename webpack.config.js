@@ -55,6 +55,7 @@ const config = {
     hot: true,
     historyApiFallback: true,
     host: main.hostname,
+    disableHostCheck: main.disableHostCheck,
     contentBase: BUILD_DIR,
     compress: true,
     port: main.client_port,

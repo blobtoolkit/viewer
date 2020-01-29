@@ -47,5 +47,6 @@ module.exports = {
   'ga_id': process.env.BTK_GA_ID || '',
   'gdpr_url': process.env.BTK_GDPR_URL || '',
   'dataset_table': process.env.BTK_DATASET_TABLE || false,
-  'use_default': process.env.BTK_USE_DEFAULT_LINKS || false
+  'use_default': process.env.BTK_USE_DEFAULT_LINKS || false,
+  'disableHostCheck': process.env.BTK_DISABLE_HOST_CHECK || false
 }
