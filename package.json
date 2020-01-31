@@ -48,6 +48,7 @@
     "mkdirp-promise": "^5.0.1",
     "node-sass": "^4.13.1",
     "postcss-loader": "^3.0.0",
+    "prebuild-install": "^5.3.3",
     "promise": "^8.0.3",
     "prop-types": "^15.7.2",
     "react": "^16.12.0",
