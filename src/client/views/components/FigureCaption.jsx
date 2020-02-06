@@ -77,7 +77,10 @@ class Caption extends Component {
     let equation
     let record = this.props.meta.record_type || 'contig'
     let z = labels[this.props.plot.axes.z]
-    let [taxrule, cat] = this.props.plot.axes.cat.split('_')
+    let taxrule, cat
+    if (this.props.plot.axes.cat){
+      [taxrule, cat] = this.props.plot.axes.cat.split('_')
+    }
     if (this.props.view == 'blob'){
       if (!this.props.plot.axes.y){
         return null
