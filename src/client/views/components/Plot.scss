@@ -192,6 +192,25 @@ div.list_download {
   flex: 1 1 100%;
 }
 
+.centerContent {
+  height:100%;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  .warn {
+    color: $lightColor;
+    font-size: 2em;
+    background-color: $highlightColor;
+    padding: 0 0.25em;
+    display: block;
+  }
+  .info {
+    font-size: 1.25em;
+  }
+}
+
 .busco_fill_parent {
   position: absolute;
   top: 0;

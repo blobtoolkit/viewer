@@ -75,7 +75,7 @@ export const availableDatasets = handleActions(
       state
     ),
     RECEIVE_META: (state, action) => {
-      if(!state.byId[action.payload.id]){
+      if(!state.byId[action.payload.id] && !action.payload.json.error){
         let prefix, latest
         if (action.payload.json.assembly.prefix && action.payload.json.assembly.prefix){
           prefix = action.payload.json.assembly.prefix
@@ -180,13 +180,15 @@ export function fetchMeta(id) {
     }
     return fetch(`${apiUrl}/dataset/id/${id}`)
       .then(
-        response => response.json(),
-        error => console.log('An error occured.', error)
+        response => response.json()
       )
       .then(json => {
         json = clearUnderscores(json)
         json.fields.unshift({id:'userDefined',children:[{id:'selection'}]})
         dispatch(receiveMeta({id,json}))
+      })
+      .catch(err => {
+        dispatch(receiveMeta({id, json: {error: `dataset ${id} not found`}}))
       })
   }
 }
@@ -236,7 +238,6 @@ export const loadDataset = (id,clear) => {
     let threshold = getStaticThreshold(state)
     let nohit = getNohitThreshold(state)
     dispatch(setDatasetIsActive('loading'))
-    // dispatch(refreshStore())
     if (!window.firstLoad && !clear){
       dispatch(refreshStore())
       let values = {}
@@ -246,68 +247,73 @@ export const loadDataset = (id,clear) => {
     }
     dispatch(fetchMeta(id)).then(() => {
       let meta = deep(store.getState(),['availableDatasets','byId',id])
-      dispatch(setMaxCount(meta.assembly['scaffold-count']))
-      dispatch(setMaxSpan(meta.assembly.span))
-      let plot = {}
-      Object.keys(meta.plot).forEach(key=>{
-        plot[key] = meta.plot[key]
-      })
-      window.plot = plot
-      plot.id = 'default'
-      Object.keys(plot).forEach(key=>{
-        let qv = getQueryValue(key+'Field')
-        if (qv){
-          plot[key] = qv
-        }
-      })
-      if ((window.firstLoad || window.records < meta.records) && meta.records > threshold){
-        if (meta.static_plots && !isStatic) {
-          let view = getView(state)
-          dispatch(updatePathname({[view]:true,static:true}))
+      if (meta.error){
+        console.log(`ERROR: ${meta.error}`)
+        dispatch(updatePathname({notfound:true},{static:true}))
+        dispatch(setDatasetIsActive(true))
+      }
+      else {
+        dispatch(setMaxCount(meta.assembly['scaffold-count']))
+        dispatch(setMaxSpan(meta.assembly.span))
+        let plot = {}
+        Object.keys(meta.plot).forEach(key=>{
+          plot[key] = meta.plot[key]
+        })
+        window.plot = plot
+        plot.id = 'default'
+        Object.keys(plot).forEach(key=>{
+          let qv = getQueryValue(key+'Field')
+          if (qv){
+            plot[key] = qv
+          }
+        })
+        if ((window.firstLoad || window.records < meta.records) && meta.records > threshold){
+          if (meta.static_plots && !isStatic) {
+            let view = getView(state)
+            dispatch(updatePathname({[view]:true,static:true}))
+          }
+          else if (!meta.static_plots) {
+            dispatch(updatePathname({},{static:true}))
+          }
         }
         else if (!meta.static_plots) {
           dispatch(updatePathname({},{static:true}))
         }
-      }
-      else if (!meta.static_plots) {
-        dispatch(updatePathname({},{static:true}))
-      }
-      else if (window.records > meta.records && meta.records < threshold && isStatic){
-        dispatch(updatePathname({},{static:true}))
-      }
-      else if (meta.records < threshold){
-        dispatch(updatePathname({},{static:true}))
-      }
-
-      dispatch(editPlot(plot))
-      Promise.all(addAllFields(dispatch,meta.fields,1,meta,plot,false))
-      .then(()=>{
-        if (window.firstLoad || clear){
-          let values = qs.parse(getQueryString(state))
-          Object.keys(values).forEach(key=>{
-            if (key.match('--LimitMax')){
-              let k = key.replace('--Limit','--')
-              if (!values.hasOwnProperty(k)){
-                values[k] = values[key]
+        else if (window.records > meta.records && meta.records < threshold && isStatic){
+          dispatch(updatePathname({},{static:true}))
+        }
+        else if (meta.records < threshold){
+          dispatch(updatePathname({},{static:true}))
+        }
+        dispatch(editPlot(plot))
+        Promise.all(addAllFields(dispatch,meta.fields,1,meta,plot,false))
+        .then(()=>{
+          if (window.firstLoad || clear){
+            let values = qs.parse(getQueryString(state))
+            Object.keys(values).forEach(key=>{
+              if (key.match('--LimitMax')){
+                let k = key.replace('--Limit','--')
+                if (!values.hasOwnProperty(k)){
+                  values[k] = values[key]
+                }
               }
-            }
-          })
-          dispatch(queryToStore({values}))
-          window.firstLoad = false
-          dispatch(filterToList())
-        }
-        else {
-          dispatch(filterToList())
-        }
-        window.scrollTop = {}
-        window.records = meta.records
-      })
-      .then(()=>{
-        dispatch(setDatasetIsActive(true))
-        dispatch(fetchIdentifiers())
-        dispatch(addReferenceFields())
-      })
-
+            })
+            dispatch(queryToStore({values}))
+            window.firstLoad = false
+            dispatch(filterToList())
+          }
+          else {
+            dispatch(filterToList())
+          }
+          window.scrollTop = {}
+          window.records = meta.records
+        })
+        .then(()=>{
+          dispatch(setDatasetIsActive(true))
+          dispatch(fetchIdentifiers())
+          dispatch(addReferenceFields())
+        })
+      }
     })
   }
 }
