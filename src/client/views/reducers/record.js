@@ -87,6 +87,12 @@ const generateLink = (link, obj) => {
 
 }
 
+const chunkSize = (value) => {
+    let mag = Math.floor(Math.log10(value))
+    let first = Number(String(value).substring(0, 2)) + 1
+    return first * Math.pow(10, mag-1)
+}
+
 export const getCategoryDistributionForRecord = createSelector(
   getCurrentRecord,
   getRawDataForLength,
@@ -98,11 +104,14 @@ export const getCategoryDistributionForRecord = createSelector(
     if (!data || !data.values || typeof(data.id) == 'undefined') return false
     let yLimit = 0
     let binSize = 100000
+    let xLimit = lengths.values[data.id]
+    if (10 * binSize < xLimit){
+      binSize = chunkSize(xLimit / 10)
+    }
     let labels = {}
     let other = false
     let offsets = {}
     let sets = {}
-    let xLimit = lengths.values[data.id]
     let id = identifiers[data.id]
     let cat_i = data.category_slot
     if (Array.isArray(cat_i)){
@@ -175,7 +184,7 @@ export const getCategoryDistributionForRecord = createSelector(
       }
       return points
     })
-    return {lines,yLimit,xLimit,labels,id,otherColor:colors.colors[9]}
+    return {lines,yLimit,xLimit,labels,id,otherColor:colors.colors[9],binSize}
   }
 )
 
