@@ -30,10 +30,10 @@ export default class  CategoryPlotBoundary extends React.Component {
   }
 }
 
-export const CategoryPlotBoundaryComponent = ({length,maxScore,plotText}) => {
+export const CategoryPlotBoundaryComponent = ({length,maxScore,plotText,showDist,bins}) => {
   let xScale = d3scaleLinear().range([0,900]).domain([0,length])
-  let yScale = d3scaleLinear().range([200,0]).domain([0,maxScore])
-  let binSize = 100000
+  let yScale = d3scaleLinear().range([200,10]).domain([0,maxScore]).nice()
+  let binSize = bins[0]
   let xTicks = Math.min(Math.floor(length/binSize),10)
   if (length < binSize * Math.sqrt(2)){
     xTicks = 1
@@ -45,11 +45,25 @@ export const CategoryPlotBoundaryComponent = ({length,maxScore,plotText}) => {
   if (minorTicks < 5){
     minorTicks *= Math.round(10/minorTicks)
   }
+  let distBounds = []
+  if (showDist){
+    distBounds = bins.map((end,i)=>{
+    return (
+      <rect className={styles.plot_boundary}
+            key={i}
+            x={xScale(i == 0 ? 0 : bins[(i-1)])}
+            y={0}
+            height={5}
+            width={xScale(end - (i == 0 ? 0 : bins[(i-1)]))}/>
+        )})
+  }
   let fontSize = plotText.axisTick.fontSize
   let f = d3Format(".2s");
   return (
     <g>
-      <Axis {...axisPropsFromTickScale(xScale, xTicks)} style={{orient: BOTTOM, tickFontSize: 0, tickSizeInner:200, tickSizeOuter:200, strokeColor:'#eee'}}/>
+      <g transform={'translate(0,10)'} >
+        <Axis {...axisPropsFromTickScale(xScale, xTicks)} style={{orient: BOTTOM, tickFontSize: 0, tickSizeInner:190, tickSizeOuter:190, strokeColor:'#eee'}}/>
+      </g>
       <Axis {...axisPropsFromTickScale(yScale, 10)} format={f} style={{orient: LEFT, tickFontSize: fontSize}}/>
       <g transform={'translate(900)'} >
         <Axis {...axisPropsFromTickScale(yScale, 10)} style={{orient: LEFT, tickFontSize: 0, tickSizeInner:900, tickSizeOuter:900, strokeColor:'#eee'}}/>
@@ -63,7 +77,10 @@ export const CategoryPlotBoundaryComponent = ({length,maxScore,plotText}) => {
       <g transform={'translate(450,250)'}>
         <text className={styles.small_axis_title}>position (bp)</text>
       </g>
-      <rect className={styles.plot_boundary} x={0} y={0} width={900} height={200} fill='none'/>
+      <g>
+        {distBounds}
+      </g>
+      <rect  pointerEvents='none' className={styles.plot_boundary} x={0} y={0} width={900} height={200} fill='none'/>
     </g>
   )
 }
