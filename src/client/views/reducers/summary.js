@@ -1118,6 +1118,9 @@ export const getLinks = createSelector(
               links.position[0] = {title,func}
             }
           }
+          else if (key.match('_reverse')){
+            links[key] = new RegExp(meta.links[key])
+          }
           else {
             links.dataset[key][title] = links.dataset[key][title] || {}
             Object.keys(meta.links[key][title]).forEach(field=>{

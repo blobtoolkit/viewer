@@ -134,7 +134,8 @@ export const getCategoryDistributionForRecord = createSelector(
   getIdentifiers,
   getLinks,
   getColorPalette,
-  (data,lengths,bins,chunkInfo,identifiers,links, colors) => {
+  getCatAxis,
+  (data,lengths,bins,chunkInfo,identifiers,links,colors,catAxis) => {
     if (!data || !data.values || typeof(data.id) == 'undefined') return false
     let yLimit = 0
     let binSize = chunkInfo.binSize
@@ -189,6 +190,9 @@ export const getCategoryDistributionForRecord = createSelector(
         obj.taxon = data.keys[hit[cat_i]]
       }
       if (links.position){
+        if (links.position_reverse && catAxis.match(links.position_reverse)){
+          obj.index = Math.abs(obj.index - 1)
+        }
         if (links.position[0]){
           if (obj.index !== undefined && links.position[obj.index] !== undefined){
             points.link = generateLink(links.position[obj.index], obj)

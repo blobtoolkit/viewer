@@ -50,11 +50,14 @@ class Caption extends Component {
         }
         label = `${type} ${labels.cov} in ${parts[0]}`
       }
-      else if (parts.length == 3){
+      else if (parts.length == 3 && labels[parts[2]]){
         label = `${parts[1]} ${labels[parts[2]]}`
       }
+      else if (parts.length == 4 && labels[parts[3]]){
+        label = `${parts[2]} ${labels[parts[3]]}`
+      }
       else {
-        label = `${parts[1]}`
+        label = `${parts[parts.length-1]}`
       }
     }
     return label
@@ -190,7 +193,9 @@ class Caption extends Component {
     if (this.props.filters.length > 0){
       caption += `The assembly has been filtered to exclude${this.props.filters.length > 1 ? ':' : ''} ${record}s with `
       let filters = this.props.filters.map(o=>{
+        console.log(o)
         let name = this.axis(o.id)
+        console.log(name)
         if (o.type == 'in'){
           return `${name} < ${o.range[0].toLocaleString()} or > ${o.range[1].toLocaleString()}`
         }
