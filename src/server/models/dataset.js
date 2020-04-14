@@ -132,7 +132,8 @@ const defaultLinks = {
       {
         "UniProt": "https://www.uniprot.org/uniprot/{subject}"
       }
-    ]
+    ],
+    "position_reverse": "_aa_"
   }
 }
 

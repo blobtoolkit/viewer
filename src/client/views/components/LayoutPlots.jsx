@@ -13,6 +13,7 @@ import MainPlot from './MainPlot'
 import BuscoPlot from './BuscoPlot'
 import CumulativePlot from './CumulativePlot'
 import DetailPlot from './DetailPlot'
+import NoPlot from './NoPlot'
 import SnailPlot from './SnailPlot'
 import StaticPlot from './StaticPlot'
 import TablePlot from './TablePlot'
@@ -110,6 +111,9 @@ class PlotsLayoutComponent extends React.Component {
           break
         case 'detail':
           view = <DetailPlot {...this.props}/>
+          break
+        case 'notfound':
+          view = <NoPlot {...this.props}/>
           break
         case 'snail':
           view = <SnailPlot {...this.props}/>

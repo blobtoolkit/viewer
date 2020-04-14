@@ -2,6 +2,7 @@ import { createAction, handleAction, handleActions } from 'redux-actions'
 import { createSelector } from 'reselect'
 import { byIdSelectorCreator } from './selectorCreators'
 import { getDatasetID } from './location'
+import { getSelectedDatasetMeta } from './dataset'
 import { getCatAxis } from './plot';
 import { format as d3Format } from 'd3-format'
 import { getBinsForCat, getDetailsForFieldId } from './field'
@@ -87,22 +88,67 @@ const generateLink = (link, obj) => {
 
 }
 
+const chunkSize = (value) => {
+  let mag = Math.floor(Math.log10(value))
+  let first = Number(String(value).substring(0, 2)) + 1
+  return first * Math.pow(10, mag-1)
+}
+
+const indexOfMax = (arr) => {
+  if (arr.length === 0) {
+    return -1
+  }
+  let max = (arr[0] || 0)
+  let maxIndex = 0
+  for (let i = 1; i < arr.length; i++) {
+    if (arr[i] > max) {
+      maxIndex = i
+      max = arr[i]
+    }
+  }
+  return maxIndex;
+}
+
+export const getChunkInfo = createSelector(
+  getSelectedDatasetMeta,
+  (meta) => {
+    let binSize = Number.POSITIVE_INFINITY
+    let maxChunks = 1
+    if (meta.settings){
+      if (meta.settings.blast_chunk){
+        binSize = meta.settings.blast_chunk
+      }
+      if (meta.settings.blast_max_chunks){
+        maxChunks = meta.settings.blast_max_chunks
+      }
+    }
+    return {binSize, maxChunks}
+  }
+)
+
 export const getCategoryDistributionForRecord = createSelector(
   getCurrentRecord,
   getRawDataForLength,
   getCatBinIndices,
+  getChunkInfo,
   getIdentifiers,
   getLinks,
   getColorPalette,
-  (data,lengths,bins,identifiers,links, colors) => {
+  getCatAxis,
+  (data,lengths,bins,chunkInfo,identifiers,links,colors,catAxis) => {
     if (!data || !data.values || typeof(data.id) == 'undefined') return false
     let yLimit = 0
-    let binSize = 100000
+    let binSize = chunkInfo.binSize
+    let maxChunks = chunkInfo.maxChunks
+    let xLimit = lengths.values[data.id]
+    if (maxChunks * binSize < xLimit){
+      binSize = chunkSize(xLimit / maxChunks)
+    }
+    let catScores = []
     let labels = {}
     let other = false
     let offsets = {}
     let sets = {}
-    let xLimit = lengths.values[data.id]
     let id = identifiers[data.id]
     let cat_i = data.category_slot
     if (Array.isArray(cat_i)){
@@ -121,11 +167,14 @@ export const getCategoryDistributionForRecord = createSelector(
       let width = hit[end_i] - hit[start_i]
       points.x1 = center
       points.x2 = points.x1
-      let bin = Math.floor(hit[start_i]/binSize)*binSize
+      let bin_i = Math.floor(hit[start_i]/binSize)
+      let bin = bin_i*binSize
+      if (!catScores[bin_i]) catScores[bin_i] = []
       let offset = offsets[bin] || 0
       let previous = sets[bin]
       sets[bin] = i
       offsets[bin] = hit[score_i] + offset
+      catScores[bin_i][hit[cat_i]] = (catScores[bin_i][hit[cat_i]] || 0) + hit[score_i]
       if (offsets[bin] > yLimit) yLimit = offsets[bin]
       points.y1 = offsets[bin]
       points.y2 = offset
@@ -141,6 +190,9 @@ export const getCategoryDistributionForRecord = createSelector(
         obj.taxon = data.keys[hit[cat_i]]
       }
       if (links.position){
+        if (links.position_reverse && catAxis.match(links.position_reverse)){
+          obj.index = Math.abs(obj.index - 1)
+        }
         if (links.position[0]){
           if (obj.index !== undefined && links.position[obj.index] !== undefined){
             points.link = generateLink(links.position[obj.index], obj)
@@ -175,7 +227,8 @@ export const getCategoryDistributionForRecord = createSelector(
       }
       return points
     })
-    return {lines,yLimit,xLimit,labels,id,otherColor:colors.colors[9]}
+    let binCats = catScores.map(arr=>indexOfMax(arr))
+    return {lines,yLimit,xLimit,labels,id,otherColor:colors.colors[9],maxChunks,binSize,binCats}
   }
 )
 

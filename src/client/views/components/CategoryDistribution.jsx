@@ -33,8 +33,32 @@ class CatDistribution extends React.Component {
     let yLimit = this.props.data.yLimit || 10000
     let xLimit = this.props.data.xLimit || 1000000
     let xScale = d3scaleLinear().domain([0,xLimit]).range([0,900])
-    let yScale = d3scaleLinear().domain([0,yLimit]).range([200,0])
+    let yScale = d3scaleLinear().domain([0,yLimit]).range([200,10]).nice()
     let viewbox = '0 0 1000 325'
+    let binCount = this.props.data.xLimit / this.props.data.binSize
+    let bins = []
+    let ends = []
+    for (let i = 0; i < binCount; i++){
+      let start = this.props.data.binSize*i
+      let end = this.props.data.binSize*(i+1)
+      let width
+      if (xScale(end) < 900){
+        width = xScale(this.props.data.binSize)
+        ends.push(end)
+      }
+      else {
+        width = xScale(xLimit - start)
+        ends.push(xLimit)
+      }
+      bins.push(<rect x={xScale(start)}
+                      y={0}
+                      key={i}
+                      width={width}
+                      height={5}
+                      fill={this.props.data.binCats[i] > -1 ? this.props.colors[this.props.data.binCats[i]] || this.props.data.otherColor : 'none'}
+                      stroke={'none'}
+                />)
+    }
     let lines = points.map((line,i)=>{
       let color = this.props.colors[line.cat] || this.props.data.otherColor
       let url
@@ -42,7 +66,8 @@ class CatDistribution extends React.Component {
         url = line.link.url
       }
       let connector
-      if (line.previous || line.previous === 0){
+      if ((this.props.data.binSize < Number.POSITIVE_INFINITY && this.props.data.maxChunks > 1)
+            && (line.previous || line.previous === 0)){
         connector = <line
               x1={xScale(points[line.previous].x1)}
               x2={xScale(line.x2)}
@@ -108,7 +133,8 @@ class CatDistribution extends React.Component {
           </g>
 
           <g transform={'translate(75,50)'} >
-            <CategoryPlotBoundary length={xLimit} maxScore={yLimit}/>
+            {bins}
+            <CategoryPlotBoundary length={xLimit} maxScore={yLimit} showDist={true} bins={ends}/>
           </g>
           <g transform={'translate(75,50)'} >
             {lines}

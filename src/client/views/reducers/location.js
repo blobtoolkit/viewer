@@ -18,13 +18,23 @@ export const pathname = handleAction(
   (state, action) => (
     action.payload
   ),
-  document.location.pathname.replace((new RegExp('^'+basename)),'') || ''
+  document.location.pathname.replace((new RegExp('^'+basename)),'').replace('notfound','') || ''
 )
 export const getPathname = state => {
   return state.pathname
 }
 
-const options = ['blob','busco','cumulative','detail','dataset','report','snail','table','treemap','static']
+const options = ['blob',
+                 'busco',
+                 'cumulative',
+                 'detail',
+                 'dataset',
+                 'notfound',
+                 'report',
+                 'snail',
+                 'table',
+                 'treemap',
+                 'static']
 
 export const getViews = createSelector(
   getPathname,
