@@ -83,7 +83,8 @@ const config = {
       BRANCH: JSON.stringify(gitRevisionPlugin.branch()),
       GA_ID: JSON.stringify(main.ga_id),
       GDPR_URL: JSON.stringify(main.gdpr_url),
-      DATASET_TABLE: (main.dataset_table ? true : false)
+      DATASET_TABLE: (main.dataset_table ? true : false),
+      MESSAGE: JSON.stringify(main.message)
     }),
     new HtmlWebpackPlugin({
       hash: true,

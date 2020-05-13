@@ -20,6 +20,7 @@ import ToolTips from './ToolTips'
 import Search from './Search'
 
 const dataset_table = DATASET_TABLE || false
+const message = MESSAGE || false
 
 const DatasetFinder = ({ searchTerm, selectedDataset, isFetching, datasetIds, datasets, onDatasetMount, onDatasetClick }) => {
   let css = dataset_table ? styles.fill_parent : ''
@@ -35,6 +36,9 @@ const DatasetFinder = ({ searchTerm, selectedDataset, isFetching, datasetIds, da
         </span>
       ) : null }
       {dataset_table && <DatasetTable onDatasetClick={onDatasetClick}/>}
+      {message && <span><hr/>
+      <p className={styles.message}>{message}</p>
+      </span>}
       <hr/>
       <DatasetTree searchTerm={searchTerm}/>
 

@@ -632,3 +632,9 @@ div.reset {
 .menuButton:hover {
   background-color: $highlightColor;
 }
+
+.message {
+  color: $lightColor;
+  background-color: $highlightColor;
+  padding: 1em;
+}
