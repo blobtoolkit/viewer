@@ -98,7 +98,7 @@ const defaultLinks = {
         "ENA": "https://www.ebi.ac.uk/ena/browser/view/Taxon:{taxid}"
       },
       "species" : {
-        "Wikipedia": "https://wikipedia.org/{species}"
+        "Wikipedia": "https://wikipedia.org/wiki/{species}"
       }
     },
     "blobtoolkit": {
