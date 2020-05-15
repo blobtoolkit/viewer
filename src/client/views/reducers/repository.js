@@ -21,6 +21,7 @@ import { getDatasetID,
   getQueryValue,
   getQueryString,
   getHashString,
+  removeHash,
   getStatic } from './location'
 
 const apiUrl = API_URL || '/api/v1'
@@ -103,6 +104,17 @@ export const getAvailableDatasetIds = state => deep(state,'availableDatasets.all
 
 export const getAvailableDatasets = state => deep(state,'availableDatasets.byId') || []
 
+export const setApiStatus = createAction('SET_API_STATUS')
+export const apiStatus = handleAction(
+  'SET_API_STATUS',
+  (state, action) => (
+    action.payload
+  ),
+  true
+)
+export const getApiStatus = state => state.apiStatus
+
+
 export function fetchRepository(searchTerm) {
   return function (dispatch) {
     dispatch(setDatasetIsActive(false))
@@ -139,7 +151,6 @@ export function fetchRepository(searchTerm) {
         response => response.json(),
         error => console.log('An error occured.', error)
       )
-      .catch(err => console.log('An error occured.', apiUrl))
       .then(json =>{
         if (datasetId){
           if (!reload){
@@ -160,6 +171,8 @@ export function fetchRepository(searchTerm) {
         dispatch(receiveRepository(json))
       }
     )
+    .catch(err => dispatch(setApiStatus(false)))
+
   }
 }
 
@@ -251,6 +264,7 @@ export const loadDataset = (id,clear) => {
       if (meta.error){
         console.log(`ERROR: ${meta.error}`)
         dispatch(updatePathname({notfound:true},{static:true}))
+        dispatch(removeHash())
         dispatch(setDatasetIsActive(true))
       }
       else {
@@ -358,6 +372,7 @@ export const getReloading = state => state.reloading
 export const repositoryReducers = {
   availableDatasets,
   fetchRepository,
+  apiStatus,
   datasetIsActive,
   reloading,
   staticThreshold,

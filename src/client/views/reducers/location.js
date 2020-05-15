@@ -224,8 +224,13 @@ export const removeHash = (value) => {
   return function (dispatch) {
     let state = store.getState()
     let currentHash = getHashString(state)
-    if (currentHash == value){
-      dispatch(toggleHash(value))
+    if (value){
+      if (currentHash == value){
+        dispatch(toggleHash(value))
+      }
+    }
+    else {
+      dispatch(toggleHash(currentHash))
     }
   }
 }

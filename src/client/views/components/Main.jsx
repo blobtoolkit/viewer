@@ -3,13 +3,14 @@ import { connect } from 'react-redux'
 import { Router, Switch, Route } from 'react-router-dom'
 import Dataset from './Dataset';
 import Routes from './Routes';
+import NoPlot from './NoPlot'
 import Repository from './Repository';
 import { NotFound } from './Error';
 import history from '../reducers/history';
 import { cookieConsent, analytics } from '../reducers/tracking';
 import Spinner from './Spinner'
 import { getDatasetID } from '../reducers/location'
-import { getDatasetIsActive } from '../reducers/repository'
+import { getApiStatus, getDatasetIsActive } from '../reducers/repository'
 import { getCookieConsent, getAnalytics, setCookieConsent, startAnalytics } from '../reducers/tracking'
 import { fetchRepository, getRepositoryIsInitialised, getRepositoryIsFetching } from '../reducers/repository'
 import ReactGA from 'react-ga';
@@ -42,6 +43,10 @@ class MainDiv extends React.Component {
   }
 
   render(){
+    if (!this.props.apiStatus){
+      console.log('error with API')
+      return (<NoPlot reason='api'/>)
+    }
     if (!this.props.initialised){
        return null
     }
@@ -62,6 +67,7 @@ export default class Main extends React.Component {
     super(props);
     this.mapStateToProps = state => (
       {
+        apiStatus: getApiStatus(state),
         initialised: getRepositoryIsInitialised(state),
         fetching: getRepositoryIsFetching(state),
         datasetId: getDatasetID(state),
