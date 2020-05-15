@@ -139,6 +139,7 @@ export function fetchRepository(searchTerm) {
         response => response.json(),
         error => console.log('An error occured.', error)
       )
+      .catch(err => console.log('An error occured.', apiUrl))
       .then(json =>{
         if (datasetId){
           if (!reload){

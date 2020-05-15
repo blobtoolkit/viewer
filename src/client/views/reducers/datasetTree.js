@@ -5,6 +5,7 @@ import { getSearchTerm } from './location'
 import store from '../store'
 
 const apiUrl = API_URL || '/api/v1'
+const showTargetTree = TARGET_TREE || false
 
 const requestDatasetTree = createAction('REQUEST_DATASET_TREE')
 const receiveDatasetTree = createAction(
@@ -45,7 +46,9 @@ export function fetchDatasetTree() {
       )
       .then(json =>{
         dispatch(receiveDatasetTree(json))
-        dispatch(fetchTargetTree())
+        if (showTargetTree){
+          dispatch(fetchTargetTree())
+        }
       }
     )
   }
