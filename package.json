@@ -5,6 +5,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "preinstall": "npx npm-force-resolutions",
     "api": "node src/server/app.js",
     "start": "nodemon src/server/app.js",
     "client": "webpack-dev-server --mode development --content-base src/client",
@@ -112,5 +113,8 @@
     "selenium-webdriver": "^3.6.0",
     "should": "^13.2.3",
     "webpack-dev-server": "^3.10.1"
+  },
+  "resolutions": {
+    "fsevents": "2.1.3"
   }
 }
