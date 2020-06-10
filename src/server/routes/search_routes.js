@@ -46,7 +46,8 @@ const readMeta = (dir,md) => {
     }
     versions[o.prefix][o.revision] = i
   })
-  fs.readdirSync(dir).forEach(file => {
+  let files = fs.readdirSync(dir)
+  files.forEach(file => {
     let path = dir+'/'+file
     if (fs.statSync(path).isDirectory()){
       readMeta(path,md)
