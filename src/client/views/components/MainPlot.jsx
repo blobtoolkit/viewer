@@ -273,35 +273,20 @@ class PlotBox extends React.Component {
     if (this.props.plotShape == 'circle'){
       if (this.props.plotGraphics != 'svg'){
         plotCanvas = (
-
-          <svg id="main_plot"
-            ref={(elem) => { this.svg = elem; }}
-            className={styles.main_plot+' '+styles.fill_parent}
-            viewBox={viewbox}
-            preserveAspectRatio="xMinYMin">
-            {mask}
-            <g transform={'translate(100,320)'} >
-              <g transform="translate(50,50)">
-                <g>
-                  <foreignObject width={900} height={900}>
-                    <div xmlns="http://www.w3.org/1999/xhtml" className={styles.fill_parent}>
-                      <PlotBubblesCanvasLayers {...this.props}/>
-                    </div>
-                  </foreignObject>
-                  <PlotRefKitesSVG/>
-                </g>
-              </g>
-            </g>
-          </svg>
+          <g>
+            <foreignObject width={900} height={900}>
+              <div xmlns="http://www.w3.org/1999/xhtml" className={styles.fill_parent}>
+                <PlotBubblesCanvasLayers {...this.props}/>
+              </div>
+            </foreignObject>
+            <PlotRefKitesSVG/>
+          </g>
         )
       }
       return (
         <div className={styles.outer}>
-          <div className={styles.fill_parent} style={{display:'block',position:'relative'}}>
-            <div style={{height:'100%',width:'100%',position:'absolute'}}>
-              {plotCanvas}
-            </div>
-            <div style={{height:'100%',width:'100%',position:'absolute'}}>
+          <div className={styles.fill_parent}>
+            <div className={styles.fill_parent}>
               <svg id="main_plot"
                 ref={(elem) => { this.svg = elem; }}
                 className={styles.main_plot+' '+styles.fill_parent}
@@ -312,6 +297,7 @@ class PlotBox extends React.Component {
                   <g transform="translate(50,50)">
                     <PlotTransformLines />
                     {plotContainer}
+                    {plotCanvas}
                     <PlotRefKitesSVG/>
                   </g>
                   {xPlot}
