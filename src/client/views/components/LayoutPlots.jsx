@@ -87,8 +87,16 @@ class PlotsLayoutComponent extends React.Component {
       return <HomePage toggleHash={this.props.toggleHash}/>
     }
     let defaultPlot = <MainPlot {...this.props}/>
+    let problem
     if (this.props.active && this.props.active != 'loading' && Object.keys(this.props.plot.axes).length < 4){
-      defaultPlot = <CumulativePlot {...this.props} warning='noBlob'/>
+      if (!this.props.plot.axes.cat){
+        defaultPlot = <SnailPlot {...this.props} warning='noCat'/>
+        problem = 'noCat'
+      }
+      else {
+        defaultPlot = <CumulativePlot {...this.props} warning='noBlob'/>
+        problem = 'noBlob'
+      }
     }
     let view
     if (this.props.static){
@@ -99,6 +107,14 @@ class PlotsLayoutComponent extends React.Component {
         default:
           view = <StaticPlot {...this.props}/>
           break
+      }
+    }
+    else if (problem){
+      if (this.props.view == 'blob'){
+        view = defaultPlot
+      }
+      else if (problem == 'noCat' && this.props.view == 'cumulative'){
+        view = defaultPlot
       }
     }
     else {
