@@ -247,7 +247,7 @@ const tabulate = (term) => {
   prefixes = {};
   json.forEach((assembly) => {
     if (assembly.summaryStats) {
-      if (assembly.accession.startsWith("GCA_")) {
+      if (assembly.accession && assembly.accession.startsWith("GCA_")) {
         let id = assembly.id;
         let prefix = assembly.prefix;
         let revision = assembly.revision || 0;
@@ -260,6 +260,7 @@ const tabulate = (term) => {
             3
           )}\t${pctTarget.toPrecision(3)}\t${ratio.toPrecision(2)}`;
           prefixes[prefix] = {
+            id,
             gca: `${assembly.accession}\t${string}`,
             wgs: `${prefix}000000\t${string}`,
             revision,
@@ -268,8 +269,7 @@ const tabulate = (term) => {
       }
     }
   });
-  let byGCA = "test/n";
-  console.log(Object.keys(prefixes));
+  let byGCA = "";
   let byWGS = "";
   Object.keys(prefixes).forEach((prefix) => {
     byGCA += `${prefixes[prefix].gca}\n`;
