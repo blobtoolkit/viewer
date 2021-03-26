@@ -1,17 +1,17 @@
-const sharp = require('sharp');
+const sharp = require("sharp");
 
 const resize = async (file, width, height) => {
-  height = height || width
+  height = height || width;
   let buffer = await sharp(file)
     .resize(width, height, {
       fit: sharp.fit.inside,
-      withoutEnlargement: true
+      withoutEnlargement: true,
     })
-    .toFormat('png')
+    .toFormat("png")
     .toBuffer()
-    .then(outputBuffer => outputBuffer)
-  return buffer
-}
+    .then((outputBuffer) => outputBuffer);
+  return buffer;
+};
 
 /**
  * @swagger
@@ -29,33 +29,33 @@ const resize = async (file, width, height) => {
  *     description: view type
  */
 /**
-   * @swagger
-   * parameters:
-   *   type:
-   *     in: path
-   *     name: type
-   *     type: string
-   *     enum:
-   *       - square
-   *       - hex
-   *       - circle
-   *     required: true
-   *     description: blob view plot type
-   */
- /**
-  * @swagger
-  * parameters:
-  *   format:
-  *     in: query
-  *     name: format
-  *     type: string
-  *     enum:
-  *       - png
-  *       - svg
-  *     required: false
-  *     description: image format
-  *     default: png
-  */
+ * @swagger
+ * parameters:
+ *   type:
+ *     in: path
+ *     name: type
+ *     type: string
+ *     enum:
+ *       - square
+ *       - hex
+ *       - circle
+ *     required: true
+ *     description: blob view plot type
+ */
+/**
+ * @swagger
+ * parameters:
+ *   format:
+ *     in: query
+ *     name: format
+ *     type: string
+ *     enum:
+ *       - png
+ *       - svg
+ *     required: false
+ *     description: image format
+ *     default: png
+ */
 /**
  * @swagger
  * parameters:
@@ -65,11 +65,9 @@ const resize = async (file, width, height) => {
  *     type: integer
  *     required: false
  *     description: png image width
- *     default: 2000
  */
 
-
-module.exports = function(app, db) {
+module.exports = function (app, db) {
   var directory = app.locals.directory;
 
   /**
@@ -88,9 +86,9 @@ module.exports = function(app, db) {
    *     parameters:
    *       - $ref: "#/parameters/dataset_id"
    */
-  app.get('/api/v1/image/:dataset_id', async (req, res) => {
-    res.setHeader('content-type', 'image/png');
-    res.sendFile(directory+"/"+req.params.dataset_id+"/blob.square.png");
+  app.get("/api/v1/image/:dataset_id", async (req, res) => {
+    res.setHeader("content-type", "image/png");
+    res.sendFile(directory + "/" + req.params.dataset_id + "/blob.square.png");
   });
 
   /**
@@ -112,24 +110,36 @@ module.exports = function(app, db) {
    *       - $ref: "#/parameters/format"
    *       - $ref: "#/parameters/width"
    */
-  app.get('/api/v1/image/:dataset_id/:view', async (req, res) => {
-    let type = ''
-    if (req.params.view == 'blob'){
-      type = '.square'
+  app.get("/api/v1/image/:dataset_id/:view", async (req, res) => {
+    let type = "";
+    if (req.params.view == "blob") {
+      type = ".square";
     }
-    if (req.query.format == 'svg'){
-      res.setHeader('content-type', 'image/svg+xml');
-      let file = directory+"/"+req.params.dataset_id+"/"+req.params.view+type+".svg"
+    if (req.query.format == "svg") {
+      res.setHeader("content-type", "image/svg+xml");
+      let file =
+        directory +
+        "/" +
+        req.params.dataset_id +
+        "/" +
+        req.params.view +
+        type +
+        ".svg";
       res.sendFile(file);
-    }
-    else {
-      res.setHeader('content-type', 'image/png');
-      let file = directory+"/"+req.params.dataset_id+"/"+req.params.view+type+".png"
-      if (req.query.width){
-        let outputBuffer = await resize(file, Math.floor(1*req.query.width))
-        res.send(outputBuffer)
-      }
-      else {
+    } else {
+      res.setHeader("content-type", "image/png");
+      let file =
+        directory +
+        "/" +
+        req.params.dataset_id +
+        "/" +
+        req.params.view +
+        type +
+        ".png";
+      if (req.query.width) {
+        let outputBuffer = await resize(file, Math.floor(1 * req.query.width));
+        res.send(outputBuffer);
+      } else {
         res.sendFile(file);
       }
     }
@@ -154,23 +164,32 @@ module.exports = function(app, db) {
    *       - $ref: "#/parameters/format"
    *       - $ref: "#/parameters/width"
    */
-  app.get('/api/v1/image/:dataset_id/blob/:type', async (req, res) => {
-    if (req.query.format == 'svg'){
-      res.setHeader('content-type', 'image/svg+xml');
-      let file = directory+"/"+req.params.dataset_id+"/blob."+req.params.type+".svg"
+  app.get("/api/v1/image/:dataset_id/blob/:type", async (req, res) => {
+    if (req.query.format == "svg") {
+      res.setHeader("content-type", "image/svg+xml");
+      let file =
+        directory +
+        "/" +
+        req.params.dataset_id +
+        "/blob." +
+        req.params.type +
+        ".svg";
       res.sendFile(file);
-    }
-    else {
-      res.setHeader('content-type', 'image/png');
-      let file = directory+"/"+req.params.dataset_id+"/blob."+req.params.type+".png"
-      if (req.query.width){
-        let outputBuffer = await resize(file, Math.floor(1*req.query.width))
-        res.send(outputBuffer)
-      }
-      else {
+    } else {
+      res.setHeader("content-type", "image/png");
+      let file =
+        directory +
+        "/" +
+        req.params.dataset_id +
+        "/blob." +
+        req.params.type +
+        ".png";
+      if (req.query.width) {
+        let outputBuffer = await resize(file, Math.floor(1 * req.query.width));
+        res.send(outputBuffer);
+      } else {
         res.sendFile(file);
       }
     }
-
   });
 };

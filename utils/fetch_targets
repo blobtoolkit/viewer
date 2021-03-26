@@ -3,46 +3,36 @@ const doc = `
 Usage:
   utils/fetch_targets TAXID
 `;
-
+const parser = require("fast-xml-parser");
 const fetch = require("node-fetch");
 const resolve = require("path").resolve;
 const docopt = require("docopt").docopt;
 const fs = require("fs");
+// const readline = require('readline')
+// const { execFileSync } = require('child_process');
+
+const sleep = (ms) => {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+};
 
 const fetchAsyncText = async (url) => await (await fetch(url)).text();
 
 const countAssemblies = async (root) => {
-  let baseUrl = "https://www.ebi.ac.uk/ena/portal/api";
-  let url = `${baseUrl}/count?query="tax_tree(${root})"&result=assembly`;
+  let baseUrl = "https://www.ebi.ac.uk/ena/data/warehouse";
+  let url = `${baseUrl}/search?query="tax_tree(${root})"&result=assembly&resultcount`;
   let text = await fetchAsyncText(url);
   let count = text.match(/[\d,]+/)[0];
   return count.replace(",", "");
 };
 
-const listAssemblies = async (root) => {
-  let baseUrl = "https://www.ebi.ac.uk/ena/portal/api";
-  let fields = "accession,tax_id,sample_accession,assembly_name";
-  let url = `${baseUrl}/search?query="tax_tree(${root})"&result=assembly&fields=${fields}&format=json`;
+const listAssemblies = async (root, offset, count) => {
+  let baseUrl = "https://www.ebi.ac.uk/ena/data/warehouse";
+  let url = `${baseUrl}/search?query="tax_tree(${root})"&result=assembly&display=xml&offset=${offset}&length=${count}`;
   process.stderr.write(`${url}\n`);
-  let assemblies = await fetchAsyncText(url);
-  assemblies = JSON.parse(assemblies);
-  process.stderr.write(JSON.stringify(assemblies[0]));
-  return assemblies;
-};
-
-const listWGS = async (root) => {
-  let baseUrl = "https://www.ebi.ac.uk/ena/portal/api";
-  let fields = "accession,study_accession,sample_accession";
-  let url = `${baseUrl}/search?query="tax_tree(${root})"&result=wgs_set&fields=${fields}&format=json`;
-  process.stderr.write(`${url}\n`);
-  let sets = await fetchAsyncText(url);
-  samples = {};
-  sets = JSON.parse(sets);
-  process.stderr.write(JSON.stringify(sets[0]));
-  sets.forEach((set) => {
-    samples[set.sample_accession] = set;
-  });
-  return samples;
+  let xmlData = await fetchAsyncText(url);
+  let jsonObj = parser.parse(xmlData);
+  let assemblies = jsonObj.ROOT.ASSEMBLY;
+  return Array.isArray(assemblies) ? assemblies : [assemblies];
 };
 
 const hierarchy = [
@@ -100,32 +90,44 @@ const addAssemblyToTree = (taxid, acc, taxdump, tree) => {
 const main = async (args) => {
   let count = await countAssemblies(args.TAXID);
   process.stderr.write(`Processing ${count} assemblies...\n`);
+  let offset = 0;
+  let step = 50;
   let taxids = {};
   let taxdump = JSON.parse(fs.readFileSync(`${__dirname}/taxdump.json`));
   let targets = { n, r: "root", ta: 0, ts: 0, d: {} };
   let ids = {};
   let processed = 0;
-  let assemblies = await listAssemblies(args.TAXID);
-  let samples = await listWGS(args.TAXID);
-
-  assemblies.forEach((asm) => {
-    let taxid = asm.tax_id;
-    let acc;
-    let id = asm.accession.replace(/\./g, "_");
-    if (!ids[id]) {
-      ids[id] = true;
-      processed += 1;
-      if (samples[asm.sample_accession]) {
-        acc = samples[asm.sample_accession].accession;
-        acc = acc.replace(/0+$/g, "");
-      } else if (asm.assembly_name && asm.assembly_name.length > 0) {
-        acc = asm.assembly_name.replace(/\./g, "_");
+  while (processed < count) {
+    process.stderr.write(`${offset}\r`);
+    // step = Math.min(count-offset,step)
+    let assemblies = await listAssemblies(args.TAXID, offset, step);
+    assemblies.forEach((asm) => {
+      if (asm) {
+        let taxid = asm.TAXON.TAXON_ID;
+        let acc;
+        let id = asm.IDENTIFIERS.PRIMARY_ID.replace(".", "_");
+        if (!ids[id]) {
+          ids[id] = true;
+          processed += 1;
+          if (asm.WGS_SET && asm.WGS_SET.VERSION) {
+            acc =
+              asm.WGS_SET.PREFIX +
+              (asm.WGS_SET.VERSION < 10
+                ? "0" + asm.WGS_SET.VERSION
+                : asm.WGS_SET.VERSION);
+          } else if (asm.ALIAS && asm.ALIAS.indexOf(" ") < 0) {
+            acc = asm.ALIAS.replace(".", "_");
+          } else {
+            acc = id;
+          }
+          addAssemblyToTree(taxid, acc, taxdump, targets, n);
+        }
       } else {
-        acc = id;
+        processed = count;
       }
-      addAssemblyToTree(taxid, acc, taxdump, targets, n);
-    }
-  });
+    });
+    offset += step;
+  }
   process.stderr.write(`done\n`);
   process.stdout.write(JSON.stringify(targets));
 };
