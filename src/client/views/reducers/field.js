@@ -1,26 +1,28 @@
-import { createAction, handleAction, handleActions } from "redux-actions";
-import { createSelector } from "reselect";
-import { byIdSelectorCreator } from "./selectorCreators";
-import immutableUpdate from "immutable-update";
-import deep from "deep-get-set";
-import store from "../store";
-import { getSelectedDatasetMeta } from "./dataset";
-import { addFilter, editFilter, getMetaDataForFilter } from "./filter";
-import { getCatAxis } from "./plot";
-import {
-  getDimensionsbyDimensionId,
-  setDimension,
-  getPreviewDimensions,
-} from "./dimension";
 import * as d3 from "d3";
+
+import { addFilter, editFilter, getMetaDataForFilter } from "./filter";
+import { createAction, handleAction, handleActions } from "redux-actions";
 import {
+  getDatasetID,
   getParsedQueryString,
   getQueryValue,
-  getDatasetID,
-  getView,
   getStatic,
+  getView,
 } from "./location";
+import {
+  getDimensionsbyDimensionId,
+  getPreviewDimensions,
+  setDimension,
+} from "./dimension";
+
+import { byIdSelectorCreator } from "./selectorCreators";
+import { createSelector } from "reselect";
+import deep from "deep-get-set";
 import { fetchReferenceValues } from "./reference";
+import { getCatAxis } from "./plot";
+import { getSelectedDatasetMeta } from "./dataset";
+import immutableUpdate from "immutable-update";
+import store from "../store";
 
 const apiUrl = API_URL || "/api/v1";
 
@@ -147,7 +149,13 @@ export function sumField(obj) {
     });
     field.id = id;
     field.clonedFrom = parent;
-    field.range = [Math.min(...values), Math.max(...values)];
+    let min = Number.POSITIVE_INFINITY;
+    let max = Number.NEGATIVE_INFINITY;
+    for (let i = 0; i < values.length; i++) {
+      min = Math.min(min, values[i]);
+      max = Math.max(max, values[i]);
+    }
+    field.range = [min, max];
     dispatch(addField(field));
     let child = { id: id, name: id, active: false };
     let children = state.fields.byId[parent_id].children.concat(child);
