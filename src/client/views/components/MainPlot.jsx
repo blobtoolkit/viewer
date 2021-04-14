@@ -58,6 +58,7 @@ export default class MainPlot extends React.Component {
       return (state, props) => {
         if (!getScatterPlotDataBySquareBin(state)) return {};
         let plotShape = getPlotShape(state);
+        let records = getRecordCount(state);
         if (plotShape == "hex") {
           if (!getScatterPlotDataByHexBin(state)) return {};
           return {
@@ -72,7 +73,10 @@ export default class MainPlot extends React.Component {
             zScale: getHexGridScale(state),
             largeFonts: getLargeFonts(state),
           };
-        } else if (plotShape == "square") {
+        } else if (
+          plotShape == "square" ||
+          (plotShape == "none" && records > 1000)
+        ) {
           return {
             datasetId: getDatasetID(state),
             plotShape: getPlotShape(state),
@@ -217,13 +221,21 @@ class PlotBox extends React.Component {
   }
 
   render() {
+    let plotShape = this.props.plotShape;
+    if (plotShape == "none") {
+      if (this.props.records > 1000) {
+        plotShape = "square";
+      } else {
+        plotShape = "circle";
+      }
+    }
     if (
       this.props.active &&
       this.props.active != "loading" &&
       Object.keys(this.props.plot.axes).length < 4
     ) {
       return <NoBlobWarning />;
-    } else if (!this.props.plotShape) {
+    } else if (!plotShape) {
       return null;
     }
     let plotContainer;
@@ -237,7 +249,7 @@ class PlotBox extends React.Component {
       </defs>
     );
     let func = undefined;
-    if (this.props.plotShape == "circle") {
+    if (plotShape == "circle") {
       if (this.props.plotGraphics != "svg") {
         func = () =>
           alert(
@@ -251,14 +263,14 @@ class PlotBox extends React.Component {
         <ExportButton
           view="blob"
           element="main_plot"
-          prefix={this.props.datasetId + ".blob." + this.props.plotShape}
+          prefix={this.props.datasetId + ".blob." + plotShape}
           format="svg"
           func={func}
         />
         <ExportButton
           view="blob"
           element="main_plot"
-          prefix={this.props.datasetId + ".blob." + this.props.plotShape}
+          prefix={this.props.datasetId + ".blob." + plotShape}
           format="png"
           func={func}
           size={side}
@@ -268,7 +280,7 @@ class PlotBox extends React.Component {
     let bins = this.state.bins;
     let viewbox = "0 0 " + side + " " + side;
     let xPlot, yPlot;
-    // if (this.props.plotShape != 'kite'){
+    // if (plotShape != 'kite'){
     xPlot = <PlotSideBinsSVG axis="x" />;
     yPlot = <PlotSideBinsSVG axis="y" />;
     // }
@@ -286,22 +298,22 @@ class PlotBox extends React.Component {
         </g>
       );
     }
-    if (this.props.plotShape == "circle") {
+    if (plotShape == "circle") {
       if (this.props.plotGraphics != "svg") {
         plotContainer = "";
       } else {
         plotContainer = <PlotBubblesSVGLayers {...this.props} />;
       }
-    } else if (this.props.plotShape == "kite") {
+    } else if (plotShape == "kite") {
       plotContainer = <PlotKitesSVG />;
-    } else if (this.props.plotShape == "square") {
+    } else if (plotShape == "square") {
       plotContainer = <PlotSquareBinsSVG />;
       plotGrid = <PlotSquareGridSVG />;
-    } else if (this.props.plotShape == "hex") {
+    } else if (plotShape == "hex") {
       plotContainer = <PlotHexBinsSVG />;
       plotGrid = <PlotHexGridSVG />;
     }
-    if (this.props.plotShape == "circle") {
+    if (plotShape == "circle") {
       if (this.props.plotGraphics != "svg") {
         plotCanvas = (
           <g>
@@ -356,7 +368,7 @@ class PlotBox extends React.Component {
             )}
         </div>
       );
-    } else if (this.props.plotShape == "kite") {
+    } else if (plotShape == "kite") {
       return (
         <div className={styles.outer}>
           <div className={styles.fill_parent}>

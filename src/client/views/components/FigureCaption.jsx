@@ -111,7 +111,10 @@ class Caption extends Component {
       title = `${plot} plot of ${yaxis} against ${xaxis} for ${record}s in assembly ${this.props.datasetName}. `;
       caption = `${this.capitalise(record)}s are coloured by ${cat}`;
       if (this.props.plotShape != "kite") {
-        if (this.props.plotShape == "circle") {
+        if (
+          this.props.plotShape == "circle" ||
+          (this.props.plotShape == "none" && records <= 1000)
+        ) {
           caption += `. Circles are sized in proportion to ${record} ${z} `;
         } else {
           caption += ` and binned at a resolution of ${this.props.binned.grid.res} divisions on each axis`;
