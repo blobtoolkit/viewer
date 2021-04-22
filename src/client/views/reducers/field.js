@@ -334,7 +334,8 @@ export function fetchRawData(id) {
           dispatch(editFilter({ id, keys, invert }));
         }
         dispatch(receiveRawData({ id, json }));
-      });
+      })
+      .catch((err) => dispatch(receiveRawData({ id, json: { values: [] } })));
   };
 }
 

@@ -103,11 +103,11 @@ const mapDispatchToQuery = {
     payload: (k, v) => v,
     default: "false",
   },
-  adjustCoverage: {
-    type: "SET_ADJUST_COVERAGE",
-    payload: (k, v) => v,
-    default: "false",
-  },
+  // adjustCoverage: {
+  //   type: "SET_ADJUST_COVERAGE",
+  //   payload: (k, v) => v,
+  //   default: "false",
+  // },
   palette: {
     type: "SELECT_PALETTE",
     payload: (k, v) => v,

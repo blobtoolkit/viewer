@@ -2,31 +2,33 @@ import * as d3 from "d3";
 
 import { createAction, handleAction, handleActions } from "redux-actions";
 import {
-  getAdjustedDataForFieldId,
-  getCategoryListForFieldId,
-  getFilteredDataForFieldId,
-  getPlainCategoryListForFieldId,
-} from "./preview";
-import {
   getBinsForCat,
   getBinsForFieldId,
   getDetailsForFieldId,
+  getFields,
   getMetaDataForField,
   getRawDataForFieldId,
 } from "./field";
 import { getCatAxis, getMainPlot, getXAxis, getYAxis, getZAxis } from "./plot";
+import {
+  getCategoryListForFieldId,
+  getFilteredDataForFieldId,
+  getPlainCategoryListForFieldId,
+} from "./preview";
 import {
   getPlotResolution,
   getPlotScale,
   getTransformFunction,
   getTransformFunctionParams,
   getZScale,
+  radiusScale,
 } from "./plotParameters";
 
 import { byIdSelectorCreator } from "./selectorCreators";
 import { clampDomain } from "./field";
 import cloneFunction from "clone-function";
 import { createSelector } from "reselect";
+import { datasetColumns } from "./datasetTable";
 import { getColorPalette } from "./color";
 import { getDatasetID } from "./location";
 import { getFilteredList } from "./filter";
@@ -44,22 +46,22 @@ export const getAxisTitle = createSelector(
 );
 
 const getRawDataForX = createSelector(
-  (state) => getAdjustedDataForFieldId(state, getXAxis(state)),
+  (state) => getRawDataForFieldId(state, getXAxis(state)),
   (data) => data
 );
 
 const getRawDataForY = createSelector(
-  (state) => getAdjustedDataForFieldId(state, getYAxis(state)),
+  (state) => getRawDataForFieldId(state, getYAxis(state)),
   (data) => data
 );
 
 const getRawDataForZ = createSelector(
-  (state) => getAdjustedDataForFieldId(state, getZAxis(state)),
+  (state) => getRawDataForFieldId(state, getZAxis(state)),
   (data) => data
 );
 
 export const getRawDataForCat = createSelector(
-  (state) => getAdjustedDataForFieldId(state, getCatAxis(state)),
+  (state) => getRawDataForFieldId(state, getCatAxis(state)),
   (data) => data
 );
 
@@ -387,6 +389,271 @@ export const getScatterPlotDataByCategory = createSelector(
   }
 );
 
+const flattenNestedArray = (arr) => {
+  for (let i = 0; i < arr.length; i++) {
+    if (Array.isArray(arr[i])) {
+      for (let j = 0; j < arr[i].length; j++) {
+        if (Array.isArray(arr[i][j])) {
+          arr[i][j] = arr[i][j][0];
+        }
+      }
+    }
+  }
+};
+
+const nestValues = (arr) => {
+  for (let i = 0; i < arr.length; i++) {
+    arr[i] = [arr[i]];
+  }
+};
+
+const getFilteredWindowDataForX = createSelector(
+  getXAxis,
+  getFields,
+  (state) => getFilteredDataForFieldId(state, `${getXAxis(state)}_windows`),
+  getFilteredDataForX,
+  (axis, fields, data, mainData) => {
+    if (fields[`${axis}_windows`]) {
+      if (data && data.values) flattenNestedArray(data.values);
+      return data;
+    }
+    if (mainData && mainData.values) nestValues(mainData.values);
+    return mainData;
+  }
+);
+
+const getFilteredWindowDataForY = createSelector(
+  getYAxis,
+  getFields,
+  (state) => getFilteredDataForFieldId(state, `${getYAxis(state)}_windows`),
+  getFilteredDataForY,
+  (axis, fields, data, mainData) => {
+    if (fields[`${axis}_windows`]) {
+      if (data && data.values) flattenNestedArray(data.values);
+      return data;
+    }
+    if (mainData && mainData.values) nestValues(mainData.values);
+    return mainData;
+  }
+);
+
+const getFilteredWindowDataForZ = createSelector(
+  getZAxis,
+  getFields,
+  (state) => getFilteredDataForFieldId(state, `${getZAxis(state)}_windows`),
+  getFilteredDataForZ,
+  (axis, fields, data, mainData) => {
+    if (fields[`${axis}_windows`]) {
+      if (data && data.values) flattenNestedArray(data.values);
+      return data;
+    }
+    if (mainData && mainData.values) nestValues(mainData.values);
+    return mainData;
+  }
+);
+
+const getFilteredWindowDataForCat = createSelector(
+  getCatAxis,
+  getFields,
+  (state) => getFilteredDataForFieldId(state, `${getCatAxis(state)}_windows`),
+  getFilteredDataForCat,
+  (axis, fields, data, mainData) => {
+    if (fields[`${axis}_windows`]) {
+      if (data && data.values) flattenNestedArray(data.values);
+      return data;
+    }
+    if (mainData && mainData.values) nestValues(mainData.values);
+    return mainData;
+  }
+);
+
+export const getWindowPlotData = createSelector(
+  getDatasetID,
+  getFilteredWindowDataForX,
+  getFilteredWindowDataForY,
+  getFilteredWindowDataForZ,
+  getFilteredWindowDataForCat,
+  getFilteredDataForCat,
+  getDetailsForX,
+  getDetailsForY,
+  getDetailsForZ,
+  getDetailsForCat,
+  (
+    dsId,
+    xData,
+    yData,
+    zData,
+    catData,
+    mainCatData,
+    xMeta,
+    yMeta,
+    zMeta,
+    catMeta
+  ) => {
+    if (!dsId || !catData) return undefined;
+    let plotData = { id: "default", axes: {}, meta: {} };
+    plotData.axes.x = xData || { values: [] };
+    let xDomain = xMeta.xScale ? xMeta.xScale.domain().slice(0) : [0, 10];
+    let xmin = getQueryValue("xmin");
+    if (xmin) {
+      xDomain[0] = 1 * xmin;
+    }
+    let xmax = getQueryValue("xmax");
+    if (xmax) {
+      xDomain[1] = 1 * xmax;
+    }
+    xMeta.xScale.domain(xDomain);
+    xMeta.xScale.type = xMeta.meta.scale;
+    plotData.meta.x = xMeta;
+    plotData.axes.y = yData || { values: [] };
+    let yDomain = yMeta.xScale ? yMeta.xScale.domain().slice(0) : [0, 10];
+    let ymin = getQueryValue("ymin");
+    if (ymin) {
+      yDomain[0] = 1 * ymin;
+    }
+    let ymax = getQueryValue("ymax");
+    if (ymax) {
+      yDomain[1] = 1 * ymax;
+    }
+    if (yMeta.xScale) {
+      yMeta.xScale.domain(yDomain);
+      yMeta.xScale.type = yMeta.meta.scale;
+    }
+    plotData.meta.y = yMeta;
+    plotData.axes.z = zData || { values: [] };
+    plotData.meta.z = zMeta;
+    plotData.axes.cat = catData;
+    plotData.axes.mainCat = mainCatData;
+    plotData.meta.cat = catMeta;
+    return plotData;
+  }
+);
+
+export const getLinesPlotData = createSelector(
+  getWindowPlotData,
+  getFilteredList,
+  getTransformFunction,
+  getDetailsForZ,
+  getZScale,
+  getPlotResolution,
+  getPlotScale,
+  getBinsForCat,
+  getColorPalette,
+  (
+    plotData,
+    list,
+    transform,
+    details,
+    scale,
+    res,
+    plotScale,
+    bins,
+    palette
+  ) => {
+    if (!plotData) return {};
+    let coords = [];
+    let scales = {};
+    let axes = ["x", "y", "z"];
+    if (
+      plotData.axes.x.values.length == 0 ||
+      plotData.axes.y.values.length == 0 ||
+      plotData.axes.z.values.length == 0 ||
+      plotData.axes.cat.values.length == 0
+    ) {
+      return { coords: [] };
+    }
+    let zScale = d3[scale]()
+      .domain(details.range)
+      .range([2, (2 * 900) / res]);
+    axes.forEach((axis) => {
+      scales[axis] = plotData.meta[axis].xScale
+        ? plotData.meta[axis].xScale.copy()
+        : d3.scaleLinear().domain([0, 10]);
+      if (axis == "z") {
+        scales[axis] = d3.scaleSqrt().domain(scales[axis].domain());
+        scales[axis].type = "scaleSqrt";
+      } else {
+        if (plotData.meta[axis].xScale.hasOwnProperty("type")) {
+          scales[axis].type = plotData.meta[axis].xScale.type;
+        }
+      }
+      scales[axis].range([0, 900]);
+    });
+    let min = Number.POSITIVE_INFINITY;
+    let max = Number.NEGATIVE_INFINITY;
+    let len = Math.max(
+      plotData.axes.x.values.length,
+      plotData.axes.y.values.length,
+      plotData.axes.z.values.length
+    );
+    let yClamp = Number.NEGATIVE_INFINITY;
+    if (plotData.meta.y.meta) {
+      let yClamp = plotData.meta.y.meta.clamp || Number.NEGATIVE_INFINITY;
+      let yMin = plotData.meta.y.meta.limit[0];
+      if (yClamp < yMin) {
+        yClamp = Number.NEGATIVE_INFINITY;
+      }
+    }
+    let xClamp = plotData.meta.x.meta.clamp || Number.NEGATIVE_INFINITY;
+    let xMin = plotData.meta.x.meta.limit[0];
+    if (xClamp < xMin) {
+      xClamp = Number.NEGATIVE_INFINITY;
+    }
+    let keys = {};
+    bins.forEach((bin, i) => {
+      bin.keys.forEach((key) => {
+        keys[key] = i;
+      });
+    });
+    axes = ["x", "y", "z", "cat"];
+    for (let i = 0; i < len; i++) {
+      let xs = [];
+      let ys = [];
+      let zs = [];
+      let rs = [];
+      let cats = [];
+      let wins = Math.max(
+        plotData.axes.x.values[i].length,
+        plotData.axes.y.values[i].length,
+        plotData.axes.z.values[i].length,
+        plotData.axes.cat.values[i].length
+      );
+      for (let j = 0; j < wins; j++) {
+        let values = {};
+        axes.forEach((axis) => {
+          if (plotData.axes[axis].values[i].length == wins) {
+            values[axis] = plotData.axes[axis].values[i][j];
+          } else {
+            values[axis] = plotData.axes[axis].values[i][0];
+          }
+        });
+        values.y = values.y < yClamp ? scales.y(yMin) : scales.y(values.y);
+        values.x = values.x < xClamp ? scales.x(xMin) : scales.x(values.x);
+        values.cat = keys[values.cat];
+        if (transform) [values.x, values.y] = transform([values.x, values.y]);
+        xs.push(values.x);
+        ys.push(900 - values.y);
+        zs.push(values.z);
+        rs.push(zScale(values.z) * plotScale);
+        cats.push(values.cat);
+        max = Math.max(max, values.z);
+        min = Math.min(min, values.z);
+      }
+      coords.push({
+        id: list[i],
+        index: i,
+        x: xs,
+        y: ys,
+        z: zs,
+        r: rs,
+        cats: cats,
+        cat: keys[plotData.axes.mainCat.values[i]],
+      });
+    }
+    let range = [min, max];
+    return { coords, range, colors: palette.colors };
+  }
+);
 // const weightedMeanSd = (values, weights, sumWeight, log) => {
 //   if (log){
 //     let sum = 0
@@ -801,7 +1068,7 @@ export const getCirclePlotDataForCategoryIndex = createSelectorForCircleCategory
   (catData, details, scale, res, plotScale) => {
     let zScale = d3[scale]()
       .domain(details.range)
-      .range([1, (2 * 900) / res]);
+      .range([2, (2 * 900) / res]);
     if (catData.data) {
       catData.data.forEach((datum) => {
         datum.r = zScale(datum.z) * plotScale;

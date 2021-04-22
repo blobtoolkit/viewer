@@ -10,7 +10,11 @@ import {
   getScatterPlotDataByHexBin,
   getSelectedHexGrid,
 } from "../reducers/plotHexBins";
-import { getKitePlotData, getScatterPlotData } from "../reducers/plotData";
+import {
+  getKitePlotData,
+  getLinesPlotData,
+  getScatterPlotData,
+} from "../reducers/plotData";
 import { getNohitThreshold, getStaticThreshold } from "../reducers/repository";
 import {
   getScatterPlotDataBySquareBin,
@@ -34,6 +38,7 @@ import PlotHexGridSVG from "./PlotHexGridSVG";
 //import PlotHexBinsCanvas from './PlotHexBinsCanvas'
 import PlotKitesSVG from "./PlotKitesSVG";
 import PlotLegend from "./PlotLegend";
+import PlotLinesSVG from "./PlotLinesSVG";
 import PlotParameters from "./PlotParameters";
 import PlotRefKitesSVG from "./PlotRefKitesSVG";
 import PlotSideBinsSVG from "./PlotSideBinsSVG";
@@ -98,6 +103,17 @@ export default class MainPlot extends React.Component {
             records: getRecordCount(state),
             staticThreshold: getStaticThreshold(state),
             nohitThreshold: getNohitThreshold(state),
+            largeFonts: getLargeFonts(state),
+          };
+        } else if (plotShape == "lines") {
+          return {
+            datasetId: getDatasetID(state),
+            plotShape: getPlotShape(state),
+            plotGraphics: getPlotGraphics(state),
+            records: getRecordCount(state),
+            staticThreshold: getStaticThreshold(state),
+            nohitThreshold: getNohitThreshold(state),
+            range: getScatterPlotData(state).range,
             largeFonts: getLargeFonts(state),
           };
         }
@@ -306,6 +322,8 @@ class PlotBox extends React.Component {
       }
     } else if (plotShape == "kite") {
       plotContainer = <PlotKitesSVG />;
+    } else if (plotShape == "lines") {
+      plotContainer = <PlotLinesSVG />;
     } else if (plotShape == "square") {
       plotContainer = <PlotSquareBinsSVG />;
       plotGrid = <PlotSquareGridSVG />;
