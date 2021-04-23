@@ -386,7 +386,7 @@ class PlotBox extends React.Component {
             )}
         </div>
       );
-    } else if (plotShape == "kite") {
+    } else if (plotShape == "kite" || plotShape == "lines") {
       return (
         <div className={styles.outer}>
           <div className={styles.fill_parent}>
@@ -409,7 +409,9 @@ class PlotBox extends React.Component {
                 {xPlot}
                 {yPlot}
                 {legend}
-                <LassoSelect />
+                {(plotShape == "kite" && <LassoSelect />) || (
+                  <MainPlotBoundary />
+                )}
                 <PlotAxisTitle axis="x" side={side} />
                 <PlotAxisTitle axis="y" side={side} />
               </g>

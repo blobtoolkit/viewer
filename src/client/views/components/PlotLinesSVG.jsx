@@ -1,3 +1,14 @@
+import {
+  addRecords,
+  changeSelectPolygon,
+  getSelectPolygon,
+  getSelectSource,
+  getSelectedRecords,
+  getSelectionDisplay,
+  replaceRecords,
+  selectNone,
+  setSelectSource,
+} from "../reducers/select";
 import { getCatAxis, getXAxis, getYAxis, getZAxis } from "../reducers/plot";
 import { getPlotScale, getZScale } from "../reducers/plotParameters";
 
@@ -18,9 +29,22 @@ export default class PlotLinesSVG extends React.Component {
       zScale: getZScale(state),
       plotScale: getPlotScale(state),
       data: getLinesPlotData(state),
+      selectedRecords: getSelectedRecords(state),
     });
     this.mapDispatchToProps = (dispatch) => ({
       fetchData: (id) => dispatch(fetchRawData(id)),
+      addRecords: (arr) => {
+        dispatch(setSelectSource("lines"));
+        dispatch(addRecords(arr));
+      },
+      replaceRecords: (arr) => {
+        dispatch(setSelectSource("lines"));
+        dispatch(replaceRecords(arr));
+      },
+      selectNone: () => {
+        dispatch(setSelectSource("lines"));
+        dispatch(selectNone());
+      },
     });
   }
 
@@ -60,6 +84,15 @@ class LinesSVG extends React.Component {
   //   }
   // }
 
+  handleClick(id) {
+    let arr = [...this.props.selectedRecords];
+    if (arr.includes(id)) {
+      this.props.replaceRecords(arr.filter((val) => val != id));
+    } else {
+      this.props.addRecords([id]);
+    }
+  }
+
   render() {
     let coords = this.props.data.coords;
     if (!coords || coords.length == 0) {
@@ -67,36 +100,65 @@ class LinesSVG extends React.Component {
     }
     let colors = this.props.data.colors;
     let paths = [];
-    let circles = [];
+    let selection = [];
+    let selectedById = {};
+    let highlightColor = "rgb(156, 82, 139)";
+    this.props.selectedRecords.forEach((id) => {
+      selectedById[id] = true;
+    });
     coords.forEach((group, i) => {
       if (group.x.length > 0) {
         let points = [];
+        let groupCircles = [];
         group.x.forEach((x, j) => {
           points.push(`${x},${group.y[j]}`);
-          circles.push(
+          groupCircles.push(
             <circle
               key={`${group.id}_${j}`}
               cx={x}
               cy={group.y[j]}
               r={group.r[j]}
               fill={colors[group.cats[j]] || colors[9]}
+              fillOpacity={selectedById[group.id] ? 1 : 0.6}
               style={{
-                opacity: 0.6,
-                strokeWidth: 1,
-                stroke: "rgb(89, 101, 111)",
+                strokeWidth: selectedById[group.id] ? "6px" : "1px",
+                stroke: selectedById[group.id]
+                  ? highlightColor
+                  : "rgb(89, 101, 111)",
               }}
+              onPointerDown={() => this.handleClick(group.id)}
             />
           );
         });
-        paths.push(
+
+        let groupPaths = [];
+
+        if (selectedById[group.id]) {
+          groupPaths.push(
+            <polyline
+              key={`${group.id}_sel`}
+              style={{ strokeWidth: "10px" }}
+              stroke={highlightColor}
+              fill="none"
+              points={points.join(" ")}
+            />
+          );
+        }
+        groupPaths.push(
           <polyline
             key={group.id}
-            style={{ strokeWidth: "2px" }}
+            style={{ strokeWidth: selectedById[group.id] ? "4px" : "2px" }}
             stroke={colors[group.cat]}
             fill="none"
             points={points.join(" ")}
+            onPointerDown={() => this.handleClick(group.id)}
           />
         );
+        if (selectedById[group.id]) {
+          selection.push(...groupPaths, ...groupCircles);
+        } else {
+          paths.push(...groupPaths, ...groupCircles);
+        }
       }
       //   let kite = <g key={i}
       //                 style={{strokeWidth:"1px"}}
@@ -122,9 +184,12 @@ class LinesSVG extends React.Component {
       // }
     });
     return (
-      <g transform="translate(50, 50)">
+      <g
+        transform="translate(0, 0)"
+        style={{ cursor: "pointer", pointerEvents: "auto" }}
+      >
         {paths}
-        {circles}
+        {selection}
       </g>
     );
   }
