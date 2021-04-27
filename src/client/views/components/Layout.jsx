@@ -95,11 +95,12 @@ class LayoutComponent extends React.Component {
     if (this.props.active != "loading") {
       plotsDiv = <LayoutPlots />;
     } else {
-      plotsDiv = (
-        <div className={styles.fill_parent}>
-          <DatasetSpinner />
-        </div>
-      );
+      plotsDiv = <LayoutPlots />;
+      // plotsDiv = (
+      //   <div className={styles.fill_parent}>
+      //     <DatasetSpinner />
+      //   </div>
+      // );
     }
 
     return (

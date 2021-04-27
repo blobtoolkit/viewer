@@ -114,7 +114,7 @@ class PlotsLayoutComponent extends React.Component {
     }
   }
   render() {
-    if (!this.props.active && dataset_table) {
+    if (!this.props.datasetId) {
       return (
         <div className={styles.fill_parent}>
           <HomePage />

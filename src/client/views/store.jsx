@@ -4,6 +4,7 @@ import { createLogger } from "redux-logger";
 import { enableBatching } from "redux-batched-actions";
 import rootReducer from "./reducers/root";
 import thunkMiddleware from "redux-thunk";
+
 // import querySync from './querySync'
 
 const loggerMiddleware = createLogger();
