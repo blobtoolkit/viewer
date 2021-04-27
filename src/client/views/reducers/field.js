@@ -20,7 +20,7 @@ import { createSelector } from "reselect";
 import deep from "deep-get-set";
 import { fetchReferenceValues } from "./reference";
 import { getCatAxis } from "./plot";
-import { getSelectedDatasetMeta } from "./dataset";
+import { getCurrentDataset } from "./dataset";
 import immutableUpdate from "immutable-update";
 import store from "../store";
 
@@ -554,12 +554,24 @@ export const histogram = (
   return bins;
 };
 
+export const getOtherLimit = createSelector(
+  (state) => getParsedQueryString(state),
+  (parsed) => {
+    let otherLimit = 10;
+    if (parsed.hasOwnProperty("otherLimit")) {
+      otherLimit = parsed.otherLimit;
+    }
+    return otherLimit;
+  }
+);
+
 export const getBinsForFieldId = createBinSelectorForFieldId(
   _getFieldIdAsMemoKey,
   getRawDataForFieldId,
   getDetailsForFieldId,
   (state) => getParsedQueryString(state),
-  (rawData, details, parsed) => {
+  getOtherLimit,
+  (rawData, details, parsed, otherLimit) => {
     if (!rawData || !details) return undefined;
     let data = rawData.values || [];
     let keys = rawData.keys || {};
@@ -606,10 +618,6 @@ export const getBinsForFieldId = createBinSelectorForFieldId(
           // sorted = nested.sort((a,b) => b.value - a.value);
         } else {
           sorted = nested.sort((a, b) => a.key - b.key);
-        }
-        let otherLimit = 10;
-        if (parsed.hasOwnProperty("otherLimit")) {
-          otherLimit = parsed.otherLimit;
         }
         if (sorted.length > otherLimit) {
           let count = sorted

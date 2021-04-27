@@ -1,9 +1,11 @@
+import React, { memo } from "react";
 import { addRecords, removeRecords, setSelectSource } from "../reducers/select";
 import {
   getCircleLimit,
   getLargeFonts,
   getPlotGraphics,
   getPlotShape,
+  getSVGThreshold,
 } from "../reducers/plotParameters";
 import {
   getHexGridScale,
@@ -47,7 +49,6 @@ import PlotSquareBinsSVG from "./PlotSquareBinsSVG";
 import PlotSquareGridSVG from "./PlotSquareGridSVG";
 import PlotTransformLines from "./PlotTransformLines";
 import Pointable from "react-pointable";
-import React from "react";
 import { connect } from "react-redux";
 import { scaleLinear as d3scaleLinear } from "d3-scale";
 import { getDatasetID } from "../reducers/location";
@@ -123,6 +124,7 @@ export default class MainPlot extends React.Component {
           plotGraphics: getPlotGraphics(state),
           records: getRecordCount(state),
           circleLimit: getCircleLimit(state),
+          threshold: getSVGThreshold(state),
           staticThreshold: getStaticThreshold(state),
           nohitThreshold: getNohitThreshold(state),
           range: getScatterPlotData(state).range,
@@ -173,6 +175,13 @@ class PlotBox extends React.Component {
   constructor(props) {
     super(props);
     this.state = { mouseDown: false, addRecords: true, bins: {} };
+  }
+
+  componentWillUnmount() {
+    // fix Warning: Can't perform a React state update on an unmounted component
+    this.setState = (state, callback) => {
+      return;
+    };
   }
 
   setMouseDown(bool) {
@@ -409,8 +418,9 @@ class PlotBox extends React.Component {
                 {xPlot}
                 {yPlot}
                 {legend}
-                {(plotShape == "kite" && <LassoSelect />) || (
-                  <MainPlotBoundary />
+                {/* <LassoSelect /> */}
+                {(plotShape != "lines" && <LassoSelect />) || (
+                  <MainPlotBoundary fill="none" />
                 )}
                 <PlotAxisTitle axis="x" side={side} />
                 <PlotAxisTitle axis="y" side={side} />

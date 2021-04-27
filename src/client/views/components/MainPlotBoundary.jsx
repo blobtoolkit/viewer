@@ -23,7 +23,7 @@ export default class MainPlotBoundary extends React.Component {
 
   render() {
     const PlotBoundary = connect(this.mapStateToProps)(PlotOutline);
-    return <PlotBoundary />;
+    return <PlotBoundary {...this.props} />;
   }
 }
 
@@ -38,7 +38,7 @@ const isPowerOfTen = (d) => {
   return d == 1;
 };
 
-const PlotOutline = ({ data, params, plotPaths, plotText }) => {
+const PlotOutline = ({ data, params, plotPaths, plotText, fill }) => {
   let fontSize = plotText.axisTick.fontSize;
   let f = (d) => {
     if (d < 1 && d > 0.0001 && String(d).match(/^[0\.1]+$/)) {
@@ -151,12 +151,14 @@ const PlotOutline = ({ data, params, plotPaths, plotText }) => {
   return (
     <g>
       <rect
-        style={plotPaths.boundary}
+        style={{
+          ...plotPaths.boundary,
+          ...(fill && { fill }),
+        }}
         x={0}
         y={0}
         width={1000}
         height={1000}
-        fill="none"
       />
       {xBreak}
       {xBreakAxis}

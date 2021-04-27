@@ -11,6 +11,7 @@ import { connect } from "react-redux";
 import { format as d3format } from "d3-format";
 import { getDatasetMeta } from "../reducers/repository";
 import { getSummary } from "../reducers/summary";
+import { getWindowBinsForCat } from "../reducers/plotData";
 import { plotText } from "../reducers/plotStyles";
 import styles from "./Plot.scss";
 
@@ -35,6 +36,7 @@ export default class PlotLegend extends React.Component {
           circleLimit,
           showTotal,
           largeFonts,
+          bins: getWindowBinsForCat(state),
           plotText: plotText(state),
         };
       };
@@ -206,7 +208,7 @@ const Legend = ({
       if (zAxis == "length") {
         numbers.push(format(values.n50.binned[i]));
       }
-      if (count) {
+      if (count || shape == "lines") {
         items.push(
           <g
             key={i}
@@ -231,14 +233,16 @@ const Legend = ({
                 >
                   {title}
                 </text>
-                <text
-                  style={plotText.legend}
-                  transform={
-                    "translate(" + (w + gap * 2) + "," + (h - gap) + ")"
-                  }
-                >
-                  [{numbers.join("; ")}]
-                </text>
+                {count && (
+                  <text
+                    style={plotText.legend}
+                    transform={
+                      "translate(" + (w + gap * 2) + "," + (h - gap) + ")"
+                    }
+                  >
+                    [{numbers.join("; ")}]
+                  </text>
+                )}
               </g>
             )) || (
               <g>
@@ -248,16 +252,18 @@ const Legend = ({
                 >
                   {title}
                 </text>
-                <text
-                  style={Object.assign({}, plotText.legend, {
-                    textAnchor: "end",
-                  })}
-                  transform={
-                    "translate(" + (w + gap + 260) + "," + (h - gap) + ")"
-                  }
-                >
-                  [{numbers.join("; ")}]
-                </text>
+                {count && (
+                  <text
+                    style={Object.assign({}, plotText.legend, {
+                      textAnchor: "end",
+                    })}
+                    transform={
+                      "translate(" + (w + gap + 260) + "," + (h - gap) + ")"
+                    }
+                  >
+                    [{numbers.join("; ")}]
+                  </text>
+                )}
               </g>
             )}
             <rect

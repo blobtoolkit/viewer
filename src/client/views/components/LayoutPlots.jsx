@@ -1,237 +1,293 @@
-import React from 'react'
-import { connect } from 'react-redux'
-import styles from './Layout.scss'
-import { toggleHash, getView, getStatic, getDatasetID, getQueryString, setQueryString, getHashString } from '../reducers/location'
-import { getDatasetName, getSelectedDatasetMeta } from '../reducers/dataset'
-import { getScatterPlotData } from '../reducers/plotData'
-import { getMainPlot, getCatAxis } from '../reducers/plot'
-import { getDatasetIsActive, getStaticThreshold, getNohitThreshold } from '../reducers/repository'
-import { getBinsForCat } from '../reducers/field'
-import GetStarted from './GetStarted'
-import FindDatasets from './FindDatasets'
-import MainPlot from './MainPlot'
-import BuscoPlot from './BuscoPlot'
-import CumulativePlot from './CumulativePlot'
-import DetailPlot from './DetailPlot'
-import NoPlot from './NoPlot'
-import SnailPlot from './SnailPlot'
-import StaticPlot from './StaticPlot'
-import TablePlot from './TablePlot'
-import TreeMapPlot from './TreeMapPlot'
-import DatasetSpinner from './DatasetSpinner'
-import HomePage from './HomePage'
-import SelectWarning from './SelectWarning'
-import { queryToStore } from '../querySync'
-import qs from 'qs'
-import { NoHitWarning } from './NoHitWarning'
+import { getCatAxis, getMainPlot } from "../reducers/plot";
+import {
+  getDatasetID,
+  getHashString,
+  getQueryString,
+  getStatic,
+  getView,
+  setQueryString,
+  toggleHash,
+} from "../reducers/location";
+import {
+  getDatasetIsActive,
+  getNohitThreshold,
+  getStaticThreshold,
+} from "../reducers/repository";
+import { getDatasetName, getSelectedDatasetMeta } from "../reducers/dataset";
 
-const dataset_table = DATASET_TABLE || false
+import BuscoPlot from "./BuscoPlot";
+import CumulativePlot from "./CumulativePlot";
+import DatasetSpinner from "./DatasetSpinner";
+import DetailPlot from "./DetailPlot";
+import FindDatasets from "./FindDatasets";
+import GetStarted from "./GetStarted";
+import HomePage from "./HomePage";
+import MainPlot from "./MainPlot";
+import { NoHitWarning } from "./NoHitWarning";
+import NoPlot from "./NoPlot";
+import React from "react";
+import SelectWarning from "./SelectWarning";
+import SnailPlot from "./SnailPlot";
+import StaticPlot from "./StaticPlot";
+import TablePlot from "./TablePlot";
+import TreeMapPlot from "./TreeMapPlot";
+import { connect } from "react-redux";
+import { getBinsForCat } from "../reducers/field";
+import { getFields } from "../reducers/field";
+import { getPlotShape } from "../reducers/plotParameters";
+import { getWindowBinsForCat } from "../reducers/plotData";
+import qs from "qs";
+import { queryToStore } from "../querySync";
+import styles from "./Layout.scss";
+
+const dataset_table = DATASET_TABLE || false;
 
 class PlotsLayoutComponent extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {datasetId: this.props.datasetId, static: this.props.static, keys: false, cat: false, warn: false}
+    this.state = {
+      datasetId: this.props.datasetId,
+      static: this.props.static,
+      keys: false,
+      cat: false,
+      warn: false,
+    };
   }
 
-  componentDidMount(){
-
-  }
-  componentDidUpdate(){
-    if (!this.props.static && this.state.static){
-      if (this.props.meta && this.props.meta.records > this.props.staticThreshold){
-        this.setState({static: this.props.static})
+  componentDidMount() {}
+  componentDidUpdate() {
+    if (!this.props.static && this.state.static) {
+      if (
+        this.props.meta &&
+        this.props.meta.records > this.props.staticThreshold
+      ) {
+        this.setState({ static: this.props.static });
       }
-    }
-    else if (this.props.static && !this.state.static){
-      this.setState({static: this.props.static})
-    }
-    else if (this.props.queryString) {
-      if (this.state.keys && !this.state.warn && qs.parse(this.props.queryString)[this.state.cat] == this.state.keys){
-        this.setState({warn: true})
+    } else if (this.props.static && !this.state.static) {
+      this.setState({ static: this.props.static });
+    } else if (this.props.queryString) {
+      if (
+        this.state.keys &&
+        !this.state.warn &&
+        qs.parse(this.props.queryString)[this.state.cat] == this.state.keys
+      ) {
+        this.setState({ warn: true });
+      } else if (
+        this.state.warn &&
+        qs.parse(this.props.queryString)[this.state.cat] != this.state.keys
+      ) {
+        this.setState({ warn: false });
       }
-      else if (this.state.warn && qs.parse(this.props.queryString)[this.state.cat] != this.state.keys){
-        this.setState({warn: false})
-      }
+    } else if (this.state.warn) {
+      this.setState({ warn: false });
     }
-    else if (this.state.warn){
-      this.setState({warn: false})
-    }
-    if (!this.props.static){
-      if (this.props.meta && this.props.meta.records > this.props.nohitThreshold
-            && this.props.bins && this.props.cat
-            && !this.state.keys && !this.state.cat){
-        let index = this.props.bins.findIndex(x=>x.id=='no-hit')
-        if (index > -1){
-          let keys = this.props.bins[index].keys
-          let cat = `${this.props.cat}--Keys`
-          let qstr = `${this.props.cat}--Keys=${keys.join(',')}`
-          this.setState({keys: keys.join(','), cat})
-          this.props.updateStore(qstr)
-          this.setState({warn: true})
+    if (!this.props.static) {
+      if (
+        this.props.meta &&
+        this.props.meta.records > this.props.nohitThreshold &&
+        this.props.bins &&
+        this.props.cat &&
+        !this.state.keys &&
+        !this.state.cat
+      ) {
+        let index = this.props.bins.findIndex((x) => x.id == "no-hit");
+        if (index > -1) {
+          let keys = this.props.bins[index].keys;
+          let cat = `${this.props.cat}--Keys`;
+          let qstr = `${this.props.cat}--Keys=${keys.join(",")}`;
+          this.setState({ keys: keys.join(","), cat });
+          this.props.updateStore(qstr);
+          this.setState({ warn: true });
         }
-      }
-      else if (this.props.meta && this.props.meta.records <= this.props.nohitThreshold
-                 && this.state.keys && this.state.cat && this.state.warn){
-        let qstr=`${this.props.cat}--Keys=&nohitThreshold=${this.props.nohitThreshold}`
-        this.props.updateStore(qstr)
-        this.setState({keys: false, cat: false, warn: false})
+      } else if (
+        this.props.meta &&
+        this.props.meta.records <= this.props.nohitThreshold &&
+        this.state.keys &&
+        this.state.cat &&
+        this.state.warn
+      ) {
+        let qstr = `${this.props.cat}--Keys=&nohitThreshold=${this.props.nohitThreshold}`;
+        this.props.updateStore(qstr);
+        this.setState({ keys: false, cat: false, warn: false });
       }
     }
-
-
   }
-  render(){
-    let warning = this.state.warn && <NoHitWarning nohitThreshold={this.props.nohitThreshold}/>
-    if (!this.props.datasetId ||
-    dataset_table && this.props.activeTab == 'Datasets'){
-      return <HomePage toggleHash={this.props.toggleHash}/>
+  render() {
+    if (!this.props.active || this.props.active == "loading") {
+      return (
+        <div className={styles.fill_parent}>
+          <DatasetSpinner />
+        </div>
+      );
     }
-    let defaultPlot = <MainPlot {...this.props}/>
-    let problem
-    if (this.props.active && this.props.active != 'loading' && Object.keys(this.props.plot.axes).length < 4){
-      if (!this.props.plot.axes.cat){
-        defaultPlot = <SnailPlot {...this.props} warning='noCat'/>
-        problem = 'noCat'
-      }
-      else {
-        defaultPlot = <CumulativePlot {...this.props} warning='noBlob'/>
-        problem = 'noBlob'
+
+    let warning = this.state.warn && (
+      <NoHitWarning nohitThreshold={this.props.nohitThreshold} />
+    );
+    if (
+      !this.props.datasetId ||
+      (dataset_table && this.props.activeTab == "Datasets")
+    ) {
+      return <HomePage toggleHash={this.props.toggleHash} />;
+    }
+    let defaultPlot = <MainPlot {...this.props} />;
+    let problem;
+    if (
+      this.props.active &&
+      this.props.active != "loading" &&
+      Object.keys(this.props.plot.axes).length < 4
+    ) {
+      if (!this.props.plot.axes.cat) {
+        defaultPlot = <SnailPlot {...this.props} warning="noCat" />;
+        problem = "noCat";
+      } else {
+        defaultPlot = <CumulativePlot {...this.props} warning="noBlob" />;
+        problem = "noBlob";
       }
     }
-    let view
-    if (this.props.static){
+    let view;
+    if (this.props.static) {
       switch (this.props.view) {
-        case 'detail':
-          view = <DetailPlot {...this.props}/>
-          break
+        case "detail":
+          view = <DetailPlot {...this.props} />;
+          break;
         default:
-          view = <StaticPlot {...this.props}/>
-          break
+          view = <StaticPlot {...this.props} />;
+          break;
       }
-    }
-    else if (problem){
-      if (this.props.view == 'blob'){
-        view = defaultPlot
+    } else if (problem) {
+      if (this.props.view == "blob") {
+        view = defaultPlot;
+      } else if (problem == "noCat" && this.props.view == "cumulative") {
+        view = defaultPlot;
       }
-      else if (problem == 'noCat' && this.props.view == 'cumulative'){
-        view = defaultPlot
-      }
-    }
-    else {
-      switch (this.props.view || 'blob') {
-        case 'busco':
-          view = <BuscoPlot {...this.props}/>
-          break
-        case 'cumulative':
-          view = <CumulativePlot {...this.props}/>
-          break
-        case 'detail':
-          view = <DetailPlot {...this.props}/>
-          break
-        case 'notfound':
-          view = <NoPlot {...this.props}/>
-          break
-        case 'snail':
-          view = <SnailPlot {...this.props}/>
-          break
-        case 'table':
-          view = <TablePlot {...this.props}/>
-          break
-        case 'treemap':
-          view = <TreeMapPlot {...this.props}/>
-          break
-        case 'report':
+    } else {
+      switch (this.props.view || "blob") {
+        case "busco":
+          view = <BuscoPlot {...this.props} />;
+          break;
+        case "cumulative":
+          view = <CumulativePlot {...this.props} />;
+          break;
+        case "detail":
+          view = <DetailPlot {...this.props} />;
+          break;
+        case "notfound":
+          view = <NoPlot {...this.props} />;
+          break;
+        case "snail":
+          view = <SnailPlot {...this.props} />;
+          break;
+        case "table":
+          view = <TablePlot {...this.props} />;
+          break;
+        case "treemap":
+          view = <TreeMapPlot {...this.props} />;
+          break;
+        case "report":
           view = (
             <div className={styles.fill_parent}>
               <div className={styles.quarter}>
-                <MainPlot {...this.props}/>
+                <MainPlot {...this.props} />
               </div>
               <div className={styles.quarter}>
-                <CumulativePlot {...this.props}/>
+                <CumulativePlot {...this.props} />
               </div>
               <div className={styles.quarter}>
-                <SnailPlot {...this.props}/>
+                <SnailPlot {...this.props} />
               </div>
               <div className={styles.quarter}>
-                <BuscoPlot {...this.props}/>
+                <BuscoPlot {...this.props} />
               </div>
               <div className={styles.quarter}>
-                <DetailPlot {...this.props}/>
+                <DetailPlot {...this.props} />
               </div>
             </div>
-          )
-          break
+          );
+          break;
         default:
-          view = defaultPlot
-          break
+          view = defaultPlot;
+          break;
       }
-
     }
     return (
       <div className={styles.fill_parent}>
         {view}
-        <DatasetSpinner/>
+        <DatasetSpinner />
         {warning}
       </div>
-    )
+    );
   }
 }
 
 class LayoutPlots extends React.Component {
   constructor(props) {
     super(props);
-    this.mapStateToProps = state => {
-      let isStatic = getStatic(state)
-      if (isStatic){
+    (this.mapStateToProps = (state) => {
+      let isStatic = getStatic(state);
+      if (isStatic) {
         return {
           active: getDatasetIsActive(state),
           datasetId: getDatasetID(state),
           view: getView(state),
           plot: getMainPlot(state),
           activeTab: getHashString(state),
-          static: true
+          static: true,
+        };
+      }
+      let active = getDatasetIsActive(state);
+      let cat, bins, view;
+      if (active && active != "loading") {
+        let fields = getFields(state);
+        let shape = getPlotShape(state);
+        cat = getCatAxis(state);
+        view = getView(state);
+        if (
+          view == "blob" &&
+          shape == "lines" &&
+          fields &&
+          fields[`${cat}_windows`]
+        ) {
+          bins = getWindowBinsForCat(state);
+        } else {
+          bins = getBinsForCat(state);
         }
       }
-      // if (!getScatterPlotData(state)) {
-      //   return {
-      //     datasetId: getDatasetID(state)
-      //   }
-      // }
       return {
-        active: getDatasetIsActive(state),
+        active,
         datasetId: getDatasetID(state),
         datasetName: getDatasetName(state),
         plot: getMainPlot(state),
         activeTab: getHashString(state),
-        view: getView(state),
-        bins: getBinsForCat(state),
-        cat: getCatAxis(state),
+        view,
+        bins,
+        cat,
         staticThreshold: getStaticThreshold(state),
         nohitThreshold: getNohitThreshold(state),
         meta: getSelectedDatasetMeta(state),
         static: false,
-        queryString: getQueryString(state)
-      }
-    },
-    this.mapDispatchToProps = dispatch => {
-      return {
-        toggleHash: value => dispatch(toggleHash(value)),
-        updateStore: (str,searchReplace) => {
-          let values = qs.parse(str.replace('?',''))
-          dispatch(queryToStore({values,searchReplace}))
-        },
-        updateQueryString: (qStr) => dispatch(setQueryString(qStr))
-      }
-    }
+        queryString: getQueryString(state),
+      };
+    }),
+      (this.mapDispatchToProps = (dispatch) => {
+        return {
+          toggleHash: (value) => dispatch(toggleHash(value)),
+          updateStore: (str, searchReplace) => {
+            let values = qs.parse(str.replace("?", ""));
+            dispatch(queryToStore({ values, searchReplace }));
+          },
+          updateQueryString: (qStr) => dispatch(setQueryString(qStr)),
+        };
+      });
   }
 
-  render(){
+  render() {
     const ConnectedLayout = connect(
       this.mapStateToProps,
-      this.mapDispatchToProps,
-    )(PlotsLayoutComponent)
-    return <ConnectedLayout {...this.props}/>
+      this.mapDispatchToProps
+    )(PlotsLayoutComponent);
+    return <ConnectedLayout {...this.props} />;
   }
 }
 
-export default LayoutPlots
+export default LayoutPlots;

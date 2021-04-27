@@ -130,7 +130,6 @@ export const plotPaths = createSelector(
       fill: colors.clearColor,
       cursor: "pointer",
       pointerEvents: "auto",
-      fill: "none",
     },
     sideBins: {
       strokeWidth: 2,

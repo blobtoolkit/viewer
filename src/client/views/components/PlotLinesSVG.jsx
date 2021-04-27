@@ -84,7 +84,9 @@ class LinesSVG extends React.Component {
   //   }
   // }
 
-  handleClick(id) {
+  handleClick(e, id) {
+    e.stopPropagation();
+    e.preventDefault();
     let arr = [...this.props.selectedRecords];
     if (arr.includes(id)) {
       this.props.replaceRecords(arr.filter((val) => val != id));
@@ -126,7 +128,7 @@ class LinesSVG extends React.Component {
                   ? highlightColor
                   : "rgb(89, 101, 111)",
               }}
-              onPointerDown={() => this.handleClick(group.id)}
+              onPointerDown={(e) => this.handleClick(e, group.id)}
             />
           );
         });
@@ -139,8 +141,10 @@ class LinesSVG extends React.Component {
               key={`${group.id}_sel`}
               style={{ strokeWidth: "10px" }}
               stroke={highlightColor}
+              strokeLinejoin="round"
               fill="none"
               points={points.join(" ")}
+              onPointerDown={(e) => this.handleClick(e, group.id)}
             />
           );
         }
@@ -149,9 +153,10 @@ class LinesSVG extends React.Component {
             key={group.id}
             style={{ strokeWidth: selectedById[group.id] ? "4px" : "2px" }}
             stroke={colors[group.cat]}
+            strokeLinejoin="round"
             fill="none"
             points={points.join(" ")}
-            onPointerDown={() => this.handleClick(group.id)}
+            onPointerDown={(e) => this.handleClick(e, group.id)}
           />
         );
         if (selectedById[group.id]) {
