@@ -114,13 +114,19 @@ class LinesSVG extends React.Component {
         let groupCircles = [];
         group.x.forEach((x, j) => {
           points.push(`${x},${group.y[j]}`);
+          let color;
+          if (isNaN(group.cats[j])) {
+            color = "white";
+          } else {
+            color = colors[group.cats[j]] || colors[9];
+          }
           groupCircles.push(
             <circle
               key={`${group.id}_${j}`}
               cx={x}
               cy={group.y[j]}
               r={group.r[j]}
-              fill={colors[group.cats[j]] || colors[9]}
+              fill={color}
               fillOpacity={selectedById[group.id] ? 1 : 0.6}
               style={{
                 strokeWidth: selectedById[group.id] ? "6px" : "1px",
