@@ -92,7 +92,7 @@ class LayoutComponent extends React.Component {
       </CookieConsent>
     );
     let plotsDiv;
-    if (this.props.active && this.props.active != "loading") {
+    if (this.props.active != "loading") {
       plotsDiv = <LayoutPlots />;
     } else {
       plotsDiv = (

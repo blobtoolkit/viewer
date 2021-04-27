@@ -18,6 +18,7 @@ import { getDatasetName, getSelectedDatasetMeta } from "../reducers/dataset";
 import BuscoPlot from "./BuscoPlot";
 import CumulativePlot from "./CumulativePlot";
 import DatasetSpinner from "./DatasetSpinner";
+import DatasetTable from "./DatasetTable";
 import DetailPlot from "./DetailPlot";
 import FindDatasets from "./FindDatasets";
 import GetStarted from "./GetStarted";
@@ -113,7 +114,13 @@ class PlotsLayoutComponent extends React.Component {
     }
   }
   render() {
-    if (!this.props.active || this.props.active == "loading") {
+    if (!this.props.active && dataset_table) {
+      return (
+        <div className={styles.fill_parent}>
+          <HomePage />
+        </div>
+      );
+    } else if (!this.props.active || this.props.active == "loading") {
       return (
         <div className={styles.fill_parent}>
           <DatasetSpinner />
