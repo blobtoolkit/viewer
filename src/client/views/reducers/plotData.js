@@ -17,6 +17,7 @@ import {
   getPlainCategoryListForFieldId,
 } from "./preview";
 import {
+  getCenterWindows,
   getPlotResolution,
   getPlotScale,
   getTransformFunction,
@@ -392,44 +393,34 @@ export const getScatterPlotDataByCategory = createSelector(
 
 const flattenNestedArray = (arr, reference, details) => {
   let func = (value, index) => value;
-  // if (reference && reference.values && details) {
-  //   let scale = d3[details.meta.scale]()
-  //     .domain([details.range[0], details.range[1]])
-  //     .clamp(true)
-  //     .range([0, 1]);
-  //   func = (value, index) => {
-  //     scale.invert(scale(value) - scale(reference.values[index]) + 0.5);
-  //   };
-  // }
-  // return arr;
+  // Experimental code to display relative values
+  if (reference && reference.values && details) {
+    let scale = d3[details.meta.scale]()
+      .domain(details.range)
+      .clamp(true)
+      .range([0, 1]);
+    let midpoint = (scale(details.range[1]) + scale(details.range[0])) / 2;
+    func = (value, index) => {
+      return scale.invert(
+        scale(value) - scale(reference.values[index]) + midpoint
+      );
+    };
+  }
   let newArr = [];
-  // let min = Number.POSITIVE_INFINITY;
-  // let max = Number.NEGATIVE_INFINITY;
   for (let i = 0; i < arr.length; i++) {
     if (Array.isArray(arr[i])) {
       newArr[i] = [];
       for (let j = 0; j < arr[i].length; j++) {
         if (Array.isArray(arr[i][j])) {
           newArr[i][j] = func(arr[i][j][0], i);
-          // min = Math.min(min, newArr[i][j]);
-          // max = Math.max(max, newArr[i][j]);
         } else {
           newArr[i][j] = func(arr[i][j], i);
-          // min = Math.min(min, newArr[i][j]);
-          // max = Math.max(max, newArr[i][j]);
         }
       }
     } else {
       newArr[i] = func(arr[i], i);
-      // min = Math.min(min, newArr[i]);
-      // max = Math.max(max, newArr[i]);
     }
   }
-  // if (reference && reference.values && details) {
-  //   console.log(details.range);
-  //   console.log(min);
-  //   console.log(max);
-  // }
   return newArr;
 };
 
@@ -446,13 +437,15 @@ const getFilteredWindowDataForX = createSelector(
   getFields,
   (state) => getFilteredDataForFieldId(state, `${getXAxis(state)}_windows`),
   getFilteredDataForX,
-  (axis, fields, data, mainData) => {
-    let normalise = false;
+  getDetailsForX,
+  getCenterWindows,
+  (axis, fields, data, mainData, details, center) => {
     if (fields[`${axis}_windows`]) {
       if (data && data.values) {
         let values = flattenNestedArray(
           data.values,
-          normalise ? mainData : undefined
+          center ? mainData : undefined,
+          details
         );
         return { ...data, values };
       }
@@ -472,13 +465,13 @@ const getFilteredWindowDataForY = createSelector(
   (state) => getFilteredDataForFieldId(state, `${getYAxis(state)}_windows`),
   getFilteredDataForY,
   getDetailsForY,
-  (axis, fields, data, mainData, details) => {
-    let normalise = true;
+  getCenterWindows,
+  (axis, fields, data, mainData, details, center) => {
     if (fields[`${axis}_windows`]) {
       if (data && data.values) {
         let values = flattenNestedArray(
           data.values,
-          normalise ? mainData : undefined,
+          center ? mainData : undefined,
           details
         );
         return { ...data, values };
@@ -498,13 +491,15 @@ const getFilteredWindowDataForZ = createSelector(
   getFields,
   (state) => getFilteredDataForFieldId(state, `${getZAxis(state)}_windows`),
   getFilteredDataForZ,
-  (axis, fields, data, mainData) => {
-    let normalise = false;
+  getDetailsForZ,
+  (axis, fields, data, mainData, details) => {
+    let center = false;
     if (fields[`${axis}_windows`]) {
       if (data && data.values) {
         let values = flattenNestedArray(
           data.values,
-          normalise ? mainData : undefined
+          center ? mainData : undefined,
+          details
         );
         return { ...data, values };
       }
@@ -524,12 +519,12 @@ const getFilteredWindowDataForCat = createSelector(
   (state) => getFilteredDataForFieldId(state, `${getCatAxis(state)}_windows`),
   getFilteredDataForCat,
   (axis, fields, data, mainData) => {
-    let normalise = false;
+    let center = false;
     if (fields[`${axis}_windows`]) {
       if (data && data.values) {
         let values = flattenNestedArray(
           data.values,
-          normalise ? mainData : undefined
+          center ? mainData : undefined
         );
         return { ...data, values };
       }

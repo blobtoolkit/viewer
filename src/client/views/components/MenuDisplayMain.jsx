@@ -1,4 +1,5 @@
 import {
+  chooseCenterWindows,
   chooseCircleLimit,
   chooseCurveOrigin,
   chooseLargeFonts,
@@ -16,6 +17,7 @@ import {
   chooseSnailOrigin,
   chooseZReducer,
   chooseZScale,
+  getCenterWindows,
   getCircleLimit,
   getCurveOrigin,
   getLargeFonts,
@@ -70,6 +72,7 @@ import TextIcon from "./TextIcon";
 import Timeout from "./Timeout";
 import ToolTips from "./ToolTips";
 import adjustIcon from "./svg/adjust.svg";
+import centerIcon from "./svg/center.svg";
 import circleIcon from "./svg/circleShape.svg";
 import { connect } from "react-redux";
 import countIcon from "./svg/count.svg";
@@ -158,6 +161,8 @@ class DisplayMenu extends React.Component {
       // adjustCoverage, onToggleAdjustCoverage,
       largeFonts,
       onToggleLargeFonts,
+      centerWindows,
+      onToggleCenterWindows,
     } = this.props;
     let context;
     view = view || "blob";
@@ -254,6 +259,15 @@ class DisplayMenu extends React.Component {
               onIconClick={() => onSelectShape("kite")}
             />
           </MenuDisplaySimple>
+          {shape == "lines" && (
+            <MenuDisplaySimple name="center lines">
+              <SVGIcon
+                sprite={centerIcon}
+                active={centerWindows}
+                onIconClick={() => onToggleCenterWindows(!centerWindows)}
+              />
+            </MenuDisplaySimple>
+          )}
           {shape == "kite" && <MenuDisplayKite />}
           <MenuDisplaySimple name={"resolution [ " + resolution + " ]"}>
             <div className={styles.full_height}>
@@ -728,6 +742,7 @@ class MenuDisplayMain extends React.Component {
           dispatch(toggleStatic(view, datasetId)),
         // onToggleAdjustCoverage: (bool) => dispatch(chooseAdjustCoverage(bool)),
         onToggleLargeFonts: (bool) => dispatch(chooseLargeFonts(bool)),
+        onToggleCenterWindows: (bool) => dispatch(chooseCenterWindows(bool)),
         onSelectCurveOrigin: (origin) => dispatch(chooseCurveOrigin(origin)),
         onSelectScaleTo: (origin) => dispatch(chooseScaleTo(origin)),
         onSelectSnailOrigin: (origin) => dispatch(chooseSnailOrigin(origin)),
@@ -793,6 +808,7 @@ class MenuDisplayMain extends React.Component {
         maxCount: getMaxCount(state),
         // adjustCoverage: getAdjustCoverage(state),
         largeFonts: getLargeFonts(state),
+        centerWindows: getCenterWindows(state),
       };
     };
   }

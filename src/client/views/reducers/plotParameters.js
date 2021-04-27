@@ -468,6 +468,22 @@ export const largeFonts = handleAction(
 export const getLargeFonts = (state) =>
   state.largeFonts == "true" ? true : false;
 
+export const setCenterWindows = createAction("SET_CENTER_WINDOWS");
+export const chooseCenterWindows = (centerWindows) => {
+  return function (dispatch) {
+    centerWindows = String(centerWindows) == "true" ? "true" : "false";
+    let values = { centerWindows };
+    dispatch(queryToStore({ values }));
+  };
+};
+export const centerWindows = handleAction(
+  "SET_CENTER_WINDOWS",
+  (state, action) => action.payload,
+  qsDefault("centerWindows")
+);
+export const getCenterWindows = (state) =>
+  state.centerWindows == "true" ? true : false;
+
 // export const setAdjustCoverage = createAction('SET_ADJUST_COVERAGE')
 // export const chooseAdjustCoverage = (adjust) => {
 //   return function (dispatch) {
@@ -520,4 +536,5 @@ export const plotParameterReducers = {
   showTotal,
   // adjustCoverage,
   largeFonts,
+  centerWindows,
 };
