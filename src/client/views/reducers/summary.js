@@ -1216,10 +1216,13 @@ const funcFromPattern = (pattern) => {
       if (parts[i]) {
         if (i % 2 == 0) {
           url += parts[i];
-        } else if (String(def[parts[i]]).match(re)) {
-          url += def[parts[i]];
         } else {
-          return false;
+          let arr = String(def[parts[i]]).match(re);
+          if (arr) {
+            url += arr[1];
+          } else {
+            return false;
+          }
         }
       }
     }
