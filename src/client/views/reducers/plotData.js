@@ -442,6 +442,13 @@ const getFilteredWindowDataForX = createSelector(
   (axis, fields, data, mainData, details, center) => {
     if (fields[`${axis}_windows`]) {
       if (data && data.values) {
+        if (
+          axis.match("proportion") ||
+          axis.match("position") ||
+          axis.match("length")
+        ) {
+          center = false;
+        }
         let values = flattenNestedArray(
           data.values,
           center ? mainData : undefined,
@@ -469,6 +476,13 @@ const getFilteredWindowDataForY = createSelector(
   (axis, fields, data, mainData, details, center) => {
     if (fields[`${axis}_windows`]) {
       if (data && data.values) {
+        if (
+          axis.match("proportion") ||
+          axis.match("position") ||
+          axis.match("length")
+        ) {
+          center = false;
+        }
         let values = flattenNestedArray(
           data.values,
           center ? mainData : undefined,

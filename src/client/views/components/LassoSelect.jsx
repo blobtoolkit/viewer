@@ -24,6 +24,7 @@ import { polygonContains as d3polygonContains } from "d3-polygon";
 import { polygonHull as d3polygonHull } from "d3-polygon";
 import { scaleLinear as d3scaleLinear } from "d3-scale";
 import { getColorScheme } from "../reducers/color";
+import { getPlotShape } from "../reducers/plotParameters";
 import styles from "./Plot.scss";
 
 export default class LassoSelect extends React.Component {
@@ -40,6 +41,7 @@ export default class LassoSelect extends React.Component {
           yMeta: getDetailsForY(state),
           selectSource: getSelectSource(state),
           colors: getColorScheme(state),
+          shape: getPlotShape(state),
         };
       };
     };
@@ -184,7 +186,7 @@ class Lasso extends React.Component {
     this.props.replaceRecords(records);
   }
 
-  setMouseDown(bool, coords) {
+  setMouseDown(bool, coords, marquee) {
     //this.setState({mouseDown:bool})
     let active = this.state.active;
     let arr = coords ? [coords.x, coords.y] : [];
@@ -195,7 +197,7 @@ class Lasso extends React.Component {
         this.props.selectNone();
       }
     }
-    if (bool) {
+    if (bool && !marquee) {
       this.setState({
         mouseDown: true,
         current: arr,
@@ -389,7 +391,10 @@ class Lasso extends React.Component {
     let nodes, internodes;
     let path;
 
-    if (this.props.selectionDisplay) {
+    if (
+      this.props.selectionDisplay // &&
+      // this.props.selectSource == this.props.shape
+    ) {
       if (this.state.active) {
         let current = this.state.current;
         let line;
@@ -523,8 +528,26 @@ class Lasso extends React.Component {
                 internodes,
               });
             } else {
+              // if (this.state.mouseDown) {
+              //   if (points.length == 0) {
+              //     this.setMouseDown(true, coords, true);
+              //   }
+              //   if (points.length >= 1) {
+              //     let newPoints = [
+              //       points[0],
+              //       [current[0], points[0][1]],
+              //       current,
+              //       [points[0][0], current[1]],
+              //       points[0],
+              //     ];
+              //     this.setState({
+              //       points: newPoints,
+              //     });
+              //   }
+              // } else {
               this.detectNodes(coords, thresh);
               this.clearIncomplete();
+              // }
             }
           }}
           onPointerLeave={(e) => {
