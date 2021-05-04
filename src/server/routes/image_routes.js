@@ -1,17 +1,17 @@
-const sharp = require("sharp");
+//const sharp = require("sharp");
 
-const resize = async (file, width, height) => {
-  height = height || width;
-  let buffer = await sharp(file)
-    .resize(width, height, {
-      fit: sharp.fit.inside,
-      withoutEnlargement: true,
-    })
-    .toFormat("png")
-    .toBuffer()
-    .then((outputBuffer) => outputBuffer);
-  return buffer;
-};
+// const resize = async (file, width, height) => {
+//   height = height || width;
+//   let buffer = await sharp(file)
+//     .resize(width, height, {
+//       fit: sharp.fit.inside,
+//       withoutEnlargement: true,
+//     })
+//     .toFormat("png")
+//     .toBuffer()
+//     .then((outputBuffer) => outputBuffer);
+//   return buffer;
+// };
 
 /**
  * @swagger
@@ -36,9 +36,11 @@ const resize = async (file, width, height) => {
  *     name: type
  *     type: string
  *     enum:
- *       - square
- *       - hex
  *       - circle
+ *       - hex
+ *       - kite
+ *       - none
+ *       - square
  *     required: true
  *     description: blob view plot type
  */
@@ -88,7 +90,7 @@ module.exports = function (app, db) {
    */
   app.get("/api/v1/image/:dataset_id", async (req, res) => {
     res.setHeader("content-type", "image/png");
-    res.sendFile(directory + "/" + req.params.dataset_id + "/blob.square.png");
+    res.sendFile(directory + "/" + req.params.dataset_id + "/blob.circle.png");
   });
 
   /**
@@ -113,7 +115,7 @@ module.exports = function (app, db) {
   app.get("/api/v1/image/:dataset_id/:view", async (req, res) => {
     let type = "";
     if (req.params.view == "blob") {
-      type = ".square";
+      type = ".circle";
     }
     if (req.query.format == "svg") {
       res.setHeader("content-type", "image/svg+xml");
@@ -136,12 +138,12 @@ module.exports = function (app, db) {
         req.params.view +
         type +
         ".png";
-      if (req.query.width) {
-        let outputBuffer = await resize(file, Math.floor(1 * req.query.width));
-        res.send(outputBuffer);
-      } else {
-        res.sendFile(file);
-      }
+      // if (req.query.width) {
+      //   let outputBuffer = await resize(file, Math.floor(1 * req.query.width));
+      //   res.send(outputBuffer);
+      // } else {
+      res.sendFile(file);
+      // }
     }
   });
 
@@ -167,12 +169,14 @@ module.exports = function (app, db) {
   app.get("/api/v1/image/:dataset_id/blob/:type", async (req, res) => {
     if (req.query.format == "svg") {
       res.setHeader("content-type", "image/svg+xml");
+      let type = req.params.type
+      if (type == "none") type = "circle"
       let file =
         directory +
         "/" +
         req.params.dataset_id +
         "/blob." +
-        req.params.type +
+        type +
         ".svg";
       res.sendFile(file);
     } else {
@@ -182,14 +186,14 @@ module.exports = function (app, db) {
         "/" +
         req.params.dataset_id +
         "/blob." +
-        req.params.type +
+        type +
         ".png";
-      if (req.query.width) {
-        let outputBuffer = await resize(file, Math.floor(1 * req.query.width));
-        res.send(outputBuffer);
-      } else {
-        res.sendFile(file);
-      }
+      // if (req.query.width) {
+      //   let outputBuffer = await resize(file, Math.floor(1 * req.query.width));
+      //   res.send(outputBuffer);
+      // } else {
+      res.sendFile(file);
+      // }
     }
   });
 };
