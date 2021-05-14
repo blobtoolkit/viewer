@@ -127,7 +127,6 @@ class PlotsLayoutComponent extends React.Component {
         </div>
       );
     }
-
     let warning = this.state.warn && (
       <NoHitWarning nohitThreshold={this.props.nohitThreshold} />
     );
@@ -153,6 +152,7 @@ class PlotsLayoutComponent extends React.Component {
       }
     }
     let view;
+
     if (this.props.static) {
       switch (this.props.view) {
         case "detail":
@@ -165,15 +165,20 @@ class PlotsLayoutComponent extends React.Component {
     } else if (problem) {
       if (this.props.view == "blob") {
         view = defaultPlot;
-      } else if (problem == "noCat" && this.props.view == "cumulative") {
+      } else if (
+        (problem == "noBlob" || problem == "noCat") &&
+        this.props.view == "cumulative"
+      ) {
         view = defaultPlot;
       }
-    } else {
+    }
+    if (!view) {
       switch (this.props.view || "blob") {
         case "busco":
           view = <BuscoPlot {...this.props} />;
           break;
         case "cumulative":
+          console.log("here");
           view = <CumulativePlot {...this.props} />;
           break;
         case "detail":
