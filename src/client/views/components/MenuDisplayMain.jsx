@@ -247,6 +247,7 @@ class DisplayMenu extends React.Component {
           }
         });
         errorBarOptions = [
+          { label: "0", value: 0 },
           { label: "SD", value: "sd" },
           { label: "SE", value: "se" },
           { label: "CI", value: "ci" },

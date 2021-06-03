@@ -22,6 +22,7 @@ import {
 } from "d3-shape";
 import { getCatAxis, getXAxis, getYAxis, getZAxis } from "../reducers/plot";
 import {
+  getErrorBars,
   getPlotScale,
   getWindowSize,
   getZScale,
@@ -65,7 +66,9 @@ export default class PlotLinesSVG extends React.Component {
       zScale: getZScale(state),
       plotScale: getPlotScale(state),
       windowSize: getWindowSize(state),
+      errorBars: getErrorBars(state),
       data: getLinesPlotData(state),
+      showSelection: getSelectionDisplay(state),
       selectedRecords: getSelectedRecords(state),
     });
     this.mapDispatchToProps = (dispatch) => ({
@@ -168,10 +171,15 @@ class LinesSVG extends React.Component {
               fill={color}
               fillOpacity={selectedById[group.id] ? 1 : 0.6}
               style={{
-                strokeWidth: selectedById[group.id] ? "6px" : "1px",
-                stroke: selectedById[group.id]
-                  ? highlightColor
-                  : "rgb(89, 101, 111)",
+                strokeWidth: selectedById[group.id]
+                  ? this.props.showSelection
+                    ? "6px"
+                    : "2px"
+                  : "1px",
+                stroke:
+                  this.props.showSelection && selectedById[group.id]
+                    ? highlightColor
+                    : "rgb(89, 101, 111)",
               }}
               onPointerDown={(e) => this.handleClick(e, group.id)}
             />
@@ -182,7 +190,10 @@ class LinesSVG extends React.Component {
         let mainPath = cardinalLine(points);
 
         if (selectedById[group.id]) {
-          if ((group.ysd && !group.xsd) || (group.xsd && !group.ysd)) {
+          if (
+            (this.props.errorBars && group.ysd && !group.xsd) ||
+            (group.xsd && !group.ysd)
+          ) {
             let upperPoints = [];
             let lowerPoints = [];
             let upperPath, lowerPath;
@@ -218,7 +229,7 @@ class LinesSVG extends React.Component {
                 style={{ strokeWidth: "5px" }}
                 stroke={"black"}
                 fill="none"
-                strokeOpacity={0.3}
+                strokeOpacity={0.4}
                 d={upperPath}
                 onPointerDown={(e) => this.handleClick(e, group.id)}
               />
@@ -229,7 +240,7 @@ class LinesSVG extends React.Component {
                 style={{ strokeWidth: "5px" }}
                 stroke={"black"}
                 fill="none"
-                strokeOpacity={0.3}
+                strokeOpacity={0.4}
                 d={lowerPath}
                 onPointerDown={(e) => this.handleClick(e, group.id)}
               />
@@ -273,7 +284,7 @@ class LinesSVG extends React.Component {
                 style={{ strokeWidth: "5px" }}
                 stroke={"black"}
                 fill="none"
-                strokeOpacity={0.3}
+                strokeOpacity={0.4}
                 strokeLinejoin="round"
                 fill="none"
                 d={boundary}
@@ -282,17 +293,33 @@ class LinesSVG extends React.Component {
             );
           }
 
-          groupPaths.push(
-            <path
-              key={`${group.id}_sel`}
-              style={{ strokeWidth: "12px" }}
-              stroke={highlightColor}
-              strokeLinejoin="round"
-              fill="none"
-              d={mainPath}
-              onPointerDown={(e) => this.handleClick(e, group.id)}
-            />
-          );
+          {
+            if (this.props.showSelection) {
+              groupPaths.push(
+                <path
+                  key={`${group.id}_sel`}
+                  style={{ strokeWidth: "14px" }}
+                  stroke={highlightColor}
+                  strokeLinejoin="round"
+                  fill="none"
+                  d={mainPath}
+                  onPointerDown={(e) => this.handleClick(e, group.id)}
+                />
+              );
+            } else {
+              groupPaths.push(
+                <path
+                  key={`${group.id}_sel`}
+                  style={{ strokeWidth: "8px" }}
+                  stroke={"rgb(89, 101, 111)"}
+                  strokeLinejoin="round"
+                  fill="none"
+                  d={mainPath}
+                  onPointerDown={(e) => this.handleClick(e, group.id)}
+                />
+              );
+            }
+          }
         }
         groupPaths.push(
           <path
