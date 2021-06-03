@@ -1,7 +1,7 @@
 import {
-  chooseCenterWindows,
   chooseCircleLimit,
   chooseCurveOrigin,
+  chooseErrorBars,
   chooseLargeFonts,
   chooseMaxCount,
   chooseMaxSpan,
@@ -15,11 +15,12 @@ import {
   chooseShowTotal,
   chooseSideMax,
   chooseSnailOrigin,
+  chooseWindowSize,
   chooseZReducer,
   chooseZScale,
-  getCenterWindows,
   getCircleLimit,
   getCurveOrigin,
+  getErrorBars,
   getLargeFonts,
   getMaxCount,
   getMaxSpan,
@@ -34,6 +35,7 @@ import {
   getSideMax,
   getSnailOrigin,
   getTransformFunctionParams,
+  getWindowSize,
   getZReducer,
   getZScale,
   setPlotResolution,
@@ -77,6 +79,7 @@ import circleIcon from "./svg/circleShape.svg";
 import { connect } from "react-redux";
 import countIcon from "./svg/count.svg";
 import { format as d3Format } from "d3-format";
+import { format as d3format } from "d3-format";
 import fontSizeIcon from "./svg/fontSize.svg";
 //import styles from './Plot.scss'
 import { getAxisTitle } from "../reducers/plotData";
@@ -101,6 +104,9 @@ import svgIcon from "./svg/svg.svg";
 import xIcon from "./svg/xLetter.svg";
 import yIcon from "./svg/yLetter.svg";
 import zeroIcon from "./svg/zero.svg";
+
+let pct = (n) => d3Format(".0%")(n);
+let sci = (n) => d3Format(".1s")(n);
 
 class DisplayMenu extends React.Component {
   render() {
@@ -161,8 +167,10 @@ class DisplayMenu extends React.Component {
       // adjustCoverage, onToggleAdjustCoverage,
       largeFonts,
       onToggleLargeFonts,
-      centerWindows,
-      onToggleCenterWindows,
+      errorBars,
+      onChangeErrorBars,
+      windowSize,
+      onChangeWindowSize,
     } = this.props;
     let context;
     view = view || "blob";
@@ -228,6 +236,22 @@ class DisplayMenu extends React.Component {
         </MenuDisplaySimple>
       );
     } else {
+      let windowSizes, errorBarOptions;
+      if (meta.settings && meta.settings.stats_windows) {
+        windowSizes = [];
+        meta.settings.stats_windows.forEach((value) => {
+          if (value < 1) {
+            windowSizes.push({ label: pct(value), value });
+          } else if (value > 1) {
+            windowSizes.push({ label: sci(value), value });
+          }
+        });
+        errorBarOptions = [
+          { label: "SD", value: "sd" },
+          { label: "SE", value: "se" },
+          { label: "CI", value: "ci" },
+        ];
+      }
       blob = (
         <span>
           <MenuDisplaySimple name="shape">
@@ -259,13 +283,28 @@ class DisplayMenu extends React.Component {
               onIconClick={() => onSelectShape("kite")}
             />
           </MenuDisplaySimple>
+          {shape == "lines" && windowSizes && (
+            <MenuDisplaySimple name="window size">
+              {windowSizes.map((obj) => (
+                <TextIcon
+                  key={obj.value}
+                  title={obj.label}
+                  active={obj.value == windowSize}
+                  onIconClick={() => onChangeWindowSize(obj.value)}
+                />
+              ))}
+            </MenuDisplaySimple>
+          )}
           {shape == "lines" && (
-            <MenuDisplaySimple name="center lines">
-              <SVGIcon
-                sprite={centerIcon}
-                active={centerWindows}
-                onIconClick={() => onToggleCenterWindows(!centerWindows)}
-              />
+            <MenuDisplaySimple name="error bars">
+              {errorBarOptions.map((obj) => (
+                <TextIcon
+                  key={obj.value}
+                  title={obj.label}
+                  active={obj.value == errorBars}
+                  onIconClick={() => onChangeErrorBars(obj.value)}
+                />
+              ))}
             </MenuDisplaySimple>
           )}
           {shape == "kite" && <MenuDisplayKite />}
@@ -742,7 +781,8 @@ class MenuDisplayMain extends React.Component {
           dispatch(toggleStatic(view, datasetId)),
         // onToggleAdjustCoverage: (bool) => dispatch(chooseAdjustCoverage(bool)),
         onToggleLargeFonts: (bool) => dispatch(chooseLargeFonts(bool)),
-        onToggleCenterWindows: (bool) => dispatch(chooseCenterWindows(bool)),
+        onChangeErrorBars: (value) => dispatch(chooseErrorBars(value)),
+        onChangeWindowSize: (value) => dispatch(chooseWindowSize(value)),
         onSelectCurveOrigin: (origin) => dispatch(chooseCurveOrigin(origin)),
         onSelectScaleTo: (origin) => dispatch(chooseScaleTo(origin)),
         onSelectSnailOrigin: (origin) => dispatch(chooseSnailOrigin(origin)),
@@ -808,7 +848,8 @@ class MenuDisplayMain extends React.Component {
         maxCount: getMaxCount(state),
         // adjustCoverage: getAdjustCoverage(state),
         largeFonts: getLargeFonts(state),
-        centerWindows: getCenterWindows(state),
+        errorBars: getErrorBars(state),
+        windowSize: getWindowSize(state),
       };
     };
   }

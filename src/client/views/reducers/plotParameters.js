@@ -468,21 +468,33 @@ export const largeFonts = handleAction(
 export const getLargeFonts = (state) =>
   state.largeFonts == "true" ? true : false;
 
-export const setCenterWindows = createAction("SET_CENTER_WINDOWS");
-export const chooseCenterWindows = (centerWindows) => {
+export const setErrorBars = createAction("SET_ERROR_BARS");
+export const chooseErrorBars = (errorBars) => {
   return function (dispatch) {
-    centerWindows = String(centerWindows) == "true" ? "true" : "false";
-    let values = { centerWindows };
+    let values = { errorBars };
     dispatch(queryToStore({ values }));
   };
 };
-export const centerWindows = handleAction(
-  "SET_CENTER_WINDOWS",
+export const errorBars = handleAction(
+  "SET_ERROR_BARS",
   (state, action) => action.payload,
-  qsDefault("centerWindows")
+  qsDefault("errorBars")
 );
-export const getCenterWindows = (state) =>
-  state.centerWindows == "true" ? true : false;
+export const getErrorBars = (state) => state.errorBars;
+
+export const setWindowSize = createAction("SET_WINDOW_SIZE");
+export const chooseWindowSize = (windowSize) => {
+  return function (dispatch) {
+    let values = { windowSize };
+    dispatch(queryToStore({ values }));
+  };
+};
+export const windowSize = handleAction(
+  "SET_WINDOW_SIZE",
+  (state, action) => action.payload,
+  qsDefault("windowSize")
+);
+export const getWindowSize = (state) => state.windowSize;
 
 // export const setAdjustCoverage = createAction('SET_ADJUST_COVERAGE')
 // export const chooseAdjustCoverage = (adjust) => {
@@ -536,5 +548,6 @@ export const plotParameterReducers = {
   showTotal,
   // adjustCoverage,
   largeFonts,
-  centerWindows,
+  errorBars,
+  windowSize,
 };

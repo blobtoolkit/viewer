@@ -103,10 +103,15 @@ const mapDispatchToQuery = {
     payload: (k, v) => v,
     default: "false",
   },
-  centerWindows: {
-    type: "SET_CENTER_WINDOWS",
+  errorBars: {
+    type: "SET_ERROR_BARS",
     payload: (k, v) => v,
-    default: "false",
+    default: "sd",
+  },
+  windowSize: {
+    type: "SET_WINDOW_SIZE",
+    payload: (k, v) => v,
+    default: "0.1",
   },
   // adjustCoverage: {
   //   type: "SET_ADJUST_COVERAGE",

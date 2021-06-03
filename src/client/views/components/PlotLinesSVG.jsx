@@ -9,14 +9,50 @@ import {
   selectNone,
   setSelectSource,
 } from "../reducers/select";
+import {
+  curveBasis as d3CurveBasis,
+  curveBasisClosed as d3CurveBasisClosed,
+  curveCardinal as d3CurveCardinal,
+  curveCardinalClosed as d3CurveCardinalClosed,
+  curveLinear as d3CurveLinear,
+  curveLinearClosed as d3CurveLinearClosed,
+  curveMonotoneX as d3CurveMonotoneX,
+  curveMonotoneY as d3CurveMonotoneY,
+  line as d3Line,
+} from "d3-shape";
 import { getCatAxis, getXAxis, getYAxis, getZAxis } from "../reducers/plot";
-import { getPlotScale, getZScale } from "../reducers/plotParameters";
+import {
+  getPlotScale,
+  getWindowSize,
+  getZScale,
+} from "../reducers/plotParameters";
 
 import React from "react";
 import { connect } from "react-redux";
+import { polygonHull as d3PolygonHull } from "d3-polygon";
 import { fetchRawData } from "../reducers/field";
 import { getLinesPlotData } from "../reducers/plotData";
 import { plotShapes } from "../reducers/plotStyles";
+
+const smoothLineX = d3Line()
+  .x((d) => d[0])
+  .y((d) => d[1])
+  .curve(d3CurveMonotoneX);
+
+const smoothLineY = d3Line()
+  .x((d) => d[0])
+  .y((d) => d[1])
+  .curve(d3CurveMonotoneY);
+
+const cardinalLine = d3Line()
+  .x((d) => d[0])
+  .y((d) => d[1])
+  .curve(d3CurveCardinal);
+
+const closedLine = d3Line()
+  .x((d) => d[0])
+  .y((d) => d[1])
+  .curve(d3CurveBasisClosed);
 
 export default class PlotLinesSVG extends React.Component {
   constructor(props) {
@@ -28,6 +64,7 @@ export default class PlotLinesSVG extends React.Component {
       catAxis: getCatAxis(state),
       zScale: getZScale(state),
       plotScale: getPlotScale(state),
+      windowSize: getWindowSize(state),
       data: getLinesPlotData(state),
       selectedRecords: getSelectedRecords(state),
     });
@@ -64,10 +101,12 @@ class LinesSVG extends React.Component {
       !this.props.data.coords ||
       this.props.data.coords.length == 0
     ) {
-      this.props.fetchData(`${this.props.xAxis}_windows`);
-      this.props.fetchData(`${this.props.yAxis}_windows`);
-      this.props.fetchData(`${this.props.zAxis}_windows`);
-      this.props.fetchData(`${this.props.catAxis}_windows`);
+      let windowSuffix =
+        this.props.windowSize == 0.1 ? "" : `_${this.props.windowSize}`;
+      this.props.fetchData(`${this.props.xAxis}_windows${windowSuffix}`);
+      this.props.fetchData(`${this.props.yAxis}_windows${windowSuffix}`);
+      this.props.fetchData(`${this.props.zAxis}_windows${windowSuffix}`);
+      this.props.fetchData(`${this.props.catAxis}_windows${windowSuffix}`);
     }
   }
 
@@ -77,10 +116,10 @@ class LinesSVG extends React.Component {
   //     !this.props.data.coords ||
   //     this.props.data.coords.length == 0
   //   ) {
-  //     this.props.fetchData(`${this.props.xAxis}_windows`);
-  //     this.props.fetchData(`${this.props.yAxis}_windows`);
-  //     this.props.fetchData(`${this.props.zAxis}_windows`);
-  //     this.props.fetchData(`${this.props.catAxis}_windows`);
+  //     this.props.fetchData(`${this.props.xAxis}_windows_1000000`);
+  //     this.props.fetchData(`${this.props.yAxis}_windows_1000000`);
+  //     this.props.fetchData(`${this.props.zAxis}_windows_1000000`);
+  //     this.props.fetchData(`${this.props.catAxis}_windows_1000000`);
   //   }
   // }
 
@@ -113,7 +152,7 @@ class LinesSVG extends React.Component {
         let points = [];
         let groupCircles = [];
         group.x.forEach((x, j) => {
-          points.push(`${x},${group.y[j]}`);
+          points.push([x, group.y[j]]);
           let color;
           if (isNaN(group.cats[j])) {
             color = "white";
@@ -140,28 +179,129 @@ class LinesSVG extends React.Component {
         });
 
         let groupPaths = [];
+        let mainPath = cardinalLine(points);
 
         if (selectedById[group.id]) {
+          if ((group.ysd && !group.xsd) || (group.xsd && !group.ysd)) {
+            let upperPoints = [];
+            let lowerPoints = [];
+            let upperPath, lowerPath;
+
+            if (group.ysd) {
+              group.x.forEach((x, j) => {
+                upperPoints.push([x, group.y[j] + group.ysd[j]]);
+                lowerPoints.push([x, group.y[j] - group.ysd[j]]);
+              });
+              upperPath = smoothLineX(upperPoints);
+              lowerPath = smoothLineX(lowerPoints.reverse());
+            } else {
+              group.x.forEach((x, j) => {
+                upperPoints.push([x + group.xsd[j], group.y[j]]);
+                lowerPoints.push([x - group.xsd[j], group.y[j]]);
+              });
+              upperPath = smoothLineY(upperPoints);
+              lowerPath = smoothLineY(lowerPoints.reverse());
+            }
+            groupPaths.push(
+              <path
+                key={`${group.id}_bounds`}
+                stroke={"none"}
+                fill="black"
+                fillOpacity={0.05}
+                d={upperPath + lowerPath.replace(/^M/, "L")}
+                onPointerDown={(e) => this.handleClick(e, group.id)}
+              />
+            );
+            groupPaths.push(
+              <path
+                key={`${group.id}_upper`}
+                style={{ strokeWidth: "5px" }}
+                stroke={"black"}
+                fill="none"
+                strokeOpacity={0.3}
+                d={upperPath}
+                onPointerDown={(e) => this.handleClick(e, group.id)}
+              />
+            );
+            groupPaths.push(
+              <path
+                key={`${group.id}_lower`}
+                style={{ strokeWidth: "5px" }}
+                stroke={"black"}
+                fill="none"
+                strokeOpacity={0.3}
+                d={lowerPath}
+                onPointerDown={(e) => this.handleClick(e, group.id)}
+              />
+            );
+            // groupPaths.push(
+            //   <polyline
+            //     key={`${group.id}_lower`}
+            //     style={{ strokeWidth: "10px" }}
+            //     stroke={"black"}
+            //     strokeLinejoin="round"
+            //     fill="none"
+            //     points={lowerPoints.join(" ")}
+            //     onPointerDown={(e) => this.handleClick(e, group.id)}
+            //   />
+            // );
+            // mainPath = midPath;
+          } else if (group.xsd && group.ysd) {
+            let sdPoints = [];
+            group.x.forEach((x, j) => {
+              sdPoints.push([x - group.xsd[j], group.y[j] + group.ysd[j]]);
+              sdPoints.push([x + group.xsd[j], group.y[j] + group.ysd[j]]);
+              sdPoints.push([x + group.xsd[j], group.y[j] - group.ysd[j]]);
+              sdPoints.push([x - group.xsd[j], group.y[j] - group.ysd[j]]);
+            });
+
+            let boundary = closedLine(d3PolygonHull(sdPoints));
+
+            groupPaths.push(
+              <path
+                key={`${group.id}_area`}
+                stroke={"none"}
+                fill="black"
+                fillOpacity={0.05}
+                d={boundary}
+                onPointerDown={(e) => this.handleClick(e, group.id)}
+              />
+            );
+            groupPaths.push(
+              <path
+                key={`${group.id}_hull`}
+                style={{ strokeWidth: "5px" }}
+                stroke={"black"}
+                fill="none"
+                strokeOpacity={0.3}
+                strokeLinejoin="round"
+                fill="none"
+                d={boundary}
+                onPointerDown={(e) => this.handleClick(e, group.id)}
+              />
+            );
+          }
+
           groupPaths.push(
-            <polyline
+            <path
               key={`${group.id}_sel`}
-              style={{ strokeWidth: "10px" }}
+              style={{ strokeWidth: "12px" }}
               stroke={highlightColor}
               strokeLinejoin="round"
               fill="none"
-              points={points.join(" ")}
+              d={mainPath}
               onPointerDown={(e) => this.handleClick(e, group.id)}
             />
           );
         }
         groupPaths.push(
-          <polyline
+          <path
             key={group.id}
             style={{ strokeWidth: selectedById[group.id] ? "4px" : "2px" }}
             stroke={colors[group.cat]}
             strokeLinejoin="round"
             fill="none"
-            points={points.join(" ")}
+            d={mainPath}
             onPointerDown={(e) => this.handleClick(e, group.id)}
           />
         );

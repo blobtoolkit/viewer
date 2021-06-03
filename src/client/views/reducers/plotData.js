@@ -17,11 +17,12 @@ import {
   getPlainCategoryListForFieldId,
 } from "./preview";
 import {
-  getCenterWindows,
+  getErrorBars,
   getPlotResolution,
   getPlotScale,
   getTransformFunction,
   getTransformFunctionParams,
+  getWindowSize,
   getZScale,
   radiusScale,
 } from "./plotParameters";
@@ -391,28 +392,43 @@ export const getScatterPlotDataByCategory = createSelector(
   }
 );
 
-const flattenNestedArray = (arr, reference, details) => {
+const flattenNestedArray = (arr, errorBars, details) => {
   let func = (value, index) => value;
   // Experimental code to display relative values
-  if (reference && reference.values && details) {
-    let scale = d3[details.meta.scale]()
-      .domain(details.range)
-      .clamp(true)
-      .range([0, 1]);
-    let midpoint = (scale(details.range[1]) + scale(details.range[0])) / 2;
-    func = (value, index) => {
-      return scale.invert(
-        scale(value) - scale(reference.values[index]) + midpoint
-      );
-    };
-  }
+  // if (reference && reference.values && details) {
+  //   let scale = d3[details.meta.scale]()
+  //     .domain(details.range)
+  //     .clamp(true)
+  //     .range([0, 1]);
+  //   let midpoint = (scale(details.range[1]) + scale(details.range[0])) / 2;
+  //   func = (value, index) => {
+  //     return scale.invert(
+  //       scale(value) - scale(reference.values[index]) + midpoint
+  //     );
+  //   };
+  // }
   let newArr = [];
+  let sd = [];
+  let hasSd;
   for (let i = 0; i < arr.length; i++) {
     if (Array.isArray(arr[i])) {
       newArr[i] = [];
+      sd[i] = [];
       for (let j = 0; j < arr[i].length; j++) {
         if (Array.isArray(arr[i][j])) {
           newArr[i][j] = func(arr[i][j][0], i);
+          if (arr[i][j].length > 1) {
+            if (errorBars) {
+              hasSd = true;
+              if (errorBars == "sd") {
+                sd[i][j] = arr[i][j][1];
+              } else if (errorBars == "se") {
+                sd[i][j] = arr[i][j][1] / Math.sqrt(arr[i][j][2]);
+              } else if (errorBars == "ci") {
+                sd[i][j] = (1.96 * arr[i][j][1]) / Math.sqrt(arr[i][j][2]);
+              }
+            }
+          }
         } else {
           newArr[i][j] = func(arr[i][j], i);
         }
@@ -421,7 +437,10 @@ const flattenNestedArray = (arr, reference, details) => {
       newArr[i] = func(arr[i], i);
     }
   }
-  return newArr;
+  if (!hasSd) {
+    sd = undefined;
+  }
+  return { values: newArr, sd };
 };
 
 const nestValues = (arr) => {
@@ -432,29 +451,66 @@ const nestValues = (arr) => {
   return newArr;
 };
 
+export const getWindowedXAxis = createSelector(
+  getXAxis,
+  getWindowSize,
+  (axis, windowSize) => {
+    let windowSuffix = windowSize == 0.1 ? "" : `_${windowSize}`;
+    return `${axis}_windows${windowSuffix}`;
+  }
+);
+
+export const getWindowedYAxis = createSelector(
+  getYAxis,
+  getWindowSize,
+  (axis, windowSize) => {
+    let windowSuffix = windowSize == 0.1 ? "" : `_${windowSize}`;
+    return `${axis}_windows${windowSuffix}`;
+  }
+);
+
+export const getWindowedZAxis = createSelector(
+  getZAxis,
+  getWindowSize,
+  (axis, windowSize) => {
+    let windowSuffix = windowSize == 0.1 ? "" : `_${windowSize}`;
+    return `${axis}_windows${windowSuffix}`;
+  }
+);
+
+export const getWindowedCatAxis = createSelector(
+  getCatAxis,
+  getWindowSize,
+  (axis, windowSize) => {
+    let windowSuffix = windowSize == 0.1 ? "" : `_${windowSize}`;
+    return `${axis}_windows${windowSuffix}`;
+  }
+);
+
 const getFilteredWindowDataForX = createSelector(
   getXAxis,
+  getWindowedXAxis,
   getFields,
-  (state) => getFilteredDataForFieldId(state, `${getXAxis(state)}_windows`),
+  (state) => getFilteredDataForFieldId(state, getWindowedXAxis(state)),
   getFilteredDataForX,
   getDetailsForX,
-  getCenterWindows,
-  (axis, fields, data, mainData, details, center) => {
-    if (fields[`${axis}_windows`]) {
+  getErrorBars,
+  (axis, windowedAxis, fields, data, mainData, details, errorBars) => {
+    if (fields[windowedAxis]) {
       if (data && data.values) {
         if (
           axis.match("proportion") ||
           axis.match("position") ||
           axis.match("length")
         ) {
-          center = false;
+          errorBars = false;
         }
-        let values = flattenNestedArray(
+        let { values, sd } = flattenNestedArray(
           data.values,
-          center ? mainData : undefined,
+          errorBars,
           details
         );
-        return { ...data, values };
+        return { ...data, values, sd };
       }
       return data;
     }
@@ -468,27 +524,28 @@ const getFilteredWindowDataForX = createSelector(
 
 const getFilteredWindowDataForY = createSelector(
   getYAxis,
+  getWindowedYAxis,
   getFields,
-  (state) => getFilteredDataForFieldId(state, `${getYAxis(state)}_windows`),
+  (state) => getFilteredDataForFieldId(state, getWindowedYAxis(state)),
   getFilteredDataForY,
   getDetailsForY,
-  getCenterWindows,
-  (axis, fields, data, mainData, details, center) => {
-    if (fields[`${axis}_windows`]) {
+  getErrorBars,
+  (axis, windowedAxis, fields, data, mainData, details, errorBars) => {
+    if (fields[windowedAxis]) {
       if (data && data.values) {
         if (
           axis.match("proportion") ||
           axis.match("position") ||
           axis.match("length")
         ) {
-          center = false;
+          errorBars = false;
         }
-        let values = flattenNestedArray(
+        let { values, sd } = flattenNestedArray(
           data.values,
-          center ? mainData : undefined,
+          errorBars,
           details
         );
-        return { ...data, values };
+        return { ...data, values, sd };
       }
       return data;
     }
@@ -502,20 +559,16 @@ const getFilteredWindowDataForY = createSelector(
 
 const getFilteredWindowDataForZ = createSelector(
   getZAxis,
+  getWindowedZAxis,
   getFields,
-  (state) => getFilteredDataForFieldId(state, `${getZAxis(state)}_windows`),
+  (state) => getFilteredDataForFieldId(state, getWindowedZAxis(state)),
   getFilteredDataForZ,
-  getDetailsForZ,
-  (axis, fields, data, mainData, details) => {
-    let center = false;
-    if (fields[`${axis}_windows`]) {
+  getErrorBars,
+  (axis, windowedAxis, fields, data, mainData, errorBars) => {
+    if (fields[windowedAxis]) {
       if (data && data.values) {
-        let values = flattenNestedArray(
-          data.values,
-          center ? mainData : undefined,
-          details
-        );
-        return { ...data, values };
+        let { values, sd } = flattenNestedArray(data.values, errorBars);
+        return { ...data, values, sd };
       }
       return data;
     }
@@ -529,17 +582,14 @@ const getFilteredWindowDataForZ = createSelector(
 
 const getFilteredWindowDataForCat = createSelector(
   getCatAxis,
+  getWindowedCatAxis,
   getFields,
-  (state) => getFilteredDataForFieldId(state, `${getCatAxis(state)}_windows`),
+  (state) => getFilteredDataForFieldId(state, getWindowedCatAxis(state)),
   getFilteredDataForCat,
-  (axis, fields, data, mainData) => {
-    let center = false;
-    if (fields[`${axis}_windows`]) {
+  (axis, windowedAxis, fields, data, mainData) => {
+    if (fields[windowedAxis]) {
       if (data && data.values) {
-        let values = flattenNestedArray(
-          data.values,
-          center ? mainData : undefined
-        );
+        let { values } = flattenNestedArray(data.values);
         return { ...data, values };
       }
       return data;
@@ -746,6 +796,8 @@ export const getLinesPlotData = createSelector(
       let zs = [];
       let rs = [];
       let cats = [];
+      let xsd = [];
+      let ysd = [];
       let wins = Math.max(
         plotData.axes.x.values[i].length,
         plotData.axes.y.values[i].length,
@@ -754,24 +806,54 @@ export const getLinesPlotData = createSelector(
       );
       for (let j = 0; j < wins; j++) {
         let values = {};
+        let sd = {};
+        let valid = true;
         axes.forEach((axis) => {
           if (plotData.axes[axis].values[i].length == wins) {
             values[axis] = plotData.axes[axis].values[i][j];
+            if (plotData.axes[axis].sd) {
+              sd[axis] = plotData.axes[axis].sd[i][j];
+            }
           } else {
             values[axis] = plotData.axes[axis].values[i][0];
+            if (plotData.axes[axis].sd) {
+              sd[axis] = plotData.axes[axis].sd[i][0];
+            }
+          }
+          if (isNaN(values[axis]) || values[axis] === undefined) {
+            valid = false;
           }
         });
+        if (!valid) {
+          continue;
+        }
         values.y = values.y < yClamp ? scales.y(yMin) : scales.y(values.y);
         values.x = values.x < xClamp ? scales.x(xMin) : scales.x(values.x);
         values.cat = keys[values.cat];
         if (transform) [values.x, values.y] = transform([values.x, values.y]);
         xs.push(values.x);
         ys.push(900 - values.y);
+        if (sd.x) {
+          sd.x = scales.x(scales.x.domain()[0] + sd.x);
+          xsd.push(sd.x);
+        }
+        if (sd.y) {
+          sd.y =
+            scales.y(scales.y.domain()[0] + sd.y) -
+            scales.y(scales.y.domain()[0]);
+          ysd.push(sd.y);
+        }
         zs.push(values.z);
         rs.push(zScale(values.z) * plotScale);
         cats.push(values.cat);
         max = Math.max(max, values.z);
         min = Math.min(min, values.z);
+      }
+      if (xsd.length == 0) {
+        xsd = undefined;
+      }
+      if (ysd.length == 0) {
+        ysd = undefined;
       }
       coords.push({
         id: list[i],
@@ -782,6 +864,8 @@ export const getLinesPlotData = createSelector(
         r: rs,
         cats: cats,
         cat: keys[plotData.axes.mainCat.values[i]],
+        xsd,
+        ysd,
       });
     }
     let range = [min, max];
@@ -1182,79 +1266,82 @@ export const getScatterPlotDataSlice = createSelectorForSliceIndex(
   }
 );
 
-export const getScatterPlotDataForCategoryIndex = createSelectorForCategoryIndex(
-  _getCategoryIndexAsMemoKey,
-  getScatterPlotDataSlice,
-  getColorByIndex,
-  (plotData, color, res) => {
-    plotData.color = color;
-    return plotData;
-  }
-);
-
-export const getCirclePlotDataForCategoryIndex = createSelectorForCircleCategoryIndex(
-  _getCategoryIndexAsMemoKey,
-  getScatterPlotDataForCategoryIndex,
-  getDetailsForZ,
-  getZScale,
-  getPlotResolution,
-  getPlotScale,
-  (catData, details, scale, res, plotScale) => {
-    let zScale = d3[scale]()
-      .domain(details.range)
-      .range([2, (2 * 900) / res]);
-    if (catData.data) {
-      catData.data.forEach((datum) => {
-        datum.r = zScale(datum.z) * plotScale;
-      });
-    } else {
-      catData.data = [];
+export const getScatterPlotDataForCategoryIndex =
+  createSelectorForCategoryIndex(
+    _getCategoryIndexAsMemoKey,
+    getScatterPlotDataSlice,
+    getColorByIndex,
+    (plotData, color, res) => {
+      plotData.color = color;
+      return plotData;
     }
-    return catData;
-  }
-);
+  );
 
-export const getSquareBinPlotDataForCategoryIndex = createSelectorForSquareCategoryIndex(
-  _getCategoryIndexAsMemoKey,
-  getScatterPlotDataForCategoryIndex,
-  (plotData) => {
-    let size = 900; // FIXME: magic number
-    let res = 20; // FIXME: magic number
-    let side = size / res;
-    let squares = [];
-    for (let i = 0; i <= res; i++) {
-      squares[i] = [];
-      for (let j = 0; j <= res; j++) {
-        squares[i][j] = {
-          id: i + "_" + j,
-          x: i,
-          y: j,
-          ids: [],
-          zs: [],
-          indices: [],
-        };
+export const getCirclePlotDataForCategoryIndex =
+  createSelectorForCircleCategoryIndex(
+    _getCategoryIndexAsMemoKey,
+    getScatterPlotDataForCategoryIndex,
+    getDetailsForZ,
+    getZScale,
+    getPlotResolution,
+    getPlotScale,
+    (catData, details, scale, res, plotScale) => {
+      let zScale = d3[scale]()
+        .domain(details.range)
+        .range([2, (2 * 900) / res]);
+      if (catData.data) {
+        catData.data.forEach((datum) => {
+          datum.r = zScale(datum.z) * plotScale;
+        });
+      } else {
+        catData.data = [];
       }
+      return catData;
     }
-    plotData.data.forEach((datum) => {
-      let x = Math.floor(datum.x / side);
-      let y = Math.floor(datum.y / side);
-      squares[x][y].ids.push(datum.id);
-      squares[x][y].indices.push(datum.index);
-      squares[x][y].zs.push(datum.z);
-    });
-    let data = [];
-    for (let i = 0; i < res; i++) {
-      for (let j = 0; j < res; j++) {
-        if (squares[i][j].ids.length > 0) {
-          data.push(squares[i][j]);
+  );
+
+export const getSquareBinPlotDataForCategoryIndex =
+  createSelectorForSquareCategoryIndex(
+    _getCategoryIndexAsMemoKey,
+    getScatterPlotDataForCategoryIndex,
+    (plotData) => {
+      let size = 900; // FIXME: magic number
+      let res = 20; // FIXME: magic number
+      let side = size / res;
+      let squares = [];
+      for (let i = 0; i <= res; i++) {
+        squares[i] = [];
+        for (let j = 0; j <= res; j++) {
+          squares[i][j] = {
+            id: i + "_" + j,
+            x: i,
+            y: j,
+            ids: [],
+            zs: [],
+            indices: [],
+          };
         }
       }
+      plotData.data.forEach((datum) => {
+        let x = Math.floor(datum.x / side);
+        let y = Math.floor(datum.y / side);
+        squares[x][y].ids.push(datum.id);
+        squares[x][y].indices.push(datum.index);
+        squares[x][y].zs.push(datum.z);
+      });
+      let data = [];
+      for (let i = 0; i < res; i++) {
+        for (let j = 0; j < res; j++) {
+          if (squares[i][j].ids.length > 0) {
+            data.push(squares[i][j]);
+          }
+        }
+      }
+      plotData.data = data;
+      plotData.side = side;
+      return plotData;
     }
-    plotData.data = data;
-    plotData.side = side;
-    return plotData;
-  }
-);
+  );
 
 const createSelectorForMainPlotCategory = byIdSelectorCreator();
 
