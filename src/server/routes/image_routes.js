@@ -1,3 +1,5 @@
+const checkCompression = require("../functions/io").checkCompression;
+
 //const sharp = require("sharp");
 
 // const resize = async (file, width, height) => {
@@ -89,8 +91,18 @@ module.exports = function (app, db) {
    *       - $ref: "#/parameters/dataset_id"
    */
   app.get("/api/v1/image/:dataset_id", async (req, res) => {
-    res.setHeader("content-type", "image/png");
-    res.sendFile(directory + "/" + req.params.dataset_id + "/blob.circle.png");
+    file = await checkCompression(
+      directory + "/" + req.params.dataset_id + "/blob.circle.png"
+    );
+    if (file) {
+      res.setHeader("content-type", "image/png");
+      if (file.endsWith(".gz")) {
+        res.setHeader("content-encoding", "gzip");
+      }
+      res.sendFile(file);
+    } else {
+      res.sendStatus(404);
+    }
   });
 
   /**
@@ -118,7 +130,6 @@ module.exports = function (app, db) {
       type = ".circle";
     }
     if (req.query.format == "svg") {
-      res.setHeader("content-type", "image/svg+xml");
       let file =
         directory +
         "/" +
@@ -127,7 +138,16 @@ module.exports = function (app, db) {
         req.params.view +
         type +
         ".svg";
-      res.sendFile(file);
+      file = await checkCompression(file);
+      if (file) {
+        res.setHeader("content-type", "image/svg+xml");
+        if (file.endsWith(".gz")) {
+          res.setHeader("content-encoding", "gzip");
+        }
+        res.sendFile(file);
+      } else {
+        res.sendStatus(404);
+      }
     } else {
       res.setHeader("content-type", "image/png");
       let file =
@@ -138,12 +158,16 @@ module.exports = function (app, db) {
         req.params.view +
         type +
         ".png";
-      // if (req.query.width) {
-      //   let outputBuffer = await resize(file, Math.floor(1 * req.query.width));
-      //   res.send(outputBuffer);
-      // } else {
-      res.sendFile(file);
-      // }
+      file = await checkCompression(file);
+      if (file) {
+        res.setHeader("content-type", "image/png");
+        if (file.endsWith(".gz")) {
+          res.setHeader("content-encoding", "gzip");
+        }
+        res.sendFile(file);
+      } else {
+        res.sendStatus(404);
+      }
     }
   });
 
@@ -167,33 +191,34 @@ module.exports = function (app, db) {
    *       - $ref: "#/parameters/width"
    */
   app.get("/api/v1/image/:dataset_id/blob/:type", async (req, res) => {
+    let type = req.params.type;
+    if (type == "none") type = "circle";
     if (req.query.format == "svg") {
-      res.setHeader("content-type", "image/svg+xml");
-      let type = req.params.type
-      if (type == "none") type = "circle"
       let file =
-        directory +
-        "/" +
-        req.params.dataset_id +
-        "/blob." +
-        type +
-        ".svg";
-      res.sendFile(file);
+        directory + "/" + req.params.dataset_id + "/blob." + type + ".svg";
+      file = await checkCompression(file);
+      if (file) {
+        res.setHeader("content-type", "image/svg+xml");
+        if (file.endsWith(".gz")) {
+          res.setHeader("content-encoding", "gzip");
+        }
+        res.sendFile(file);
+      } else {
+        res.sendStatus(404);
+      }
     } else {
-      res.setHeader("content-type", "image/png");
       let file =
-        directory +
-        "/" +
-        req.params.dataset_id +
-        "/blob." +
-        type +
-        ".png";
-      // if (req.query.width) {
-      //   let outputBuffer = await resize(file, Math.floor(1 * req.query.width));
-      //   res.send(outputBuffer);
-      // } else {
-      res.sendFile(file);
-      // }
+        directory + "/" + req.params.dataset_id + "/blob." + type + ".png";
+      file = await checkCompression(file);
+      if (file) {
+        res.setHeader("content-type", "image/png");
+        if (file.endsWith(".gz")) {
+          res.setHeader("content-encoding", "gzip");
+        }
+        res.sendFile(file);
+      } else {
+        res.sendStatus(404);
+      }
     }
   });
 };

@@ -1,8 +1,9 @@
 const fs = require("fs");
-const read = require("read-yaml");
 const config = require("../../config/main");
-const fileExists = require("../functions/io").fileExists;
 const dataDirectory = config.filePath;
+const readYaml = require("../functions/io").readYaml;
+const readYamlSync = require("../functions/io").readYamlSync;
+const checkCompression = require("../functions/io").checkCompression;
 
 const parseMeta = (obj) => {
   let meta = {};
@@ -50,22 +51,30 @@ const readMeta = (dir, md) => {
     let path = dir + "/" + file;
     if (fs.statSync(path).isDirectory()) {
       readMeta(path, md);
-    } else if (file == "meta.json" && fs.statSync(path).isFile()) {
-      let dsMeta = parseMeta(read.sync(path));
+    } else if (
+      (file == "meta.json" || file == "meta.json.gz") &&
+      fs.statSync(path).isFile()
+    ) {
+      let dsMeta = parseMeta(readYamlSync(path));
+      console.log(dsMeta);
       dsMeta.id = dir.replace(/^.+\//, "");
       if (!dsMeta.hasOwnProperty("revision")) {
         dsMeta.revision = 0;
       }
       if (config.dataset_table) {
-        let sumpath = dir + "/summary.json";
-        fileExists(sumpath).then((bool) => {
-          if (bool) {
-            let summary = read.sync(sumpath);
-            if (summary.hasOwnProperty("summaryStats")) {
-              dsMeta.summaryStats = summary.summaryStats;
-            }
+        let sumpath = `${dir}/summary.json`;
+        if (file.endsWith(".gz")) {
+          sumpath += ".gz";
+        }
+        try {
+          let summary = readYamlSync(sumpath);
+          if (summary && summary.hasOwnProperty("summaryStats")) {
+            dsMeta.summaryStats = summary.summaryStats;
           }
-        });
+        } catch (error) {
+          console.log(sumpath);
+          console.log(error);
+        }
       }
       if (!versions[dsMeta.prefix]) {
         versions[dsMeta.prefix] = {};
@@ -354,7 +363,16 @@ module.exports = function (app, db) {
    */
 
   app.get("/api/v1/search/tree/target", async (req, res) => {
-    res.sendFile(`${dataDirectory}/targets.json`);
+    file = await checkCompression(`${dataDirectory}/targets.json`);
+    if (file) {
+      res.setHeader("content-type", "application/json");
+      if (file.endsWith(".gz")) {
+        res.setHeader("content-encoding", "gzip");
+      }
+      res.sendFile(file);
+    } else {
+      res.sendStatus(404);
+    }
   });
   /**
    * @swagger

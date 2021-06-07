@@ -1,4 +1,6 @@
-module.exports = function(app, db) {
+const checkCompression = require("../functions/io").checkCompression;
+
+module.exports = function (app, db) {
   var directory = app.locals.directory;
 
   /**
@@ -18,8 +20,18 @@ module.exports = function(app, db) {
    *     parameters:
    *       - $ref: "#/parameters/dataset_id"
    */
-  app.get('/api/v1/identifiers/:dataset_id', async (req, res) => {
-    res.setHeader('content-type', 'application/json');
-    res.sendFile(directory+"/"+req.params.dataset_id+"/identifiers.json");
+  app.get("/api/v1/identifiers/:dataset_id", async (req, res) => {
+    file = await checkCompression(
+      directory + "/" + req.params.dataset_id + "/identifiers.json"
+    );
+    if (file) {
+      res.setHeader("content-type", "application/json");
+      if (file.endsWith(".gz")) {
+        res.setHeader("content-encoding", "gzip");
+      }
+      res.sendFile(file);
+    } else {
+      res.sendStatus(404);
+    }
   });
 };
