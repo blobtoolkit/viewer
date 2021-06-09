@@ -804,6 +804,7 @@ export const getLinesPlotData = createSelector(
         plotData.axes.z.values[i].length,
         plotData.axes.cat.values[i].length
       );
+      let zSize = -1;
       for (let j = 0; j < wins; j++) {
         let values = {};
         let sd = {};
@@ -826,6 +827,14 @@ export const getLinesPlotData = createSelector(
         });
         if (!valid) {
           continue;
+        }
+        // ensure last bin is not too small to plot
+        if (values.z >= zSize) {
+          zSize = values.z;
+        } else {
+          if (values.z < zSize * 0.75) {
+            break;
+          }
         }
         values.y = values.y < yClamp ? scales.y(yMin) : scales.y(values.y);
         values.x = values.x < xClamp ? scales.x(xMin) : scales.x(values.x);

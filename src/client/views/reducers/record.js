@@ -95,7 +95,11 @@ const generateLink = (link, obj) => {
   return { title, url, meta: obj };
 };
 
-const chunkSize = (value) => {
+const chunkSize = (value, release = 1) => {
+  if (`${release}` >= "2.6") {
+    console.log("new");
+    return Math.ceil(value / 1000) * 1000;
+  }
   let mag = Math.floor(Math.log10(value));
   let first = Number(String(value).substring(0, 2)) + 1;
   return first * Math.pow(10, mag - 1);
@@ -119,6 +123,7 @@ const indexOfMax = (arr) => {
 export const getChunkInfo = createSelector(getSelectedDatasetMeta, (meta) => {
   let binSize = Number.POSITIVE_INFINITY;
   let maxChunks = 1;
+  let release = 1;
   if (meta.settings) {
     if (meta.settings.blast_chunk) {
       binSize = meta.settings.blast_chunk;
@@ -126,8 +131,11 @@ export const getChunkInfo = createSelector(getSelectedDatasetMeta, (meta) => {
     if (meta.settings.blast_max_chunks) {
       maxChunks = meta.settings.blast_max_chunks;
     }
+    if (meta.settings.release) {
+      release = meta.settings.release;
+    }
   }
-  return { binSize, maxChunks };
+  return { binSize, maxChunks, release };
 });
 
 export const getCategoryDistributionForRecord = createSelector(
@@ -142,11 +150,10 @@ export const getCategoryDistributionForRecord = createSelector(
   (data, lengths, bins, chunkInfo, identifiers, links, colors, catAxis) => {
     if (!data || !data.values || typeof data.id == "undefined") return false;
     let yLimit = 0;
-    let binSize = chunkInfo.binSize;
-    let maxChunks = chunkInfo.maxChunks;
+    let { binSize, maxChunks, release } = chunkInfo;
     let xLimit = lengths.values[data.id];
     if (maxChunks * binSize < xLimit) {
-      binSize = chunkSize(xLimit / maxChunks);
+      binSize = chunkSize(xLimit / maxChunks, release);
     }
     let catScores = [];
     let labels = {};

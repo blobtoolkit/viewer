@@ -154,13 +154,39 @@ class LinesSVG extends React.Component {
       if (group.x.length > 0) {
         let points = [];
         let groupCircles = [];
+        let selCircles = [];
         group.x.forEach((x, j) => {
           points.push([x, group.y[j]]);
           let color;
+          let opacity;
+          let sel;
           if (isNaN(group.cats[j])) {
             color = "white";
+            opacity = 0.3;
+            sel = false;
           } else {
             color = colors[group.cats[j]] || colors[9];
+            opacity = 0.6;
+            sel = true;
+          }
+          if (sel && selectedById[group.id]) {
+            selCircles.push(
+              <circle
+                key={`${group.id}_${j}_sel`}
+                cx={x}
+                cy={group.y[j]}
+                r={group.r[j]}
+                fill={color}
+                fillOpacity={1}
+                style={{
+                  strokeWidth: this.props.showSelection ? "6px" : "2px",
+                  stroke: this.props.showSelection
+                    ? highlightColor
+                    : "rgb(89, 101, 111)",
+                }}
+                onPointerDown={(e) => this.handleClick(e, group.id)}
+              />
+            );
           }
           groupCircles.push(
             <circle
@@ -169,22 +195,16 @@ class LinesSVG extends React.Component {
               cy={group.y[j]}
               r={group.r[j]}
               fill={color}
-              fillOpacity={selectedById[group.id] ? 1 : 0.6}
+              fillOpacity={selectedById[group.id] ? 1 : opacity}
               style={{
-                strokeWidth: selectedById[group.id]
-                  ? this.props.showSelection
-                    ? "6px"
-                    : "2px"
-                  : "1px",
-                stroke:
-                  this.props.showSelection && selectedById[group.id]
-                    ? highlightColor
-                    : "rgb(89, 101, 111)",
+                strokeWidth: "1px",
+                stroke: "rgb(89, 101, 111)",
               }}
               onPointerDown={(e) => this.handleClick(e, group.id)}
             />
           );
         });
+        groupCircles = groupCircles.concat(selCircles);
 
         let groupPaths = [];
         let mainPath = cardinalLine(points);
@@ -218,7 +238,7 @@ class LinesSVG extends React.Component {
                 key={`${group.id}_bounds`}
                 stroke={"none"}
                 fill="black"
-                fillOpacity={0.05}
+                fillOpacity={0.1}
                 d={upperPath + lowerPath.replace(/^M/, "L")}
                 onPointerDown={(e) => this.handleClick(e, group.id)}
               />
@@ -273,7 +293,7 @@ class LinesSVG extends React.Component {
                 key={`${group.id}_area`}
                 stroke={"none"}
                 fill="black"
-                fillOpacity={0.05}
+                fillOpacity={0.1}
                 d={boundary}
                 onPointerDown={(e) => this.handleClick(e, group.id)}
               />

@@ -296,7 +296,7 @@ class DisplayMenu extends React.Component {
               ))}
             </MenuDisplaySimple>
           )}
-          {shape == "lines" && (
+          {shape == "lines" && errorBarOptions && (
             <MenuDisplaySimple name="error bars">
               {errorBarOptions.map((obj) => (
                 <TextIcon
