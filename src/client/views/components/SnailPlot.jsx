@@ -13,11 +13,7 @@ import {
   getBuscoSets,
   getCircular,
 } from "../reducers/summary";
-import {
-  fetchRawData,
-  getDetailsForFieldId,
-  getRawDataForFieldId,
-} from "../reducers/field";
+import { fetchRawData, fields, getDetailsForFieldId } from "../reducers/field";
 import { fillParent, plotPaths, plotText } from "../reducers/plotStyles";
 
 import { CircleAxis } from "./CircleAxis";
@@ -166,7 +162,11 @@ class Snail extends React.Component {
   }
 
   componentDidMount() {
-    ["gc", "length", "ncount"].forEach((f) => {
+    let fields = ["gc", "length"];
+    if (this.props.ncountMeta.meta.datatype) {
+      fields.push("ncount");
+    }
+    fields.forEach((f) => {
       if (!this.props[f]) {
         this.props.activate(f);
       }
@@ -543,11 +543,12 @@ class SnailPlot extends React.Component {
           (buscoPaths = getBuscoPaths(state, buscoSets[0])),
           (buscoMeta = getDetailsForFieldId(state, buscoSets[0]));
       }
+      let ncountMeta = getDetailsForFieldId(state, "ncount");
       return {
         data: getCircular(state),
-        gc: getRawDataForFieldId(state, "gc"),
-        length: getRawDataForFieldId(state, "length"),
-        ncount: getRawDataForFieldId(state, "ncount"),
+        // gc: getRawDataForFieldId(state, "gc"),
+        // length: getRawDataForFieldId(state, "length"),
+        // ncount: getRawDataForFieldId(state, "ncount"),
         circular: circularCurves(state),
         meta: getSelectedDatasetMeta(state),
         selection: circularSelection(state),
@@ -559,6 +560,7 @@ class SnailPlot extends React.Component {
         buscoData,
         buscoPaths,
         buscoMeta,
+        ncountMeta,
       };
     };
     this.mapDispatchToProps = (dispatch) => {
