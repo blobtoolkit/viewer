@@ -20,7 +20,7 @@ export const plot = handleAction(
     let fields = Object.keys(action.payload).filter((key) => {
       return key != "id";
     });
-    if (!fields) return {};
+    if (!fields || fields.length == 0) return {};
     return immutableUpdate(
       state,
       Object.assign(...fields.map((f) => ({ [f]: action.payload[f] })))

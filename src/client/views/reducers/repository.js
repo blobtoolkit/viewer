@@ -318,18 +318,26 @@ export const loadDataset = (id, clear) => {
             let view = getView(state);
             dispatch(updatePathname({ [view]: true, static: true }));
           } else if (!meta.static_plots) {
-            dispatch(updatePathname({ interactive }, { static: true }));
+            dispatch(
+              updatePathname({ blob: true, interactive }, { static: true })
+            );
           }
         } else if (!meta.static_plots) {
-          dispatch(updatePathname({ interactive }, { static: true }));
+          dispatch(
+            updatePathname({ blob: true, interactive }, { static: true })
+          );
         } else if (
           window.records > meta.records &&
           meta.records < threshold &&
           isStatic
         ) {
-          dispatch(updatePathname({ interactive }, { static: true }));
+          dispatch(
+            updatePathname({ blob: true, interactive }, { static: true })
+          );
         } else if (meta.records < threshold) {
-          dispatch(updatePathname({ interactive }, { static: true }));
+          dispatch(
+            updatePathname({ blob: true, interactive }, { static: true })
+          );
         }
         dispatch(editPlot(plot));
         Promise.all(addAllFields(dispatch, meta.fields, 1, meta, plot, false))
