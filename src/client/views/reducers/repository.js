@@ -3,6 +3,7 @@ import { createAction, handleAction, handleActions } from "redux-actions";
 import {
   getDatasetID,
   getHashString,
+  getInteractive,
   getQueryString,
   getQueryValue,
   getSearchTerm,
@@ -129,6 +130,7 @@ export function fetchRepository(searchTerm) {
     let state = store.getState();
     let views = getViews(state);
     let datasetId = getDatasetID(state);
+    let interactive = getInteractive(state);
     let currentTerm = getSearchTerm(state);
     let setSearch = false;
     let reload = false;
@@ -147,7 +149,13 @@ export function fetchRepository(searchTerm) {
       setSearch = true;
     }
     if (setSearch) {
-      dispatch(updatePathname({ search: searchTerm }));
+      dispatch(
+        updatePathname({
+          search: searchTerm,
+          ...([views.primary] && { [views.primary]: true }),
+          ...(interactive && { interactive: true }),
+        })
+      );
     }
     dispatch(refreshStore());
 
@@ -161,12 +169,15 @@ export function fetchRepository(searchTerm) {
           if (!reload) {
             if (json.length != 1) {
               dispatch(
-                updatePathname({}, { dataset: true, [views.primary]: true })
+                updatePathname(
+                  { interactive },
+                  { dataset: true, [views.primary]: true }
+                )
               );
             } else if (json[0].id != datasetId) {
               dispatch(
                 updatePathname(
-                  { dataset: json[0].id },
+                  { dataset: json[0].id, interactive },
                   { [views.primary]: true }
                 )
               );
@@ -174,11 +185,17 @@ export function fetchRepository(searchTerm) {
           }
         } else if (json.length == 1) {
           dispatch(
-            updatePathname({ dataset: json[0].id }, { [views.primary]: true })
+            updatePathname(
+              { dataset: json[0].id, interactive },
+              { [views.primary]: true }
+            )
           );
         } else {
           dispatch(
-            updatePathname({}, { dataset: true, [views.primary]: true })
+            updatePathname(
+              { interactive },
+              { dataset: true, [views.primary]: true }
+            )
           );
         }
         dispatch(receiveRepository(json));
@@ -259,6 +276,7 @@ export const loadDataset = (id, clear) => {
   return function (dispatch) {
     let state = store.getState();
     let isStatic = getStatic(state);
+    let interactive = getInteractive(state);
     let threshold = getStaticThreshold(state);
     let nohit = getNohitThreshold(state);
     dispatch(setDatasetIsActive("loading"));
@@ -292,6 +310,7 @@ export const loadDataset = (id, clear) => {
           }
         });
         if (
+          !interactive &&
           (window.firstLoad || window.records < meta.records) &&
           meta.records > threshold
         ) {
@@ -299,18 +318,18 @@ export const loadDataset = (id, clear) => {
             let view = getView(state);
             dispatch(updatePathname({ [view]: true, static: true }));
           } else if (!meta.static_plots) {
-            dispatch(updatePathname({}, { static: true }));
+            dispatch(updatePathname({ interactive }, { static: true }));
           }
         } else if (!meta.static_plots) {
-          dispatch(updatePathname({}, { static: true }));
+          dispatch(updatePathname({ interactive }, { static: true }));
         } else if (
           window.records > meta.records &&
           meta.records < threshold &&
           isStatic
         ) {
-          dispatch(updatePathname({}, { static: true }));
+          dispatch(updatePathname({ interactive }, { static: true }));
         } else if (meta.records < threshold) {
-          dispatch(updatePathname({}, { static: true }));
+          dispatch(updatePathname({ interactive }, { static: true }));
         }
         dispatch(editPlot(plot));
         Promise.all(addAllFields(dispatch, meta.fields, 1, meta, plot, false))

@@ -635,13 +635,13 @@ class DisplayMenu extends React.Component {
           <TextIcon
             title="interactive"
             active={!isStatic}
-            onIconClick={() => onToggleStatic(false, datasetId)}
+            onIconClick={() => onToggleStatic(view, datasetId, isStatic)}
           />
           {hasStatic && (
             <TextIcon
               title="static"
               active={isStatic}
-              onIconClick={() => onToggleStatic(view, datasetId)}
+              onIconClick={() => onToggleStatic(view, datasetId, isStatic)}
             />
           )}
         </MenuDisplaySimple>
@@ -707,9 +707,9 @@ class DisplayMenu extends React.Component {
               onChangeStaticThreshold(value);
               setTimeout(() => {
                 if (value >= records && isStatic) {
-                  onToggleStatic(false, datasetId);
+                  onToggleStatic(view, datasetId, isStatic);
                 } else if (value < records && !isStatic) {
-                  onToggleStatic(view, datasetId);
+                  onToggleStatic(view, datasetId, isStatic);
                 }
               }, 500);
             }}
@@ -778,8 +778,8 @@ class MenuDisplayMain extends React.Component {
         onSelectScale: (scale) => dispatch(chooseZScale(scale)),
         onChangePlotScale: (plotScale) => dispatch(choosePlotScale(plotScale)),
         onSelectView: (view) => dispatch(chooseView(view)),
-        onToggleStatic: (view, datasetId) =>
-          dispatch(toggleStatic(view, datasetId)),
+        onToggleStatic: (view, datasetId, isStatic) =>
+          dispatch(toggleStatic(view, datasetId, isStatic)),
         // onToggleAdjustCoverage: (bool) => dispatch(chooseAdjustCoverage(bool)),
         onToggleLargeFonts: (bool) => dispatch(chooseLargeFonts(bool)),
         onChangeErrorBars: (value) => dispatch(chooseErrorBars(value)),
