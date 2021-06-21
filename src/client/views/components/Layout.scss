@@ -1,81 +1,97 @@
-@import 'web-fonts';
-@import 'colors';
-@import url(web-fonts-url('Open Sans', 'Comfortaa'));
+@import "web-fonts";
+@import "colors";
+@import url(web-fonts-url("Open Sans", "Comfortaa"));
 
 .main {
-  position:absolute;
-  width:100%;
-  height:100%;
-  min-width:0;
-  min-height:0;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
   display: flex;
   flex-direction: column;
   background-color: $lightColor;
 }
 
 .fill_parent {
-  width:100%;
-  height:100%;
-  position:relative;
+  width: 100%;
+  height: 100%;
+  position: relative;
 }
 
 .menu_outer {
-  width:100%;
-  height:auto;
-  position:relative;
+  width: 100%;
+  height: auto;
+  position: relative;
 }
 
 .quarter {
-  position:relative;
-  float:left;
-  width:50%;
-  height:50%;
-  min-width:calc(500px - 0%);
-  min-height:calc(500px - 0%);
+  position: relative;
+  float: left;
+  width: 50%;
+  height: 50%;
+  min-width: calc(500px - 0%);
+  min-height: calc(500px - 0%);
+}
+
+.modalDialog {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: $lightColor;
+  border: none;
+  box-shadow: none;
+  padding: 10px;
+  overflow: visible;
+  &:focus {
+    outline: none;
+  }
 }
 
 .modal {
-  width:100%;
-  height:100%;
-  font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
-  h1, h2, h3 {
-    font-family: 'Comfortaa', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  width: 100%;
+  height: 100%;
+  font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  h1,
+  h2,
+  h3 {
+    font-family: "Comfortaa", "Helvetica Neue", Helvetica, Arial, sans-serif;
   }
 
   .button {
-    display:inline-block;
-    border-radius:1em;
+    display: inline-block;
+    border-radius: 1em;
     background-color: $highlightColor;
-    color:$lightColor;
+    color: $lightColor;
     padding: 0 0.5em;
-    cursor:pointer;
+    cursor: pointer;
   }
 
   .code_block {
-    width:100%;
-    max-height:50vh;
-    overflow:auto;
+    width: 100%;
+    max-height: 50vh;
+    overflow: auto;
   }
-
 }
 
 .main_header {
-  position:relative;
-  z-index:10;
-  width:100%;
+  position: relative;
+  z-index: 10;
+  width: 100%;
   flex: 0 0 4em;
   background-color: $darkColor;
   // box-shadow: 0px 0px 4px 1px $shadeColor;
 }
 
 .main_header_tab {
-  position:relative;
-  width:9em;
-  height:100%;
-  text-align:center;
+  position: relative;
+  width: 9em;
+  height: 100%;
+  text-align: center;
   color: $paleColor;
-  display:inline-block;
-  cursor:pointer;
+  display: inline-block;
+  cursor: pointer;
   // border: solid 1px $darkColor;
   box-sizing: border-box;
   margin-right: -1px;
@@ -95,8 +111,8 @@
 }
 
 .main_footer {
-  z-index:10;
-  width:100%;
+  z-index: 10;
+  width: 100%;
   flex: 0 0 calc(20px + 0.8em);
   background-color: $darkColor;
   // box-shadow: 0px 0px 4px 1px $shadeColor;
@@ -125,7 +141,7 @@
     height: 2em;
     margin-top: 0.5em;
     img {
-      cursor:pointer;
+      cursor: pointer;
       height: 2em;
       background-color: $lightColor;
       box-sizing: border-box;
@@ -137,27 +153,27 @@
 }
 
 .right_align {
-  text-align:right;
+  text-align: right;
 }
 
 .left_align {
-  text-align:left;
+  text-align: left;
 }
 
 table {
   .highlight {
-    background-color:$highlightColor;
-    color:$lightColor !important;
+    background-color: $highlightColor;
+    color: $lightColor !important;
   }
 }
 
 .content {
   flex: 1 1 auto;
-  position:relative;
+  position: relative;
   display: flex;
   flex-direction: row;
-  min-width:0;
-  min-height:0;
+  min-width: 0;
+  min-height: 0;
 }
 
 .plot_area {
@@ -168,135 +184,134 @@ table {
 }
 
 .detail_link {
-  display:inline-block;
-  float:right;
-  font-size:0.8em;
+  display: inline-block;
+  float: right;
+  font-size: 0.8em;
 }
 
 .menu {
-  left:0;
-  top:0;
-  bottom:0;
+  left: 0;
+  top: 0;
+  bottom: 0;
   flex: 0 0 31em;
-  z-index:5;
+  z-index: 5;
   background-color: $deepColor;
   overflow-y: auto;
   overflow-x: hidden;
   // box-shadow: 0px 0px 8px 4px $shadeColor;
-  color:$lightColor;
+  color: $lightColor;
 
   a {
-    color:$paleColor;
+    color: $paleColor;
     //text-decoration:underline;
   }
 
   a:visited {
-    color:$paleColor;
+    color: $paleColor;
   }
 
   .sticky {
     top: 0em;
     position: sticky;
-    height:3.3em;
-    width:30em;
-    z-index:20;
-    background-color:$darkColor;
+    height: 3.3em;
+    width: 30em;
+    z-index: 20;
+    background-color: $darkColor;
     border-bottom: solid $paleColor;
     border-top: solid $paleColor;
   }
 }
 
 .menu::-webkit-scrollbar {
-  background:$deepColor;
-  width:1em;
+  background: $deepColor;
+  width: 1em;
 }
 
 .menu::-webkit-scrollbar-thumb {
-  background:rgba($lightColor,0.5);
-  border-radius:1em;
+  background: rgba($lightColor, 0.5);
+  border-radius: 1em;
 }
 
 .menu_item {
-  position:relative;
-  width:calc(100% - 2em);
-  height:4em;
-  margin-top:0.5em;
-  padding:1em;
+  position: relative;
+  width: calc(100% - 2em);
+  height: 4em;
+  margin-top: 0.5em;
+  padding: 1em;
   background-color: $darkColor;
-  overflow:hidden;
-  color:$paleColor;
+  overflow: hidden;
+  color: $paleColor;
 
   .right {
-    float:right;
-    position:relative;
-    border-radius:1em;
+    float: right;
+    position: relative;
+    border-radius: 1em;
     border: 0.2em solid $deepColor;
-    color:$lightColor;
+    color: $lightColor;
     padding: 0 0.5em;
-    cursor:pointer;
+    cursor: pointer;
   }
 
   .cover {
-    display:block;
+    display: block;
     position: absolute;
-    top:0;
-    left:0;
-    bottom:0;
-    padding:1em;
-    cursor:pointer;
-    right:0;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    padding: 1em;
+    cursor: pointer;
+    right: 0;
   }
 
   h3 {
-    margin-top:0.5em;
+    margin-top: 0.5em;
   }
-
 }
 
 .long_menu_item {
-  position:relative;
-  width:calc(100% - 2em);
-  height:auto;
-  margin-top:0.5em;
-  padding:1em;
+  position: relative;
+  width: calc(100% - 2em);
+  height: auto;
+  margin-top: 0.5em;
+  padding: 1em;
   background-color: $darkColor;
-  color:$paleColor;
+  color: $paleColor;
   .highlight {
     font-weight: bold;
-    color:$highlightColor;
+    color: $highlightColor;
   }
 
   table {
     border-collapse: collapse;
     tr {
-
     }
     td {
       padding: 0.5em 0.5em 0 0.5em;
     }
   }
-
 }
 .colored_tab {
-  display:inline-block;
-  position:relative;
-  width:1.4em;
-  height:1.4em;
-  box-sizing:border-box;
-  margin-right:0.4em;
+  display: inline-block;
+  position: relative;
+  width: 1.4em;
+  height: 1.4em;
+  box-sizing: border-box;
+  margin-right: 0.4em;
   cursor: pointer;
 }
 
-.colored_tab.highlight, .colored_tab.clear, .colored_tab.partial  {
+.colored_tab.highlight,
+.colored_tab.clear,
+.colored_tab.partial {
   border: 2px solid $shadeColor;
   border-radius: 2px;
 }
 
 .view_link {
-  display:inline-block;
+  display: inline-block;
   color: $lightColor;
   margin: 0 0.2em;
-  cursor:pointer;
+  cursor: pointer;
 }
 
 .colored_tab.highlight {
@@ -304,12 +319,12 @@ table {
 }
 
 .partial_tab {
-  display:inline-block;
-  position:relative;
-  width:1.4em;
-  height:1.4em;
-  box-sizing:border-box;
-  margin-right:0.4em;
+  display: inline-block;
+  position: relative;
+  width: 1.4em;
+  height: 1.4em;
+  box-sizing: border-box;
+  margin-right: 0.4em;
   border: 2px solid $lightColor;
 }
 
@@ -323,7 +338,7 @@ table {
   height: 0;
   border-style: solid;
   border-width: 0 0 1.4em 1.4em;
-  border-color: transparent transparent rgba($highlightColor,0.75) transparent;
+  border-color: transparent transparent rgba($highlightColor, 0.75) transparent;
 }
 
 .partial_tab::after {
@@ -345,17 +360,17 @@ table {
 }
 
 .menu_subtitle {
-  display:inline-block;
-  position:absolute;
-  left:6em;
-  bottom:0.5em;
+  display: inline-block;
+  position: absolute;
+  left: 6em;
+  bottom: 0.5em;
 }
 
 .menu_count {
-  display:inline-block;
-  position:absolute;
-  right:0.5em;
-  bottom:0.5em;
+  display: inline-block;
+  position: absolute;
+  right: 0.5em;
+  bottom: 0.5em;
   background-color: inherit;
   padding-left: 0.5em;
 }
@@ -367,14 +382,14 @@ table {
 }
 
 .dropzone_menu_item {
-  position:relative;
-  width:calc(100% - 2em);
-  height:4em;
-  margin-top:0.5em;
-  padding:1em;
+  position: relative;
+  width: calc(100% - 2em);
+  height: 4em;
+  margin-top: 0.5em;
+  padding: 1em;
   background-color: $darkColor;
-  overflow:hidden;
-  color:$paleColor;
+  overflow: hidden;
+  color: $paleColor;
 }
 
 .dropzone {
@@ -388,7 +403,7 @@ table {
   box-sizing: border-box;
   float: right;
   cursor: pointer;
-  padding:0.4em;
+  padding: 0.4em;
 }
 
 .dropzone_active {
@@ -399,47 +414,46 @@ table {
 }
 
 .dropzone_accept {
-  background-color:$highlightColor;
+  background-color: $highlightColor;
   border-color: $highlightColor;
-  color:$lightColor;
+  color: $lightColor;
 }
 
 .dropzone_reject {
   border-color: $deepColor;
-  background-color:$darkColor;
+  background-color: $darkColor;
   color: $darkColor;
 }
 
 .simple {
-  position:relative;
-  top:0;
-  left:0;
-  margin-top:0.5em;
+  position: relative;
+  top: 0;
+  left: 0;
+  margin-top: 0.5em;
   height: 2em;
   width: 100%;
-  line-height:2em;
+  line-height: 2em;
   background-color: $highlightColor;
   color: $lightColor;
 
   h1 {
-    font-size:1em;
-    margin:0 0 0 0.5em;
-
+    font-size: 1em;
+    margin: 0 0 0 0.5em;
   }
 
   .simple_buttons {
-    float:right;
-    text-align:right;
-    height:2em;
-    color:$darkColor;
+    float: right;
+    text-align: right;
+    height: 2em;
+    color: $darkColor;
   }
 
   .simple_button {
-    float:right;
-    width:1.5em;
-    text-align:center;
-    height:2em;
-    line-height:2em;
+    float: right;
+    width: 1.5em;
+    text-align: center;
+    height: 2em;
+    line-height: 2em;
   }
 }
 
@@ -452,7 +466,7 @@ table {
   margin: 0;
 
   .simple_buttons {
-    color:$lightColor;
+    color: $lightColor;
   }
 
   .simple_button {
@@ -464,19 +478,20 @@ table {
 }
 
 .full_height {
-  height:100%;
-  display:table-cell;
-  vertical-align:middle;
+  height: 100%;
+  display: table-cell;
+  vertical-align: middle;
 }
 
-.middle, .range_input {
-  vertical-align:middle;
-  margin-right:0.5em;
+.middle,
+.range_input {
+  vertical-align: middle;
+  margin-right: 0.5em;
 }
 
 .range_input {
-  border:solid $lightColor;
-  width:6em;
+  border: solid $lightColor;
+  width: 6em;
   border: 2px solid $lightColor;
   width: 9em;
   padding-left: 0.5em;
@@ -488,7 +503,7 @@ table {
 }
 
 .inline {
-  display:inline-block;
+  display: inline-block;
 }
 
 .no_break {
@@ -500,25 +515,27 @@ table {
 }
 
 .external_link:after {
-     content: " " url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAIpJREFUeNqEkIEJwCAMBGPpEs7hHK6hY+gauoZr6Bo6RtqEWkxb6EMQnuM/USEirIoxSmOKwDkhBEwp4VPkb4801Xun9xW4e+9FldYarLUvkBPPOp4JGWOgtSaSt6VWQKUU9nPOEiSIgAmNMdadFTjn7utqrXwh6fLvH9nXhamW5ksMnpfDnw4BBgBfunO056MmqAAAAABJRU5ErkJggg==);
+  content: " "
+    url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAIpJREFUeNqEkIEJwCAMBGPpEs7hHK6hY+gauoZr6Bo6RtqEWkxb6EMQnuM/USEirIoxSmOKwDkhBEwp4VPkb4801Xun9xW4e+9FldYarLUvkBPPOp4JGWOgtSaSt6VWQKUU9nPOEiSIgAmNMdadFTjn7utqrXwh6fLvH9nXhamW5ksMnpfDnw4BBgBfunO056MmqAAAAABJRU5ErkJggg==);
 }
 
 .warning {
   position: absolute;
-  z-index:1000;
+  z-index: 1000;
   bottom: 0;
   left: 0;
   right: 0;
   height: 10em;
-  background-color: rgba($highlightColor,0.85);
+  background-color: rgba($highlightColor, 0.85);
   padding-left: 2em;
   color: $lightColor;
 }
 
-.dismiss, .info {
+.dismiss,
+.info {
   font-family: "Comfortaa", Helvetica, Arial, sans-serif;
-  cursor:pointer;
-  display:flex;
+  cursor: pointer;
+  display: flex;
   align-items: center;
   justify-content: center;
   position: absolute;
@@ -526,14 +543,13 @@ table {
   right: 1em;
   height: 2em;
   width: 2em;
-  border-radius:1em;
+  border-radius: 1em;
   background-color: $deepColor;
   color: $lightColor;
 }
 
 .dismiss::after {
   content: "X";
-
 }
 
 .info {
@@ -547,9 +563,9 @@ table {
 }
 
 .hints {
-  font-size:0.75em;
-  color:$shadeColor;
-  display:block;
+  font-size: 0.75em;
+  color: $shadeColor;
+  display: block;
 }
 
 .toggle {
@@ -562,16 +578,16 @@ table {
 }
 
 span.tableDownload {
-  float:right;
+  float: right;
   .save_svg {
-    position:relative;
-    display:inline-block;
-    right:0;
-    background-color: rgba($lightColor,0.8);
-    color:$highlightColor;
+    position: relative;
+    display: inline-block;
+    right: 0;
+    background-color: rgba($lightColor, 0.8);
+    color: $highlightColor;
     margin-right: 0.5em;
     font-size: 0.8em;
-    cursor:pointer;
+    cursor: pointer;
   }
 }
 
@@ -582,18 +598,18 @@ span.reset {
 }
 
 div.reset {
-  float:right;
+  float: right;
   color: $lightColor;
   cursor: pointer;
 }
 
 .floating {
-  position:absolute;
+  position: absolute;
   z-index: 100;
 }
 
 .hidden {
-  display:none;
+  display: none;
 }
 
 .source {
@@ -625,8 +641,8 @@ div.reset {
   text-decoration: none;
   display: inline-block;
   font-size: 1em;
-  cursor:pointer;
-  box-sizing:border-box;
+  cursor: pointer;
+  box-sizing: border-box;
 }
 
 .menuButton:hover {

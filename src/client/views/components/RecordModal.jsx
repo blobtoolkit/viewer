@@ -1,5 +1,3 @@
-// import { FlexDialog, ModalContainer } from "react-modal-dialog-react16";
-
 import CategoryDistribution from "./CategoryDistribution";
 import Modal from "@material-ui/core/Modal";
 import React from "react";
@@ -40,26 +38,9 @@ export class RecordModal extends React.Component {
             open={this.state.isShowingModal}
             onClose={() => this.handleClose()}
           >
-            {/* <FlexDialog onClose={() => this.handleClose()}> */}
-            <div
-              style={{
-                position: "absolute",
-                top: "50%",
-                left: "50%",
-                transform: "translate(-50%, -50%)",
-                backgroundColor: "white",
-                border: "none",
-                boxShadow: "none",
-                padding: "10px",
-                overflow: "visible",
-                "&:focus": {
-                  outline: "none",
-                },
-              }}
-            >
+            <div className={styles.modalDialog}>
               <CategoryDistribution />
             </div>
-            {/* </FlexDialog> */}
           </Modal>
         </div>
       );
