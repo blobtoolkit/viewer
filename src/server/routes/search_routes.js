@@ -56,7 +56,6 @@ const readMeta = (dir, md) => {
       fs.statSync(path).isFile()
     ) {
       let dsMeta = parseMeta(readYamlSync(path));
-      console.log(dsMeta);
       dsMeta.id = dir.replace(/^.+\//, "");
       if (!dsMeta.hasOwnProperty("revision")) {
         dsMeta.revision = 0;
@@ -71,10 +70,7 @@ const readMeta = (dir, md) => {
           if (summary && summary.hasOwnProperty("summaryStats")) {
             dsMeta.summaryStats = summary.summaryStats;
           }
-        } catch (error) {
-          console.log(sumpath);
-          console.log(error);
-        }
+        } catch (error) {}
       }
       if (!versions[dsMeta.prefix]) {
         versions[dsMeta.prefix] = {};
