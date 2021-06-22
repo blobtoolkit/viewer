@@ -169,15 +169,12 @@ export function fetchRepository(searchTerm) {
           if (!reload) {
             if (json.length != 1) {
               dispatch(
-                updatePathname(
-                  { interactive },
-                  { dataset: true, [views.primary]: true }
-                )
+                updatePathname({}, { dataset: true, [views.primary]: true })
               );
             } else if (json[0].id != datasetId) {
               dispatch(
                 updatePathname(
-                  { dataset: json[0].id, interactive },
+                  { dataset: json[0].id },
                   { [views.primary]: true }
                 )
               );
@@ -185,17 +182,11 @@ export function fetchRepository(searchTerm) {
           }
         } else if (json.length == 1) {
           dispatch(
-            updatePathname(
-              { dataset: json[0].id, interactive },
-              { [views.primary]: true }
-            )
+            updatePathname({ dataset: json[0].id }, { [views.primary]: true })
           );
         } else {
           dispatch(
-            updatePathname(
-              { interactive },
-              { dataset: true, [views.primary]: true }
-            )
+            updatePathname({}, { dataset: true, [views.primary]: true })
           );
         }
         dispatch(receiveRepository(json));
@@ -309,35 +300,27 @@ export const loadDataset = (id, clear) => {
             plot[key] = qv;
           }
         });
+        let view = getView(state);
         if (
           !interactive &&
           (window.firstLoad || window.records < meta.records) &&
           meta.records > threshold
         ) {
           if (meta.static_plots && !isStatic) {
-            let view = getView(state);
             dispatch(updatePathname({ [view]: true, static: true }));
           } else if (!meta.static_plots) {
-            dispatch(
-              updatePathname({ blob: true, interactive }, { static: true })
-            );
+            dispatch(updatePathname({ [view]: true }, { static: true }));
           }
         } else if (!meta.static_plots) {
-          dispatch(
-            updatePathname({ blob: true, interactive }, { static: true })
-          );
+          dispatch(updatePathname({ [view]: true }, { static: true }));
         } else if (
           window.records > meta.records &&
           meta.records < threshold &&
           isStatic
         ) {
-          dispatch(
-            updatePathname({ blob: true, interactive }, { static: true })
-          );
+          dispatch(updatePathname({ [view]: true }, { static: true }));
         } else if (meta.records < threshold) {
-          dispatch(
-            updatePathname({ blob: true, interactive }, { static: true })
-          );
+          dispatch(updatePathname({ [view]: true }, { static: true }));
         }
         dispatch(editPlot(plot));
         Promise.all(addAllFields(dispatch, meta.fields, 1, meta, plot, false))

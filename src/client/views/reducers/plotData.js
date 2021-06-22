@@ -692,7 +692,7 @@ export const getWindowBinsForCat = createSelector(
             windowBins.length == otherLimit - 1 &&
             cats.keys.length > otherLimit
           ) {
-            id = other;
+            id = "other";
           }
           windowBins.push({
             id,

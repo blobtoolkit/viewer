@@ -7,7 +7,7 @@ export class DatasetModal extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      isShowingModal: this.props.selected,
+      isShowingModal: Boolean(this.props.selected),
     };
   }
   handleClick() {

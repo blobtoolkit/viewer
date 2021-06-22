@@ -160,16 +160,14 @@ export const chooseView = (view) => {
   return function (dispatch) {
     let state = store.getState();
     let interactive = getInteractive(state);
-    dispatch(updatePathname({ [view]: true, interactive }));
+    dispatch(updatePathname({ [view]: true }));
   };
 };
 
 export const toggleStatic = (view, datasetId, isStatic) => {
   return async function (dispatch) {
     if (isStatic) {
-      dispatch(
-        updatePathname({ [view]: true, interactive: true }, { static: true })
-      );
+      dispatch(updatePathname({ [view]: true }, { static: true }));
       dispatch(loadDataset(datasetId));
     } else {
       dispatch(

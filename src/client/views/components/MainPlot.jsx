@@ -81,7 +81,7 @@ export default class MainPlot extends React.Component {
           };
         } else if (
           plotShape == "square" ||
-          (plotShape == "none" && records > 1000)
+          (plotShape == "none" && records > 2000)
         ) {
           return {
             datasetId: getDatasetID(state),
@@ -248,7 +248,7 @@ class PlotBox extends React.Component {
   render() {
     let plotShape = this.props.plotShape;
     if (plotShape == "none") {
-      if (this.props.records > 1000) {
+      if (this.props.records > 2000) {
         plotShape = "square";
       } else {
         plotShape = "circle";

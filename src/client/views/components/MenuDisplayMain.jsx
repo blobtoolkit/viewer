@@ -271,7 +271,7 @@ class DisplayMenu extends React.Component {
               active={shape == "circle"}
               onIconClick={() => onSelectShape("circle")}
             />
-            {fields.gc_windows && records * 10 <= threshold && (
+            {fields.gc_windows && records <= threshold && (
               <SVGIcon
                 sprite={lineIcon}
                 active={shape == "lines"}

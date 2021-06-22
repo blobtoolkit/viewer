@@ -97,7 +97,6 @@ const generateLink = (link, obj) => {
 
 const chunkSize = (value, release = 1) => {
   if (`${release}` >= "2.6") {
-    console.log("new");
     return Math.ceil(value / 1000) * 1000;
   }
   let mag = Math.floor(Math.log10(value));

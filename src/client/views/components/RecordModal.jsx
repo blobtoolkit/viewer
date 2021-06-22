@@ -7,16 +7,18 @@ export class RecordModal extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      isShowingModal:
-        this.props.currentRecord || this.props.currentRecord === 0,
+      isShowingModal: Boolean(
+        this.props.currentRecord || this.props.currentRecord === 0
+      ),
     };
   }
 
   componentDidUpdate(nextProps) {
     if (this.props.currentRecord !== nextProps.currentRecord) {
       this.setState({
-        isShowingModal:
-          this.props.currentRecord || this.props.currentRecord === 0,
+        isShowingModal: Boolean(
+          this.props.currentRecord || this.props.currentRecord === 0
+        ),
       });
     }
   }

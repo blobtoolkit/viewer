@@ -113,7 +113,7 @@ class Caption extends Component {
       if (this.props.plotShape != "kite") {
         if (
           this.props.plotShape == "circle" ||
-          (this.props.plotShape == "none" && records <= 1000)
+          (this.props.plotShape == "none" && records <= 2000)
         ) {
           caption += `. Circles are sized in proportion to ${record} ${z} `;
         } else if (this.props.plotShape == "lines") {
