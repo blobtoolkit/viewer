@@ -147,6 +147,7 @@ const generateTree = (meta) => {
         .slice(0, 8)
         .map((r) => ds[r])
         .reduce((a, b) => a + "," + b);
+      spid = spid.replace(/,undefined$/, `,${ds.taxon_name}`);
       let parent_node = tree;
       ranks.forEach((rank) => {
         let skip;
