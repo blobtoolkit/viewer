@@ -138,58 +138,63 @@ const generateTree = (meta) => {
   let tree = { n: 0, r: "root", d: {}, a: 0, s: 0 };
   let nodes = ["root"];
   let species = {};
+  let prefixes = {};
   meta.forEach((ds, i) => {
-    let spid = ranks
-      .slice(0, 8)
-      .map((r) => ds[r])
-      .reduce((a, b) => a + "," + b);
-    let parent_node = tree;
-    ranks.forEach((rank) => {
-      let skip;
-      if (rank == "id") {
-        let assembly = ds[rank];
-        parent_node.d[assembly] = {
-          n: nodes.length,
-          // assembly,
-          p: parent_node.id,
-        };
-        nodes.push(assembly);
-        parent_node.a++;
-      } else {
-        let taxon = ds[rank];
-        if (!taxon) {
-          let parent = String(nodes[parent_node.n]);
-          if (parent) {
-            taxon = parent.endsWith("undef") ? parent : `${parent}-undef`;
-          } else {
-            parent = "undef";
-          }
-        }
-        if (!parent_node.d[taxon]) {
-          if (rank == "taxon_name" && taxon == nodes[parent_node.n]) {
-            skip = true;
-          } else {
-            parent_node.d[taxon] = {
-              n: nodes.length,
-              r: rank,
-              p: parent_node.id,
-              d: {},
-              a: 0,
-              s: 0,
-            };
-            nodes.push(taxon);
-          }
-        }
-        if (!species[spid]) {
-          parent_node.s++;
-        }
-        if (!skip) {
+    let prefix = ds.prefix;
+    if (!prefixes[prefix]) {
+      prefixes[prefix] = true;
+      let spid = ranks
+        .slice(0, 8)
+        .map((r) => ds[r])
+        .reduce((a, b) => a + "," + b);
+      let parent_node = tree;
+      ranks.forEach((rank) => {
+        let skip;
+        if (rank == "id") {
+          let assembly = ds[rank];
+          parent_node.d[assembly] = {
+            n: nodes.length,
+            // assembly,
+            p: parent_node.id,
+          };
+          nodes.push(assembly);
           parent_node.a++;
-          parent_node = parent_node.d[taxon];
+        } else {
+          let taxon = ds[rank];
+          if (!taxon) {
+            let parent = String(nodes[parent_node.n]);
+            if (parent) {
+              taxon = parent.endsWith("undef") ? parent : `${parent}-undef`;
+            } else {
+              parent = "undef";
+            }
+          }
+          if (!parent_node.d[taxon]) {
+            if (rank == "taxon_name" && taxon == nodes[parent_node.n]) {
+              skip = true;
+            } else {
+              parent_node.d[taxon] = {
+                n: nodes.length,
+                r: rank,
+                p: parent_node.id,
+                d: {},
+                a: 0,
+                s: 0,
+              };
+              nodes.push(taxon);
+            }
+          }
+          if (!species[spid]) {
+            parent_node.s++;
+          }
+          if (!skip) {
+            parent_node.a++;
+            parent_node = parent_node.d[taxon];
+          }
         }
-      }
-    });
-    species[spid] = true;
+      });
+      species[spid] = true;
+    }
   });
   return tree;
 };
@@ -258,7 +263,7 @@ const tabulate = (term) => {
         let revision = assembly.revision || 0;
         if (!prefixes[prefix] || revision > prefixes[prefix].revision) {
           let pctHit = 100 - assembly.summaryStats.stats.noHit * 100;
-          let pctTarget = assembly.summaryStats.stats.target * 100;
+          let pctTarget = (assembly.summaryStats.stats.target || 0) * 100;
           let ratio = 1 / assembly.summaryStats.stats.spanOverN50;
           ratio = ratio ? ratio : assembly.summaryStats.stats.n50OverSpan;
           let string = `${id}\t${pctHit.toPrecision(
