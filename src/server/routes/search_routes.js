@@ -278,9 +278,9 @@ const tabulate = (term) => {
   let byWGS = "";
   Object.keys(prefixes).forEach((prefix) => {
     byGCA += `${prefixes[prefix].gca}\n`;
-    if (prefix.match(/[A-Z]{4,6}\d{2}/)) {
-      byWGS += `${prefixes[prefix].wgs}\n`;
-    }
+    // if (prefix.match(/[A-Z]{4,6}\d{2}/)) {
+    //   byWGS += `${prefixes[prefix].wgs}\n`;
+    // }
   });
   return byGCA + byWGS;
 };
