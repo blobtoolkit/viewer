@@ -32,6 +32,8 @@ module.exports = {
   apiUrl: BTK_API_URL,
   // url basename
   basename: process.env.BTK_BASENAME || "",
+  // search index reload key
+  reloadKey: process.env.BTK_RELOAD_KEY || "",
   // path to read flatfiles
   filePath: FILE_PATH,
   // Path to write flatfiles

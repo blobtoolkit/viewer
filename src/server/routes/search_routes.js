@@ -200,17 +200,28 @@ const generateTree = (meta) => {
   return tree;
 };
 
-const meta = readMeta(dataDirectory);
+let meta;
 
-const index = generateIndex(meta);
+let index;
 
-const keys = Object.keys(index.values);
+let keys;
 
 let tree = {};
 
-if (config.dataset_table) {
-  tree = generateTree(meta);
-}
+const loadIndex = () => {
+  let newMeta = readMeta(dataDirectory);
+  let newIndex = generateIndex(newMeta);
+  let newKeys = Object.keys(newIndex.values);
+  if (config.dataset_table) {
+    newTree = generateTree(newMeta);
+    tree = newTree;
+    meta = newMeta;
+    index = newIndex;
+    keys = newKeys;
+  }
+};
+
+loadIndex();
 
 const autocomplete = (term) => {
   query = term.toUpperCase();
@@ -345,6 +356,12 @@ const tabulate = (term) => {
  *     type: string
  *     required: true
  *     description: search term (e.g. Nematoda)
+ *   key:
+ *     in: path
+ *     name: key
+ *     type: string
+ *     required: true
+ *     description: Search index reload key
  */
 
 module.exports = function (app, db) {
@@ -452,6 +469,34 @@ module.exports = function (app, db) {
     } else {
       res.setHeader("content-type", "application/json");
       res.json(search(req.params.term));
+    }
+  });
+
+  /**
+   * @swagger
+   * /api/v1/search/reload/{key}:
+   *   get:
+   *     tags:
+   *       - Search
+   *     description: Reload the search index
+   *     produces:
+   *       - application/json
+   *     responses:
+   *       200:
+   *         description: Request status
+   *         schema:
+   *           type: object
+   *     parameters:
+   *       - $ref: "#/parameters/key"
+   */
+
+  app.get("/api/v1/search/reload/:key", async (req, res) => {
+    res.setHeader("content-type", "application/json");
+    if (req.params.key == config.reloadKey) {
+      loadIndex();
+      res.json({ status: "updated" });
+    } else {
+      res.json({ status: "invalid key" });
     }
   });
 };
