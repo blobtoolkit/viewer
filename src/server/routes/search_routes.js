@@ -215,10 +215,10 @@ const loadIndex = () => {
   if (config.dataset_table) {
     newTree = generateTree(newMeta);
     tree = newTree;
-    meta = newMeta;
-    index = newIndex;
-    keys = newKeys;
   }
+  meta = newMeta;
+  index = newIndex;
+  keys = newKeys;
 };
 
 loadIndex();
