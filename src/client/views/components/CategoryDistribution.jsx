@@ -78,7 +78,11 @@ class CatDistribution extends React.Component {
       let connector;
       let y1 = yScale(0);
       let y2 = yScale(line.height);
-      if (catAxis.match("dist") || catAxis.match("sum")) {
+      if (
+        catAxis.match("dist") ||
+        catAxis.match("sum") ||
+        catAxis.match("buscoregions")
+      ) {
         y1 = yScale(line.y1) + 0.5;
         y2 = yScale(line.y2) - 0.5;
         if (
