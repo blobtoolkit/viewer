@@ -83,6 +83,7 @@ const config = {
       STATIC_THRESHOLD: JSON.stringify(main.staticThreshold),
       NOHIT_THRESHOLD: JSON.stringify(main.nohitThreshold),
       CIRCLE_LIMIT: JSON.stringify(main.circleLimit),
+      ABOUT: JSON.stringify(main.aboutUrl),
       HOME: JSON.stringify(protocol + "://" + main.hostname),
       GIT_VERSION: JSON.stringify(gitRevisionPlugin.version()),
       COMMIT_HASH: JSON.stringify(gitRevisionPlugin.commithash()),

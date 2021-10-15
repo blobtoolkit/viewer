@@ -39,7 +39,7 @@ module.exports = {
   // Path to write flatfiles
   outFilePath: process.env.BTK_OUT_FILE_PATH || appRoot + "/files/out",
   // version
-  version: process.env.BTK_VERSION || "v2.5",
+  version: process.env.BTK_VERSION || "v2.6.4",
   // hostname
   hostname: BTK_HOST,
   // API URL
@@ -68,4 +68,5 @@ module.exports = {
   message: process.env.BTK_MESSAGE || false,
   use_default: process.env.BTK_USE_DEFAULT_LINKS || false,
   disableHostCheck: String(process.env.BTK_DISABLE_HOST_CHECK) === "true",
+  aboutUrl: process.env.BTK_ABOUT_URL || "http://blobtoolkit.genomehubs.org",
 };
