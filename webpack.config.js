@@ -1,5 +1,6 @@
 const path = require("path");
 const webpack = require("webpack");
+const PACKAGE = require("./package.json");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const GitRevisionPlugin = require("git-revision-webpack-plugin");
 // const combineLoaders = require('webpack-combine-loaders');
@@ -78,7 +79,7 @@ const config = {
     }),
     new webpack.DefinePlugin({
       API_URL: JSON.stringify(main.apiUrl),
-      VERSION: JSON.stringify(main.version),
+      VERSION: JSON.stringify(PACKAGE.version),
       BASENAME: JSON.stringify(main.basename),
       STATIC_THRESHOLD: JSON.stringify(main.staticThreshold),
       NOHIT_THRESHOLD: JSON.stringify(main.nohitThreshold),
