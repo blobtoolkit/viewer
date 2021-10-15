@@ -83,6 +83,7 @@ const getCatBinIndices = createSelector(getBinsForCat, (bins) => {
 });
 
 const generateLink = (link, obj) => {
+  if (!link || !link.func) return {};
   let title, url, meta;
   let ret = link.func(obj);
   if (ret.hasOwnProperty("title")) {
