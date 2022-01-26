@@ -2,11 +2,9 @@ const Promise = require("promise");
 const fs = require("fs");
 const zlib = require("zlib");
 const yaml = require("js-yaml");
-const read = require("read-yaml");
 const Path = require("path");
-const mkdirp = require("mkdirp-promise");
+const mkdirp = require("mkdirp");
 const stat = Promise.denodeify(require("fs").stat);
-const readFile = Promise.denodeify(require("fs").readFile);
 const writeFile = Promise.denodeify(require("fs").writeFile);
 const waitOn = require("../../shared/functions/utils").waitOn;
 

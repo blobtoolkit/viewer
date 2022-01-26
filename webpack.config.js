@@ -2,8 +2,8 @@ const path = require("path");
 const webpack = require("webpack");
 const PACKAGE = require("./package.json");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
-const GitRevisionPlugin = require("git-revision-webpack-plugin");
-// const combineLoaders = require('webpack-combine-loaders');
+const { GitRevisionPlugin } = require("git-revision-webpack-plugin");
+// const GitRevisionPlugin = require("git-revision-webpack-plugin");
 const main = require("./src/config/main");
 const CopyWebpackPlugin = require("copy-webpack-plugin");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
@@ -25,7 +25,7 @@ const config = {
   output: {
     publicPath: main.mode == "production" ? main.basename + "/" : "/",
     path: BUILD_DIR + "/",
-    filename: devMode ? "js/bundle.js" : "js/[name].[hash].js",
+    filename: devMode ? "js/[name]/bundle.js" : "js/[name].[contenthash].js",
     chunkFilename: "js/[id].js",
   },
   resolve: {
@@ -37,7 +37,7 @@ const config = {
       maxInitialRequests: Infinity,
       minSize: 50000,
       cacheGroups: {
-        vendor: {
+        defaultVendors: {
           test: /[\\/]node_modules[\\/]/,
           name(module) {
             const packageName = module.context.match(
@@ -67,9 +67,10 @@ const config = {
   devtool: "source-map",
   plugins: [
     new MiniCssExtractPlugin({
-      filename: devMode ? "css/styles.css" : "css/[name].[hash].css",
+      filename: devMode ? "css/styles.css" : "css/[name].[contenthash].css",
       chunkFilename: "css/[id].css",
     }),
+    gitRevisionPlugin,
     new webpack.DefinePlugin({
       API_URL: JSON.stringify(main.apiUrl),
       VERSION: JSON.stringify(PACKAGE.version),
@@ -104,7 +105,7 @@ const config = {
     new CopyWebpackPlugin({
       patterns: [{ from: "./src/client/favicon" }],
     }),
-    new webpack.ExtendedAPIPlugin(),
+    // new webpack.ExtendedAPIPlugin(),
   ],
   module: {
     rules: [
@@ -160,7 +161,7 @@ const config = {
           MiniCssExtractPlugin.loader,
           {
             loader: "css-loader",
-            query: {
+            options: {
               modules: {
                 localIdentName: "[name]__[local]___[hash:base64:5]",
               },
@@ -180,7 +181,7 @@ const config = {
         test: /\.(gif|png|jpe?g)$/i,
         loader: "file-loader",
         options: {
-          name: "img/[hash].[ext]",
+          name: "img/[contenthash].[ext]",
           publicPath: main.mode == "production" ? main.basename + "/" : "/",
         },
       },
