@@ -16,20 +16,14 @@ const APP_DIR = path.resolve(__dirname, "src/client/views");
 const gitRevisionPlugin = new GitRevisionPlugin();
 
 const protocol = main.https ? "https" : "http";
-const API_PORT = main.https ? "https" : "http";
 
 const config = {
   entry: {
     main: ["@babel/polyfill", APP_DIR + "/index.jsx"],
-    // cumulative: APP_DIR + '/components/CumulativePlot.jsx',
-    // blob: APP_DIR + '/components/MainPlot.jsx',
-    // snail: APP_DIR + '/components/SnailPlot.jsx',
-    // table: APP_DIR + '/components/TablePlot.jsx'
   },
   output: {
     publicPath: main.mode == "production" ? main.basename + "/" : "/",
     path: BUILD_DIR + "/",
-    // filename: 'js/bundle.js'
     filename: devMode ? "js/bundle.js" : "js/[name].[hash].js",
     chunkFilename: "js/[id].js",
   },
@@ -40,7 +34,7 @@ const config = {
     splitChunks: {
       chunks: "all",
       maxInitialRequests: Infinity,
-      minSize: 0,
+      minSize: 50000,
       cacheGroups: {
         vendor: {
           test: /[\\/]node_modules[\\/]/,
@@ -50,6 +44,7 @@ const config = {
             )[1];
             return `npm.${packageName.replace("@", "")}`;
           },
+          chunks: "all",
         },
       },
     },
@@ -61,10 +56,6 @@ const config = {
     disableHostCheck: main.disableHostCheck,
     contentBase: BUILD_DIR,
     compress: true,
-    // headers: {
-    //   "Cross-Origin-Embedder-Policy": "require-corp",
-    //   "Cross-Origin-Opener-Policy": "same-origin",
-    // },
     port: main.client_port,
     proxy: {
       "/api/**": { target: main.apiUrl },
@@ -73,7 +64,6 @@ const config = {
   devtool: "source-map",
   plugins: [
     new MiniCssExtractPlugin({
-      // filename: 'css/styles.css',
       filename: devMode ? "css/styles.css" : "css/[name].[hash].css",
       chunkFilename: "css/[id].css",
     }),
@@ -99,9 +89,19 @@ const config = {
       hash: true,
       title: "BlobToolKit - Viewer",
       template: "./src/client/index.html",
-      // filename: BUILD_DIR + '/index.html'
+      minify: {
+        collapseInlineTagWhitespace: true,
+        collapseWhitespace: true,
+        preserveLineBreaks: true,
+        minifyURLs: true,
+        removeComments: false,
+        removeAttributeQuotes: true,
+      },
     }),
-    new CopyWebpackPlugin([{ from: "./src/client/favicon" }]),
+    new CopyWebpackPlugin({
+      patterns: [{ from: "./src/client/favicon" }],
+    }),
+    new webpack.ExtendedAPIPlugin(),
   ],
   module: {
     rules: [
@@ -169,28 +169,6 @@ const config = {
           "sass-loader",
         ],
       },
-      // {
-      //   test: /\.css$/,
-      //   include: [
-      //     /node_modules/,
-      //     path.resolve(__dirname, 'src/client/views/style/node_modules.css')
-      //   ],
-      //   use: [
-      //     {
-      //       loader: MiniCssExtractPlugin.loader,
-      //       options: {
-      //         hmr: process.env.NODE_ENV === 'development',
-      //       },
-      //     },
-      //     {
-      //       loader: 'css-loader',
-      //       query: {
-      //         modules: true,
-      //         localIdentName: '[name]__[local]___[hash:base64:5]'
-      //       }
-      //     }
-      //   ],
-      // },
       {
         test: /\.svg$/,
         use: ["svg-sprite-loader", "svgo-loader"],
