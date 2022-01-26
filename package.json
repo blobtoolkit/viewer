@@ -7,7 +7,7 @@
   "scripts": {
     "api": "node src/server/app.js",
     "start": "nodemon src/server/app.js",
-    "client": "webpack-dev-server --mode development --content-base src/client",
+    "client": "webpack serve --mode development --config ./webpack.config.js",
     "build": "NODE_ENV=production webpack -p --config ./webpack.config.js"
   },
   "author": "Richard Challis",
@@ -93,7 +93,7 @@
     "tar": "^5.0.11",
     "testdouble": "^3.16.4",
     "webpack": "^4.46.0",
-    "webpack-cli": "^3.3.12",
+    "webpack-cli": "^4.9.2",
     "webpack-combine-loaders": "^2.0.4"
   },
   "devDependencies": {
@@ -108,7 +108,7 @@
     "mini-css-extract-plugin": "^0.9.0",
     "nodemon": "^2.0.15",
     "should": "^13.2.3",
-    "webpack-dev-server": "^3.11.3"
+    "webpack-dev-server": "^4.7.3"
   },
   "optionalDependencies": {
     "fsevents": "^2.3.2"

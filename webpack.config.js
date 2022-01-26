@@ -18,6 +18,7 @@ const gitRevisionPlugin = new GitRevisionPlugin();
 const protocol = main.https ? "https" : "http";
 
 const config = {
+  mode: devMode ? "development" : "production",
   entry: {
     main: ["@babel/polyfill", APP_DIR + "/index.jsx"],
   },
@@ -50,11 +51,13 @@ const config = {
     },
   },
   devServer: {
-    hot: true,
+    hot: false,
     historyApiFallback: true,
     host: main.hostname,
-    disableHostCheck: main.disableHostCheck,
-    contentBase: BUILD_DIR,
+    allowedHosts: "all",
+    static: {
+      directory: BUILD_DIR,
+    },
     compress: true,
     port: main.client_port,
     proxy: {
