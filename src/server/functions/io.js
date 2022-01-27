@@ -6,7 +6,7 @@ const Path = require("path");
 const mkdirp = require("mkdirp");
 const stat = Promise.denodeify(require("fs").stat);
 const writeFile = Promise.denodeify(require("fs").writeFile);
-const waitOn = require("../../shared/functions/utils").waitOn;
+const waitOn = require("../shared/functions/utils").waitOn;
 
 const absolutePath = (path) => {
   if (path.match(/^\.\./)) path = Path.join(__dirname, path);

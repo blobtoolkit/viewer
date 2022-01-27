@@ -1,8 +1,8 @@
 const config = require("../../config/main");
 const io = require("../functions/io");
 const Field = require("./field");
-const utils = require("../../shared/functions/utils");
-const Dataset = require("../../shared/models/dataset");
+const utils = require("../shared/functions/utils");
+const Dataset = require("../shared/models/dataset");
 
 module.exports = Dataset;
 
