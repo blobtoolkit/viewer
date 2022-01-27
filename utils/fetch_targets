@@ -5,15 +5,8 @@ Usage:
 `;
 const parser = require("fast-xml-parser");
 const fetch = require("node-fetch");
-const resolve = require("path").resolve;
 const docopt = require("docopt").docopt;
 const fs = require("fs");
-// const readline = require('readline')
-// const { execFileSync } = require('child_process');
-
-const sleep = (ms) => {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-};
 
 const fetchAsyncText = async (url) => await (await fetch(url)).text();
 

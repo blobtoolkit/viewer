@@ -32,7 +32,7 @@
     "@": "%40",
     "[": "%5B",
     "]": "%5D",
-    " ": "%20"
+    " ": "%20",
   );
 
   @each $from, $to in $replacements {
@@ -42,8 +42,8 @@
   @return $string;
 }
 
-@function wf-implode($list, $separator: ',') {
-  $string: '';
+@function wf-implode($list, $separator: ",") {
+  $string: "";
   @for $i from 1 through length($list) {
     $el: nth($list, $i);
     $string: $string + $el;
@@ -55,60 +55,65 @@
 }
 
 @function wf-serialize($fonts) {
-  @if type-of($fonts) == 'list' or type-of($fonts) == 'arglist' {
+  @if type-of($fonts) == "list" or type-of($fonts) == "arglist" {
     $serialized: ();
     @each $font in $fonts {
       $serialized: append($serialized, wf-serialize($font));
     }
-    @return wf-implode($serialized, '|');
+    @return wf-implode($serialized, "|");
   }
 
-  @if type-of($fonts) == 'map' {
+  @if type-of($fonts) == "map" {
     $serialized: ();
     @each $family, $variants in $fonts {
-      $variants: wf-implode($variants, ',');
-      $variants: wf-str-replace($variants, ' ', '');
+      $variants: wf-implode($variants, ",");
+      $variants: wf-str-replace($variants, " ", "");
       $serialized: append($serialized, "#{$family}:#{$variants}");
     }
     @return wf-serialize($serialized);
   }
 
-  @if type-of($fonts) == 'string' {
+  @if type-of($fonts) == "string" {
     @return wf-url-encode($fonts);
   }
 
-  @warn "Unsupported font type: #{type-of($fonts)}";
+  @warn 'Unsupported font type: #{type-of($fonts)}';
 }
 
 @function wf-protocol() {
-  $web-fonts-protocol: '' !global !default;
-  $protocol: $web-fonts-protocol;
+  $webFontsProtocol: "" !default !global;
+  $protocol: $webFontsProtocol;
   @if str-length($protocol) > 0 {
-    $protocol: $protocol + ':';
+    $protocol: $protocol + ":";
   }
   @return $protocol;
 }
 
 @function wf-query-string-encode($params) {
-  $query-string: "";
+  $queryString: "";
   @each $key, $value in $params {
-    $query-string: $query-string + wf-url-encode($key) + "=";
-    $query-string: $query-string + wf-url-encode($value) + "&";
+    $queryString: $queryString + wf-url-encode($key) + "=";
+    $queryString: $queryString + wf-url-encode($value) + "&";
   }
   // remove trailing ampersand
-  $query-string: str-slice($query-string, 1, -2);
-  @return $query-string;
+  $queryString: str-slice($queryString, 1, -2);
+  @return $queryString;
 }
 
 @function wf-params-string($fonts) {
-  $web-fonts-params: () !global !default;
-  $params: map-merge((family: wf-serialize($fonts)), $web-fonts-params);
+  $webFontsParams: () !default !global;
+  $params: map-merge(
+    (
+      family: wf-serialize($fonts),
+    ),
+    $webFontsParams
+  );
   @return wf-query-string-encode($params);
 }
 
 @function web-fonts-url($fonts...) {
   $protocol: wf-protocol();
-  $query-string: wf-params-string($fonts);
-  $url: "#{$protocol}//fonts.googleapis.com/css?#{$query-string}";
+  $queryString: wf-params-string($fonts);
+  $url: "#{$protocol}//fonts.googleapis.com/css?#{$queryString}";
   @return $url;
 }
