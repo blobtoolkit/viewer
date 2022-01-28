@@ -8,7 +8,7 @@
     "api": "NODE_ENV=production node src/server/app.js",
     "start": "nodemon src/server/app.js",
     "client": "webpack serve --mode development --config ./webpack.config.js",
-    "build": "NODE_ENV=production webpack -p --config ./webpack.config.js"
+    "build": "NODE_ENV=production webpack --config ./webpack.config.js"
   },
   "author": "Richard Challis",
   "license": "MIT",

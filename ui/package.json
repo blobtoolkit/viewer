@@ -1,0 +1,26 @@
+{
+  "name": "btk-ui",
+  "version": "2.6.5",
+  "repository": "https://github.com/blobtoolkit/viewer",
+  "description": "",
+  "bin": "src/app.js",
+  "main": "index.js",
+  "scripts": {
+    "viewer": "rsync -r ../dist/public view && ws -s index.html -p 8080 -d ./view -z --spa.asset-test-fs"
+  },
+  "author": "Richard Challis",
+  "license": "MIT",
+  "pkg": {
+    "assets": [
+      "../dist/public/**/*"
+    ],
+    "targets": [
+      "node17-macos-x64"
+    ],
+    "outputPath": "dist"
+  },
+  "dependencies": {
+    "http-server": "^14.1.0",
+    "local-web-server": "^5.1.1"
+  }
+}
