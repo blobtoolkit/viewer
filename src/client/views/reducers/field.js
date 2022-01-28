@@ -15,6 +15,7 @@ import {
   setDimension,
 } from "./dimension";
 
+import { apiUrl } from "./api";
 import { byIdSelectorCreator } from "./selectorCreators";
 import { createSelector } from "reselect";
 import deep from "deep-get-set";
@@ -23,8 +24,6 @@ import { getCatAxis } from "./plot";
 import { getCurrentDataset } from "./dataset";
 import immutableUpdate from "immutable-update";
 import store from "../store";
-
-const apiUrl = API_URL || "/api/v1";
 
 export const addTopLevelFields = createAction("ADD_TOP_LEVEL_FIELDS");
 export const topLevelFields = handleAction(

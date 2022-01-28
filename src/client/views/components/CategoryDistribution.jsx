@@ -3,6 +3,7 @@ import CategoryPlotBoundary from "./CategoryPlotBoundary";
 import { ExportButton } from "./ExportButton";
 import React from "react";
 import Spinner from "./Spinner";
+import { apiUrl } from "../reducers/api";
 import { connect } from "react-redux";
 import { scaleLinear as d3scaleLinear } from "d3-scale";
 import { scaleLog as d3scaleLog } from "d3-scale";
@@ -10,8 +11,6 @@ import { getBinnedColors } from "../reducers/summary";
 import { getCategoryDistributionForRecord } from "../reducers/record";
 import { getDatasetID } from "../reducers/location";
 import styles from "./Plot.scss";
-
-const apiUrl = API_URL || "/api/v1";
 
 class CatDistribution extends React.Component {
   constructor(props) {

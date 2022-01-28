@@ -5,11 +5,12 @@ import {
 } from "../reducers/repository";
 
 import Suggestions from "./Suggestions";
+import { apiUrl } from "../reducers/api";
 import { connect } from "react-redux";
 import styles from "./Search.scss";
+
 // import { getSearhTerm,setSearchTerm } from '../reducers/search'
 
-const apiUrl = API_URL || "/api/v1";
 
 class SearchBox extends Component {
   constructor(props) {

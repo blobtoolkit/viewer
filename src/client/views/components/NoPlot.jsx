@@ -1,9 +1,8 @@
 import React from "react";
+import { apiUrl } from "../reducers/api";
 import { connect } from "react-redux";
 import { getSearchTerm } from "../reducers/location";
 import styles from "./Plot.scss";
-
-const apiUrl = API_URL || "/api/v1";
 
 class NotFound extends React.Component {
   render() {

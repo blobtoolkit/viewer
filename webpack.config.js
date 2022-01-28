@@ -60,9 +60,9 @@ const config = {
     },
     compress: true,
     port: main.client_port,
-    proxy: {
-      "/api/**": { target: main.apiUrl },
-    },
+    // proxy: {
+    //   "/api/**": { target: main.apiUrl },
+    // },
   },
   devtool: "source-map",
   plugins: [

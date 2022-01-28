@@ -17,6 +17,7 @@ import {
 import { qsDefault, queryToStore } from "../querySync";
 
 import { addReferenceFields } from "./reference";
+import { apiUrl } from "./api";
 import { createSelector } from "reselect";
 import deep from "deep-get-set";
 import { editPlot } from "./plot";
@@ -27,8 +28,6 @@ import immutableUpdate from "immutable-update";
 import qs from "qs";
 import shallow from "shallowequal";
 import store from "../store";
-
-const apiUrl = API_URL || "/api/v1";
 
 const requestRepository = createAction("REQUEST_REPOSITORY");
 const receiveRepository = createAction(

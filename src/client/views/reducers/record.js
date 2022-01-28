@@ -2,6 +2,7 @@ import { createAction, handleAction, handleActions } from "redux-actions";
 import { getBinsForCat, getDetailsForFieldId } from "./field";
 import { getLinks, getRawDataForLength } from "./summary";
 
+import { apiUrl } from "./api";
 import { byIdSelectorCreator } from "./selectorCreators";
 import { createSelector } from "reselect";
 import { format as d3Format } from "d3-format";
@@ -11,8 +12,6 @@ import { getDatasetID } from "./location";
 import { getIdentifiers } from "./identifiers";
 import { getSelectedDatasetMeta } from "./dataset";
 import store from "../store";
-
-const apiUrl = API_URL || "/api/v1";
 
 export const setCurrentRecord = createAction("SET_CURRENT_RECORD");
 
