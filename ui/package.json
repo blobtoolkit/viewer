@@ -16,9 +16,6 @@
       "./src/public/**/*",
       "./src/views/**/*"
     ],
-    "targets": [
-      "node17-macos-x64"
-    ],
     "outputPath": "dist"
   },
   "dependencies": {

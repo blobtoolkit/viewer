@@ -23,6 +23,6 @@ rm -rf ./ui/src/views/* &&
 
 sed 's:<!---->:'"$TEMPLATE"':' ./ui/src/public/index.html > ./ui/src/views/index.ejs &&
 
-pkg ./ui/package.json &&
+pkg --compress GZip ./ui/package.json &&
 
-pkg ./api/package.json
+pkg --compress GZip ./api/package.json

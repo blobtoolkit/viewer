@@ -11,5 +11,14 @@ jobs:
       - run: npm install -g pkg
       - run: npm install
       - run: cd ./api && npm install && cd -
-      - run: cd ./api && npm install && cd -
+      - run: cd ./ui && npm install && cd -
       - run: npm run package
+      - uses: "marvinpinto/action-automatic-releases@1.2.1"
+        with:
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          automatic_release_tag: "latest"
+          draft: true
+          prerelease: true
+          title: "Development Build"
+          files: |
+            dist/*

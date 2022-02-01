@@ -45,9 +45,6 @@
       "../node_modules/swagger-ui-dist/**/*",
       "../node_modules/swagger-ui-express/**/*"
     ],
-    "targets": [
-      "node17-macos-x64"
-    ],
     "outputPath": "dist"
   }
 }
