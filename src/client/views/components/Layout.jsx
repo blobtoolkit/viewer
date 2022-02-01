@@ -23,6 +23,7 @@ import LayoutPlots from "./LayoutPlots";
 import React from "react";
 import Spinner from "./Spinner";
 import { connect } from "react-redux";
+import { gdprUrl } from "../reducers/gdpr";
 import { getBinsForCat } from "../reducers/field";
 import { getCatAxis } from "../reducers/plot";
 import { getColorScheme } from "../reducers/color";
@@ -35,7 +36,6 @@ const branch = BRANCH || "";
 const version = VERSION || "";
 const git_version = GIT_VERSION || "";
 const hash = COMMIT_HASH || "";
-const gdpr_url = GDPR_URL || "";
 
 window.scrollTop = {};
 
@@ -52,45 +52,48 @@ class LayoutComponent extends React.Component {
       "We use browser cookies to analyse traffic to this site. To use this site you must agree to our ";
     let url = "https://github.com/blobtoolkit/viewer";
     // {this.props.datasetId ? this.props.active ? <LayoutPlots/> : <Spinner/> : <LayoutPlots/> }
-    let notice = (
-      <CookieConsent
-        style={{ background: this.props.colors.darkColor }}
-        contentStyle={{ margin: "15px" }}
-        buttonText="Accept"
-        declineButtonText="Decline"
-        enableDeclineButton={true}
-        cookieValue={true}
-        declineCookieValue={false}
-        buttonStyle={{
-          backgroundColor: this.props.colors.highlightColor,
-          color: this.props.colors.lightColor,
-          border: `${this.props.colors.lightColor} solid 1px`,
-          fontSize: "13px",
-        }}
-        declineButtonStyle={{
-          backgroundColor: this.props.colors.lightColor,
-          color: this.props.colors.highlightColor,
-          border: `${this.props.colors.highlightColor} solid 1px`,
-          fontSize: "13px",
-        }}
-        flipButtons={true}
-      >
-        This website uses cookies to help us monitor usage. To allow us to do
-        this, please accept the terms of our{" "}
-        <a
-          style={{
-            textDecoration: "underline",
-            color: this.props.colors.highlightColor,
-            fontWeight: "bold",
+    let notice;
+    if (gdprUrl) {
+      notice = (
+        <CookieConsent
+          style={{ background: this.props.colors.darkColor }}
+          contentStyle={{ margin: "15px" }}
+          buttonText="Accept"
+          declineButtonText="Decline"
+          enableDeclineButton={true}
+          cookieValue={true}
+          declineCookieValue={false}
+          buttonStyle={{
+            backgroundColor: this.props.colors.highlightColor,
+            color: this.props.colors.lightColor,
+            border: `${this.props.colors.lightColor} solid 1px`,
+            fontSize: "13px",
           }}
-          href={gdpr_url}
-          target="_blank"
+          declineButtonStyle={{
+            backgroundColor: this.props.colors.lightColor,
+            color: this.props.colors.highlightColor,
+            border: `${this.props.colors.highlightColor} solid 1px`,
+            fontSize: "13px",
+          }}
+          flipButtons={true}
         >
-          Privacy Policy
-        </a>
-        .
-      </CookieConsent>
-    );
+          This website uses cookies to help us monitor usage. To allow us to do
+          this, please accept the terms of our{" "}
+          <a
+            style={{
+              textDecoration: "underline",
+              color: this.props.colors.highlightColor,
+              fontWeight: "bold",
+            }}
+            href={gdprUrl}
+            target="_blank"
+          >
+            Privacy Policy
+          </a>
+          .
+        </CookieConsent>
+      );
+    }
     let plotsDiv;
     if (this.props.active != "loading") {
       plotsDiv = <LayoutPlots />;

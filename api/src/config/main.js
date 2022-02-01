@@ -62,8 +62,8 @@ module.exports = {
   // SSL
   keyFile: process.env.BTK_KEYFILE || "",
   certFile: process.env.BTK_CERTFILE || "",
-  ga_id: process.env.BTK_GA_ID || "",
-  gdpr_url: process.env.BTK_GDPR_URL || "",
+  ga_id: process.env.BTK_GA_ID || "UA-000000-01",
+  gdpr_url: process.env.BTK_GDPR_URL,
   dataset_table: process.env.BTK_DATASET_TABLE || false,
   target_tree: process.env.BTK_TARGET_TREE || false,
   message: process.env.BTK_MESSAGE || false,
