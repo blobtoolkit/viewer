@@ -40,7 +40,7 @@ module.exports = {
   // Path to write flatfiles
   outFilePath: process.env.BTK_OUT_FILE_PATH || appRoot + "/files/out",
   // version
-  version: process.env.BTK_VERSION || "v2.6.5",
+  version: process.env.BTK_VERSION || "v3.0.0",
   // hostname
   hostname: BTK_HOST,
   // API URL
