@@ -1,0 +1,13 @@
+name: package-viewer
+on: [push]
+jobs:
+  package viewer:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: "16"
+      - run: npm install -g pkg
+      - run: npm install
+      - run: npm run package
