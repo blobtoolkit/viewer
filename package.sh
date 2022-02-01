@@ -13,7 +13,7 @@ npm run build &&
 
 rm -rf ./ui/src/public &&
 
-tar -C ./dist -czf ./dist/site.tgz public &&
+tar -C ./dist -czf ./dist/blobtoolkit-viewer.tgz public &&
 
 mv ./dist/public ./ui/src/ &&
 
