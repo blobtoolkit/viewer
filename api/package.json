@@ -1,5 +1,5 @@
 {
-  "name": "btk-api",
+  "name": "blobtoolkit-api",
   "version": "2.6.5",
   "repository": "https://github.com/blobtoolkit/viewer",
   "description": "",
@@ -41,6 +41,7 @@
       "models/**/*",
       "routes/**/*",
       "shared/**/*",
+      "../demo/**/*",
       "../node_modules/swagger-ui-dist/**/*",
       "../node_modules/swagger-ui-express/**/*"
     ],

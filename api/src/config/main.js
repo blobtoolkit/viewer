@@ -2,7 +2,8 @@ require("dotenv").config();
 
 const appRoot = require("app-root-path");
 const BTK_HOST = process.env.BTK_HOST || "localhost";
-const BTK_CLIENT_PORT = Number(process.env.BTK_CLIENT_PORT) || 8080;
+const BTK_CLIENT_PORT =
+  Number(process.env.BTK_CLIENT_PORT) || Number(process.env.BTK_PORT) || 8080;
 const BTK_API_PORT = Number(process.env.BTK_API_PORT) || 8000;
 const BTK_API_URL =
   process.env.BTK_API_URL || BTK_HOST + ":" + BTK_API_PORT + "/api/v1";
@@ -15,7 +16,7 @@ const BTK_ORIGINS = process.env.BTK_ORIGINS
       BTK_HOST,
       (BTK_HTTPS ? "https" : "http") + "://" + BTK_HOST + ":" + BTK_CLIENT_PORT,
     ];
-const FILE_PATH = process.env.BTK_FILE_PATH || appRoot + "/demo";
+const FILE_PATH = process.env.BTK_FILE_PATH || appRoot + "/../demo";
 
 module.exports = {
   // setting port for server

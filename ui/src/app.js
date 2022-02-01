@@ -1,7 +1,7 @@
 const express = require("express");
 const path = require("path");
-const PORT = process.env.BTK_PORT || "8080";
-const BTK_API_PORT = process.env.BTK_API_PORT || "8008";
+const PORT = process.env.BTK_PORT || process.env.BTK_CLIENT_PORT || "8080";
+const BTK_API_PORT = process.env.BTK_API_PORT || "8000";
 const BTK_API_URL =
   process.env.BTK_API_URL || `http://localhost:${BTK_API_PORT}/api/v1`;
 const app = express();
