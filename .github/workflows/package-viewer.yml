@@ -1,7 +1,7 @@
 name: package-viewer
 on: [push]
 jobs:
-  package viewer:
+  package-viewer:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
