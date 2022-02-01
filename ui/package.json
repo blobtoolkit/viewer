@@ -17,7 +17,9 @@
       "./src/views/**/*"
     ],
     "targets": [
-      "node17-macos-x64"
+      "node17-linux-x64",
+      "node17-macos-x64",
+      "node17-win-x64"
     ],
     "outputPath": "dist"
   },

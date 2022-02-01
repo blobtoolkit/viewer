@@ -13,7 +13,7 @@ npm run build &&
 
 rm -rf ./ui/src/public &&
 
-tar -C ./dist -czf ./dist/site.tgz public &&
+tar -C ./dist -czf ./dist/blobtoolkit-viewer.tgz public &&
 
 mv ./dist/public ./ui/src/ &&
 
@@ -23,6 +23,6 @@ rm -rf ./ui/src/views/* &&
 
 sed 's:<!---->:'"$TEMPLATE"':' ./ui/src/public/index.html > ./ui/src/views/index.ejs &&
 
-pkg ./ui/package.json &&
+pkg --compress GZip ./ui/package.json &&
 
-pkg ./api/package.json
+pkg --compress GZip ./api/package.json
