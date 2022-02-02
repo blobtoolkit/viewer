@@ -22,3 +22,5 @@ jobs:
           title: "v${{github.ref_name}}"
           files: |
             dist/*
+            api/dist/*
+            ui/dist/*
