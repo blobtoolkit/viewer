@@ -25,4 +25,4 @@ sed 's:<!---->:'"$TEMPLATE"':' ./ui/src/public/index.html > ./ui/src/views/index
 
 cd ./ui && pkg --compress GZip package.json && cd - &&
 
-cd .api && pkg --compress GZip package.json
+cd ./api && pkg --compress GZip package.json
