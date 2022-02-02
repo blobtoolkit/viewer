@@ -6,11 +6,14 @@
 
 From v3.0.0, the viewer and api are available as packaged executables. These will be compatible with other v3 BlobToolKit repositories as they are released. Meanwhile, please use the latest `release/v2.6.x` branch as part of the pipeline or with `blobtools view`. To run the v3 viewer, fetch the executables from the release page and add them to your PATH.
 
-To view a demo BlobDir, run:
+To view a demo BlobDir, run the following commands in separate terminal windows:
 
 ```
-blobtoolkit-api &
-blobtoolkit-viewer &
+blobtoolkit-api
+```
+
+```
+blobtoolkit-viewer
 ```
 
 Then open [localhost:8080/view/all](http://localhost:8080/view/all) in a web browser.

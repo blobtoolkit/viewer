@@ -9,6 +9,8 @@ TEMPLATE="<% if (variables) { %> \
 <% } %> \
 "
 
+cp .env.dist .env &&
+
 npm run build &&
 
 rm -rf ./ui/src/public &&
@@ -23,6 +25,8 @@ rm -rf ./ui/src/views/* &&
 
 sed 's:<!---->:'"$TEMPLATE"':' ./ui/src/public/index.html > ./ui/src/views/index.ejs &&
 
-BTK_BASENAME=/view pkg --compress GZip ui/package.json &&
+pkg --compress GZip ui/package.json &&
+
+cp ./api/.env.dist ./api/.env &&
 
 pkg --compress GZip api/package.json
