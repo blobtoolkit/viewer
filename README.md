@@ -1,3 +1,7 @@
+# ARCHIVED
+
+This repository has been archived as all code is now maintained as part of [blobtoolkit/blobtoolkit](https://github.com/blobtoolkit/blobtoolkit) under `src/api`, `src/viewer` and `src/packaged-viewer`
+
 # BlobToolKit Viewer (v1.1)
 
  [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1134794.svg)](https://doi.org/10.5281/zenodo.1134794)
